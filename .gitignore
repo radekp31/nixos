@@ -1,0 +1,7 @@
+# Ignore everything in .config
+.config/*
+/etc/nixos
+
+# But do not ignore .nix files
+!.config/**/*.nix
+!/etc/nixos/**/*.nix
