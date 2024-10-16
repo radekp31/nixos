@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=GWE
+Comment=GUI to control cooling and overclock of nVidia cards
+Terminal=false
+Categories=System;Settings;
+Icon=/nix/store/xsp809x7s4smzdax6f8nxixjhjrf64sr-gwe-0.15.7/lib/python3.11/site-packages/gwe/data/com.leinardi.gwe
+Exec=gwe --hide-window --delay
+X-GNOME-Autostart-enabled=true
