@@ -1,6 +1,7 @@
 # Ignore everything in .config
 .config/*
 /etc/nixos
+.ssh
 
 # But do not ignore .nix files
 !.config/**/*.nix
