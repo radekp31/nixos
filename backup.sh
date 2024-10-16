@@ -13,5 +13,5 @@ if [[ $(git status --porcelain) ]]; then
     # Push the changes to GitHub
     git push origin main
 else
-    echo "No changes to NixOS configuration."
+    break
 fi
