@@ -27,6 +27,42 @@
     };
   };
 
+  # Backup to GIT service
+#  systemd.services.git-backup = {
+#    enable = true;
+#    description = "Backups the configuration files to git";
+#    unitConfig = {
+#    };
+#    serviceConfig = {
+#      ExecStart = "${pkgs.bash}/bin/bash -c /home/radekp/.dotfiles/backup.sh";
+#      Environment = "PATH=/home/radekp/.nix-profile/bin:/usr/local/bin:/usr/bin:/bin";
+#    wantedBy = [ "multi-user.target" ];
+#    };
+#  };
+
+
+   #Enable git
+   # programs.git = {
+   #	enable = true;
+   #	
+   # };
+
+
+# systemd.services.git-backup = {
+#    description = "NixOS config backup to git";
+#    enable = true;
+#    wantedBy = [ "multi-user.target" ]; # Start the service during normal system startup
+#    serviceConfig = {
+#      Type = "oneshot";
+#      ExecStart = "${pkgs.bash}/bin/bash -c /home/radekp/.dotfiles/backup.sh";
+#      #Environment = "PATH=/home/radekp/.nix-profile/bin:/usr/local/bin:/usr/bin:/bin";
+#      Environment = [
+#	"GIT=${pkgs.git}/bin/git"
+#	"HOME=/home/radekp"
+#      ];
+#    };
+#  };
+
   # Bootloader.
   boot.loader.grub.enable = true;
     boot.loader.grub.device = "/dev/sda";
@@ -252,10 +288,10 @@
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
 
+  #git # this thing basically doesnt function properly without git
+
   # TEST
   dunst
-  openrgb-with-all-plugins
-  betterlockscreen
 
   # Packages
 
@@ -279,6 +315,9 @@
   picom #x11 lightweight compositor
   ly # TUI login screen
   ntfs3g
+  openrgb-with-all-plugins #RGB control
+  betterlockscreen # cool lockscreen built on i3 lock
+
 
  
   # Zsh

@@ -18,24 +18,6 @@ in
     git
     ];
   
-  # Set wallpaper
-  xsession.profileExtra = ''
-    # Ensure D-Bus session is initialized
-    if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
-      export $(dbus-launch)
-    fi
-
-  # Set the wallpaper using gsettings
-  gsettings set org.gnome.desktop.background picture-uri 'file:///home/radekp/.config/wallpapers/nix-wallpaper-binary-black.png'
-    '';
-
-  # Run login scripts
-  home.activation = {
-      test = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      # run scripts here
-      '';
-  };    
-  
   #Setup and configure git
   programs.git = {
 	enable = true;
@@ -51,5 +33,23 @@ in
   enable = true;
   };
   xdg.enable = true ;
+
+ systemd.user.services.git-backup = {
+    Unit = {
+      Description = "NixOS config backup to git";  # The correct way to define the description
+    };
+    Service = {
+      Type = "oneshot";  # Run once and exit
+      ExecStart = "${pkgs.bash}/bin/bash -c /home/radekp/.dotfiles/backup.sh";  # Run the script
+      Environment = [
+        "GIT=${pkgs.git}/bin/git"  # Make git available
+      ];
+    };
+    Install = {
+      WantedBy = [ "default.target" ];  # Automatically start on user login
+    };
+  };
+
+
 }
 

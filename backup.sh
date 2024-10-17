@@ -2,16 +2,23 @@
 #git commit -m "automatic configuration backup"
 #git push -u origin main
 
+REPO_PATH="/home/radekp/.dotfiles"
+
+# Change to the Git repository directory
+cd $REPO_PATH || exit 1  # Exit if the directory does not exist
+
+$GIT config --global --add safe.directory $REPO_PATH
+
 # Check if there are any changes
-if [[ $(git status --porcelain) ]]; then
+if [[ $($GIT status --porcelain) ]]; then
     # Stage all changes
-    git add .
+    $GIT add .
 
     # Commit the changes with a timestamp
-    git commit -m "Backup NixOS config $(date '+%Y-%m-%d %H:%M:%S')"
+    $GIT commit -m "Backup NixOS config $(date '+%Y-%m-%d %H:%M:%S')"
 
     # Push the changes to GitHub
-    git push origin main
+    $GIT push origin main
 else
-    break
+    exit 0
 fi
