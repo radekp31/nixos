@@ -16,6 +16,7 @@ in
     unstable.neovim
     unstable.vlc
     git
+    openssh
     ];
   
   #Setup and configure git
@@ -34,6 +35,9 @@ in
   };
   xdg.enable = true ;
 
+  # backup nixos config to git
+
+
  systemd.user.services.git-backup = {
     Unit = {
       Description = "NixOS config backup to git";  # The correct way to define the description
@@ -43,6 +47,7 @@ in
       ExecStart = "${pkgs.bash}/bin/bash -c /home/radekp/.dotfiles/backup.sh";  # Run the script
       Environment = [
         "GIT=${pkgs.git}/bin/git"  # Make git available
+	"SSH=${pkgs.openssh}/bin/ssh"  # Add ssh to the environment
       ];
     };
     Install = {
