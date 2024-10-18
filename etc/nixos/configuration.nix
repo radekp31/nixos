@@ -84,10 +84,10 @@ in
       /run/current-system/sw/bin/git remote add origin ${gitHubRepo}
     fi
 
-    /run/current-system/sw/bin/git switch main
+    #/run/current-system/sw/bin/git switch main
     /run/current-system/sw/bin/git add .
     /run/current-system/sw/bin/git commit -m "Auto-update: $(date)"
-    /run/current-system/sw/bin/git push origin master
+    /run/current-system/sw/bin/git push origin main
   '';
 
 
