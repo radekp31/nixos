@@ -15,7 +15,7 @@ in
   home.packages = with pkgs; [
     unstable.vlc
     git
-    openssh
+#    openssh
     ];
   
   #Setup and configure git
