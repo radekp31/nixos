@@ -1,6 +1,4 @@
-#git add .
-#git commit -m "automatic configuration backup"
-#git push -u origin main
+#!/run/current-system/sw/bin/bash
 
 REPO_PATH="/home/radekp/.dotfiles"
 
