@@ -13,7 +13,7 @@ if [[ $($GIT status --porcelain) ]]; then
     $GIT add .
 
     # Commit the changes with a timestamp
-    $GIT commit -m "Backup NixOS config $(date '+%Y-%m-%d %H:%M:%S')"
+    $GIT commit -m "Backup NixOS config"
 
     # Push the changes to GitHub
     $GIT push origin main
