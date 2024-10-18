@@ -4,6 +4,13 @@
 
 { config, pkgs, lib,  ... }:
 
+let
+  dotfilesDir = "/home/radekp/.dotfiles";
+  gitHubRepo = "https://github.com/<your-username>/<your-repo>.git"; # Replace with your repo
+  gitHubUser = "radekp31";
+  gitHubEmail = "<polaek.31@seznam.cz";
+  gitHubTokenFile = "/etc/secrets/github-token"; # Define path for your GitHub token
+in
 
 {
   imports =
@@ -27,41 +34,62 @@
     };
   };
 
-  # Backup to GIT service
-#  systemd.services.git-backup = {
-#    enable = true;
-#    description = "Backups the configuration files to git";
-#    unitConfig = {
-#    };
-#    serviceConfig = {
-#      ExecStart = "${pkgs.bash}/bin/bash -c /home/radekp/.dotfiles/backup.sh";
-#      Environment = "PATH=/home/radekp/.nix-profile/bin:/usr/local/bin:/usr/bin:/bin";
-#    wantedBy = [ "multi-user.target" ];
-#    };
-#  };
-
-
    #Enable git
-   # programs.git = {
-   #	enable = true;
-   #	
-   # };
+    programs.git = {
+   	enable = true;
+    };
 
 
-# systemd.services.git-backup = {
-#    description = "NixOS config backup to git";
-#    enable = true;
-#    wantedBy = [ "multi-user.target" ]; # Start the service during normal system startup
-#    serviceConfig = {
-#      Type = "oneshot";
-#      ExecStart = "${pkgs.bash}/bin/bash -c /home/radekp/.dotfiles/backup.sh";
-#      #Environment = "PATH=/home/radekp/.nix-profile/bin:/usr/local/bin:/usr/bin:/bin";
-#      Environment = [
-#	"GIT=${pkgs.git}/bin/git"
-#	"HOME=/home/radekp"
-#      ];
-#    };
-#  };
+  # Use systemd timer to periodically push changes to GitHub
+  systemd.services.uploadDotfiles = {
+    description = "Upload dotfiles to GitHub";
+    serviceConfig = {
+      ExecStart = "${pkgs.bash}/bin/bash /etc/nixos/scripts/upload-dotfiles.sh";
+      User = "radekp";
+    };
+    wantedBy = [ "multi-user.target" ];
+  };
+
+  systemd.timers.uploadDotfilesTimer = {
+    description = "Timer to upload dotfiles to GitHub";
+    timerConfig = {
+      OnCalendar = "*:0/30"; # Runs every 30 minutes, adjust as needed
+      Persistent = true;
+    };
+    wantedBy = [ "timers.target" ];
+  };
+
+  # Git global configuration
+  environment.etc."gitconfig".text = ''
+    [user]
+      name = "${gitHubUser}"
+      email = "${gitHubEmail}"
+    [credential]
+      helper = "store --file ${gitHubTokenFile}"
+    [init]
+      defaultBranch = main
+  '';
+ 
+  # Ensure the GitHub token file is present
+  systemd.tmpfiles.rules = [
+    "f /etc/secrets/github-token 0600 radekp radekp - $(echo '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' | base64 -d)" # Replace with your GitHub token in base64
+  ];
+
+  # Upload script that will handle git commit and push
+  environment.etc."nixos/scripts/upload-dotfiles.sh".text = ''
+    #!/usr/bin/env bash
+    cd ${dotfilesDir}
+    if [ ! -d .git ]; then
+      /run/current-system/sw/bin/git init
+      /run/current-system/sw/bin/git remote add origin ${gitHubRepo}
+    fi
+
+    /run/current-system/sw/bin/git add .
+    /run/current-system/sw/bin/git commit -m "Auto-update: $(date)"
+    /run/current-system/sw/bin/git push origin master
+  '';
+
+
 
   # Bootloader.
   boot.loader.grub.enable = true;
