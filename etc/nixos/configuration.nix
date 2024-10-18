@@ -86,6 +86,7 @@ in
 
     /run/current-system/sw/bin/git add .
     /run/current-system/sw/bin/git commit -m "Auto-update: $(date)"
+    /run/current-system/sw/bin/git branch -M main
     /run/current-system/sw/bin/git push origin master
   '';
 
