@@ -13,7 +13,6 @@ in
 
   # Home packages
   home.packages = with pkgs; [
-    unstable.neovim
     unstable.vlc
     git
     openssh
@@ -34,6 +33,27 @@ in
   enable = true;
   };
   xdg.enable = true ;
+
+
+  #Enable NVIM
+  programs.neovim = {
+	enable = true;
+	viAlias = true;
+	vimAlias = true;
+	vimdiffAlias = true;
+
+#  extraLuaConfig = ''
+#  	 ${builtins.readFile ./nvim/options.lua}
+#  '';
+
+  extraPackages = with pkgs; [
+      lua-language-server
+#      rnix-lsp
+
+      xclip
+      wl-clipboard
+    ];
+  };
 
   # backup nixos config to git
 
@@ -57,4 +77,3 @@ in
 
 
 }
-
