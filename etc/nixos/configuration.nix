@@ -321,6 +321,8 @@ in
 
   # TEST
   dunst
+  git
+  openssh
 
   # Packages
 
