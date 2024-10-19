@@ -2,9 +2,6 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-
-# Timer test from auto backup service 222222222
-
 { config, pkgs, lib,  ... }:
 
 let
