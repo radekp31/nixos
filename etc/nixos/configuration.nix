@@ -60,8 +60,8 @@ in
   systemd.timers.uploadDotfiles = {
     description = "Timer to upload dotfiles to GitHub";
     timerConfig = {
-      OnCalendar = "*:0/30"; # Runs every 30 minutes, adjust as needed
-      Persistent = true;
+      OnCalendar = "0/12:00:00"; # Runs every 12 hours, adjust as needed
+      Persistent = true; # Ensure that job runs even after missed schedule
     };
     wantedBy = [ "timers.target" ];
   };
