@@ -2,6 +2,9 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
+#Test commit message from backup service
+
+
 { config, pkgs, lib,  ... }:
 
 let
@@ -49,7 +52,7 @@ in
     enable = true;
     description = "Upload dotfiles to GitHub";
     serviceConfig = {
-      ExecStart = "${pkgs.bash}/bin/bash /etc/nixos/scripts/upload-dotfiles.sh";
+      ExecStart = "${pkgs.zsh}/bin/zsh /etc/nixos/scripts/upload-dotfiles.sh";
       User = "radekp";
     };
     wantedBy = [ "multi-user.target" ];
@@ -98,26 +101,43 @@ in
 #  };
 
  
-  # Ensure the GitHub token file is present
-  systemd.tmpfiles.rules = [
-    "f /etc/secrets/github-token 0600 radekp radekp - $(echo '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' | base64 -d)" # Replace with your GitHub token in base64
-  ];
+#  # Upload script that will handle git commit and push
+#  environment.etc."nixos/scripts/upload-dotfiles.sh".text = ''
+#    #!/usr/bin/env bash
+#    cd ${dotfilesDir}
+#    if [ ! -d .git ]; then
+#      /run/current-system/sw/bin/git init
+#      /run/current-system/sw/bin/git remote add origin ${gitHubRepo}
+#    fi
+#
+#    #/run/current-system/sw/bin/git switch main
+#    /run/current-system/sw/bin/git add .
+#    /run/current-system/sw/bin/git commit -m "Auto-update: $(date)"
+#    /run/current-system/sw/bin/git push origin main
+#  '';
 
-  # Upload script that will handle git commit and push
-  environment.etc."nixos/scripts/upload-dotfiles.sh".text = ''
-    #!/usr/bin/env bash
-    cd ${dotfilesDir}
-    if [ ! -d .git ]; then
-      /run/current-system/sw/bin/git init
-      /run/current-system/sw/bin/git remote add origin ${gitHubRepo}
-    fi
+environment.etc."nixos/scripts/upload-dotfiles.sh".text = ''
+  #!/usr/bin/env bash
+  cd ${dotfilesDir}
 
-    #/run/current-system/sw/bin/git switch main
+  # Initialize the repository if .git does not exist
+  if [ ! -d .git ]; then
+    /run/current-system/sw/bin/git init
+    /run/current-system/sw/bin/git remote add origin ${gitHubRepo}
+    
+    # Ensure there is an initial commit, even if the directory is empty
     /run/current-system/sw/bin/git add .
-    /run/current-system/sw/bin/git commit -m "Auto-update: $(date)"
-    /run/current-system/sw/bin/git push origin main
-  '';
+    /run/current-system/sw/bin/git commit -m "Initial commit" || true
+  fi
 
+  # Create or switch to the auto-update branch
+  /run/current-system/sw/bin/git checkout -B auto-update
+
+  # Add any new changes, commit, and push to the auto-update branch
+  /run/current-system/sw/bin/git add .
+  /run/current-system/sw/bin/git commit -m "Auto-update: $(date)" || true
+  /run/current-system/sw/bin/git push -u origin auto-update
+'';
 
 
   # Bootloader.
