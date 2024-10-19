@@ -2,6 +2,9 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
+
+# Timer test from auto backup service 222222222
+
 { config, pkgs, lib,  ... }:
 
 let
@@ -327,13 +330,13 @@ environment.etc."nixos/scripts/upload-dotfiles.sh".text = ''
 
   # TEST
   dunst
-  git
-  openssh
-
+  libnotify
   # Packages
 
   neofetch #distro stats
-  curl 
+  curl
+  git
+  openssh
   htop #system monitor
   eza #ls on steroids 
   fzf # fuzzy finder
