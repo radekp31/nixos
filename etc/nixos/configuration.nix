@@ -39,7 +39,10 @@ in
     programs.git = {
    	enable = true;
     };
-
+   
+   #setup SSH
+   programs.ssh.startAgent = true;
+   services.openssh.enable = true;
 
   # Use systemd timer to periodically push changes to GitHub
   systemd.services.uploadDotfiles = {
@@ -73,26 +76,26 @@ in
   '';
 
   # Set up the ssh-agent as a systemd user service for the user `radekp`
-  systemd.user.services.ssh-agent = {
-    enable = true;
-    description = "SSH agent";
-    wantedBy = [ "default.target" ];
-    serviceConfig = {
-      ExecStart = "${pkgs.openssh}/bin/ssh-agent -s";
-    };
-  };
+  #systemd.user.services.ssh-agent = {
+  #  enable = true;
+  #  description = "SSH agent";
+  #  wantedBy = [ "default.target" ];
+  #  serviceConfig = {
+  #    ExecStart = "${pkgs.openssh}/bin/ssh-agent -s";
+  #  };
+  #};
 
   # Automatically load the SSH key (adjust the path to your SSH key)
-  systemd.user.services.ssh-add = {
-    enable = true;
-    description = "Add SSH private key to agent";
-    after = [ "ssh-agent.service" ];
-    wants = [ "ssh-agent.service" ];
-    serviceConfig = {
-      ExecStart = "${pkgs.openssh}/bin/ssh-add /home/radekp/.ssh/id_rsa";  # Replace with your key
-      ExecStartPost = "/run/current-system/sw/bin/systemctl --user enable ssh-agent";
-    };
-  };
+#  systemd.user.services.ssh-add = {
+#    enable = true;
+#    description = "Add SSH private key to agent";
+#    after = [ "ssh-agent.service" ];
+#    wants = [ "ssh-agent.service" ];
+#    serviceConfig = {
+#      ExecStart = "${pkgs.openssh}/bin/ssh-add /home/radekp/.ssh/id_rsa";  # Replace with your key
+#      ExecStartPost = "/run/current-system/sw/bin/systemctl --user enable ssh-agent";
+#    };
+#  };
 
  
   # Ensure the GitHub token file is present
