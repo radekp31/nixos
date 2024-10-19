@@ -2,14 +2,10 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-#Test commit message from backup service
-
-
 { config, pkgs, lib,  ... }:
 
 let
   dotfilesDir = "/home/radekp/.dotfiles";
-#  gitHubRepo = "https://github.com/radekp31/nixos.git"; # Replace with your repo
   gitHubRepo = "git@github.com:radekp31/nixos.git"; # Replace with your repo
   gitHubUser = "radekp31";
   gitHubEmail = "<polaek.31@seznam.cz";
@@ -22,7 +18,6 @@ in
       <home-manager/nixos>
       ./hardware-configuration.nix
       ./nvidia-drivers.nix
-#      ./sddm-theme-dialog.nix
     ];
 
   # Enable experimental features
@@ -58,7 +53,8 @@ in
     wantedBy = [ "multi-user.target" ];
   };
 
-  systemd.timers.uploadDotfilesTimer = {
+#  systemd.timers.uploadDotfilesTimer = {
+  systemd.timers.uploadDotfiles = {
     description = "Timer to upload dotfiles to GitHub";
     timerConfig = {
       OnCalendar = "*:0/30"; # Runs every 30 minutes, adjust as needed
@@ -77,44 +73,6 @@ in
     [init]
       defaultBranch = main
   '';
-
-  # Set up the ssh-agent as a systemd user service for the user `radekp`
-  #systemd.user.services.ssh-agent = {
-  #  enable = true;
-  #  description = "SSH agent";
-  #  wantedBy = [ "default.target" ];
-  #  serviceConfig = {
-  #    ExecStart = "${pkgs.openssh}/bin/ssh-agent -s";
-  #  };
-  #};
-
-  # Automatically load the SSH key (adjust the path to your SSH key)
-#  systemd.user.services.ssh-add = {
-#    enable = true;
-#    description = "Add SSH private key to agent";
-#    after = [ "ssh-agent.service" ];
-#    wants = [ "ssh-agent.service" ];
-#    serviceConfig = {
-#      ExecStart = "${pkgs.openssh}/bin/ssh-add /home/radekp/.ssh/id_rsa";  # Replace with your key
-#      ExecStartPost = "/run/current-system/sw/bin/systemctl --user enable ssh-agent";
-#    };
-#  };
-
- 
-#  # Upload script that will handle git commit and push
-#  environment.etc."nixos/scripts/upload-dotfiles.sh".text = ''
-#    #!/usr/bin/env bash
-#    cd ${dotfilesDir}
-#    if [ ! -d .git ]; then
-#      /run/current-system/sw/bin/git init
-#      /run/current-system/sw/bin/git remote add origin ${gitHubRepo}
-#    fi
-#
-#    #/run/current-system/sw/bin/git switch main
-#    /run/current-system/sw/bin/git add .
-#    /run/current-system/sw/bin/git commit -m "Auto-update: $(date)"
-#    /run/current-system/sw/bin/git push origin main
-#  '';
 
 environment.etc."nixos/scripts/upload-dotfiles.sh".text = ''
   #!/usr/bin/env bash
