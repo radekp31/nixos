@@ -101,10 +101,13 @@ environment.etc."nixos/scripts/upload-dotfiles.sh".text = ''
   # Check if stderr is empty
   if [ $? -eq 0 ]; then  
   # If no error, display a success notification
-    dunstify -u normal "NixOS config backup" "Push to GitHub was successful."
-  else
-    # If there's an error, display a critical notification
-    dunstify -u critical "NixOS config backup" "Push to GitHub failed."
+  # Script runs as root - need to send notifications to user with:
+  # sudo -u <USERNAME> DISPLAY=:0 dunstify "test"
+
+  sudo -u $(who | awk '{print $1}' | sort | uniq) DISPLAY=:0 dunstify -u normal "NixOS config backup" "Push to GitHub was successful."
+
+   # If there's an error, display a critical notification
+  sudo -u $(who | awk '{print $1}' | sort | uniq) DISPLAY=:0 dunstify -u critical "NixOS config backup" "Push to GitHub failed."
   fi
   '';
 
