@@ -96,7 +96,7 @@ environment.etc."nixos/scripts/upload-dotfiles.sh".text = ''
   /run/current-system/sw/bin/git commit -m "Auto-update: $(date)" || true
 
   # Run git push and capture stderr output
-  /run/current-system/sw/bin/git push -u origin auto-update
+  git_push_status=$(/run/current-system/sw/bin/git push -u origin auto-update 2>/tmp/nixos_backup_error.log)
 
   # Check if stderr is empty
   if [ $? -eq 0 ]; then  
