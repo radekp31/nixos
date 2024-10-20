@@ -94,8 +94,20 @@ environment.etc."nixos/scripts/upload-dotfiles.sh".text = ''
   # Add any new changes, commit, and push to the auto-update branch
   /run/current-system/sw/bin/git add .
   /run/current-system/sw/bin/git commit -m "Auto-update: $(date)" || true
-  /run/current-system/sw/bin/git push -u origin auto-update
-'';
+
+  # Run git push and capture stderr output
+  /run/current-system/sw/bin/git push -u origin auto-update 2> error.log 
+
+  # Check if stderr is empty
+  if [ -z "$git_push_error" ]; then
+  
+  # If no error, display a success notification
+    dunstify -u normal "NixOS config backup" "Push to GitHub was successful."
+  else
+    # If there's an error, display a critical notification
+    dunstify -u critical "NixOS config backup" "Push to GitHub failed."
+  fi
+  '';
 
 
   # Bootloader.
