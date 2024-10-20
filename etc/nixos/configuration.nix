@@ -2,6 +2,14 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
+#TODO
+#1/ fix hardcoded values
+#2/ keep only relevant config in configuration.nix 
+#   split into more .nix files or move it to home.nix  
+#3/ move the backed up directory back into /etc/nixos/
+#4/ fix ugly formatting (extraneous comments, indentation)
+#5/ test removing some configs that might be included by default (openssh, ...)
+
 { config, pkgs, lib,  ... }:
 
 let
@@ -101,12 +109,11 @@ environment.etc."nixos/scripts/upload-dotfiles.sh".text = ''
   # Check if stderr is empty
   if [ $? -eq 0 ]; then  
   # If no error, display a success notification
-  # Script runs as root - need to send notifications to user with:
-  # sudo -u <USERNAME> DISPLAY=:0 dunstify "test"
-
   sudo -u $(who | awk '{print $1}' | sort | uniq) DISPLAY=:0 dunstify -u normal "NixOS config backup" "Push to GitHub was successful."
 
-   # If there's an error, display a critical notification
+  else
+
+  # If there's an error, display a critical notification
   sudo -u $(who | awk '{print $1}' | sort | uniq) DISPLAY=:0 dunstify -u critical "NixOS config backup" "Push to GitHub failed."
   fi
   '';
