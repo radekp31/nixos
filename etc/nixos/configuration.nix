@@ -96,11 +96,10 @@ environment.etc."nixos/scripts/upload-dotfiles.sh".text = ''
   /run/current-system/sw/bin/git commit -m "Auto-update: $(date)" || true
 
   # Run git push and capture stderr output
-  /run/current-system/sw/bin/git push -u origin auto-update 2> error.log 
+  /run/current-system/sw/bin/git push -u origin auto-update
 
   # Check if stderr is empty
-  if [ -z "$git_push_error" ]; then
-  
+  if [ $? -eq 0 ]; then  
   # If no error, display a success notification
     dunstify -u normal "NixOS config backup" "Push to GitHub was successful."
   else
