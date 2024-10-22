@@ -1,0 +1,25 @@
+0000000000000000000000000000000000000000 a3f0c78d1a98b8bf0839bf8413dd0bf0ec96721d Radek Polasek <polasek.31@seznam.cz> 1729026869 +0200	commit (initial): first nixos commit
+a3f0c78d1a98b8bf0839bf8413dd0bf0ec96721d a3f0c78d1a98b8bf0839bf8413dd0bf0ec96721d Radek Polasek <polasek.31@seznam.cz> 1729026877 +0200	Branch: renamed refs/heads/main to refs/heads/main
+a3f0c78d1a98b8bf0839bf8413dd0bf0ec96721d 8c8eaac0036e23b612ea9b4fe557cfcd620b4647 Radek Polasek <polasek.31@seznam.cz> 1729111850 +0200	commit: first nixos commit
+8c8eaac0036e23b612ea9b4fe557cfcd620b4647 cc70b7a688a9b809dd67d873987d7a636f2cc3d1 Radek Polasek <polasek.31@seznam.cz> 1729111977 +0200	commit: first nixos commit
+cc70b7a688a9b809dd67d873987d7a636f2cc3d1 0dad0c5a04a18fc8a0b75076025e3b580c91f23e Radek Polasek <polasek.31@seznam.cz> 1729113662 +0200	commit: automatic configuration backup
+0dad0c5a04a18fc8a0b75076025e3b580c91f23e 101574bd29cbecc3ec93cb5530b7e961999eb1ee Radek Polasek <polasek.31@seznam.cz> 1729113990 +0200	commit: Backup NixOS config 2024-10-16 23:26:30
+101574bd29cbecc3ec93cb5530b7e961999eb1ee b21df80f7e830f2e61412ac7e8620ae4411b90ff Radek Polasek <polasek.31@seznam.cz> 1729114045 +0200	commit: Backup NixOS config 2024-10-16 23:27:25
+b21df80f7e830f2e61412ac7e8620ae4411b90ff 370d48c37669bae3e65c6ea32896f116e1a699a4 Radek Polasek <polasek.31@seznam.cz> 1729199086 +0200	commit: Backup NixOS config
+370d48c37669bae3e65c6ea32896f116e1a699a4 c4080ad3fffae6aaacf2c647db2cf428032e402a Radek Polasek <polasek.31@seznam.cz> 1729199954 +0200	commit: Backup NixOS config
+c4080ad3fffae6aaacf2c647db2cf428032e402a c31478d5d0c82c9af94e0bf894d246c75156f2bd Radek Polasek <polasek.31@seznam.cz> 1729277100 +0200	commit: update on 20:45
+c31478d5d0c82c9af94e0bf894d246c75156f2bd 5f12013eb7dee9653e6ce59407d61ebbc4cc7c5c Radek Polasek <polasek.31@seznam.cz> 1729277401 +0200	commit: update on 20:50
+5f12013eb7dee9653e6ce59407d61ebbc4cc7c5c 28aae8dbc6af94cbeab7557ef31f95ec34f597e3 Radek Polasek <polasek.31@seznam.cz> 1729277805 +0200	commit: Backup NixOS config
+28aae8dbc6af94cbeab7557ef31f95ec34f597e3 ff70e7316bc88be1cd4d8c95412d3ee1d92489c7 Radek Polasek <polasek.31@seznam.cz> 1729277879 +0200	commit: Backup NixOS config
+ff70e7316bc88be1cd4d8c95412d3ee1d92489c7 149caf201962cfd808d0950412aaac239dee5ed6 Radek Polasek <polasek.31@seznam.cz> 1729278117 +0200	commit: Backup NixOS config
+149caf201962cfd808d0950412aaac239dee5ed6 75c4c3ca40cbac45a261c9a3af0215dc70e920bd radekp31 <polaek.31@seznam.cz> 1729285703 +0200	commit: Auto-update: Fri Oct 18 11:08:23 PM CEST 2024
+75c4c3ca40cbac45a261c9a3af0215dc70e920bd 75c4c3ca40cbac45a261c9a3af0215dc70e920bd radekp31 <polaek.31@seznam.cz> 1729286050 +0200	Branch: renamed refs/heads/main to refs/heads/main
+75c4c3ca40cbac45a261c9a3af0215dc70e920bd d99d835fbb01401cf1c2903d56133dbba4352791 radekp31 <polaek.31@seznam.cz> 1729286155 +0200	commit: Auto-update: Fri Oct 18 11:15:55 PM CEST 2024
+d99d835fbb01401cf1c2903d56133dbba4352791 d99d835fbb01401cf1c2903d56133dbba4352791 radekp31 <polaek.31@seznam.cz> 1729286155 +0200	Branch: renamed refs/heads/main to refs/heads/main
+d99d835fbb01401cf1c2903d56133dbba4352791 72a2ecb2c7cbfba15571ee6cadad094a51f3d3ce radekp31 <polaek.31@seznam.cz> 1729286351 +0200	commit: Auto-update: Fri Oct 18 11:19:11 PM CEST 2024
+72a2ecb2c7cbfba15571ee6cadad094a51f3d3ce 5ee05c90724f82ede10926307fbd17ffc19d83ac radekp31 <polaek.31@seznam.cz> 1729286556 +0200	commit: Auto-update: Fri Oct 18 11:22:36 PM CEST 2024
+5ee05c90724f82ede10926307fbd17ffc19d83ac 597515ae0827be3afc177207ac158621b963ce7f radekp31 <polaek.31@seznam.cz> 1729287005 +0200	commit: Auto-update: Fri Oct 18 11:30:05 PM CEST 2024
+597515ae0827be3afc177207ac158621b963ce7f f8ee6cd58d1e5f5116034f2ad81e1c46446d0496 radekp31 <polaek.31@seznam.cz> 1729287233 +0200	commit: Auto-update: Fri Oct 18 11:33:53 PM CEST 2024
+f8ee6cd58d1e5f5116034f2ad81e1c46446d0496 2b685e5913c35f55da3c7c4477658d71c45d9d24 radekp31 <polaek.31@seznam.cz> 1729287493 +0200	commit: Auto-update: Fri Oct 18 11:38:13 PM CEST 2024
+2b685e5913c35f55da3c7c4477658d71c45d9d24 f86d8de96a7e1333e9315bfcfb851dc3a0378902 radekp31 <polaek.31@seznam.cz> 1729288188 +0200	commit: Auto-update: Fri Oct 18 11:49:48 PM CEST 2024
+f86d8de96a7e1333e9315bfcfb851dc3a0378902 2b0ac037f0cd1712f60e93fb1a2a8441d3ea68f6 radekp31 <polaek.31@seznam.cz> 1729362781 +0200	commit: Auto-update: Sat Oct 19 08:33:01 PM CEST 2024

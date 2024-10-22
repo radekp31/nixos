@@ -1,0 +1,19 @@
+0000000000000000000000000000000000000000 2b0ac037f0cd1712f60e93fb1a2a8441d3ea68f6 radekp31 <polaek.31@seznam.cz> 1729367315 +0200	branch: Created from HEAD
+2b0ac037f0cd1712f60e93fb1a2a8441d3ea68f6 79e6c77596903c732054ed043f649f3cd7e36397 radekp31 <polaek.31@seznam.cz> 1729367515 +0200	commit: Auto-update: Sat Oct 19 09:51:55 PM CEST 2024
+79e6c77596903c732054ed043f649f3cd7e36397 439e6f9ebc6651f1b549f96981d1ade7fb6bdd19 radekp31 <polaek.31@seznam.cz> 1729368099 +0200	commit: Auto-update: Sat Oct 19 10:01:39 PM CEST 2024
+439e6f9ebc6651f1b549f96981d1ade7fb6bdd19 78de2dab677332ce9f5bc2dbc8db00b34f3b0180 radekp31 <polaek.31@seznam.cz> 1729371608 +0200	commit: Auto-update: Sat Oct 19 11:00:08 PM CEST 2024
+78de2dab677332ce9f5bc2dbc8db00b34f3b0180 a1f52b6c58a5735b07c2a8ba55624bb191380dfd radekp31 <polaek.31@seznam.cz> 1729373408 +0200	commit: Auto-update: Sat Oct 19 11:30:08 PM CEST 2024
+a1f52b6c58a5735b07c2a8ba55624bb191380dfd d6c982cf22e10e9f3a0888a8fb67d37074ee3766 radekp31 <polaek.31@seznam.cz> 1729375208 +0200	commit: Auto-update: Sun Oct 20 12:00:08 AM CEST 2024
+d6c982cf22e10e9f3a0888a8fb67d37074ee3766 842f85209b5d150c5f7f99c40e9f8ff0912489ed radekp31 <polaek.31@seznam.cz> 1729449883 +0200	commit: Auto-update: Sun Oct 20 08:44:43 PM CEST 2024
+842f85209b5d150c5f7f99c40e9f8ff0912489ed 70302cb4a86cd2b923e9d4f79fbb639171c96163 radekp31 <polaek.31@seznam.cz> 1729450157 +0200	commit: Auto-update: Sun Oct 20 08:49:17 PM CEST 2024
+70302cb4a86cd2b923e9d4f79fbb639171c96163 bf6e42b7fe967bf6c4e4812945b129fa2b64e27e radekp31 <polaek.31@seznam.cz> 1729450856 +0200	commit: Auto-update: Sun Oct 20 09:00:56 PM CEST 2024
+bf6e42b7fe967bf6c4e4812945b129fa2b64e27e 06eeee806be03ab37f78003cfc91c4d52e240af0 radekp31 <polaek.31@seznam.cz> 1729451668 +0200	commit: Auto-update: Sun Oct 20 09:14:28 PM CEST 2024
+06eeee806be03ab37f78003cfc91c4d52e240af0 4c4ae3f1256d1f804b08560d4d15eaa8dc8cc3f0 radekp31 <polaek.31@seznam.cz> 1729452159 +0200	commit: Auto-update: Sun Oct 20 09:22:39 PM CEST 2024
+4c4ae3f1256d1f804b08560d4d15eaa8dc8cc3f0 2a15ac69c3023acd167f7e6f4cf13c45f5915607 radekp31 <polaek.31@seznam.cz> 1729456168 +0200	commit: Auto-update: Sun Oct 20 10:29:28 PM CEST 2024
+2a15ac69c3023acd167f7e6f4cf13c45f5915607 a707ee8a418384085c1cddc8806f4fa3ad3a9a05 radekp31 <polaek.31@seznam.cz> 1729456734 +0200	commit: Auto-update: Sun Oct 20 10:38:54 PM CEST 2024
+a707ee8a418384085c1cddc8806f4fa3ad3a9a05 6464a22834ca7244cf73450fa66dee1d770d3449 radekp31 <polaek.31@seznam.cz> 1729457110 +0200	commit: Auto-update: Sun Oct 20 10:45:10 PM CEST 2024
+6464a22834ca7244cf73450fa66dee1d770d3449 c2bdacd5d0f6af956e6f31b9468426636dde4310 radekp31 <polaek.31@seznam.cz> 1729457966 +0200	commit: Auto-update: Sun Oct 20 10:59:26 PM CEST 2024
+c2bdacd5d0f6af956e6f31b9468426636dde4310 b095af459db1e024eb3c00e07e143c1d030a168e radekp31 <polaek.31@seznam.cz> 1729535603 +0200	commit: Auto-update: Mon Oct 21 08:33:23 PM CEST 2024
+b095af459db1e024eb3c00e07e143c1d030a168e 7bc4aca15a2ca35ab8b3f18cdfb32753196f0f09 radekp31 <polaek.31@seznam.cz> 1729541625 +0200	commit: reverting back to /etc/nixos
+7bc4aca15a2ca35ab8b3f18cdfb32753196f0f09 193f5001a92d5f1c9f947d01ce512aa29755c8b9 radekp31 <polaek.31@seznam.cz> 1729545761 +0200	commit: update on 23:22
+193f5001a92d5f1c9f947d01ce512aa29755c8b9 6c066e58b5ab3e000cc9503aeccbd477b4d01e49 radekp31 <polaek.31@seznam.cz> 1729622018 +0200	commit: update on 20:33
