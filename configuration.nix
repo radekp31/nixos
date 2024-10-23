@@ -165,9 +165,9 @@
   services.displayManager.ly.enable = true;
 
   #Automount USB devices
-  services.devmon.enable = true;
-  services.gvfs.enable = true;
-  services.udisks2.enable = true; 
+  #services.devmon.enable = true;
+  #services.gvfs.enable = true;
+  #services.udisks2.enable = true; 
 
   #Enable picom
   services.picom.enable = true;

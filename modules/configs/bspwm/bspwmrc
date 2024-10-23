@@ -1,0 +1,36 @@
+#!/run/current-system/sw/bin/bash
+
+# Start sxhkd if it is not running
+pgrep -x sxhkd > /dev/null || sxhkd &
+
+# Wait for a bit before starting Polybar to ensure services are ready
+sleep 1
+
+# Kill any existing Polybar instances before starting a new one
+killall -q polybar
+while pgrep -x polybar >/dev/null; do sleep 1; done
+
+# Start Polybar
+polybar -c ~/.config/polybar/example/config.ini example > /tmp/polybar.log 2>&1 &
+
+# Set up bspwm workspaces
+bspc monitor -d I II III IV V VI VII VIII IX X
+
+# bspwm configurations
+bspc config border_width 2
+bspc config window_gap 12
+bspc config split_ratio 0.52
+bspc config borderless_monocle true
+bspc config gapless_monocle true
+xsetroot -cursor_name left_ptr &
+
+
+# bspwm rules for specific applications
+bspc rule -a Gimp desktop='^8' state=floating follow=on
+bspc rule -a Chromium desktop='^2'
+bspc rule -a mplayer2 state=floating
+bspc rule -a Kupfer.py focus=on
+bspc rule -a Screenkey manage=off
+
+# Set wallpaper
+feh --bg-center /etc/nixos/nix-wallpaper-binary-black.jpg
