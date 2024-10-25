@@ -6,9 +6,13 @@
 #1/ fix hardcoded values
 #2/ keep only relevant config in configuration.nix 
 #   split into more .nix files or move it to home.nix  
-#3/ move the backed up directory back into /etc/nixos/
 #4/ fix ugly formatting (extraneous comments, indentation)
 #5/ test removing some configs that might be included by default (openssh, ...)
+#6/ Make the config functional for fresh machines via git pull
+#7/ Make the config "interactive"
+#	- automatic user creation from list - https://discourse.nixos.org/t/creating-users-from-a-list/34014/5
+#	- multiple profiles available instead of just having modules/default.nix
+
 
 { config, pkgs, lib,  ... }:
 
@@ -18,7 +22,8 @@
       <home-manager/nixos>
       ./hardware-configuration.nix
       ./nvidia-drivers.nix
-      (import ./modules)
+      #(import ./modules)
+      ./modules/default.nix
     ];
 
   # Enable experimental features
@@ -63,21 +68,6 @@
     };
     wantedBy = [ "timers.target" ];
   };
-
-  # Git global configuration
-#  environment.etc."gitconfig".text = ''
-#    [user]
-#      name = "${gitHubUser}"
-#      email = "${gitHubEmail}"
-#    [credential]
-#      helper = "store --file ${gitHubTokenFile}"
-#    [init]
-#      defaultBranch = main
-#    [safe]
-#      directory = "/etc/nixos"
-#  '';
-
-
 
   # Bootloader.
   boot.loader.grub.enable = true;
@@ -308,7 +298,11 @@
 
   # TEST
   dunst
-  libnotify
+  lld_18
+  qmk
+  qmk_hid
+  qmk-udev-rules
+  udiskie
   # Packages
 
   neofetch #distro stats
@@ -333,7 +327,6 @@
   picom #x11 lightweight compositor
   ly # TUI login screen
   ntfs3g
-  openrgb-with-all-plugins #RGB control
   betterlockscreen # cool lockscreen built on i3 lock
   shutter # snipping tool
 

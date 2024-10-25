@@ -11,6 +11,7 @@ in
   imports = [
     ./apps/git/default.nix
     ./apps/vbox/vbox.nix
+    ./apps/openrgb/openrgb.nix
     ./usb/usb.nix
   ];
 
