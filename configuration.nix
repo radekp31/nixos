@@ -39,11 +39,17 @@
     };
   };
 
-   #Enable git
-#    programs.git = {
-#   	enable = true;
-#    };
-#   
+   # Setup manix documentation search
+#   environment.shellAliases = {
+#   	manix = ''
+#		" bash -c '"manix ""| grep '^# ' | sed 's/^# \(.*\) (.*/\1/;s/ (.*//;s/^# //' | fzf --preview=\"'manix' '{}'\" | xargs manix "'" ;
+#	'';
+
+   environment.interactiveShellInit = ''
+#	alias manix = " bash -c '"manix ""| grep '^# ' | sed 's/^# \(.*\) (.*/\1/;s/ (.*//;s/^# //' | fzf --preview=\"'manix' '{}'\" | xargs manix "'" ;
+	alias manix='manix "" | grep "^# " | sed "s/^# \\(.*\\) (.*/\\1/;s/ (.*//;s/^# //" | fzf --preview="manix '{}'" | xargs manix'
+   '';
+
    #setup SSH
    programs.ssh.startAgent = true;
    services.openssh.enable = true;
@@ -297,12 +303,12 @@
   #git # this thing basically doesnt function properly without git
 
   # TEST
-  dunst
-  lld_18
   qmk
   qmk_hid
   qmk-udev-rules
   udiskie
+  manix 
+
   # Packages
 
   neofetch #distro stats
@@ -329,6 +335,8 @@
   ntfs3g
   betterlockscreen # cool lockscreen built on i3 lock
   shutter # snipping tool
+  dunst
+  lld_18
 
  
   # Zsh
