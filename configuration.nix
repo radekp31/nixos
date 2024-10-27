@@ -39,16 +39,23 @@
     };
   };
 
-   # Setup manix documentation search
-#   environment.shellAliases = {
-#   	manix = ''
-#		" bash -c '"manix ""| grep '^# ' | sed 's/^# \(.*\) (.*/\1/;s/ (.*//;s/^# //' | fzf --preview=\"'manix' '{}'\" | xargs manix "'" ;
-#	'';
+  # Configure rebuild VM access
 
-   environment.interactiveShellInit = ''
-#	alias manix = " bash -c '"manix ""| grep '^# ' | sed 's/^# \(.*\) (.*/\1/;s/ (.*//;s/^# //' | fzf --preview=\"'manix' '{}'\" | xargs manix "'" ;
-	alias manix='manix "" | grep "^# " | sed "s/^# \\(.*\\) (.*/\\1/;s/ (.*//;s/^# //" | fzf --preview="manix '{}'" | xargs manix'
-   '';
+  users.users.vmtest = {
+    isSystemUser = true;
+    initialPassword = "1234";
+    group = "vmtest";
+    shell = pkgs.bash;
+  };
+
+  users.groups.vmtest = {};
+
+  virtualisation.vmVariant = {
+    virtualisation = {
+      memorySize =  2048; 
+      cores = 2;         
+    };
+  };
 
    #setup SSH
    programs.ssh.startAgent = true;
@@ -152,12 +159,15 @@
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
+  
+  # Enable Budgie desktop
+  services.xserver.desktopManager.budgie.enable = true;
 
-  #Enable bspwm
+  # Enable bspwm
   services.xserver.windowManager.bspwm.enable = true;
   services.displayManager.defaultSession = "none+bspwm";
-  services.xserver.windowManager.bspwm.configFile = "/home/radekp/.config/bspwm/bspwmrc";
-  services.xserver.windowManager.bspwm.sxhkd.configFile = "/home/radekp/.config/bspwm/sxhkd/sxhkdrc";
+ 
+  # Enable ly
   services.displayManager.ly.enable = true;
 
   #Automount USB devices
@@ -281,7 +291,9 @@
     ll = "ls -lah";
     update = "sudo nixos-rebuild switch";
     edit = "sudoedit /etc/nixos/configuration.nix";
+    updatevm = "nixos-rebuild switch build-vm && dunstify \"NixOS Rebuild\" \"VM is ready\"";
   };
+
   ohMyZsh = {
     enable = true;
     plugins = [ "git" "sudo" "fzf" "eza"
@@ -289,7 +301,9 @@
     theme = "robbyrussell";
   };
 
-}; 
+  };
+
+ 
 
   # Install firefox.
   programs.firefox.enable = true;
@@ -307,7 +321,8 @@
   qmk_hid
   qmk-udev-rules
   udiskie
-  manix 
+  manix
+  alacritty-theme
 
   # Packages
 
