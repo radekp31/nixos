@@ -235,6 +235,14 @@ in
 
 	[font]
 	size = 12.0
+    
+	[cursor]
+	style = { shape = "Underline", blinking = "Always" }
+
+	[mouse]
+	bindings = [
+	{ mouse = "Right", mods = "Control", action = "Paste" },
+	]	
     '';
   };  
 
