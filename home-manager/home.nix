@@ -2,7 +2,12 @@
 
 let 
         unstable = import <nixpkgs> { };
-	
+	  alacritty_themes = pkgs.fetchFromGitHub {
+		owner = "alacritty";
+		repo = "alacritty-theme";
+		rev = "master";
+		sha256 = "sha256-KdjysVDs4oGU9gQwkW36aHmK30KiCdVNiREJOAETxNw=";
+  };
 in
 
 {
@@ -13,10 +18,19 @@ in
 
   # Home packages
   home.packages = with pkgs; [
-    unstable.vlc
-#    git
-#    openssh
+	unstable.vlc
+       git
+#       openssh
+	alacritty
+	alacritty-theme    
     ];
+
+
+#  home.activation = {
+#	    if [ ! -d "$HOME/.config/alacritty-themes" ]; then
+#              git clone https://github.com/alacritty/alacritty-theme.git $HOME/.config/alacritty-themes
+#            fi
+#  };
 
 
 # Setup bspwm
@@ -192,13 +206,14 @@ in
   };
   
   #Setup and configure git
-#  programs.git = {
-#	enable = true;
-#	userName = "Radek Polasek";
-#	userEmail = "polasek.31@seznam.cz";
-#	extraConfig = {
-#		init.defaultBranch = "main";
-#  };
+  programs.git = {
+	enable = true;
+	userName = "Radek Polasek";
+	userEmail = "polasek.31@seznam.cz";
+	extraConfig = {
+		init.defaultBranch = "main";
+         };
+  };
 
   #Bash is needed for XDG vars - needs testing
   programs.bash = {
@@ -206,6 +221,22 @@ in
   };
   xdg.enable = true ;
 
+
+  #Enable Alacritty
+  programs.alacritty.enable = true;
+
+  home.file.".config/alacritty-themes" = {
+	source = alacritty_themes;
+  };
+
+  home.file.".config/alacritty/alacritty.toml" = {
+    text = ''
+	import = ["${config.home.homeDirectory}/.config/alacritty-themes/themes/tokyo_night.toml"]
+
+	[font]
+	size = 12.0
+    '';
+  };  
 
   #Enable NVIM
   programs.neovim = {
