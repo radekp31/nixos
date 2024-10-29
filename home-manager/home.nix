@@ -2,12 +2,6 @@
 
 let 
         unstable = import <nixpkgs> { };
-#	  alacritty_themes = pkgs.fetchFromGitHub {
-#		owner = "alacritty";
-#		repo = "alacritty-theme";
-#		rev = "master";
-#		sha256 = "sha256-KdjysVDs4oGU9gQwkW36aHmK30KiCdVNiREJOAETxNw=";
-#  };
 in
 
 {
@@ -224,10 +218,6 @@ in
 
   #Enable Alacritty
   programs.alacritty.enable = true;
-
-#  home.file.".config/alacritty-themes" = {
-#	source = alacritty_themes;
-#  };
 
   home.file.".config/alacritty/alacritty.toml" = {
     text = ''
