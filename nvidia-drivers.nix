@@ -2,7 +2,7 @@
 {
 
   # Enable OpenGL
-  hardware.opengl = {
+  hardware.graphics = { #formerly hardware.opengl
     enable = true;
   };
 

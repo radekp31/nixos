@@ -20,13 +20,6 @@ in
     ];
 
 
-#  home.activation = {
-#	    if [ ! -d "$HOME/.config/alacritty-themes" ]; then
-#              git clone https://github.com/alacritty/alacritty-theme.git $HOME/.config/alacritty-themes
-#            fi
-#  };
-
-
 # Setup bspwm
 
 #   services.xserver.windowManager.bspwm.enable = true;
@@ -222,6 +215,7 @@ in
   home.file.".config/alacritty/alacritty.toml" = {
     text = ''
 #	import = ["${pkgs.alacritty-theme}/tokyo-night.toml"]
+	[general]
 	import = ["${pkgs.alacritty-theme}/tokyo-night.toml"]
 
 	[font]

@@ -22,7 +22,6 @@
       <home-manager/nixos>
       ./hardware-configuration.nix
       ./nvidia-drivers.nix
-      #(import ./modules)
       ./modules/default.nix
     ];
 
@@ -322,7 +321,6 @@
   qmk-udev-rules
   udiskie
   manix
-  alacritty-theme
 
   # Packages
 
@@ -342,6 +340,7 @@
   tree # dir tree structure viewer
   polybarFull # status bar
   alacritty #GPU accelerated terminal emulator
+  alacritty-theme
   rofi # awesome launch menu
   rofi-power-menu #awesome power menu
   yazi #cli based file manager - its awesome, check nix options as well!
@@ -350,7 +349,7 @@
   ntfs3g
   betterlockscreen # cool lockscreen built on i3 lock
   shutter # snipping tool
-  dunst
+  dunst #notification tool
   lld_18
 
  
