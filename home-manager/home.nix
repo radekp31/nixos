@@ -2,12 +2,12 @@
 
 let 
         unstable = import <nixpkgs> { };
-	  alacritty_themes = pkgs.fetchFromGitHub {
-		owner = "alacritty";
-		repo = "alacritty-theme";
-		rev = "master";
-		sha256 = "sha256-KdjysVDs4oGU9gQwkW36aHmK30KiCdVNiREJOAETxNw=";
-  };
+#	  alacritty_themes = pkgs.fetchFromGitHub {
+#		owner = "alacritty";
+#		repo = "alacritty-theme";
+#		rev = "master";
+#		sha256 = "sha256-KdjysVDs4oGU9gQwkW36aHmK30KiCdVNiREJOAETxNw=";
+#  };
 in
 
 {
@@ -55,7 +55,7 @@ in
 	polybar -c ~/.config/polybar/example/config.ini example > /tmp/polybar.log 2>&1 &
 	
 	# Set wallpaper
-	feh --bg-center /etc/nixos/nix-wallpaper-binary-black.jpg
+	feh --bg-center /etc/nixos/wallpapers/nix-wallpaper-binary-black.jpg
 
         # Set cursor to pointer
 	xsetroot -cursor_name left_ptr &
@@ -225,13 +225,14 @@ in
   #Enable Alacritty
   programs.alacritty.enable = true;
 
-  home.file.".config/alacritty-themes" = {
-	source = alacritty_themes;
-  };
+#  home.file.".config/alacritty-themes" = {
+#	source = alacritty_themes;
+#  };
 
   home.file.".config/alacritty/alacritty.toml" = {
     text = ''
-	import = ["${config.home.homeDirectory}/.config/alacritty-themes/themes/tokyo_night.toml"]
+#	import = ["${pkgs.alacritty-theme}/tokyo-night.toml"]
+	import = ["${pkgs.alacritty-theme}/tokyo-night.toml"]
 
 	[font]
 	size = 12.0
