@@ -112,6 +112,8 @@
      # "quiet"
      # "splash"
       "boot.shell_on_fail"
+      "tsc=unstable"
+      "trace_clock=local"
       #"loglevel=3"
       #"rd.systemd.show_status=false"
       #"rd.udev.log_level=3"
@@ -321,6 +323,7 @@
   qmk-udev-rules
   udiskie
   manix
+  unzip
 
   # Packages
 

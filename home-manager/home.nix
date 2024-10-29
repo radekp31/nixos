@@ -10,13 +10,20 @@ in
   home.homeDirectory = "/home/radekp";
   home.stateVersion = "24.05";
 
+  home.sessionVariables = {
+    EDITOR = lib.mkDefault "${pkgs.neovim}/bin/nvim";
+    VISUAL = lib.mkDefault "${pkgs.neovim}/bin/nvim";
+  };
+
+
   # Home packages
   home.packages = with pkgs; [
 	unstable.vlc
-       git
+        git
 #       openssh
 	alacritty
-	alacritty-theme    
+	alacritty-theme
+    
     ];
 
 
@@ -47,6 +54,8 @@ in
         # Set cursor to pointer
 	xsetroot -cursor_name left_ptr &
 
+	# Set focus on hover
+
    '';
 
   xsession.windowManager.bspwm.monitors = {
@@ -71,6 +80,7 @@ in
 	split_ratio =  0.52;
 	borderless_monocle = true;
 	gapless_monocle = true;
+#	focus_follows_pointer = true;
   };
 
   xsession.windowManager.bspwm.rules = {
@@ -226,7 +236,8 @@ in
 
 	[mouse]
 	bindings = [
-	{ mouse = "Right", mods = "Control", action = "Paste" },
+	{ mouse = "Right", mods = "Shift", action = "Copy" },
+	{ mouse = "Right", action = "Paste" },
 	]	
     '';
   };  
@@ -238,9 +249,6 @@ in
 	vimAlias = true;
 	vimdiffAlias = true;
 
-#  extraLuaConfig = ''
-#  	 ${builtins.readFile ./nvim/options.lua}
-#  '';
 
   extraPackages = with pkgs; [
       lua-language-server
