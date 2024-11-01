@@ -60,27 +60,6 @@
    programs.ssh.startAgent = true;
    services.openssh.enable = true;
 
-  # Use systemd timer to periodically push changes to GitHub
-  systemd.services.uploadDotfiles = {
-    enable = true;
-    description = "Upload dotfiles to GitHub";
-    serviceConfig = {
-      ExecStart = "${pkgs.zsh}/bin/zsh /etc/nixos/modules/scripts/upload-dotfiles.sh";
-      User = "radekp";
-    };
-    wantedBy = [ "multi-user.target" ];
-  };
-
-#  systemd.timers.uploadDotfilesTimer = {
-  systemd.timers.uploadDotfiles = {
-    description = "Timer to upload dotfiles to GitHub";
-    timerConfig = {
-      OnCalendar = "0/12:00:00"; # Runs every 12 hours, adjust as needed
-      Persistent = true; # Ensure that job runs even after missed schedule
-    };
-    wantedBy = [ "timers.target" ];
-  };
-
   # Bootloader.
   boot.loader.grub.enable = true;
     boot.loader.grub.device = "/dev/sda";
@@ -114,6 +93,14 @@
       "boot.shell_on_fail"
       "tsc=unstable"
       "trace_clock=local"
+      
+      #Trying to fix random freezes
+      # Adds rcu_nocbs with CPU core count parameter
+      "rcu_nocbs=0-11"	# thread count of the CPU   "rcu_nocbs=0-$(($(nproc) - 1))" 
+    
+      # Limits the C-state to C5
+      "processor.max_cstate=5"
+
       #"loglevel=3"
       #"rd.systemd.show_status=false"
       #"rd.udev.log_level=3"
@@ -136,6 +123,11 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
+  # Environment variables
+  environment.variables = {
+	EDITOR = "nvim";
+	VISUAL = "nvim";
+  };
   # Enable virtualization
   virtualisation.libvirtd.enable = true;
   boot.kernelModules = [ "kvm-amd" "kvm-intel" ];
@@ -275,8 +267,6 @@
   users.defaultUserShell = pkgs.zsh;
   programs.zsh = {
   enable = true;
-#  sessionVariables = {
-#  };
   promptInit = ''
     source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
   '';
@@ -292,7 +282,9 @@
     ll = "ls -lah";
     update = "sudo nixos-rebuild switch";
     edit = "sudoedit /etc/nixos/configuration.nix";
-    updatevm = "nixos-rebuild switch build-vm && dunstify \"NixOS Rebuild\" \"VM is ready\"";
+    update-vm = "sudo nixos-rebuild switch build-vm && dunstify \"NixOS Rebuild\" \"VM is ready.\"";
+    rebuild = "sudo nixos-rebuild test && dunstify \"NixOS Rebuild\" \"Test rebuild is done.\"";
+    rebuild-switch = "sudo nixos-rebuild switch && dunstify \"NixOS Rebuild\"\"Switch rebuild is done.\"";
   };
 
   ohMyZsh = {
@@ -309,6 +301,40 @@
   # Install firefox.
   programs.firefox.enable = true;
 
+  # Setup neovim
+    programs.neovim = {
+    	enable = true;
+    	viAlias = true;
+    	vimAlias = true;
+	defaultEditor = true;
+	package = pkgs.neovim-unwrapped;
+    # Neovim configure section for custom RC and plugins
+    	configure = {
+      		customRC = ''
+        		au VimLeave * !clear
+			colorscheme tokyonight-night
+      		'';
+
+#	    customRC = ''
+#      		" Set colorscheme to tokyonight-night
+#      			augroup myColors
+#        		autocmd!
+#        		autocmd VimEnter * colorscheme tokyonight-night
+#      			augroup END
+#			au VimLeave * :!clear
+#    		'';
+
+#		colorscheme tokyonight-night
+    		packages.myVimPackage = with pkgs.vimPlugins; {
+    			
+			# loaded on launch
+    			start = [ tokyonight-nvim ];
+    			# manually loadable by calling `:packadd $plugin-name`
+    			opt = [ tokyonight-nvim ];
+  		};
+    	};
+    };
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -324,7 +350,9 @@
   udiskie
   manix
   unzip
-
+  yt-dlp
+  ffmpeg
+  jq
   # Packages
 
   neofetch #distro stats
@@ -366,6 +394,14 @@
   zsh-autosuggestions 
   zsh-syntax-highlighting
   meslo-lgs-nf # font
+
+  # NVIM
+  vimPlugins.tokyonight-nvim
+  lua-language-server
+  xclip
+  wl-clipboard
+  # Uncomment the next line if rnix-lsp is desired
+  # rnix-lsp
 
   # Home manager
   home-manager 

@@ -11,10 +11,9 @@ in
   home.stateVersion = "24.05";
 
   home.sessionVariables = {
-    EDITOR = lib.mkDefault "${pkgs.neovim}/bin/nvim";
-    VISUAL = lib.mkDefault "${pkgs.neovim}/bin/nvim";
+	EDITOR = "nvim";
+	VISUAL = "nvim";
   };
-
 
   # Home packages
   home.packages = with pkgs; [
@@ -23,7 +22,8 @@ in
 #       openssh
 	alacritty
 	alacritty-theme
-    
+ 	flameshot
+	nomacs
     ];
 
 
@@ -107,7 +107,8 @@ in
   "super + Escape" = "pkill -USR1 -x sxhkd";
   "super + e" = "alacritty --command yazi";
   "alt + Escape" = "betterlockscreen -l dim";
-
+  "Print" = "flameshot gui";
+  "Shift + Print" = "/etc/nixos/modules/scripts/screenshot.sh";
   # bspwm hotkeys
   "super + f" = "bspc node -t ~fullscreen";
   "super + alt + q" = "bspc quit";
@@ -202,6 +203,7 @@ in
   "super + Right" = "bspc node -v 20 0";
   };
   
+
   #Setup and configure git
   programs.git = {
 	enable = true;
@@ -217,7 +219,6 @@ in
   enable = true;
   };
   xdg.enable = true ;
-
 
   #Enable Alacritty
   programs.alacritty.enable = true;
@@ -244,19 +245,25 @@ in
 
   #Enable NVIM
   programs.neovim = {
-	enable = true;
+	enable = false;
 	viAlias = true;
 	vimAlias = true;
 	vimdiffAlias = true;
+	plugins	= with pkgs.vimPlugins; [
+		tokyonight-nvim
+	];
+	extraConfig = ''
+		au VimLeave * :!clear
+		#colorscheme tokyonight-night"
+	'';
 
+        extraPackages = with pkgs; [
+        	lua-language-server
+      		#rnix-lsp
 
-  extraPackages = with pkgs; [
-      lua-language-server
-#      rnix-lsp
-
-      xclip
-      wl-clipboard
-    ];
+      		xclip
+      		wl-clipboard
+    	];
   };
 
 }
