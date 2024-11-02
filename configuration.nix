@@ -87,6 +87,16 @@
     # Enable "Silent Boot"
     boot.consoleLogLevel = 0;
     boot.initrd.verbose = true;
+
+    #Fix OOM freezes
+    boot.kernelPackages = pkgs.linuxPackages_latest;
+    zramSwap = {
+	enable = true;
+	algorithm = "ztsd"; #lz4 works
+    };
+
+    powerManagement.cpuFreqGovernor = "performance";
+
     boot.kernelParams = [
      # "quiet"
      # "splash"
@@ -214,7 +224,6 @@
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
-    variant = "";
   };
 
   # Enable CUPS to print documents.
