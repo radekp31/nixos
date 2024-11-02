@@ -6,9 +6,13 @@
 #1/ fix hardcoded values
 #2/ keep only relevant config in configuration.nix 
 #   split into more .nix files or move it to home.nix  
-#3/ move the backed up directory back into /etc/nixos/
 #4/ fix ugly formatting (extraneous comments, indentation)
 #5/ test removing some configs that might be included by default (openssh, ...)
+#6/ Make the config functional for fresh machines via git pull
+#7/ Make the config "interactive"
+#	- automatic user creation from list - https://discourse.nixos.org/t/creating-users-from-a-list/34014/5
+#	- multiple profiles available instead of just having modules/default.nix
+
 
 { config, pkgs, lib,  ... }:
 
@@ -18,7 +22,7 @@
       <home-manager/nixos>
       ./hardware-configuration.nix
       ./nvidia-drivers.nix
-      (import ./modules)
+      ./modules/default.nix
     ];
 
   # Enable experimental features
@@ -34,50 +38,27 @@
     };
   };
 
-   #Enable git
-#    programs.git = {
-#   	enable = true;
-#    };
-#   
+  # Configure rebuild VM access
+
+  users.users.vmtest = {
+    isSystemUser = true;
+    initialPassword = "1234";
+    group = "vmtest";
+    shell = pkgs.bash;
+  };
+
+  users.groups.vmtest = {};
+
+  virtualisation.vmVariant = {
+    virtualisation = {
+      memorySize =  2048; 
+      cores = 2;         
+    };
+  };
+
    #setup SSH
    programs.ssh.startAgent = true;
    services.openssh.enable = true;
-
-  # Use systemd timer to periodically push changes to GitHub
-  systemd.services.uploadDotfiles = {
-    enable = true;
-    description = "Upload dotfiles to GitHub";
-    serviceConfig = {
-      ExecStart = "${pkgs.zsh}/bin/zsh /etc/nixos/modules/scripts/upload-dotfiles.sh";
-      User = "radekp";
-    };
-    wantedBy = [ "multi-user.target" ];
-  };
-
-#  systemd.timers.uploadDotfilesTimer = {
-  systemd.timers.uploadDotfiles = {
-    description = "Timer to upload dotfiles to GitHub";
-    timerConfig = {
-      OnCalendar = "0/12:00:00"; # Runs every 12 hours, adjust as needed
-      Persistent = true; # Ensure that job runs even after missed schedule
-    };
-    wantedBy = [ "timers.target" ];
-  };
-
-  # Git global configuration
-#  environment.etc."gitconfig".text = ''
-#    [user]
-#      name = "${gitHubUser}"
-#      email = "${gitHubEmail}"
-#    [credential]
-#      helper = "store --file ${gitHubTokenFile}"
-#    [init]
-#      defaultBranch = main
-#    [safe]
-#      directory = "/etc/nixos"
-#  '';
-
-
 
   # Bootloader.
   boot.loader.grub.enable = true;
@@ -106,10 +87,30 @@
     # Enable "Silent Boot"
     boot.consoleLogLevel = 0;
     boot.initrd.verbose = true;
+
+    #Fix OOM freezes
+    boot.kernelPackages = pkgs.linuxPackages_latest;
+    zramSwap = {
+	enable = true;
+	algorithm = "ztsd"; #lz4 works
+    };
+
+    powerManagement.cpuFreqGovernor = "performance";
+
     boot.kernelParams = [
      # "quiet"
      # "splash"
       "boot.shell_on_fail"
+      "tsc=unstable"
+      "trace_clock=local"
+      
+      #Trying to fix random freezes
+      # Adds rcu_nocbs with CPU core count parameter
+      "rcu_nocbs=0-11"	# thread count of the CPU   "rcu_nocbs=0-$(($(nproc) - 1))" 
+    
+      # Limits the C-state to C5
+      "processor.max_cstate=5"
+
       #"loglevel=3"
       #"rd.systemd.show_status=false"
       #"rd.udev.log_level=3"
@@ -132,6 +133,11 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
+  # Environment variables
+  environment.variables = {
+	EDITOR = "nvim";
+	VISUAL = "nvim";
+  };
   # Enable virtualization
   virtualisation.libvirtd.enable = true;
   boot.kernelModules = [ "kvm-amd" "kvm-intel" ];
@@ -156,18 +162,21 @@
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
+  
+  # Enable Budgie desktop
+  services.xserver.desktopManager.budgie.enable = true;
 
-  #Enable bspwm
+  # Enable bspwm
   services.xserver.windowManager.bspwm.enable = true;
   services.displayManager.defaultSession = "none+bspwm";
-  services.xserver.windowManager.bspwm.configFile = "/home/radekp/.config/bspwm/bspwmrc";
-  services.xserver.windowManager.bspwm.sxhkd.configFile = "/home/radekp/.config/bspwm/sxhkd/sxhkdrc";
+ 
+  # Enable ly
   services.displayManager.ly.enable = true;
 
   #Automount USB devices
-  services.devmon.enable = true;
-  services.gvfs.enable = true;
-  services.udisks2.enable = true; 
+  #services.devmon.enable = true;
+  #services.gvfs.enable = true;
+  #services.udisks2.enable = true; 
 
   #Enable picom
   services.picom.enable = true;
@@ -215,7 +224,6 @@
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
-    variant = "";
   };
 
   # Enable CUPS to print documents.
@@ -268,8 +276,6 @@
   users.defaultUserShell = pkgs.zsh;
   programs.zsh = {
   enable = true;
-#  sessionVariables = {
-#  };
   promptInit = ''
     source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
   '';
@@ -285,7 +291,11 @@
     ll = "ls -lah";
     update = "sudo nixos-rebuild switch";
     edit = "sudoedit /etc/nixos/configuration.nix";
+    update-vm = "sudo nixos-rebuild switch build-vm && dunstify \"NixOS Rebuild\" \"VM is ready.\"";
+    rebuild = "sudo nixos-rebuild test && dunstify \"NixOS Rebuild\" \"Test rebuild is done.\"";
+    rebuild-switch = "sudo nixos-rebuild switch && dunstify \"NixOS Rebuild\"\"Switch rebuild is done.\"";
   };
+
   ohMyZsh = {
     enable = true;
     plugins = [ "git" "sudo" "fzf" "eza"
@@ -293,10 +303,46 @@
     theme = "robbyrussell";
   };
 
-}; 
+  };
+
+ 
 
   # Install firefox.
   programs.firefox.enable = true;
+
+  # Setup neovim
+    programs.neovim = {
+    	enable = true;
+    	viAlias = true;
+    	vimAlias = true;
+	defaultEditor = true;
+	package = pkgs.neovim-unwrapped;
+    # Neovim configure section for custom RC and plugins
+    	configure = {
+      		customRC = ''
+        		au VimLeave * !clear
+			colorscheme tokyonight-night
+      		'';
+
+#	    customRC = ''
+#      		" Set colorscheme to tokyonight-night
+#      			augroup myColors
+#        		autocmd!
+#        		autocmd VimEnter * colorscheme tokyonight-night
+#      			augroup END
+#			au VimLeave * :!clear
+#    		'';
+
+#		colorscheme tokyonight-night
+    		packages.myVimPackage = with pkgs.vimPlugins; {
+    			
+			# loaded on launch
+    			start = [ tokyonight-nvim ];
+    			# manually loadable by calling `:packadd $plugin-name`
+    			opt = [ tokyonight-nvim ];
+  		};
+    	};
+    };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -307,8 +353,15 @@
   #git # this thing basically doesnt function properly without git
 
   # TEST
-  dunst
-  libnotify
+  qmk
+  qmk_hid
+  qmk-udev-rules
+  udiskie
+  manix
+  unzip
+  yt-dlp
+  ffmpeg
+  jq
   # Packages
 
   neofetch #distro stats
@@ -327,15 +380,17 @@
   tree # dir tree structure viewer
   polybarFull # status bar
   alacritty #GPU accelerated terminal emulator
+  alacritty-theme
   rofi # awesome launch menu
   rofi-power-menu #awesome power menu
   yazi #cli based file manager - its awesome, check nix options as well!
   picom #x11 lightweight compositor
   ly # TUI login screen
   ntfs3g
-  openrgb-with-all-plugins #RGB control
   betterlockscreen # cool lockscreen built on i3 lock
   shutter # snipping tool
+  dunst #notification tool
+  lld_18
 
  
   # Zsh
@@ -348,6 +403,14 @@
   zsh-autosuggestions 
   zsh-syntax-highlighting
   meslo-lgs-nf # font
+
+  # NVIM
+  vimPlugins.tokyonight-nvim
+  lua-language-server
+  xclip
+  wl-clipboard
+  # Uncomment the next line if rnix-lsp is desired
+  # rnix-lsp
 
   # Home manager
   home-manager 
