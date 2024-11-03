@@ -137,6 +137,7 @@
   environment.variables = {
 	EDITOR = "nvim";
 	VISUAL = "nvim";
+	TERM = lib.mkDefault "xterm-256color";
   };
   # Enable virtualization
   virtualisation.libvirtd.enable = true;
@@ -320,9 +321,13 @@
     # Neovim configure section for custom RC and plugins
     	configure = {
       		customRC = ''
-        		au VimLeave * !clear
-			colorscheme tokyonight-night
-      		'';
+      colorscheme tokyonight-night
+
+      set number
+      set relativenumber
+
+      lua vim.api.nvim_create_autocmd("VimLeavePre", { command = "silent !clear" })
+	'';
 
 #	    customRC = ''
 #      		" Set colorscheme to tokyonight-night
@@ -359,9 +364,6 @@
   udiskie
   manix
   unzip
-  yt-dlp
-  ffmpeg
-  jq
   # Packages
 
   neofetch #distro stats
@@ -391,6 +393,11 @@
   shutter # snipping tool
   dunst #notification tool
   lld_18
+  opera
+  jq
+  yt-dlp
+  ffmpeg
+  nmon
 
  
   # Zsh
