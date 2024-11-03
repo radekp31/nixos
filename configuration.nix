@@ -321,6 +321,7 @@
     # Neovim configure section for custom RC and plugins
     	configure = {
       		customRC = ''
+
       colorscheme tokyonight-night
 
       set number
@@ -328,6 +329,7 @@
 
       lua vim.api.nvim_create_autocmd("VimLeavePre", { command = "silent !clear" })
 	'';
+
 
 #	    customRC = ''
 #      		" Set colorscheme to tokyonight-night
@@ -364,6 +366,7 @@
   udiskie
   manix
   unzip
+  
   # Packages
 
   neofetch #distro stats
@@ -398,6 +401,7 @@
   yt-dlp
   ffmpeg
   nmon
+
 
  
   # Zsh

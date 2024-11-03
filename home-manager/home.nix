@@ -10,11 +10,13 @@ in
   home.homeDirectory = "/home/radekp";
   home.stateVersion = "24.05";
 
+
 # Alacritty overwrites the env vars, put them into alacritty.toml below
 #  home.sessionVariables = {
 #	EDITOR = "nvim";
 #	VISUAL = "nvim";
 #  };
+
 
   # Home packages
   home.packages = with pkgs; [
@@ -250,6 +252,7 @@ in
 	TERM = "xterm-256color"
 	EDITOR = "nvim"
 	VISUAL = "nvim"
+
     '';
   };  
 
