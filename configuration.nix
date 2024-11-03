@@ -25,7 +25,6 @@
       ./modules/default.nix
     ];
 
-
   # Enable experimental features
   nix.extraOptions = ''
     experimental-features = nix-command flakes
@@ -34,7 +33,6 @@
   # Configure Nixpkgs to use the unstable channel for system-wide packages
   nixpkgs.config = {
     allowUnfree = true;
-    overlays = [import ./overlays/libx11.nix];
     packageOverrides = pkgs: {
       unstable = import <nixos-unstable> {config = pkgs.config; };
     };
@@ -295,7 +293,7 @@
     edit = "sudoedit /etc/nixos/configuration.nix";
     update-vm = "sudo nixos-rebuild switch build-vm && dunstify \"NixOS Rebuild\" \"VM is ready.\"";
     rebuild = "sudo nixos-rebuild test && dunstify \"NixOS Rebuild\" \"Test rebuild is done.\"";
-    rebuild-switch = "sudo nixos-rebuild switch && dunstify \"NixOS Rebuild\" \"Switch rebuild is done.\"";
+    rebuild-switch = "sudo nixos-rebuild switch && dunstify \"NixOS Rebuild\"\"Switch rebuild is done.\"";
   };
 
   ohMyZsh = {
@@ -310,7 +308,7 @@
  
 
   # Install firefox.
-  #programs.firefox.enable = true;
+  programs.firefox.enable = true;
 
   # Setup neovim
     programs.neovim = {
@@ -361,10 +359,12 @@
   udiskie
   manix
   unzip
+  yt-dlp
+  ffmpeg
+  jq
   # Packages
 
   neofetch #distro stats
-  jq
   curl
   git
   openssh
@@ -391,10 +391,7 @@
   shutter # snipping tool
   dunst #notification tool
   lld_18
-  opera # supports good ad blocking
-  nmon # disk (and other) monitoring tool
-  yt-dlp # video downloading
-  ffmpeg # video converting 
+
  
   # Zsh
 
