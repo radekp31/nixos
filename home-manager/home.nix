@@ -10,10 +10,13 @@ in
   home.homeDirectory = "/home/radekp";
   home.stateVersion = "24.05";
 
-  home.sessionVariables = {
-	EDITOR = "nvim";
-	VISUAL = "nvim";
-  };
+
+# Alacritty overwrites the env vars, put them into alacritty.toml below
+#  home.sessionVariables = {
+#	EDITOR = "nvim";
+#	VISUAL = "nvim";
+#  };
+
 
   # Home packages
   home.packages = with pkgs; [
@@ -239,7 +242,17 @@ in
 	bindings = [
 	{ mouse = "Right", mods = "Shift", action = "Copy" },
 	{ mouse = "Right", action = "Paste" },
-	]	
+	]
+
+	[selection]
+	semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
+	save_to_clipboard = true
+
+	[env]
+	TERM = "xterm-256color"
+	EDITOR = "nvim"
+	VISUAL = "nvim"
+
     '';
   };  
 
