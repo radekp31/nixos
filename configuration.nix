@@ -16,6 +16,24 @@
 
 { config, pkgs, lib,  ... }:
 
+  let
+  	inherit (lib.lists) foldl forEach;
+
+  	# Define the Alacritty configuration content once
+  	alacrittyConfigContent = ''
+  	  # Alacritty configuration
+  	  window:
+  	    opacity: 0.9
+  	  font:
+  	    size: 12
+  	  # Add any other configuration settings here
+  	'';
+
+  	# List of users
+  	users = [ "one" "two" ]; 
+  in
+
+
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -40,21 +58,21 @@
 
   # Configure rebuild VM access
 
-  users.users.vmtest = {
-    isSystemUser = true;
-    initialPassword = "1234";
-    group = "vmtest";
-    shell = pkgs.bash;
-  };
-
-  users.groups.vmtest = {};
-
-  virtualisation.vmVariant = {
-    virtualisation = {
-      memorySize =  2048; 
-      cores = 2;         
-    };
-  };
+#  users.users.vmtest = {
+#    isSystemUser = true;
+#    initialPassword = "1234";
+#    group = "vmtest";
+#    shell = pkgs.bash;
+#  };
+#
+#  users.groups.vmtest = {};
+#
+#  virtualisation.vmVariant = {
+#    virtualisation = {
+#      memorySize =  2048; 
+#      cores = 2;         
+#    };
+#  };
 
    #setup SSH
    programs.ssh.startAgent = true;
@@ -259,6 +277,7 @@
     ];
   };
 
+
   #Set up Steam
   programs.steam = {
     enable = true;
@@ -295,6 +314,9 @@
     update-vm = "sudo nixos-rebuild switch build-vm && dunstify \"NixOS Rebuild\" \"VM is ready.\"";
     rebuild = "sudo nixos-rebuild test && dunstify \"NixOS Rebuild\" \"Test rebuild is done.\"";
     rebuild-switch = "sudo nixos-rebuild switch && dunstify \"NixOS Rebuild\"\"Switch rebuild is done.\"";
+    manix = ''
+      manix "" | grep '^# ' | sed 's/^# \\(.*\\) (.*/\\1/;s/ (.*//;s/^# //' | fzf --preview="manix '{}'" | xargs manix
+    '';
   };
 
   ohMyZsh = {
@@ -367,6 +389,7 @@
   manix
   unzip
   
+  p7zip
   # Packages
 
   neofetch #distro stats
@@ -388,7 +411,7 @@
   alacritty-theme
   rofi # awesome launch menu
   rofi-power-menu #awesome power menu
-  yazi #cli based file manager - its awesome, check nix options as well!
+  #yazi #cli based file manager - its awesome, check nix options as well!
   picom #x11 lightweight compositor
   ly # TUI login screen
   ntfs3g
