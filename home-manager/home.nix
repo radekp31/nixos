@@ -2,6 +2,7 @@
 
 let 
         unstable = import <nixpkgs> { };
+	font = "MesloLGL Nerd Font"; #default monospace
 in
 
 {
@@ -94,7 +95,8 @@ in
 	};
 	"Screenkey" = {
 	  manage=true;
-	};
+	  };
+
   };
 
   # Enable sxhkd
@@ -103,7 +105,7 @@ in
   services.sxhkd.keybindings = {
   # wm independent hotkeys
   "super + Return" = "alacritty";
-  "super + space" = "rofi -show drun";
+  "super + space" = "rofi -show combi";
   "alt + F1" = "rofi -show window";
   "alt + F2" = "rofi -show run";
   "alt + F4" = "rofi -show power-menu -modi power-menu:rofi-power-menu";
@@ -112,6 +114,7 @@ in
   "alt + Escape" = "betterlockscreen -l dim";
   "Print" = "flameshot gui";
   "Shift + Print" = "/etc/nixos/modules/scripts/screenshot.sh";
+  
   # bspwm hotkeys
   "super + f" = "bspc node -t ~fullscreen";
   "super + alt + q" = "bspc quit";
@@ -229,11 +232,15 @@ in
   home.file.".config/alacritty/alacritty.toml" = {
     text = ''
 	[general]
-	#import = ["${pkgs.alacritty-theme}/tokyo-night.toml"]
+	import = ["${pkgs.alacritty-theme}/tokyo_night.toml"]
 
 	[font]
-	size = 12.0
-    
+	size = 13.0
+	normal = {family = "Hack", style = "Regular"}
+	bold = {family = "Hack", style = "Bold"}
+	italic = {family = "Hack", style = "Italic"}
+	bold_italic = {family = "Hack", style = "Bold Italic"}
+	
 	[cursor]
 	style = { shape = "Underline", blinking = "Always" }
 
@@ -258,26 +265,26 @@ in
 	foreground = '#a9b1d6'
 	
 	# Normal colors
-	[colors.normal]
-	black   = '#32344a'
-	red     = '#f7768e'
-	green   = '#9ece6a'
-	yellow  = '#e0af68'
-	blue    = '#7aa2f7'
-	magenta = '#ad8ee6'
-	cyan    = '#449dab'
-	white   = '#787c99'
-	
-	# Bright colors
-	[colors.bright]
-	black   = '#444b6a'
-	red     = '#ff7a93'
-	green   = '#b9f27c'
-	yellow  = '#ff9e64'
-	blue    = '#7da6ff'
-	magenta = '#bb9af7'
-	cyan    = '#0db9d7'
-	white   = '#acb0d0'
+	#[colors.normal]
+	#black   = '#32344a'
+	#red     = '#f7768e'
+	#green   = '#9ece6a'
+	#yellow  = '#e0af68'
+	#blue    = '#7aa2f7'
+	#magenta = '#ad8ee6'
+	#cyan    = '#449dab'
+	#white   = '#787c99'
+	#
+	## Bright colors
+	#[colors.bright]
+	#black   = '#444b6a'
+	#red     = '#ff7a93'
+	#green   = '#b9f27c'
+	#yellow  = '#ff9e64'
+	#blue    = '#7da6ff'
+	#magenta = '#bb9af7'
+	#cyan    = '#0db9d7'
+	#white   = '#acb0d0'
     '';
   };  
 
@@ -303,5 +310,4 @@ in
       		wl-clipboard
     	];
   };
-
 }
