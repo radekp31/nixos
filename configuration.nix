@@ -16,6 +16,13 @@
 
 { config, pkgs, lib,  ... }:
 
+#let 
+
+  #vars in needed
+
+#in
+
+
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -23,6 +30,7 @@
       ./hardware-configuration.nix
       ./nvidia-drivers.nix
       ./modules/default.nix
+      ./modules/apps/qmk/qmk.nix
     ];
 
   # Enable experimental features
@@ -40,21 +48,21 @@
 
   # Configure rebuild VM access
 
-  users.users.vmtest = {
-    isSystemUser = true;
-    initialPassword = "1234";
-    group = "vmtest";
-    shell = pkgs.bash;
-  };
-
-  users.groups.vmtest = {};
-
-  virtualisation.vmVariant = {
-    virtualisation = {
-      memorySize =  2048; 
-      cores = 2;         
-    };
-  };
+#  users.users.vmtest = {
+#    isSystemUser = true;
+#    initialPassword = "1234";
+#    group = "vmtest";
+#    shell = pkgs.bash;
+#  };
+#
+#  users.groups.vmtest = {};
+#
+#  virtualisation.vmVariant = {
+#    virtualisation = {
+#      memorySize =  2048; 
+#      cores = 2;         
+#    };
+#  };
 
    #setup SSH
    programs.ssh.startAgent = true;
@@ -161,6 +169,15 @@
     LC_TIME = "en_US.UTF-8";
   };
 
+ 
+  #Add udev rules for GMMK2
+  services.udev.extraRules = ''
+	SUBSYSTEM=="usb", ATTR{idVendor}=="320f", ATTR{idProduct}=="504b", MODE="0666"  	
+  '';
+
+  #Enable Android Debug Bridge
+  programs.adb.enable = true;
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   
@@ -173,11 +190,6 @@
  
   # Enable ly
   services.displayManager.ly.enable = true;
-
-  #Automount USB devices
-  #services.devmon.enable = true;
-  #services.gvfs.enable = true;
-  #services.udisks2.enable = true; 
 
   #Enable picom
   services.picom.enable = true;
@@ -253,11 +265,12 @@
   users.users.radekp = {
     isNormalUser = true;
     description = "Radek Polasek";
-    extraGroups = [ "networkmanager" "wheel" "libvirtd" "video" ];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" "video" "kvm" "adbusers"];
     packages = with pkgs; [
     #  thunderbird
     ];
   };
+
 
   #Set up Steam
   programs.steam = {
@@ -289,12 +302,17 @@
   '';
 
   shellAliases = {
-    ll = "ls -lah";
     update = "sudo nixos-rebuild switch";
     edit = "sudoedit /etc/nixos/configuration.nix";
     update-vm = "sudo nixos-rebuild switch build-vm && dunstify \"NixOS Rebuild\" \"VM is ready.\"";
     rebuild = "sudo nixos-rebuild test && dunstify \"NixOS Rebuild\" \"Test rebuild is done.\"";
     rebuild-switch = "sudo nixos-rebuild switch && dunstify \"NixOS Rebuild\"\"Switch rebuild is done.\"";
+    manix = ''
+      manix "" | grep '^# ' | sed 's/^# \\(.*\\) (.*/\\1/;s/ (.*//;s/^# //' | fzf --preview="manix '{}'" | xargs manix
+    '';
+    ll = "eza -lah";
+    llt = "eza -lah --tree --git-ignore";
+    lld = "eza -lahd";
   };
 
   ohMyZsh = {
@@ -364,12 +382,13 @@
   qmk_hid
   qmk-udev-rules
   udiskie
-  manix
   unzip
-  
+  p7zip
+
   # Packages
 
   neofetch #distro stats
+  manix # nix options manual
   curl
   git
   openssh
@@ -388,7 +407,7 @@
   alacritty-theme
   rofi # awesome launch menu
   rofi-power-menu #awesome power menu
-  yazi #cli based file manager - its awesome, check nix options as well!
+  #yazi #cli based file manager - its awesome, check nix options as well!
   picom #x11 lightweight compositor
   ly # TUI login screen
   ntfs3g
@@ -438,7 +457,30 @@
   # Install fonts from NerdFonts
   fonts.packages = with pkgs; [
 
-    (nerdfonts.override { fonts = [ "FiraCode" ]; })
+    (nerdfonts.override { fonts = [ 
+    "FiraCode"
+    "Inconsolata"
+    "Meslo"
+    "SpaceMono"
+    "Ubuntu"
+    "UbuntuSans"
+    "UbuntuMono"
+    "0xProto"
+    "Agave"
+    #"BistromWera"
+    #"BlexMono"
+    #"CaskaydiaMono"
+    "CommitMono"
+    #"D2CodingLigature"
+    #"DroidSansM"
+    "GeistMono"
+    "Hack"
+    "Lilex"
+    "MartianMono"
+    #"MonaSpice"
+    #"SauceCodePro"
+    "SpaceMono"
+    ]; })
   ];
   
   # Enable dconf
