@@ -97,7 +97,9 @@
     boot.initrd.verbose = true;
 
     #Fix OOM freezes
-    boot.kernelPackages = pkgs.linuxPackages_latest;
+    #boot.kernelPackages = pkgs.linuxPackages_latest;
+    boot.kernelPackages = pkgs.linuxPackages_5_15;
+
     zramSwap = {
 	enable = true;
 	algorithm = "ztsd"; #lz4 works
@@ -114,10 +116,13 @@
       
       #Trying to fix random freezes
       # Adds rcu_nocbs with CPU core count parameter
-      "rcu_nocbs=0-11"	# thread count of the CPU   "rcu_nocbs=0-$(($(nproc) - 1))" 
+      #"rcu_nocbs=0-11"	# thread count of the CPU   "rcu_nocbs=0-$(($(nproc) - 1))" 
     
       # Limits the C-state to C5
-      "processor.max_cstate=5"
+      #"processor.max_cstate=5"
+
+      #Disable USB power management
+      "usbcore.autosuspend=-1"
 
       #"loglevel=3"
       #"rd.systemd.show_status=false"

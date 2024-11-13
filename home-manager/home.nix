@@ -6,6 +6,10 @@ let
 in
 
 {
+
+  #Let Home Manager install and manage itself
+  programs.home-manager.enable = true;
+  
   # User settings
   home.username = "radekp";
   home.homeDirectory = "/home/radekp";
@@ -28,6 +32,14 @@ in
 	alacritty-theme
  	flameshot
 	nomacs
+	qpdf
+	pdfcrack
+	hashcat
+	pdftk
+	poppler_utils
+	ghostscript
+	john
+	johnny
     ];
 
 
@@ -44,6 +56,9 @@ in
 
 	# Wait for a bit before starting Polybar to ensure services are ready
 	sleep 1
+
+	#Apply nvidia-settings profile
+	nvidia-settings -l
 
 	# Kill any existing Polybar instances before starting a new one
 	killall -q polybar

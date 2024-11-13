@@ -1,6 +1,9 @@
 { config, lib, pkgs, ... }:
 {
 
+  #Accept NVIDIA licence
+  nixpkgs.config.nvidia.acceptLicense = true;
+
   # Enable OpenGL
   hardware.graphics = { #formerly hardware.opengl
     enable = true;
@@ -39,7 +42,7 @@
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     package = config.boot.kernelPackages.nvidiaPackages.stable;
-
+    
   };
 
 }
