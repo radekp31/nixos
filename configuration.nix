@@ -31,6 +31,7 @@
       ./nvidia-drivers.nix
       ./modules/default.nix
       ./modules/apps/qmk/qmk.nix
+      #./modules/services/fancontrol.nix
     ];
 
   # Enable experimental features
@@ -98,7 +99,7 @@
 
     #Fix OOM freezes
     #boot.kernelPackages = pkgs.linuxPackages_latest;
-    boot.kernelPackages = pkgs.linuxPackages_5_15;
+    boot.kernelPackages = pkgs.linuxPackages_5_4;
 
     zramSwap = {
 	enable = true;
@@ -123,6 +124,8 @@
 
       #Disable USB power management
       "usbcore.autosuspend=-1"
+      "usbcore.power_control=0"
+      "usbcore.debug=1"
 
       #"loglevel=3"
       #"rd.systemd.show_status=false"
@@ -151,6 +154,7 @@
 	EDITOR = "nvim";
 	VISUAL = "nvim";
 	TERM = lib.mkDefault "xterm-256color";
+	LD_LIBRARY_PATH="${pkgs.libglvnd}/lib";
   };
   # Enable virtualization
   virtualisation.libvirtd.enable = true;
@@ -187,8 +191,9 @@
   services.xserver.enable = true;
   
   # Enable Budgie desktop
-  services.xserver.desktopManager.budgie.enable = true;
-
+  #services.xserver.desktopManager.budgie.enable = true;
+  #services.xserver.displayManager.lightdm.enable = true;
+  
   # Enable bspwm
   services.xserver.windowManager.bspwm.enable = true;
   services.displayManager.defaultSession = "none+bspwm";
@@ -284,7 +289,7 @@
     dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
     localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
-
+  
  # nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
  #   "steam"
  #   "steam-original"
@@ -390,6 +395,14 @@
   unzip
   p7zip
 
+  pciutils
+  smartmontools
+  thinkfan
+  lm_sensors
+  
+  #TEST nvidia
+  #mesa
+  libglvnd
   # Packages
 
   neofetch #distro stats

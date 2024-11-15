@@ -251,10 +251,10 @@ in
 
 	[font]
 	size = 13.0
-	normal = {family = "Hack", style = "Regular"}
-	bold = {family = "Hack", style = "Bold"}
-	italic = {family = "Hack", style = "Italic"}
-	bold_italic = {family = "Hack", style = "Bold Italic"}
+	#normal = {family = "Hack", style = "Regular"}
+	#bold = {family = "Hack", style = "Bold"}
+	#italic = {family = "Hack", style = "Italic"}
+	#bold_italic = {family = "Hack", style = "Bold Italic"}
 	
 	[cursor]
 	style = { shape = "Underline", blinking = "Always" }
