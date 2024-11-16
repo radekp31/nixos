@@ -6,44 +6,60 @@
   # Define the fan control script content
   system.activationScripts.fanControlScript = lib.mkForce ''
     mkdir -p /etc/nixos/gpu-scripts
-	   
+	
+    cat << EOF > /etc/nixos/gpu-scripts/fancontrol.sh
+	#!/bin/sh
+
+	# Trap SIGTERM to handle shutdown properly
 	trap "exit" SIGTERM
 
-	    /run/current-system/sw/bin/nvidia-settings -a '[gpu:0]/GPUFanControlState=1'
+	# Define paths to necessary binaries
+	NVIDIA_SETTINGS="/run/current-system/sw/bin/nvidia-settings"
+	NVIDIA_SMI="/run/current-system/sw/bin/nvidia-smi"
 
+	# Set the DISPLAY variable to ensure proper access to the X server
+	export DISPLAY=:0
+	export XAUTHORITY=/home/<your-username>/.Xauthority  # Replace <your-username> with the correct username
+
+	# Enable manual fan control
+	$NVIDIA_SETTINGS -a '[gpu:0]/GPUFanControlState=1' 2>> /var/log/fancontrol.log
+
+	# Initialize variables
 	CURRENTFANSPEED=0
 
-	    while true; do
+	# Main loop to monitor temperature and adjust fan speed
+	while true; do
+	    # Get current GPU temperature
+	    GPUTEMP=$($NVIDIA_SMI --query-gpu=temperature.gpu --format=csv,noheader)
 
-	    GPUTEMP=$(/run/current-system/sw/bin/nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader)
+	    # Determine the desired fan speed based on temperature thresholds
+	    if [[ $GPUTEMP -gt 81 ]]; then
+		DESIRED_FANSPEED=100
+	    elif [[ $GPUTEMP -gt 65 ]]; then
+		DESIRED_FANSPEED=90
+	    elif [[ $GPUTEMP -gt 60 ]]; then
+		DESIRED_FANSPEED=75
+	    elif [[ $GPUTEMP -gt 50 ]]; then
+		DESIRED_FANSPEED=65
+	    elif [[ $GPUTEMP -gt 40 ]]; then
+		DESIRED_FANSPEED=45
+	    elif [[ $GPUTEMP -gt 15 ]]; then
+		DESIRED_FANSPEED=30
+	    else
+		DESIRED_FANSPEED=0
+	    fi
 
-		if [[ $GPUTEMP -gt 15 ]] && [[ CURRENTFANSPEED -lt 30 ]]; then
-		    CURRENTFANSPEED=30 && /run/current-system/sw/bin/nvidia-settings -a '[fan:0]/GPUTargetFanSpeed=30' && /run/current-system/sw/bin/nvidia-settings -a '[fan:1]/GPUTargetFanSpeed=30';
-		fi
+	    # Only update the fan speed if it differs from the current fan speed
+	    if [[ $DESIRED_FANSPEED -ne $CURRENTFANSPEED ]]; then
+		$NVIDIA_SETTINGS -a "[fan:0]/GPUTargetFanSpeed=$DESIRED_FANSPEED" \
+				 -a "[fan:1]/GPUTargetFanSpeed=$DESIRED_FANSPEED" 2>> /var/log/fancontrol.log
+		CURRENTFANSPEED=$DESIRED_FANSPEED
+	    fi
 
-		if [[ $GPUTEMP -gt 40 ]] && [[ CURRENTFANSPEED -lt 45 ]]; then
-		    CURRENTFANSPEED=45 && /run/current-system/sw/bin/nvidia-settings -a '[fan:0]/GPUTargetFanSpeed=45' && /run/current-system/sw/bin/nvidia-settings -a '[fan:1]/GPUTargetFanSpeed=45';
-		fi
-
-		if [[ $GPUTEMP -gt 50 ]] && [[ CURRENTFANSPEED -lt 65 ]]; then
-		    CURRENTFANSPEED=65 && /run/current-system/sw/bin/nvidia-settings -a '[fan:0]/GPUTargetFanSpeed=65' && /run/current-system/sw/bin/nvidia-settings -a '[fan:1]/GPUTargetFanSpeed=65';
-		fi
-
-		if [[ $GPUTEMP -gt 60 ]] && [[ CURRENTFANSPEED -lt 75 ]]; then
-		    CURRENTFANSPEED=75 && /run/current-system/sw/bin/nvidia-settings -a '[fan:0]/GPUTargetFanSpeed=75' && /run/current-system/sw/bin/nvidia-settings -a '[fan:1]/GPUTargetFanSpeed=75';
-		fi
-
-		if [[ $GPUTEMP -gt 65 ]] && [[ CURRENTFANSPEED -lt 90 ]]; then
-		    CURRENTFANSPEED=90 && /run/current-system/sw/bin/nvidia-settings -a '[fan:0]/GPUTargetFanSpeed=90' && /run/current-system/sw/bin/nvidia-settings -a '[fan:1]/GPUTargetFanSpeed=90';
-		fi
-
-		if [[ $GPUTEMP -gt 81 ]] && [[ CURRENTFANSPEED -lt 100 ]]; then
-		    CURRENTFANSPEED=100 && /run/current-system/sw/bin/nvidia-settings -a '[fan:0]/GPUTargetFanSpeed=100' && /run/current-system/sw/bin/nvidia-settings -a '[fan:1]/GPUTargetFanSpeed=100';
-		fi
-
-		sleep 2
-	    done
-   EOF
+	    # Sleep for 2 seconds before checking again
+	    sleep 2
+	done
+    EOF
     chmod 755 /etc/nixos/gpu-scripts/fancontrol.sh
   '';
 

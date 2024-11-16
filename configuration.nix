@@ -70,6 +70,7 @@
    services.openssh.enable = true;
 
   # Bootloader.
+  boot.loader.systemd-boot.enable = false; 
   boot.loader.grub.enable = true;
     boot.loader.grub.device = "/dev/sda";
     boot.loader.grub.useOSProber = true;
@@ -79,7 +80,7 @@
       set fastboot=1
     '';
     boot.loader.timeout = 1; #F
-    boot.loader.grub.timeoutStyle = "hidden";
+    boot.loader.grub.timeoutStyle = "menu";
   # test plymouth
   
   # boot.plymouth = {
@@ -320,9 +321,9 @@
     manix = ''
       manix "" | grep '^# ' | sed 's/^# \\(.*\\) (.*/\\1/;s/ (.*//;s/^# //' | fzf --preview="manix '{}'" | xargs manix
     '';
-    ll = "eza -lah";
-    llt = "eza -lah --tree --git-ignore";
-    lld = "eza -lahd";
+    ll = "eza -lahg";
+    llt = "eza -lahg --tree --git-ignore";
+    lld = "eza -lahgd";
   };
 
   ohMyZsh = {

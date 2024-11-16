@@ -172,25 +172,8 @@ in
   "super + o" = "bspc wm -h off; bspc node older -f; bspc wm -h on";
   "super + i" = "bspc wm -h off; bspc node newer -f; bspc wm -h on";
   "super + 1" = "bspc desktop -f ^1";
-  "super + shift + 1" = "bspc node -d ^1";
-  "super + 2" = "bspc desktop -f ^2";
-  "super + shift + 2" = "bspc node -d ^2";
-  "super + 3" = "bspc desktop -f ^3";
-  "super + shift + 3" = "bspc node -d ^3";
-  "super + 4" = "bspc desktop -f ^4";
-  "super + shift + 4" = "bspc node -d ^4";
-  "super + 5" = "bspc desktop -f ^5";
-  "super + shift + 5" = "bspc node -d ^5";
-  "super + 6" = "bspc desktop -f ^6";
-  "super + shift + 6" = "bspc node -d ^6";
-  "super + 7" = "bspc desktop -f ^7";
-  "super + shift + 7" = "bspc node -d ^7";
-  "super + 8" = "bspc desktop -f ^8";
-  "super + shift + 8" = "bspc node -d ^8";
-  "super + 9" = "bspc desktop -f ^9";
-  "super + shift + 9" = "bspc node -d ^9";
-  "super + 0" = "bspc desktop -f ^10";
-  "super + shift + 0" = "bspc node -d ^10";
+  "super + {_,shift + }{1-9,0}" = "bspc {desktop -f, node -d} '^{1-9,10}' --follow";
+ # "super + shift + <x>" = "bspc node -d ^<x>"; per workspace binding
 
   # preselect
   "super + ctrl + h" = "bspc node -p west";
