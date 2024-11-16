@@ -76,8 +76,7 @@
     boot.loader.grub.useOSProber = true;
     boot.loader.grub.extraEntries = ''
       set gfxpayload=keep
-      set gfxmode=1920x1080
-      set fastboot=1
+      set gfxmode=auto
     '';
     boot.loader.timeout = 1; #F
     boot.loader.grub.timeoutStyle = "menu";
@@ -127,12 +126,11 @@
       "usbcore.autosuspend=-1"
       "usbcore.power_control=0"
       "usbcore.debug=1"
-
+      "video=1920x1080"
       #"loglevel=3"
       #"rd.systemd.show_status=false"
       #"rd.udev.log_level=3"
       #"udev.log_priority=3"
-      #"nvidia-drm.modeset=1"  # NVIDIA-specific setting
       #"console=tty1"
     ];
     # Hide the OS choice for bootloaders.
