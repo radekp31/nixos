@@ -305,6 +305,17 @@
   enableCompletion = true;
   autosuggestions.enable = true;
   syntaxHighlighting.enable = true;
+  loginShellInit = ''
+    #Disable fan off
+    nvidia-settings -a GPUTargetFanSpeed=35
+    
+    #Enable more aggresive fan curve (still pretty weak though)
+    nvidia-settings -a GPUPowerMizerMode=1
+
+    #Increase color vibrance
+    nvidia-settings -a /DigitalVibrance=430
+
+  '';
   shellInit = ''
     #Enable fzf plugin
     source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
