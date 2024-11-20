@@ -1,0 +1,1 @@
+/etc/static/nixos/modules/scripts/fancontrol.nix

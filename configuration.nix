@@ -31,6 +31,11 @@
       ./nvidia-drivers.nix
       ./modules/default.nix
       ./modules/apps/qmk/qmk.nix
+
+      ./modules/apps/qemu/qemu.nix
+      #./modules/services/fancontrol.nix
+
+
     ];
 
   # Enable experimental features
@@ -46,58 +51,48 @@
     };
   };
 
-  # Configure rebuild VM access
 
-#  users.users.vmtest = {
-#    isSystemUser = true;
-#    initialPassword = "1234";
-#    group = "vmtest";
-#    shell = pkgs.bash;
-#  };
-#
-#  users.groups.vmtest = {};
-#
-#  virtualisation.vmVariant = {
-#    virtualisation = {
-#      memorySize =  2048; 
-#      cores = 2;         
-#    };
-#  };
 
-   #setup SSH
+  security.sudo = {
+    enable = true;
+    wheelNeedsPassword = true; # Require password for sudo
+    extraRules = [{
+      commands = [
+        {
+          command = "/run/current-system/sw/bin/nvidia-settings";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    groups = [ "wheel" ];
+  }];
+
+  };
+  
+  #setup SSH
+
    programs.ssh.startAgent = true;
    services.openssh.enable = true;
 
   # Bootloader.
+  boot.loader.systemd-boot.enable = false; 
   boot.loader.grub.enable = true;
     boot.loader.grub.device = "/dev/sda";
     boot.loader.grub.useOSProber = true;
     boot.loader.grub.extraEntries = ''
       set gfxpayload=keep
-      set gfxmode=1920x1080
-      set fastboot=1
+      set gfxmode=auto
     '';
     boot.loader.timeout = 1; #F
-    boot.loader.grub.timeoutStyle = "hidden";
-  # test plymouth
-  
-  # boot.plymouth = {
-  #    enable = true;
-  #    theme = "spinfinity";
-     # themePackages = with pkgs; [
-     #   # By default we would install all themes
-     #   (adi1090x-plymouth-themes.override {
-     #     selected_themes = [ "rings" ];
-     #   })
-     # ];
-   # };
+    boot.loader.grub.timeoutStyle = "menu";
 
     # Enable "Silent Boot"
     boot.consoleLogLevel = 0;
     boot.initrd.verbose = true;
 
     #Fix OOM freezes
-    boot.kernelPackages = pkgs.linuxPackages_latest;
+    #boot.kernelPackages = pkgs.linuxPackages_latest;
+    boot.kernelPackages = pkgs.linuxPackages_5_4;
+
     zramSwap = {
 	enable = true;
 	algorithm = "ztsd"; #lz4 works
@@ -112,24 +107,11 @@
       "tsc=unstable"
       "trace_clock=local"
       
-      #Trying to fix random freezes
-      # Adds rcu_nocbs with CPU core count parameter
-      "rcu_nocbs=0-11"	# thread count of the CPU   "rcu_nocbs=0-$(($(nproc) - 1))" 
-    
-      # Limits the C-state to C5
-      "processor.max_cstate=5"
-
-      #"loglevel=3"
-      #"rd.systemd.show_status=false"
-      #"rd.udev.log_level=3"
-      #"udev.log_priority=3"
-      #"nvidia-drm.modeset=1"  # NVIDIA-specific setting
-      #"console=tty1"
+      #Disable USB power management
+      "usbcore.autosuspend=-1"
+      "usbcore.debug=1"
+      "video=1920x1080"
     ];
-    # Hide the OS choice for bootloaders.
-    # It's still possible to open the bootloader list by pressing any key
-    # It will just not appear on screen unless a key is pressed
-    #loader.timeout = 0;
 
   networking.hostName = "nixos-desktop"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -146,6 +128,7 @@
 	EDITOR = "nvim";
 	VISUAL = "nvim";
 	TERM = lib.mkDefault "xterm-256color";
+	LD_LIBRARY_PATH="${pkgs.libglvnd}/lib";
   };
   # Enable virtualization
   virtualisation.libvirtd.enable = true;
@@ -182,8 +165,9 @@
   services.xserver.enable = true;
   
   # Enable Budgie desktop
-  services.xserver.desktopManager.budgie.enable = true;
-
+  #services.xserver.desktopManager.budgie.enable = true;
+  #services.xserver.displayManager.lightdm.enable = true;
+  
   # Enable bspwm
   services.xserver.windowManager.bspwm.enable = true;
   services.displayManager.defaultSession = "none+bspwm";
@@ -265,7 +249,7 @@
   users.users.radekp = {
     isNormalUser = true;
     description = "Radek Polasek";
-    extraGroups = [ "networkmanager" "wheel" "libvirtd" "video" "kvm" "adbusers"];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" "video" "kvm" "adbusers" "gcis"];
     packages = with pkgs; [
     #  thunderbird
     ];
@@ -279,7 +263,7 @@
     dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
     localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
-
+  
  # nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
  #   "steam"
  #   "steam-original"
@@ -310,9 +294,10 @@
     manix = ''
       manix "" | grep '^# ' | sed 's/^# \\(.*\\) (.*/\\1/;s/ (.*//;s/^# //' | fzf --preview="manix '{}'" | xargs manix
     '';
-    ll = "eza -lah";
-    llt = "eza -lah --tree --git-ignore";
-    lld = "eza -lahd";
+    ll = "eza -lahg";
+    llt = "eza -lahg --tree --git-ignore";
+    lld = "eza -lahgd";
+
   };
 
   ohMyZsh = {
@@ -349,16 +334,7 @@
 	'';
 
 
-#	    customRC = ''
-#      		" Set colorscheme to tokyonight-night
-#      			augroup myColors
-#        		autocmd!
-#        		autocmd VimEnter * colorscheme tokyonight-night
-#      			augroup END
-#			au VimLeave * :!clear
-#    		'';
-
-#		colorscheme tokyonight-night
+		#colorscheme tokyonight-night
     		packages.myVimPackage = with pkgs.vimPlugins; {
     			
 			# loaded on launch
@@ -384,6 +360,12 @@
   udiskie
   unzip
   p7zip
+
+  pciutils
+  smartmontools
+  thinkfan
+  lm_sensors
+  unetbootin
 
   # Packages
 
@@ -467,18 +449,11 @@
     "UbuntuMono"
     "0xProto"
     "Agave"
-    #"BistromWera"
-    #"BlexMono"
-    #"CaskaydiaMono"
     "CommitMono"
-    #"D2CodingLigature"
-    #"DroidSansM"
     "GeistMono"
     "Hack"
     "Lilex"
     "MartianMono"
-    #"MonaSpice"
-    #"SauceCodePro"
     "SpaceMono"
     ]; })
   ];

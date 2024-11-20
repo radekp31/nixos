@@ -1,13 +1,36 @@
 { config, lib, pkgs, ... }:
 {
 
+  #Accept NVIDIA licence
+  nixpkgs.config.nvidia.acceptLicense = true;
+
   # Enable OpenGL
   hardware.graphics = { #formerly hardware.opengl
     enable = true;
+    enable32Bit = true;
+    extraPackages = with pkgs; [        
+        
+        amdvlk
+        intel-media-driver      # LIBVA_DRIVER_NAME=iHD
+        libvdpau-va-gl
+        nvidia-vaapi-driver
+        vaapiIntel              # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+        vaapiVdpau
+        vulkan-validation-layers
+	xorg.libXrandr
+	libglvnd
+      ];
   };
 
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = ["nvidia"];
+  
+  #NVIDIA env vars
+  environment.variables = {
+    GBM_BACKEND = "nvidia-drm";
+    LIBVA_DRIVER_NAME = "nvidia";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+  };
 
   hardware.nvidia = {
 
@@ -39,7 +62,18 @@
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     package = config.boot.kernelPackages.nvidiaPackages.stable;
-
+    
   };
 
+  #Packages related to NVIDIA
+  environment.systemPackages = with pkgs; [
+
+    clinfo
+    gwe
+    nvtop-nvidia
+    virtualglLib
+    vulkan-loader
+    vulkan-tools
+
+  ];
 }

@@ -3,9 +3,17 @@
 let 
         unstable = import <nixpkgs> { };
 	font = "MesloLGL Nerd Font"; #default monospace
+	nvidiaDisplay = builtins.exec "${pkgs.writeScript "get-nvidia-display" ''
+    		#!/usr/bin/env bash
+    		nvidia-settings -q dpys | grep -oP '\[DPY:[^\]]+\]' | head -n 1
+  	''}";
 in
 
 {
+
+  #Let Home Manager install and manage itself
+  programs.home-manager.enable = true;
+  
   # User settings
   home.username = "radekp";
   home.homeDirectory = "/home/radekp";
@@ -23,20 +31,30 @@ in
   home.packages = with pkgs; [
 	unstable.vlc
         git
-#       openssh
 	alacritty
 	alacritty-theme
  	flameshot
 	nomacs
+	qpdf
+	pdfcrack
+	hashcat
+	pdftk
+	poppler_utils
+	ghostscript
+	john
+	johnny
     ];
+
+# Append to ~/.nvidia-settings-rc
+   home.file.".nvidia-settings-rc".text = ''
+      ${nvidiaDisplay}/GPUFanControlState=1
+      ${nvidiaDisplay}/GPUTargetFanSpeed=35
+      ${nvidiaDisplay}/DigitalVibrance=430
+    '';
 
 
 # Setup bspwm
 
-#   services.xserver.windowManager.bspwm.enable = true;
-#  services.displayManager.defaultSession = "none+bspwm";
-#  services.xserver.windowManager.bspwm.configFile = "/home/radekp/.config/bspwm/bspwmrc";
-#  services.xserver.windowManager.bspwm.sxhkd.configFile = "/home/radekp/.config/bspwm/sx>
    xsession.windowManager.bspwm.enable = true;
    xsession.windowManager.bspwm.extraConfigEarly = ''
 	# Start sxhkd if it is not running
@@ -44,6 +62,9 @@ in
 
 	# Wait for a bit before starting Polybar to ensure services are ready
 	sleep 1
+
+	#Apply nvidia-settings profile
+	nvidia-settings -l
 
 	# Kill any existing Polybar instances before starting a new one
 	killall -q polybar
@@ -58,8 +79,15 @@ in
         # Set cursor to pointer
 	xsetroot -cursor_name left_ptr &
 
-	# Set focus on hover
 
+
+   '';
+   xsession.windowManager.bspwm.extraConfig = ''
+	
+        sudo /run/current-system/sw/bin/nvidia-settings -c :0 -a '[gpu:0]/GPUFanControlState=1'
+        sudo /run/current-system/sw/bin/nvidia-settings -c :0 -a GPUTargetFanSpeed=35
+        sudo /run/current-system/sw/bin/nvidia-settings -a "DigitalVibrance=900"
+        ##sudo /run/current-system/sw/bin/nvidia-settings -l
    '';
 
   xsession.windowManager.bspwm.monitors = {
@@ -84,7 +112,6 @@ in
 	split_ratio =  0.52;
 	borderless_monocle = true;
 	gapless_monocle = true;
-#	focus_follows_pointer = true;
   };
 
   xsession.windowManager.bspwm.rules = {
@@ -157,25 +184,8 @@ in
   "super + o" = "bspc wm -h off; bspc node older -f; bspc wm -h on";
   "super + i" = "bspc wm -h off; bspc node newer -f; bspc wm -h on";
   "super + 1" = "bspc desktop -f ^1";
-  "super + shift + 1" = "bspc node -d ^1";
-  "super + 2" = "bspc desktop -f ^2";
-  "super + shift + 2" = "bspc node -d ^2";
-  "super + 3" = "bspc desktop -f ^3";
-  "super + shift + 3" = "bspc node -d ^3";
-  "super + 4" = "bspc desktop -f ^4";
-  "super + shift + 4" = "bspc node -d ^4";
-  "super + 5" = "bspc desktop -f ^5";
-  "super + shift + 5" = "bspc node -d ^5";
-  "super + 6" = "bspc desktop -f ^6";
-  "super + shift + 6" = "bspc node -d ^6";
-  "super + 7" = "bspc desktop -f ^7";
-  "super + shift + 7" = "bspc node -d ^7";
-  "super + 8" = "bspc desktop -f ^8";
-  "super + shift + 8" = "bspc node -d ^8";
-  "super + 9" = "bspc desktop -f ^9";
-  "super + shift + 9" = "bspc node -d ^9";
-  "super + 0" = "bspc desktop -f ^10";
-  "super + shift + 0" = "bspc node -d ^10";
+  "super + {_,shift + }{1-9,0}" = "bspc {desktop -f, node -d} '^{1-9,10}' --follow";
+  #"super + shift + <x>" = "bspc node -d ^<x>"; per workspace binding
 
   # preselect
   "super + ctrl + h" = "bspc node -p west";
@@ -236,11 +246,11 @@ in
 
 	[font]
 	size = 13.0
-	normal = {family = "Hack", style = "Regular"}
-	bold = {family = "Hack", style = "Bold"}
-	italic = {family = "Hack", style = "Italic"}
-	bold_italic = {family = "Hack", style = "Bold Italic"}
-	
+	#normal = {family = "Hack", style = "Regular"}
+	#bold = {family = "Hack", style = "Bold"}
+	#italic = {family = "Hack", style = "Italic"}
+	#bold_italic = {family = "Hack", style = "Bold Italic"}
+  
 	[cursor]
 	style = { shape = "Underline", blinking = "Always" }
 
