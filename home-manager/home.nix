@@ -32,7 +32,6 @@ in
   home.packages = with pkgs; [
 	unstable.vlc
         git
-#       openssh
 	alacritty
 	alacritty-theme
  	flameshot
@@ -57,10 +56,6 @@ in
 
 # Setup bspwm
 
-#   services.xserver.windowManager.bspwm.enable = true;
-#  services.displayManager.defaultSession = "none+bspwm";
-#  services.xserver.windowManager.bspwm.configFile = "/home/radekp/.config/bspwm/bspwmrc";
-#  services.xserver.windowManager.bspwm.sxhkd.configFile = "/home/radekp/.config/bspwm/sx>
    xsession.windowManager.bspwm.enable = true;
    xsession.windowManager.bspwm.extraConfigEarly = ''
 	# Start sxhkd if it is not running
@@ -118,7 +113,6 @@ in
 	split_ratio =  0.52;
 	borderless_monocle = true;
 	gapless_monocle = true;
-#	focus_follows_pointer = true;
   };
 
   xsession.windowManager.bspwm.rules = {
@@ -192,7 +186,7 @@ in
   "super + i" = "bspc wm -h off; bspc node newer -f; bspc wm -h on";
   "super + 1" = "bspc desktop -f ^1";
   "super + {_,shift + }{1-9,0}" = "bspc {desktop -f, node -d} '^{1-9,10}' --follow";
- # "super + shift + <x>" = "bspc node -d ^<x>"; per workspace binding
+  #"super + shift + <x>" = "bspc node -d ^<x>"; per workspace binding
 
   # preselect
   "super + ctrl + h" = "bspc node -p west";

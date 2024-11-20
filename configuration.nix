@@ -48,23 +48,6 @@
     };
   };
 
-  # Configure rebuild VM access
-
-#  users.users.vmtest = {
-#    isSystemUser = true;
-#    initialPassword = "1234";
-#    group = "vmtest";
-#    shell = pkgs.bash;
-#  };
-#
-#  users.groups.vmtest = {};
-#
-#  virtualisation.vmVariant = {
-#    virtualisation = {
-#      memorySize =  2048; 
-#      cores = 2;         
-#    };
-#  };
 
   security.sudo = {
     enable = true;
@@ -96,18 +79,6 @@
     '';
     boot.loader.timeout = 1; #F
     boot.loader.grub.timeoutStyle = "menu";
-  # test plymouth
-  
-  # boot.plymouth = {
-  #    enable = true;
-  #    theme = "spinfinity";
-     # themePackages = with pkgs; [
-     #   # By default we would install all themes
-     #   (adi1090x-plymouth-themes.override {
-     #     selected_themes = [ "rings" ];
-     #   })
-     # ];
-   # };
 
     # Enable "Silent Boot"
     boot.consoleLogLevel = 0;
@@ -131,28 +102,11 @@
       "tsc=unstable"
       "trace_clock=local"
       
-      #Trying to fix random freezes
-      # Adds rcu_nocbs with CPU core count parameter
-      #"rcu_nocbs=0-11"	# thread count of the CPU   "rcu_nocbs=0-$(($(nproc) - 1))" 
-    
-      # Limits the C-state to C5
-      #"processor.max_cstate=5"
-
       #Disable USB power management
       "usbcore.autosuspend=-1"
-      #"usbcore.power_control=0"
       "usbcore.debug=1"
       "video=1920x1080"
-      #"loglevel=3"
-      #"rd.systemd.show_status=false"
-      #"rd.udev.log_level=3"
-      #"udev.log_priority=3"
-      #"console=tty1"
     ];
-    # Hide the OS choice for bootloaders.
-    # It's still possible to open the bootloader list by pressing any key
-    # It will just not appear on screen unless a key is pressed
-    #loader.timeout = 0;
 
   networking.hostName = "nixos-desktop"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -374,16 +328,7 @@
 	'';
 
 
-#	    customRC = ''
-#      		" Set colorscheme to tokyonight-night
-#      			augroup myColors
-#        		autocmd!
-#        		autocmd VimEnter * colorscheme tokyonight-night
-#      			augroup END
-#			au VimLeave * :!clear
-#    		'';
-
-#		colorscheme tokyonight-night
+		#colorscheme tokyonight-night
     		packages.myVimPackage = with pkgs.vimPlugins; {
     			
 			# loaded on launch
@@ -416,8 +361,6 @@
   lm_sensors
   unetbootin
   
-  #TEST nvidia
-  #mesa
   # Packages
 
   neofetch #distro stats
@@ -500,18 +443,11 @@
     "UbuntuMono"
     "0xProto"
     "Agave"
-    #"BistromWera"
-    #"BlexMono"
-    #"CaskaydiaMono"
     "CommitMono"
-    #"D2CodingLigature"
-    #"DroidSansM"
     "GeistMono"
     "Hack"
     "Lilex"
     "MartianMono"
-    #"MonaSpice"
-    #"SauceCodePro"
     "SpaceMono"
     ]; })
   ];
