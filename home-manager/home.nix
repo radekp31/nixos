@@ -3,6 +3,11 @@
 let 
         unstable = import <nixpkgs> { };
 	font = "MesloLGL Nerd Font"; #default monospace
+	nvidiaDisplay = builtins.exec "${pkgs.writeScript "get-nvidia-display" ''
+    		#!/usr/bin/env bash
+    		nvidia-settings -q dpys | grep -oP '\[DPY:[^\]]+\]' | head -n 1
+  	''}";
+
 in
 
 {
@@ -42,6 +47,13 @@ in
 	johnny
     ];
 
+# Append to ~/.nvidia-settings-rc
+   home.file.".nvidia-settings-rc".text = ''
+      ${nvidiaDisplay}/GPUFanControlState=1
+      ${nvidiaDisplay}/GPUTargetFanSpeed=35
+      ${nvidiaDisplay}/DigitalVibrance=430
+    '';
+
 
 # Setup bspwm
 
@@ -73,8 +85,15 @@ in
         # Set cursor to pointer
 	xsetroot -cursor_name left_ptr &
 
-	# Set focus on hover
 
+
+   '';
+   xsession.windowManager.bspwm.extraConfig = ''
+	
+        sudo /run/current-system/sw/bin/nvidia-settings -c :0 -a '[gpu:0]/GPUFanControlState=1'
+        sudo /run/current-system/sw/bin/nvidia-settings -c :0 -a GPUTargetFanSpeed=35
+        sudo /run/current-system/sw/bin/nvidia-settings -a "DigitalVibrance=900"
+        ##sudo /run/current-system/sw/bin/nvidia-settings -l
    '';
 
   xsession.windowManager.bspwm.monitors = {

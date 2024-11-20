@@ -17,6 +17,8 @@
         vaapiIntel              # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
         vaapiVdpau
         vulkan-validation-layers
+	xorg.libXrandr
+	libglvnd
       ];
   };
 

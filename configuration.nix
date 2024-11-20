@@ -31,6 +31,7 @@
       ./nvidia-drivers.nix
       ./modules/default.nix
       ./modules/apps/qmk/qmk.nix
+      ./modules/apps/qemu/qemu.nix
       #./modules/services/fancontrol.nix
     ];
 
@@ -65,7 +66,22 @@
 #    };
 #  };
 
-   #setup SSH
+  security.sudo = {
+    enable = true;
+    wheelNeedsPassword = true; # Require password for sudo
+    extraRules = [{
+      commands = [
+        {
+          command = "/run/current-system/sw/bin/nvidia-settings";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    groups = [ "wheel" ];
+  }];
+
+  };
+  
+  #setup SSH
    programs.ssh.startAgent = true;
    services.openssh.enable = true;
 
@@ -124,7 +140,7 @@
 
       #Disable USB power management
       "usbcore.autosuspend=-1"
-      "usbcore.power_control=0"
+      #"usbcore.power_control=0"
       "usbcore.debug=1"
       "video=1920x1080"
       #"loglevel=3"
@@ -274,7 +290,7 @@
   users.users.radekp = {
     isNormalUser = true;
     description = "Radek Polasek";
-    extraGroups = [ "networkmanager" "wheel" "libvirtd" "video" "kvm" "adbusers"];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" "video" "kvm" "adbusers" "gcis"];
     packages = with pkgs; [
     #  thunderbird
     ];
@@ -305,17 +321,6 @@
   enableCompletion = true;
   autosuggestions.enable = true;
   syntaxHighlighting.enable = true;
-  loginShellInit = ''
-    #Disable fan off
-    nvidia-settings -a GPUTargetFanSpeed=35
-    
-    #Enable more aggresive fan curve (still pretty weak though)
-    nvidia-settings -a GPUPowerMizerMode=1
-
-    #Increase color vibrance
-    nvidia-settings -a /DigitalVibrance=430
-
-  '';
   shellInit = ''
     #Enable fzf plugin
     source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
@@ -409,10 +414,10 @@
   smartmontools
   thinkfan
   lm_sensors
+  unetbootin
   
   #TEST nvidia
   #mesa
-  libglvnd
   # Packages
 
   neofetch #distro stats
