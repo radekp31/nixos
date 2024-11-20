@@ -7,7 +7,6 @@ let
     		#!/usr/bin/env bash
     		nvidia-settings -q dpys | grep -oP '\[DPY:[^\]]+\]' | head -n 1
   	''}";
-
 in
 
 {
@@ -251,7 +250,7 @@ in
 	#bold = {family = "Hack", style = "Bold"}
 	#italic = {family = "Hack", style = "Italic"}
 	#bold_italic = {family = "Hack", style = "Bold Italic"}
-	
+  
 	[cursor]
 	style = { shape = "Underline", blinking = "Always" }
 

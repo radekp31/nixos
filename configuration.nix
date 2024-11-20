@@ -31,8 +31,11 @@
       ./nvidia-drivers.nix
       ./modules/default.nix
       ./modules/apps/qmk/qmk.nix
+
       ./modules/apps/qemu/qemu.nix
       #./modules/services/fancontrol.nix
+
+
     ];
 
   # Enable experimental features
@@ -47,6 +50,7 @@
       unstable = import <nixos-unstable> {config = pkgs.config; };
     };
   };
+
 
 
   security.sudo = {
@@ -65,6 +69,7 @@
   };
   
   #setup SSH
+
    programs.ssh.startAgent = true;
    services.openssh.enable = true;
 
@@ -292,6 +297,7 @@
     ll = "eza -lahg";
     llt = "eza -lahg --tree --git-ignore";
     lld = "eza -lahgd";
+
   };
 
   ohMyZsh = {
@@ -360,7 +366,7 @@
   thinkfan
   lm_sensors
   unetbootin
-  
+
   # Packages
 
   neofetch #distro stats
