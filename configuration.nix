@@ -289,9 +289,11 @@
     manix = ''
       manix "" | grep '^# ' | sed 's/^# \\(.*\\) (.*/\\1/;s/ (.*//;s/^# //' | fzf --preview="manix '{}'" | xargs manix
     '';
-    ll = "eza -lahg";
+    ll = "eza --header --long --group --links";
     llt = "eza -lahg --tree --git-ignore";
     lld = "eza -lahgd";
+    cat = "bat -pp";
+    man = "tldr";
   };
 
   ohMyZsh = {
@@ -396,9 +398,10 @@
   yt-dlp
   ffmpeg
   nmon
+  tldr
+  bat
+  btop
 
-
- 
   # Zsh
 
   zsh #I use zsh btw

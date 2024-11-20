@@ -3,10 +3,6 @@
 let 
         unstable = import <nixpkgs> { };
 	font = "MesloLGL Nerd Font"; #default monospace
-	nvidiaDisplay = builtins.exec "${pkgs.writeScript "get-nvidia-display" ''
-    		#!/usr/bin/env bash
-    		nvidia-settings -q dpys | grep -oP '\[DPY:[^\]]+\]' | head -n 1
-  	''}";
 
 in
 
@@ -45,14 +41,6 @@ in
 	john
 	johnny
     ];
-
-# Append to ~/.nvidia-settings-rc
-   home.file.".nvidia-settings-rc".text = ''
-      ${nvidiaDisplay}/GPUFanControlState=1
-      ${nvidiaDisplay}/GPUTargetFanSpeed=35
-      ${nvidiaDisplay}/DigitalVibrance=430
-    '';
-
 
 # Setup bspwm
 
@@ -269,6 +257,8 @@ in
 	TERM = "xterm-256color"
 	EDITOR = "nvim"
 	VISUAL = "nvim"
+	BAT_THEME = "base16"
+	MANPAGER = "nvim +Man!"
 
 	[colors.primary]
 	
