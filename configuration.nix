@@ -31,8 +31,11 @@
       ./nvidia-drivers.nix
       ./modules/default.nix
       ./modules/apps/qmk/qmk.nix
+
       ./modules/apps/qemu/qemu.nix
       #./modules/services/fancontrol.nix
+
+
     ];
 
   # Enable experimental features
@@ -47,6 +50,7 @@
       unstable = import <nixos-unstable> {config = pkgs.config; };
     };
   };
+
 
 
   security.sudo = {
@@ -65,6 +69,7 @@
   };
   
   #setup SSH
+
    programs.ssh.startAgent = true;
    services.openssh.enable = true;
 
@@ -289,11 +294,10 @@
     manix = ''
       manix "" | grep '^# ' | sed 's/^# \\(.*\\) (.*/\\1/;s/ (.*//;s/^# //' | fzf --preview="manix '{}'" | xargs manix
     '';
-    ll = "eza --header --long --group --links";
+    ll = "eza -lahg";
     llt = "eza -lahg --tree --git-ignore";
     lld = "eza -lahgd";
-    cat = "bat -pp";
-    man = "tldr";
+
   };
 
   ohMyZsh = {
@@ -362,7 +366,7 @@
   thinkfan
   lm_sensors
   unetbootin
-  
+
   # Packages
 
   neofetch #distro stats
@@ -398,10 +402,9 @@
   yt-dlp
   ffmpeg
   nmon
-  tldr
-  bat
-  btop
 
+
+ 
   # Zsh
 
   zsh #I use zsh btw
