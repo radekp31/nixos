@@ -31,6 +31,12 @@
     LIBVA_DRIVER_NAME = "nvidia";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
   };
+  
+  #Load kernel Modules
+  boot.kernelModules = ["nvidia_uvm" "nvidia_modeset" "nvidia_drm" "nvidia" ];
+  
+  #Set kernel params
+  boot.kernelParams = ["nvidia-drm.modeset=1"];
 
   hardware.nvidia = {
 
