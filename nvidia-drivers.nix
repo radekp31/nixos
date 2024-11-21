@@ -59,11 +59,25 @@
     # Enable the Nvidia settings menu,
 	# accessible via `nvidia-settings`.
     nvidiaSettings = true;
-
+    
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     package = config.boot.kernelPackages.nvidiaPackages.stable;
     
   };
+
+  
+    #Enable nvidia-settings without password
+    security.sudo = {
+      extraRules = [{
+	commands = [
+	{
+	  command = "/run/current-system/sw/bin/nvidia-settings";
+	  options = [ "NOPASSWD" ];
+	}
+       ];
+      }];
+    };
+
 
   #Packages related to NVIDIA
   environment.systemPackages = with pkgs; [
