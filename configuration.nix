@@ -12,7 +12,7 @@
 #7/ Make the config "interactive"
 #	- automatic user creation from list - https://discourse.nixos.org/t/creating-users-from-a-list/34014/5
 #	- multiple profiles available instead of just having modules/default.nix
-
+#blalblalba
 
 { config, pkgs, lib,  ... }:
 
@@ -74,35 +74,55 @@
    services.openssh.enable = true;
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = false; 
+  boot.initrd = {
+    enable = true;
+    #verbose = false;
+  };
+  boot.loader.systemd-boot.enable = false;
+  boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub.enable = true;
-    boot.loader.grub.device = "/dev/sda";
-    boot.loader.grub.useOSProber = true;
-    boot.loader.grub.extraEntries = ''
-      set gfxpayload=keep
-      set gfxmode=auto
-    '';
-    boot.loader.timeout = 1; #F
-    boot.loader.grub.timeoutStyle = "menu";
+  boot.loader.grub.device = "/dev/sda";
+  boot.loader.grub.useOSProber = true;
+  boot.loader.grub.extraEntries = ''
+    set gfxpayload=keep
+    set gfxmode=auto
+  '';
+  boot.loader.timeout = 1; #F
+  boot.consoleLogLevel = 0;
+  #boot.loader.grub.timeoutStyle = "menu";
 
-    # Enable "Silent Boot"
-    boot.consoleLogLevel = 0;
-    boot.initrd.verbose = true;
+  # Enable "Silent Boot"
+  #boot.consoleLogLevel = 0;
 
-    #Fix OOM freezes
-    #boot.kernelPackages = pkgs.linuxPackages_latest;
-    boot.kernelPackages = pkgs.linuxPackages_5_4;
+  #Fix OOM freezes
+  #boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_5_4;
 
-    zramSwap = {
-	enable = true;
-	algorithm = "ztsd"; #lz4 works
-    };
+  zramSwap = {
+    enable = true;
+    algorithm = "ztsd"; #lz4 works
+  };
 
-    powerManagement.cpuFreqGovernor = "performance";
+  #Setup plymouth
+  boot.plymouth = {
+    enable = true;
+    #themePackages = [ "breeze" ]; #if multiple then []
+    theme = "breeze";
+    # logo - example
+    #pkgs.fetchurl {
+    #  url = "https://nixos.org/logo/nixos-hires.png";
+    #  sha256 = "1ivzgd7iz0i06y36p8m5w48fd8pjqwxhdaavc0pxs7w1g7mcy5si";
+    #}
+    logo = "${pkgs.nixos-icons}/share/icons/hicolor/48x48/apps/nix-snowflake.png";
+    font = "${pkgs.dejavu_fonts}/share/fonts/truetype/DejaVuSans.ttf";
+
+  };
+
+  powerManagement.cpuFreqGovernor = "performance";
 
     boot.kernelParams = [
-     # "quiet"
-     # "splash"
+      "quiet"
+      #"splash"
       "boot.shell_on_fail"
       "tsc=unstable"
       "trace_clock=local"
@@ -294,9 +314,12 @@
     manix = ''
       manix "" | grep '^# ' | sed 's/^# \\(.*\\) (.*/\\1/;s/ (.*//;s/^# //' | fzf --preview="manix '{}'" | xargs manix
     '';
-    ll = "eza -lahg";
+    
+    ll = "eza -lahg --all";
     llt = "eza -lahg --tree --git-ignore";
     lld = "eza -lahgd";
+    man = "tldr";
+    cat = "bat -pp";
 
   };
 
@@ -366,6 +389,9 @@
   thinkfan
   lm_sensors
   unetbootin
+  nixos-icons
+  dejavu_fonts
+
 
   # Packages
 
@@ -402,6 +428,9 @@
   yt-dlp
   ffmpeg
   nmon
+  bat
+  tldr
+  btop
 
 
  
