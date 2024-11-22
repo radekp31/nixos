@@ -38,6 +38,7 @@
   #Set kernel params
   boot.kernelParams = ["nvidia-drm.modeset=1"];
 
+
   hardware.nvidia = {
 
     # Modesetting is required.

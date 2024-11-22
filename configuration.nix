@@ -314,11 +314,13 @@
     manix = ''
       manix "" | grep '^# ' | sed 's/^# \\(.*\\) (.*/\\1/;s/ (.*//;s/^# //' | fzf --preview="manix '{}'" | xargs manix
     '';
+    
     ll = "eza -lahg --all";
     llt = "eza -lahg --tree --git-ignore";
     lld = "eza -lahgd";
     man = "tldr";
     cat = "bat -pp";
+
   };
 
   ohMyZsh = {
@@ -389,6 +391,7 @@
   unetbootin
   nixos-icons
   dejavu_fonts
+
 
   # Packages
 

@@ -3,6 +3,7 @@
 let 
         unstable = import <nixpkgs> { };
 	font = "MesloLGL Nerd Font"; #default monospace
+
 in
 
 {
