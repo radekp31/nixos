@@ -26,13 +26,17 @@
 {
   imports =
     [ # Include the results of the hardware scan.
-      <home-manager/nixos>
+      #<home-manager/nixos>
+      "${builtins.fetchTarball {
+        url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
+        }
+      }/nixos"
       ./hardware-configuration.nix
       ./nvidia-drivers.nix
-      ./modules/default.nix
-      ./modules/apps/qmk/qmk.nix
+      #./modules/default.nix
+      #./modules/apps/qmk/qmk.nix
 
-      ./modules/apps/qemu/qemu.nix
+      #./modules/apps/qemu/qemu.nix
       #./modules/services/fancontrol.nix
 
 
@@ -48,10 +52,21 @@
     allowUnfree = true;
     packageOverrides = pkgs: {
       unstable = import <nixos-unstable> {config = pkgs.config; };
-    };
+      };
+    overlays = [
+      (import (builtins.fetchTarball {
+        url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
+      }))
+    ];
   };
 
+  services.tcsd.enable = false;
 
+  # Example swap partition configuration
+  #swapDevices = [
+  #  { device = "/dev/nvme0n1p2"; }
+  #];
+  
 
   security.sudo = {
     enable = true;
@@ -74,21 +89,27 @@
    services.openssh.enable = true;
 
   # Bootloader.
-  boot.initrd = {
-    enable = true;
-    #verbose = false;
-  };
-  boot.loader.systemd-boot.enable = false;
+  boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda";
-  boot.loader.grub.useOSProber = true;
-  boot.loader.grub.extraEntries = ''
-    set gfxpayload=keep
-    set gfxmode=auto
-  '';
-  boot.loader.timeout = 1; #F
-  boot.consoleLogLevel = 0;
+
+
+#  boot.initrd = {
+#    enable = true;
+#    #verbose = false;
+#  };
+
+
+  #boot.loader.systemd-boot.enable = false;
+  #boot.loader.efi.canTouchEfiVariables = true;
+  #boot.loader.grub.enable = true;
+  #boot.loader.grub.device = "/dev/sda";
+  #boot.loader.grub.useOSProber = true;
+  #boot.loader.grub.extraEntries = ''
+  #  set gfxpayload=keep
+  #  set gfxmode=auto
+  #'';
+  #boot.loader.timeout = 1; #F
+  #boot.consoleLogLevel = 0;
   #boot.loader.grub.timeoutStyle = "menu";
 
   # Enable "Silent Boot"
@@ -124,6 +145,7 @@
       "quiet"
       #"splash"
       "boot.shell_on_fail"
+      #"fsck.mode=skip"
       "tsc=unstable"
       "trace_clock=local"
       
@@ -151,7 +173,7 @@
 	LD_LIBRARY_PATH="${pkgs.libglvnd}/lib";
   };
   # Enable virtualization
-  virtualisation.libvirtd.enable = true;
+  #virtualisation.libvirtd.enable = true;
   boot.kernelModules = [ "kvm-amd" "kvm-intel" ];
 
   # Set your time zone.
@@ -185,15 +207,15 @@
   services.xserver.enable = true;
   
   # Enable Budgie desktop
-  #services.xserver.desktopManager.budgie.enable = true;
-  #services.xserver.displayManager.lightdm.enable = true;
+  services.xserver.desktopManager.budgie.enable = true;
+  services.xserver.displayManager.lightdm.enable = true;
   
   # Enable bspwm
   services.xserver.windowManager.bspwm.enable = true;
   services.displayManager.defaultSession = "none+bspwm";
  
   # Enable ly
-  services.displayManager.ly.enable = true;
+  #services.displayManager.ly.enable = true;
 
   #Enable picom
   services.picom.enable = true;
@@ -269,12 +291,30 @@
   users.users.radekp = {
     isNormalUser = true;
     description = "Radek Polasek";
-    extraGroups = [ "networkmanager" "wheel" "libvirtd" "video" "kvm" "adbusers" "gcis"];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" "video" "kvm" ];
+    #home.file = pkgs.lib.mkForce /home/radekp/.config/nixpkgs/home.nix; # nonsense - but it will have to be crated on autonated user creation
     packages = with pkgs; [
     #  thunderbird
     ];
   };
 
+
+   home-manager.users.radekp = import /etc/nixos/home-manager/home.nix;
+    
+   # home-manager.users.radekp = {
+      
+    #  import = /etc/nixos/home-manager/home.nix;
+
+     # home.stateVersion = "24.05";
+    #home.packages = with pkgs; [
+      # Add any other packages you want here
+    #];
+
+    # Shell configuration
+ 
+ # Optionally enable other services
+    #programs.git.enable = true;
+  #};
 
   #Set up Steam
   programs.steam = {

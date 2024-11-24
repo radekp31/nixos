@@ -5,9 +5,9 @@
   nixpkgs.config.nvidia.acceptLicense = true;
 
   # Enable OpenGL
-  hardware.graphics = { #formerly hardware.opengl
+  hardware.opengl = { #formerly hardware.opengl, now hardware.graphics
     enable = true;
-    enable32Bit = true;
+#    enable32Bit = true;
     extraPackages = with pkgs; [        
         
         amdvlk
@@ -68,7 +68,7 @@
     nvidiaSettings = true;
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
+    package = config.boot.kernelPackages.nvidiaPackages.legacy_535;
     
   };
 
@@ -77,7 +77,7 @@
 
     clinfo
     gwe
-    nvtop-nvidia
+    nvtopPackages.nvidia
     virtualglLib
     vulkan-loader
     vulkan-tools
