@@ -12,7 +12,6 @@
 #7/ Make the config "interactive"
 #	- automatic user creation from list - https://discourse.nixos.org/t/creating-users-from-a-list/34014/5
 #	- multiple profiles available instead of just having modules/default.nix
-#blalblalba
 
 { config, pkgs, lib,  ... }:
 
