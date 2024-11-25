@@ -60,14 +60,6 @@
     ];
   };
 
-  services.tcsd.enable = false;
-
-  # Example swap partition configuration
-  #swapDevices = [
-  #  { device = "/dev/nvme0n1p2"; }
-  #];
-  
-
   security.sudo = {
     enable = true;
     wheelNeedsPassword = true; # Require password for sudo
@@ -85,8 +77,10 @@
   
   #setup SSH
 
-   programs.ssh.startAgent = true;
-   services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    passwordAuthentication = true;
+  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -291,7 +285,7 @@
   users.users.radekp = {
     isNormalUser = true;
     description = "Radek Polasek";
-    extraGroups = [ "networkmanager" "wheel" "libvirtd" "video" "kvm" ];
+    extraGroups = [ "wheel" "networkmanager" "video" ];
     #home.file = pkgs.lib.mkForce /home/radekp/.config/nixpkgs/home.nix; # nonsense - but it will have to be crated on autonated user creation
     packages = with pkgs; [
     #  thunderbird

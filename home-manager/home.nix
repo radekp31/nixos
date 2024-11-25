@@ -357,6 +357,7 @@ in
 	userEmail = "polasek.31@seznam.cz";
 	extraConfig = {
 		init.defaultBranch = "main";
+		safe.directory = "/etc/nixos";
          };
   };
 
