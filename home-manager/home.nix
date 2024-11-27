@@ -62,14 +62,12 @@ in
 	# Start Polybar
 	polybar -c ~/.config/polybar/example/config.ini example > /tmp/polybar.log 2>&1 &
 	
+
 	# Set wallpaper
 	feh --bg-center /etc/nixos/wallpapers/nix-wallpaper-binary-black.jpg
 
         # Set cursor to pointer
 	xsetroot -cursor_name left_ptr &
-
-
-
    '';
    xsession.windowManager.bspwm.extraConfig = ''
 	
@@ -80,7 +78,7 @@ in
    '';
 
   xsession.windowManager.bspwm.monitors = {
-	DP-4 = [
+	DP-2 = [
 		"I"
 		"II"
 		"III"
@@ -92,6 +90,7 @@ in
 		"IX"
 		"X"
 	];
+
   };
 
    xsession.windowManager.bspwm.settings = {
@@ -112,7 +111,6 @@ in
 	"Screenkey" = {
 	  manage=true;
 	  };
-
   };
 
   # Enable sxhkd
@@ -372,6 +370,7 @@ in
 
   home.file.".config/alacritty/alacritty.toml" = {
     text = ''
+        [general]
 	import = ["${pkgs.alacritty-theme}/tokyo-night.toml"]
 
 	[font]

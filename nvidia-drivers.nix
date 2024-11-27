@@ -5,7 +5,7 @@
   nixpkgs.config.nvidia.acceptLicense = true;
 
   # Enable OpenGL
-  hardware.opengl = { #formerly hardware.opengl, now hardware.graphics
+  hardware.graphics = { #formerly hardware.opengl, now hardware.graphics
     enable = true;
 #    enable32Bit = true;
     extraPackages = with pkgs; [        
@@ -36,8 +36,8 @@
   boot.kernelModules = ["nvidia_uvm" "nvidia_modeset" "nvidia_drm" "nvidia" ];
   
   #Set kernel params
-  boot.kernelParams = ["nvidia-drm.modeset=1"];
-
+  boot.kernelParams = [ "nvidia-drm.modeset=1"];
+  #boot.kernelParams = ["nvidia-drm.fbdev=1"];
 
   hardware.nvidia = {
 
@@ -68,8 +68,8 @@
     nvidiaSettings = true;
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
-    package = config.boot.kernelPackages.nvidiaPackages.legacy_535;
-    
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
+    #package = config.boot.kernelPackages.nvidiaPackages.nvidia_x11_stable_open;
   };
 
   #Packages related to NVIDIA
