@@ -36,7 +36,7 @@
   boot.kernelModules = ["nvidia_uvm" "nvidia_modeset" "nvidia_drm" "nvidia" ];
   
   #Set kernel params
-  boot.kernelParams = [ "nvidia-drm.modeset=1"];
+  boot.kernelParams = [ "nvidia-drm.modeset=1"]; #Required by Hyprland
   #boot.kernelParams = ["nvidia-drm.fbdev=1"];
 
   hardware.nvidia = {

@@ -24,6 +24,93 @@ in
 #  };
 
 
+  # Hyprland attempt
+  wayland.windowManager.hyprland = {
+    enable = true;
+    #extraConfig = ''
+    #  monitor = *,preferred,auto
+    #  sensitivity = 1.0
+    #'';
+    #settings = {
+    #  decoration = {
+    #    shadow_offset = 0.5;
+    #	"col.shadow" = "rgba(00000099)";
+    #  };
+    #
+    #  "$mod" = "SUPER";
+    #
+    #  bindm = [
+    #    "$mod, mouse:272, moveWindow"
+    #	"$mod, mouse:273, resizeWindow"
+    #	"$mod ALT, mouse:272, resizeWindow"
+    #  ];
+
+    systemd = {
+      enable = true;
+      extraCommands = [
+        "systemctl --user start hyprland-session.target"
+      ];
+      variables = [
+        "--all" #hope this works
+	#"DISPLAY"
+	#"HYPRLAND_INSTANCE_SIGNATURE"
+	#"WAYLAND_DISPLAY"
+	#"XDG_CURRENT_DESKTOP"
+      ];
+    };
+  };
+
+  home.file.".local/share/wayland-sessions/hyprland.desktop".text = ''
+    [Desktop Entry]
+    Name=Hyprland
+    Exec=Hyprland
+    Type=Application
+  '';
+  
+  #Probably requried by Hyprland as well
+  programs.kitty = {
+    enable = true;
+    #themeFile = "${pkgs.kitty-themes}/share/kitty-themes/themes/tokyo_night_night.conf";
+    extraConfig = ''
+      include ${pkgs.kitty-themes}/share/kitty-themes/themes/tokyo_night_night.conf
+    '';
+    environment = {
+      
+	"TERM" = "xterm-256color";
+	"EDITOR" = "nvim";
+	"VISUAL" = "nvim";
+	"BAT_THEME" = "ansi";
+	"MANPAGER" = "nvim +Man!";
+	
+	# Set Wayland-related variables
+        
+	#"WAYLAND_DISPLAY" = ":1"; # included in wayland.windowManager.hyprland.systemd.enable
+	"XDG_SESSION_TYPE" = "wayland";
+  	#"XDG_CURRENT_DESKTOP" = "Hyprland"; # included in wayland.windowManager.hyprland.systemd.enable
+	"MOZ_ENABLE_WAYLAND" = "1"; # Enable Wayland for Firefox, if applicable
+	"QT_QPA_PLATFORM" = "wayland"; # Use Wayland for Qt apps
+    };
+    font = {
+      package = pkgs.nerdfonts;
+      name = "Inconsolata";
+      size = 14.0;
+    };
+    keybindings = {
+     "ctrl+c" = "copy_or_interrupt";
+    };
+    settings = {
+      scrollback_lines = 10000;
+      enable_audio_bell = false;
+      update_check_interval = 0;
+    };
+    shellIntegration = {
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      mode = "no-rc";  
+    };
+  };
+
+
   # Home packages
   home.packages = with pkgs; [
 	unstable.vlc
@@ -40,6 +127,11 @@ in
 	ghostscript
 	john
 	johnny
+	kitty-themes
+
+	#Hyprnland attempt
+	gnome-shell
+	gdm
     ];
 
 # Setup bspwm
@@ -118,7 +210,7 @@ in
 
   services.sxhkd.keybindings = {
   # wm independent hotkeys
-  "super + Return" = "alacritty";
+  "super + Return" = "kitty";
   "super + space" = "rofi -show combi";
   "alt + F1" = "rofi -show window";
   "alt + F2" = "rofi -show run";
@@ -399,6 +491,14 @@ in
 	VISUAL = "nvim"
 	BAT_THEME = "ansi"
 	MANPAGER = "nvim +Man!"
+	
+	# Set Wayland-related variables
+        
+	#WAYLAND_DISPLAY = ":1" # included in wayland.windowManager.hyprland.systemd.enable
+	XDG_SESSION_TYPE = "wayland"
+  	#XDG_CURRENT_DESKTOP = "Hyprland" # included in wayland.windowManager.hyprland.systemd.enable
+	MOZ_ENABLE_WAYLAND = "1" # Enable Wayland for Firefox, if applicable
+	QT_QPA_PLATFORM = "wayland" # Use Wayland for Qt apps
 
 	[colors.primary]
 	

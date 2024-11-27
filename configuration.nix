@@ -133,6 +133,11 @@
   #};
 
   #Setup plymouth
+  
+  boot.extraModprobeConfig = ''
+    options nvidia-drm modeset=1
+  '';
+
   boot.plymouth = {
     enable = true;
     #themePackages = [ "breeze" ]; #if multiple then []
@@ -223,8 +228,11 @@
   services.displayManager.defaultSession = "none+bspwm";
  
   # Enable ly
-  services.displayManager.ly.enable = true;
+  #services.displayManager.ly.enable = true;
 
+  # Hyprland attempt
+  services.xserver.displayManager.gdm.enable = true;
+  services.xserver.displayManager.gdm.wayland = true;
   #Enable picom
   services.picom.enable = true;
   services.picom.settings = {
@@ -368,6 +376,7 @@
     lld = "eza -lahgd";
     man = "tldr";
     cat = "bat -pp";
+    icat = "kitty icat";
 
   };
 
@@ -463,6 +472,7 @@
   polybarFull # status bar
   alacritty #GPU accelerated terminal emulator
   alacritty-theme
+  #kitty
   rofi # awesome launch menu
   rofi-power-menu #awesome power menu
   #yazi #cli based file manager - its awesome, check nix options as well!
