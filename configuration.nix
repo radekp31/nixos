@@ -33,7 +33,7 @@
       }/nixos"
       ./hardware-configuration.nix
       ./nvidia-drivers.nix
-      #./modules/default.nix
+      ./modules/default.nix
       #./modules/apps/qmk/qmk.nix
 
       #./modules/apps/qemu/qemu.nix
@@ -50,6 +50,10 @@
   # Configure Nixpkgs to use the unstable channel for system-wide packages
   nixpkgs.config = {
     allowUnfree = true;
+    channels = {
+      enable = true;
+      urls = ["https://nixos.org/channels/nixpkgs-unstable"];
+    };
     packageOverrides = pkgs: {
       unstable = import <nixos-unstable> {config = pkgs.config; };
       };
@@ -69,6 +73,14 @@
           command = "/run/current-system/sw/bin/nvidia-settings";
           options = [ "NOPASSWD" ];
         }
+	{
+	  command = "/run/current-system/sw/bin/journalctl";
+	  options = [ "NOPASSWD" ];
+	}
+	{
+	  command = "/run/current-system/sw/bin/dmesg";
+	  options = [ "NOPASSWD" ];
+	}
       ];
     groups = [ "wheel" ];
   }];
@@ -79,18 +91,20 @@
 
   services.openssh = {
     enable = true;
-    passwordAuthentication = true;
+    settings = {
+      PasswordAuthentication = true ;
+    };
   };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.blacklistedKernelModules = [ "nouveau" ];
+  boot.initrd.availableKernelModules = [ "nvidia" "nvme" "vesafb" "xhci_pci" "usbhid" ];  
 
-
-#  boot.initrd = {
-#    enable = true;
-#    #verbose = false;
-#  };
+  boot.initrd = {
+    enable = true;
+  };
 
 
   #boot.loader.systemd-boot.enable = false;
@@ -110,13 +124,13 @@
   #boot.consoleLogLevel = 0;
 
   #Fix OOM freezes
-  #boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelPackages = pkgs.linuxPackages_5_4;
+  #boot.kernelPackages = pkgs.linuxPackages_6_6; # works with beta nvidia driver
+  boot.kernelPackages = pkgs.linuxPackages_zen;
 
-  zramSwap = {
-    enable = true;
-    algorithm = "ztsd"; #lz4 works
-  };
+  #zramSwap = {
+  #  enable = true;
+  #  algorithm = "lz4"; #lz4 works
+  #};
 
   #Setup plymouth
   boot.plymouth = {
@@ -202,14 +216,14 @@
   
   # Enable Budgie desktop
   services.xserver.desktopManager.budgie.enable = true;
-  services.xserver.displayManager.lightdm.enable = true;
+  #services.xserver.displayManager.lightdm.enable = true;
   
   # Enable bspwm
   services.xserver.windowManager.bspwm.enable = true;
   services.displayManager.defaultSession = "none+bspwm";
  
   # Enable ly
-  #services.displayManager.ly.enable = true;
+  services.displayManager.ly.enable = true;
 
   #Enable picom
   services.picom.enable = true;
@@ -425,7 +439,9 @@
   unetbootin
   nixos-icons
   dejavu_fonts
-
+  
+  #nvidia
+  libdrm
 
   # Packages
 
@@ -549,7 +565,7 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.05"; # Did you read the comment?
+  system.stateVersion = "unstable"; # Did you read the comment?
 
 }
 
