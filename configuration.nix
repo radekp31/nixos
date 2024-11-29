@@ -217,10 +217,9 @@
   programs.adb.enable = true;
 
   # Enable the X11 windowing system.
-  services.xserver.enable = true;
-  
-  # Enable Budgie desktop
-  services.xserver.desktopManager.budgie.enable = true;
+  # services.xserver.enable = true; 
+ # Enable Budgie desktop
+  #services.xserver.desktopManager.budgie.enable = true;
   #services.xserver.displayManager.lightdm.enable = true;
   
   # Enable bspwm
@@ -230,9 +229,25 @@
   # Enable ly
   #services.displayManager.ly.enable = true;
 
-  # Hyprland attempt
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.displayManager.gdm.wayland = true;
+  # Wayland + Hyprland attempt
+  programs.hyprland.enable = true;
+  programs.hyprland.withUWSM = true;
+  #services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
+  services.xserver.enable = true;
+  services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
+  services.xserver.desktopManager.plasma5.enable = true;
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.graphics.enable = true; # hardware.opengl.enable on older versions
+  hardware.nvidia.modesetting.enable = true;
+  
+  #layout = user.services.xserver.layout;
+  #xkbVariant = user.services.xserver.xkbVariant;
+  #excludePackages = with pkgs; [ xterm ];
+  
+
+
+
   #Enable picom
   services.picom.enable = true;
   services.picom.settings = {
@@ -449,8 +464,7 @@
   nixos-icons
   dejavu_fonts
   
-  #nvidia
-  libdrm
+  # Wayland + Hyprland
 
   # Packages
 

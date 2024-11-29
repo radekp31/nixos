@@ -1,4 +1,18 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, fetchpatch, ... }:
+
+let
+
+  # Fixes drm device not working with linux 6.12
+  # https://github.com/NVIDIA/open-gpu-kernel-modules/issues/712
+    drm_fop_flags_linux_612_patch  = fetchpatch {
+      url = "https://github.com/Binary-Eater/open-gpu-kernel-modules/commit/8ac26d3c66ea88b0f80504bdd1e907658b41609d.patch";
+      hash = "sha256-+SfIu3uYNQCf/KXhv4PWvruTVKQSh4bgU1moePhe57U=";
+    };
+
+in
+
+
+
 {
 
   #Accept NVIDIA licence
@@ -19,6 +33,7 @@
         vulkan-validation-layers
 	xorg.libXrandr
 	libglvnd
+	libdrm
       ];
   };
 
@@ -68,8 +83,17 @@
     nvidiaSettings = true;
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
-    package = config.boot.kernelPackages.nvidiaPackages.beta;
-    #package = config.boot.kernelPackages.nvidiaPackages.nvidia_x11_stable_open;
+    # package = config.boot.kernelPackages.nvidiaPackages.beta;
+      package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
+        version = "565.57.01";
+        sha256_64bit = "sha256-buvpTlheOF6IBPWnQVLfQUiHv4GcwhvZW3Ks0PsYLHo=";
+        sha256_aarch64 = "sha256-aDVc3sNTG4O3y+vKW87mw+i9AqXCY29GVqEIUlsvYfE=";
+        openSha256 = "sha256-/tM3n9huz1MTE6KKtTCBglBMBGGL/GOHi5ZSUag4zXA=";
+        settingsSha256 = "sha256-H7uEe34LdmUFcMcS6bz7sbpYhg9zPCb/5AmZZFTx1QA=";
+        persistencedSha256 = "sha256-hdszsACWNqkCh8G4VBNitDT85gk9gJe1BlQ8LdrYIkg=";
+	patchesOpen = [drm_fop_flags_linux_612_patch];
+      };
+
   };
 
   #Packages related to NVIDIA

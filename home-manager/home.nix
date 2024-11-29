@@ -11,11 +11,11 @@ in
   #Let Home Manager install and manage itself
   programs.home-manager.enable = true;
   
-  # User settings
+  # Home Manager settings
   home.username = "radekp";
   home.homeDirectory = "/home/radekp";
   home.stateVersion = "24.05";
-
+  home.enableNixpkgsReleaseCheck = false;
 
 # Alacritty overwrites the env vars, put them into alacritty.toml below
 #  home.sessionVariables = {
@@ -27,10 +27,22 @@ in
   # Hyprland attempt
   wayland.windowManager.hyprland = {
     enable = true;
-    #extraConfig = ''
-    #  monitor = *,preferred,auto
-    #  sensitivity = 1.0
-    #'';
+    settings = {
+    "$mod" = "SUPER";
+    bind =
+      [
+        "$mod, Return, exec, kitty"
+	"$mod, F, exec, opera"
+        ", Print, exec, grimblast copy area"
+      ];
+    };
+    plugins = [
+      #inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprbars
+      #"/absolute/path/to/plugin.so"
+    ];
+
+    extraConfig = ''
+    '';
     #settings = {
     #  decoration = {
     #    shadow_offset = 0.5;
@@ -66,8 +78,225 @@ in
     Exec=Hyprland
     Type=Application
   '';
+
+  programs.waybar = {
+  enable = true;
+  systemd.enable = true;
+  style = ''
+  * {
+    font-family: Source Code Pro;
+    font-size: 13px;
+}
+
+#waybar {
+    background-color: #16191C;
+    color: #AAB2BF;
+}
+
+button {
+    box-shadow: inset 0 -3px transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0 5px;
+}
+
+#workspaces button {
+    background-color: #5f676a;
+    color: #ffffff;
+}
+
+#workspaces button:hover {
+    background: rgba(0,0,0,0.2);
+}
+
+#workspaces button.focused {
+    background-color: #285577;
+}
+
+#workspaces button.urgent {
+    background-color: #900000;
+}
+
+#workspaces button.active {
+    background-color: #285577;
+}
+
+#clock,
+#battery,
+#cpu,
+#memory,
+#pulseaudio,
+#tray,
+#mode,
+#idle_inhibitor,
+#window,
+#workspaces {
+    margin: 0 5px;
+}
+
+
+.modules-left > widget:first-child > #workspaces {
+    margin-left: 0;
+}
+
+
+.modules-right > widget:last-child > #workspaces {
+    margin-right: 0;
+}
+
+@keyframes blink {
+    to {
+        background-color: #ffffff;
+        color: #000000;
+    }
+}
+
+#battery.critical:not(.charging) {
+    background-color: #f53c3c;
+    color: #ffffff;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+label:focus {
+    background-color: #000000;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: #eb4d4b;
+}
+
+#idle_inhibitor {
+    font-size: 15px;
+    background-color: #333333;
+    padding: 5px;
+}
+
+#idle_inhibitor.activated {
+    background-color: #285577;
+}
+  '';
+  settings = {
+    mainBar = {
+      layer = "top";
+      position = "top";
+      spacing = 5;
+      height = 30;
+      output = [ "DP-2" ];
+
+      modules-left = [ "sway/mode" ];
+      modules-center = [ "hyprland/window" ];
+      modules-right = [ "cpu" "memory" "pulseaudio" "clock" ];
+
+      "sway/mode" = {
+        format = "{}";
+      };
+      "hyprland/window" = {
+        format = "{title}";
+      };
+      "cpu" = {
+        interval = 30;
+	format = "CPU: {usage}%";
+      };
+      "memory" = {
+        interval = 30;
+	format = "{percentage}%";
+      };
+      "pulseaudio" = {
+        format = "{volume}%";
+      };
+      "clock" = {
+        format = "{:%Y/%m/%d %H:%M}";
+        tooltip-format = "<tt><small>{calendar}</small></tt>";
+        calendar = {
+          format = {
+            months = "<span color='#ffead3'><b>{}</b></span>";
+            today = "<span color='#ff6699'><b>{}</b></span>";
+          };
+        };
+      };
+    };
+  };
+};
+
+
   
-  #Probably requried by Hyprland as well
+
+  services.hyprpaper = {
+    enable = true;
+    settings = {
+        ipc = "on";
+        splash = false;
+        splash_offset = 2.0;
+
+        preload =
+          [ "/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg" ];
+
+        wallpaper = [
+          "DP-2,/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg"
+          "DP-4,/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg"
+        ];
+    };
+  };
+
+  programs.wofi = {
+    enable = true; 
+    settings = {
+      location = "center";
+      allow_markup = true;
+      width = 250;
+    };
+    style = ''
+      * {
+        font-family: monospace;
+      }
+  
+      window {
+        background-color: #1a1b26;
+      }
+    '';
+  };
+
+  programs.yazi = {
+    enable = true;
+    enableZshIntegration = true;
+    #flavors = {
+    #  This is some kind of variation of themes - there is tokyonight available - get it!
+    #};
+    keymap = {
+      input.keymap = [
+        { exec = "close"; on = [ "<C-q>" ]; }
+        { exec = "close --submit"; on = [ "<Enter>" ]; }
+        { exec = "escape"; on = [ "<Esc>" ]; }
+        { exec = "backspace"; on = [ "<Backspace>" ]; }
+      ];
+      manager.keymap = [
+        { exec = "escape"; on = [ "<Esc>" ]; }
+        { exec = "quit"; on = [ "q" ]; }
+        { exec = "close"; on = [ "<C-q>" ]; }
+      ];
+    };
+    settings = {
+      log = {
+        enabled = false;
+      };
+      manager = {
+        show_hidden = false;
+          sort_by = "modified";
+          sort_dir_first = true;
+      };
+    };
+  };
+  
+  #Hyprland - kitty is used by default
   programs.kitty = {
     enable = true;
     #themeFile = "${pkgs.kitty-themes}/share/kitty-themes/themes/tokyo_night_night.conf";
@@ -81,7 +310,11 @@ in
 	"VISUAL" = "nvim";
 	"BAT_THEME" = "ansi";
 	"MANPAGER" = "nvim +Man!";
-	
+	"PATH" = "${pkgs.kitty}/bin:$PATH";
+	"WAYBAR_LOG_LEVEL" = "debug waybar";
+	#"AQ_DRM_DEVICES" = "/dev/dri/card0";
+	#"WLR_NO_HARDWARE_CURSORS" = "1";
+        #"GBM_BACKEND" = "/run/opengl-driver/lib/dri/nvidia_gbm.so";
 	# Set Wayland-related variables
         
 	#"WAYLAND_DISPLAY" = ":1"; # included in wayland.windowManager.hyprland.systemd.enable
@@ -127,11 +360,14 @@ in
 	ghostscript
 	john
 	johnny
-	kitty-themes
 
-	#Hyprnland attempt
-	gnome-shell
-	gdm
+	#Hyprland
+	kitty-themes
+	pipewire
+	wireplumber
+	webcord # Discord is apparently a pain to run, so this is alternative
+	hyprpicker
+
     ];
 
 # Setup bspwm
@@ -495,7 +731,7 @@ in
 	# Set Wayland-related variables
         
 	#WAYLAND_DISPLAY = ":1" # included in wayland.windowManager.hyprland.systemd.enable
-	XDG_SESSION_TYPE = "wayland"
+	#XDG_SESSION_TYPE = "wayland"
   	#XDG_CURRENT_DESKTOP = "Hyprland" # included in wayland.windowManager.hyprland.systemd.enable
 	MOZ_ENABLE_WAYLAND = "1" # Enable Wayland for Firefox, if applicable
 	QT_QPA_PLATFORM = "wayland" # Use Wayland for Qt apps
