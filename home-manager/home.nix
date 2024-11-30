@@ -36,7 +36,7 @@ in
         #[ "allow_workspace_cycles true" ]
         # Static key bindings
         [
-          "$mod, F, exec, firefox"
+          "$mod, F, exec, opera"
           "$mod, Return, exec, kitty"
           "$mod, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
         ]
