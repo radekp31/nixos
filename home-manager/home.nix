@@ -28,19 +28,38 @@ in
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
+    
+    #Keybinds
     "$mod" = "SUPER";
     bind =
       [
         "$mod, Return, exec, kitty"
 	"$mod, F, exec, opera"
-        ", Print, exec, grimblast copy area"
+	"$mod, grave, exec,grim -g \"$(slurp)\" - | swappy -f -"
       ];
-    };
-    plugins = [
-      #inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprbars
-      #"/absolute/path/to/plugin.so"
-    ];
+    
+    #plugins = [
+    #  inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprbars
+    #  "/absolute/path/to/plugin.so"
+    #];
 
+    ++ (
+     # workspaces
+     # binds $mod + [shift +] {1..10} to [move to] workspace {1..10}
+     builtins.concatLists (builtins.genList (
+          x: let
+            ws = let
+              c = (x + 1) / 10;
+            in
+              builtins.toString (x + 1 - (c * 10));
+          in [
+            "$mod, ${ws}, workspace, ${toString (x + 1)}"
+            "$mod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
+          ]
+        )
+        10)
+    );
+    };
     extraConfig = ''
     '';
     #settings = {
@@ -83,106 +102,87 @@ in
   enable = true;
   systemd.enable = true;
   style = ''
-  * {
-    font-family: Source Code Pro;
-    font-size: 13px;
-}
+  *     {
+        font-family: Source Code Pro;
+        font-size: 13px;
+	}
 
-#waybar {
-    background-color: #16191C;
-    color: #AAB2BF;
-}
+	#waybar {
+	    background-color: #16191C;
+	    color: #AAB2BF;
+	}
 
-button {
-    box-shadow: inset 0 -3px transparent;
-    border: none;
-    border-radius: 0;
-    padding: 0 5px;
-}
+	button {
+	    box-shadow: inset 0 -3px transparent;
+	    border: none;
+	    border-radius: 0;
+	    padding: 0 5px;
+	}
 
-#workspaces button {
-    background-color: #5f676a;
-    color: #ffffff;
-}
+	#workspaces button {
+	    background-color: #5f676a;
+	    color: #ffffff;
+	}
 
-#workspaces button:hover {
-    background: rgba(0,0,0,0.2);
-}
+	#workspaces button:hover {
+	    background: rgba(0,0,0,0.2);
+	}
 
-#workspaces button.focused {
-    background-color: #285577;
-}
+	#workspaces button.focused {
+	    background-color: #285577;
+	}
 
-#workspaces button.urgent {
-    background-color: #900000;
-}
+	#workspaces button.urgent {
+	    background-color: #900000;
+	}
 
-#workspaces button.active {
-    background-color: #285577;
-}
+	#workspaces button.active {
+	    background-color: #285577;
+	}
 
-#clock,
-#battery,
-#cpu,
-#memory,
-#pulseaudio,
-#tray,
-#mode,
-#idle_inhibitor,
-#window,
-#workspaces {
-    margin: 0 5px;
-}
-
-
-.modules-left > widget:first-child > #workspaces {
-    margin-left: 0;
-}
+	#clock,
+	#battery,
+	#cpu,
+	#memory,
+	#pulseaudio,
+	#tray,
+	#mode,
+	#idle_inhibitor,
+	#window,
+	#workspaces {
+	    margin: 0 5px;
+	}
 
 
-.modules-right > widget:last-child > #workspaces {
-    margin-right: 0;
-}
+	.modules-left > widget:first-child > #workspaces {
+	    margin-left: 0;
+	}
 
-@keyframes blink {
-    to {
-        background-color: #ffffff;
-        color: #000000;
-    }
-}
 
-#battery.critical:not(.charging) {
-    background-color: #f53c3c;
-    color: #ffffff;
-    animation-name: blink;
-    animation-duration: 0.5s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
-}
+	.modules-right > widget:last-child > #workspaces {
+	    margin-right: 0;
+	}
 
-label:focus {
-    background-color: #000000;
-}
+	@keyframes blink {
+	    to {
+		background-color: #ffffff;
+		color: #000000;
+	    }
+	}
 
-#tray > .passive {
-    -gtk-icon-effect: dim;
-}
+	label:focus {
+	    background-color: #000000;
+	}
 
-#tray > .needs-attention {
-    -gtk-icon-effect: highlight;
-    background-color: #eb4d4b;
-}
+	#tray > .passive {
+	    -gtk-icon-effect: dim;
+	}
 
-#idle_inhibitor {
-    font-size: 15px;
-    background-color: #333333;
-    padding: 5px;
-}
+	#tray > .needs-attention {
+	    -gtk-icon-effect: highlight;
+	    background-color: #eb4d4b;
+	}
 
-#idle_inhibitor.activated {
-    background-color: #285577;
-}
   '';
   settings = {
     mainBar = {
@@ -192,23 +192,57 @@ label:focus {
       height = 30;
       output = [ "DP-2" ];
 
-      modules-left = [ "sway/mode" ];
+      modules-left = [ "sway/workspaces" ]; # put back sway/mode if needed
       modules-center = [ "hyprland/window" ];
-      modules-right = [ "cpu" "memory" "pulseaudio" "clock" ];
-
+      modules-right = [ "keyboard-state" "disk" "cpu" "memory" "pulseaudio" "clock" "custom/power" ];
+      
+      # modules-left
       "sway/mode" = {
         format = "{}";
       };
+      "sway/workspaces" = {
+         disable-scroll = true;
+         all-outputs = true;
+         warp-on-scroll = false;
+         format = "{name}";
+         format-icons = {
+             terminal = "";
+             web = "";
+             dev ="";
+             system = "";
+             social = "";
+             urgent = "";
+             focused = "";
+             default = "";
+         };
+      };
+
+      # modules-center
       "hyprland/window" = {
         format = "{title}";
       };
-      "cpu" = {
+
+      # modules-right
+      "keyboard-state" = {
+        numlock = true;
+        capslock = true;
+        format = "{name} {icon}";
+        format-icons = {
+            locked = "";
+            unlocked = "";
+        };
+      };        
+      "disk" = {
         interval = 30;
+	format = "/ {percentage_used}% ";
+      };
+      "cpu" = {
+        interval = 10;
 	format = "CPU: {usage}%";
       };
       "memory" = {
-        interval = 30;
-	format = "{percentage}%";
+        interval = 10;
+	format = "RAM: {percentage}%";
       };
       "pulseaudio" = {
         format = "{volume}%";
@@ -223,12 +257,69 @@ label:focus {
           };
         };
       };
+      "custom/power" = {
+        format = "⏻ ";
+		tooltip = false;
+		menu = "on-click";
+		menu-file = "$HOME/.config/waybar/power_menu.xml"; # Menu file in resources folder
+		menu-actions = {
+			shutdown = "shutdown";
+			reboot = "reboot";
+			suspend = "systemctl suspend";
+			hibernate = "systemctl hibernate";
+		};
+      };
     };
   };
 };
 
+  #Create power_menu.xml for waybar
+  home.file.".config/waybar/power_menu.xml".text = ''
+  <?xml version="1.0" encoding="UTF-8"?>
+  <interface>
+    <object class="GtkMenu" id="menu">
+      <child>
+		  <object class="GtkMenuItem" id="suspend">
+			  <property name="label">Suspend</property>
+          </object>
+	  </child>
+	  <child>
+          <object class="GtkMenuItem" id="hibernate">
+			  <property name="label">Hibernate</property>
+          </object>
+	  </child>
+      <child>
+          <object class="GtkMenuItem" id="shutdown">
+			  <property name="label">Shutdown</property>
+          </object>
+      </child>
+      <child>
+        <object class="GtkSeparatorMenuItem" id="delimiter1"/>
+      </child>
+      <child>
+		  <object class="GtkMenuItem" id="reboot">
+			  <property name="label">Reboot</property>
+  		  </object>
+      </child>
+    </object>
+  </interface>
+  '';
 
-  
+  #Configure Swappy
+  #Create keybind: grim -g "$(slurp)" - | swappy -f -
+
+  home.file.".config/swappy/config".text = ''
+    [Default]
+    save_dir=${config.home.homeDirectory}/Pictures
+    save_filename_format=swappy-%Y%m%d-%H%M%S.png
+    show_panel=false
+    line_size=5
+    text_size=20
+    text_font=sans-serif
+    paint_mode=brush
+    early_exit=false
+    fill_shape=false
+  '';
 
   services.hyprpaper = {
     enable = true;
@@ -367,7 +458,9 @@ label:focus {
 	wireplumber
 	webcord # Discord is apparently a pain to run, so this is alternative
 	hyprpicker
-
+	grim #screenshots
+	slurp #screenshots
+	swappy #screenshots
     ];
 
 # Setup bspwm
