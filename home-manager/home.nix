@@ -28,37 +28,34 @@ in
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
-    
-    #Keybinds
-    "$mod" = "SUPER";
-    bind =
-      [
-        "$mod, Return, exec, kitty"
-	"$mod, F, exec, opera"
-	"$mod, grave, exec,grim -g \"$(slurp)\" - | swappy -f -"
-      ];
-    
-    #plugins = [
-    #  inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprbars
-    #  "/absolute/path/to/plugin.so"
-    #];
+      "$mod" = "SUPER";
 
-    ++ (
-     # workspaces
-     # binds $mod + [shift +] {1..10} to [move to] workspace {1..10}
-     builtins.concatLists (builtins.genList (
-          x: let
-            ws = let
-              c = (x + 1) / 10;
-            in
-              builtins.toString (x + 1 - (c * 10));
-          in [
-            "$mod, ${ws}, workspace, ${toString (x + 1)}"
-            "$mod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
-          ]
-        )
-        10)
-    );
+      # Define key bindings
+      bind = builtins.concatLists [
+
+        #[ "allow_workspace_cycles true" ]
+        # Static key bindings
+        [
+          "$mod, F, exec, firefox"
+          "$mod, Return, exec, kitty"
+          "$mod, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
+        ]
+        # Dynamic workspace bindings
+        (builtins.concatLists (builtins.genList (x:
+          let
+            ws = toString (x + 1);
+          in
+            [
+              "$mod, ${ws}, workspace, ${ws}"
+              "$mod SHIFT, ${ws}, movetoworkspace, ${ws}"
+            ]
+        ) 10))
+        # Additional bindings for workspace navigation
+        #[
+        #  "$mod, LEFT, exec, hyprctl dispatch workspace prev"
+        #  "$mod, RIGHT, exec, hyprctl dispatch workspace next"
+        #]
+      ];
     };
     extraConfig = ''
     '';
@@ -403,6 +400,8 @@ in
 	"MANPAGER" = "nvim +Man!";
 	"PATH" = "${pkgs.kitty}/bin:$PATH";
 	"WAYBAR_LOG_LEVEL" = "debug waybar";
+	"XCURSOR_THEME" = "${pkgs.bibata-cursors}/share/icons/Bibata-Modern-ice/cursor.theme";
+	"XCURSOR_SIZE" = "24";
 	#"AQ_DRM_DEVICES" = "/dev/dri/card0";
 	#"WLR_NO_HARDWARE_CURSORS" = "1";
         #"GBM_BACKEND" = "/run/opengl-driver/lib/dri/nvidia_gbm.so";
@@ -461,6 +460,8 @@ in
 	grim #screenshots
 	slurp #screenshots
 	swappy #screenshots
+	adwaita-icon-theme
+	bibata-cursors
     ];
 
 # Setup bspwm
@@ -784,8 +785,9 @@ in
   programs.bash = {
   enable = true;
   };
-  xdg.enable = true ;
-
+  xdg = {
+    enable = true;
+  };
   #Enable Alacritty
   programs.alacritty.enable = true;
 

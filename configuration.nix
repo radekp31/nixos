@@ -249,7 +249,7 @@
 
 
   #Enable picom
-  services.picom.enable = true;
+  services.picom.enable = false;
   services.picom.settings = {
     
       # Enable shadows
