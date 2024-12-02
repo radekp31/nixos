@@ -39,6 +39,8 @@ in
           "$mod, F, exec, opera"
           "$mod, Return, exec, kitty"
           "$mod, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
+	  "$mod, space, exec, rofi -show combi"
+	  "$mod, G, exec, rofi -show games "
         ]
         # Dynamic workspace bindings
         (builtins.concatLists (builtins.genList (x:
@@ -58,6 +60,8 @@ in
       ];
     };
     extraConfig = ''
+      exec-once = systemctl --user enable --now waybar.service
+      exec-once = waybar
     '';
     #settings = {
     #  decoration = {
@@ -189,31 +193,30 @@ in
       height = 30;
       output = [ "DP-2" ];
 
-      modules-left = [ "sway/workspaces" ]; # put back sway/mode if needed
+      modules-left = [ "hyprland/workspaces" ]; # put back sway/mode if needed
       modules-center = [ "hyprland/window" ];
-      modules-right = [ "keyboard-state" "disk" "cpu" "memory" "pulseaudio" "clock" "custom/power" ];
+      modules-right = [ "keyboard-state" "disk" "cpu" "memory" "pulseaudio" "clock" "custom/power"];
       
       # modules-left
       "sway/mode" = {
         format = "{}";
       };
-      "sway/workspaces" = {
-         disable-scroll = true;
-         all-outputs = true;
-         warp-on-scroll = false;
-         format = "{name}";
-         format-icons = {
-             terminal = "";
-             web = "";
-             dev ="";
-             system = "";
-             social = "";
-             urgent = "";
-             focused = "";
-             default = "";
-         };
+      "hyprland/workspaces" = {
+        format = "{name}";
+        format-icons = {
+          "1" = "";
+          "2" = "";
+          "3" = "";
+          "4" = "";
+          "5" = "";
+          "active" = "";
+          "default" = "";
+        };
+        persistent-workspaces = {
+          "*" = [ "2" "3" "4" "5" ]; # 2-5 on every monitor
+          # "HDMI-A-1" = [ 1 ]; # but only workspace 1 on HDMI-A-1
+        };
       };
-
       # modules-center
       "hyprland/window" = {
         format = "{title}";
@@ -300,6 +303,160 @@ in
       </child>
     </object>
   </interface>
+  '';
+
+  # Configure Rofi app launcher
+  programs.rofi = {
+    enable = true;
+    cycle = true;
+    font = "Inconsolata";
+    location = "center";
+    plugins = [ pkgs.rofi-calc pkgs.rofi-games pkgs.rofi-wayland ];
+    terminal = "\${pkgs.kitty}/bin/kitty";
+    theme = "tokyo-night.rasi";
+  };
+
+  # Rofi TokyoNight theme
+  home.file.".config/rofi/tokyo-night.rasi".text=''
+	    /*
+	 * Tokyonight colorscheme for rofi
+	 * User: w8ste
+	 */
+
+
+	// define colors etc.
+	* {
+	    bg: #1A1B26;
+	    hv: #9274ca; // selector highlight
+	    primary: #C0CAF5; 
+	    ug: #0B2447;
+	    font: "Inconsolata 11";
+	    background-color: @bg;
+	    //dark: @bg;
+	    border: 0px;
+	    kl: #C0CAF5; //font color
+	    black: #000000;
+
+	    transparent: rgba(46,52,64,0);
+	}
+
+	// defines different aspects of the window
+	window {
+	    width: 700;
+	    /*since line wont work with height, i comment it out 
+	    if you rather control the size via height
+	    just comment it out */
+	    //height: 500;
+
+	    orientation: horizontal;
+	    location: center;
+	    anchor: center;
+	    transparency: "screenshot";
+	    border-color: @transparent;   
+	    border: 0px;
+	    border-radius: 6px;
+	    spacing: 0;
+	    children: [ mainbox ];
+	}
+
+	mainbox {
+	    spacing: 0;
+	    children: [ inputbar, message, listview ];
+	}
+
+	inputbar {
+	    color: @kl;
+	    padding: 11px;
+	    border: 3px 3px 2px 3px;
+	    border-color: @primary;
+	    border-radius: 6px 6px 0px 0px;
+	}
+
+	message {
+	    padding: 0;
+	    border-color: @primary;
+	    border: 0px 1px 1px 1px;
+	}
+
+	entry, prompt, case-indicator {
+	    text-font: inherit;
+	    text-color: inherit;
+	}
+
+	entry {
+	    cursor: pointer;
+	}
+
+	prompt {
+	    margin: 0px 5px 0px 0px;
+	}
+
+	listview {
+	    layout: vertical;
+	    //spacing: 5px;
+	    padding: 8px;
+	    lines: 12;
+	    columns: 1;
+	    border: 0px 3px 3px 3px; 
+	    border-radius: 0px 0px 6px 6px;
+	    border-color: @primary;
+	    dynamic: false;
+	}
+
+	element {
+	    padding: 2px;
+	    vertical-align: 1;
+	    color: @kl;
+	    font: inherit;
+	}
+
+	element-text {
+	    background-color: inherit;
+	    text-color: inherit;
+	}
+
+	element selected.normal {
+	    color: @black;
+	    background-color: @hv;
+	}
+
+	element normal active {
+	    background-color: @hv;
+	    color: @black;
+	}
+
+	element-text, element-icon {
+	    background-color: inherit;
+	    text-color: inherit;
+	}
+
+	element normal urgent {
+	    background-color: @primary;
+	}
+
+	element selected active {
+	    background: @hv;
+	    foreground: @bg;
+	}
+
+	button {
+	    padding: 6px;
+	    color: @primary;
+	    horizonatal-align: 0.5;
+
+	    border: 2px 0px 2px 2px;
+	    border-radius: 4px 0px 0px 4px;
+	    border-color: @primary;
+	}
+
+	button selected normal {
+	    border: 2px 0px 2px 2px;
+	    border-color: @primary;
+	}
+
+	scrollbar {
+	    enabled: true;
+	} 
   '';
 
   #Configure Swappy
@@ -399,7 +556,10 @@ in
 	"BAT_THEME" = "ansi";
 	"MANPAGER" = "nvim +Man!";
 	"PATH" = "${pkgs.kitty}/bin:$PATH";
+	# #WaybarLife
 	"WAYBAR_LOG_LEVEL" = "debug waybar";
+	"WAYLAND_DISPLAY" = "wayland-1";
+	#Cursor
 	"XCURSOR_THEME" = "${pkgs.bibata-cursors}/share/icons/Bibata-Modern-ice/cursor.theme";
 	"XCURSOR_SIZE" = "24";
 	#"AQ_DRM_DEVICES" = "/dev/dri/card0";
@@ -414,7 +574,7 @@ in
 	"QT_QPA_PLATFORM" = "wayland"; # Use Wayland for Qt apps
     };
     font = {
-      package = pkgs.nerdfonts;
+      package = pkgs.nerd-fonts.inconsolata;
       name = "Inconsolata";
       size = 14.0;
     };
@@ -460,8 +620,10 @@ in
 	grim #screenshots
 	slurp #screenshots
 	swappy #screenshots
+	nerd-fonts.inconsolata
 	adwaita-icon-theme
 	bibata-cursors
+
     ];
 
 # Setup bspwm

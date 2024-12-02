@@ -4,7 +4,7 @@ let
 
   # Fixes drm device not working with linux 6.12
   # https://github.com/NVIDIA/open-gpu-kernel-modules/issues/712
-    drm_fop_flags_linux_612_patch  = fetchpatch {
+    drm_fop_flags_linux_612_patch  = pkgs.fetchpatch {
       url = "https://github.com/Binary-Eater/open-gpu-kernel-modules/commit/8ac26d3c66ea88b0f80504bdd1e907658b41609d.patch";
       hash = "sha256-+SfIu3uYNQCf/KXhv4PWvruTVKQSh4bgU1moePhe57U=";
     };

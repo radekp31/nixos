@@ -322,7 +322,7 @@
   users.users.radekp = {
     isNormalUser = true;
     description = "Radek Polasek";
-    extraGroups = [ "wheel" "networkmanager" "video" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "input" ];
     #home.file = pkgs.lib.mkForce /home/radekp/.config/nixpkgs/home.nix; # nonsense - but it will have to be crated on autonated user creation
     packages = with pkgs; [
     #  thunderbird
@@ -537,30 +537,22 @@
   hunspellDicts.en_US-large # enUS dictionary for grammar checking
   hunspellDicts.en_GB-large # enGB dictionary for grammar checking
   hunspellDicts.cs_CZ # csCz dictionary for grammar checking
-  ];
-  
-  # Install fonts from NerdFonts
-  fonts.packages = with pkgs; [
 
-    (nerdfonts.override { fonts = [ 
-    "FiraCode"
-    "Inconsolata"
-    "Meslo"
-    "SpaceMono"
-    "Ubuntu"
-    "UbuntuSans"
-    "UbuntuMono"
-    "0xProto"
-    "Agave"
-    "CommitMono"
-    "GeistMono"
-    "Hack"
-    "Lilex"
-    "MartianMono"
-    "SpaceMono"
-    ]; })
+  # Fonts
+  nerd-fonts.fira-code
+  nerd-fonts.fira-mono
+  nerd-fonts.jetbrains-mono
+  nerd-fonts.dejavu-sans-mono
+  nerd-fonts.inconsolata
+  nerd-fonts.meslo-lg
+  nerd-fonts.space-mono
+  nerd-fonts.ubuntu
+  nerd-fonts.ubuntu-sans
+  nerd-fonts.agave
+  nerd-fonts.hack
+  nerd-fonts.symbols-only
   ];
-  
+
   # Enable dconf
   programs.dconf.enable = true;
 
