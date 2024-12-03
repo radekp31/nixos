@@ -28,40 +28,37 @@ in
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
+      #decoration = {
+      #  shadow_offset = "0 5";
+      #  "col.shadow" = "rgba(00000099)";
+      #};
+
       "$mod" = "SUPER";
 
-      # Define key bindings
-      bind = builtins.concatLists [
-
-        #[ "allow_workspace_cycles true" ]
-        # Static key bindings
-        [
+      bind = [
+        # Keybindings
           "$mod, F, exec, opera"
           "$mod, Return, exec, kitty"
           "$mod, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
 	  "$mod, space, exec, rofi -show combi"
 	  "$mod, G, exec, rofi -show games "
-        ]
-        # Dynamic workspace bindings
-        (builtins.concatLists (builtins.genList (x:
-          let
-            ws = toString (x + 1);
-          in
-            [
-              "$mod, ${ws}, workspace, ${ws}"
-              "$mod SHIFT, ${ws}, movetoworkspace, ${ws}"
-            ]
-        ) 10))
-        # Additional bindings for workspace navigation
-        #[
-        #  "$mod, LEFT, exec, hyprctl dispatch workspace prev"
-        #  "$mod, RIGHT, exec, hyprctl dispatch workspace next"
-        #]
+      ];
+      monitor = [
+	#Monitor setup
+	"DP-2, 2560x1440@144, 0x0, auto"
+	"DP-3, 1680x1050@60, -1680x0, auto"
       ];
     };
+
     extraConfig = ''
-      exec-once = systemctl --user enable --now waybar.service
-      exec-once = waybar
+      #exec-once = systemctl --user enable --now waybar.service
+      #exec-once = waybar
+
+      #monitor = DP-2, 2560x1440@144, 0x0, 1
+      #monitor = DP-3, 1680x1050@60, -1650x0, auto
+
+
+
     '';
     #settings = {
     #  decoration = {
@@ -201,22 +198,23 @@ in
       "sway/mode" = {
         format = "{}";
       };
-      "hyprland/workspaces" = {
-        format = "{name}";
-        format-icons = {
-          "1" = "";
-          "2" = "";
-          "3" = "";
-          "4" = "";
-          "5" = "";
-          "active" = "";
-          "default" = "";
-        };
-        persistent-workspaces = {
-          "*" = [ "2" "3" "4" "5" ]; # 2-5 on every monitor
-          # "HDMI-A-1" = [ 1 ]; # but only workspace 1 on HDMI-A-1
-        };
-      };
+      #"hyprland/workspaces" = {
+      #  format = "{name}";
+      #  format-icons = {
+      #    "1" = "";
+      #    "2" = "";
+      #    "3" = "";
+      #    "4" = "";
+      #    "5" = "";
+      #    "active" = "";
+      #    "default" = "";
+      #  };
+      #  persistent-workspaces = {
+      #    "*" = [ "2" "3" "4" "5" ]; # 2-5 on every monitor
+      #    # "HDMI-A-1" = [ 1 ]; # but only workspace 1 on HDMI-A-1
+      #  };
+      #};
+      
       # modules-center
       "hyprland/window" = {
         format = "{title}";
@@ -487,7 +485,7 @@ in
 
         wallpaper = [
           "DP-2,/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg"
-          "DP-4,/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg"
+          "DP-3,/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg"
         ];
     };
   };

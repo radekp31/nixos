@@ -21,7 +21,7 @@ in
   # Enable OpenGL
   hardware.graphics = { #formerly hardware.opengl, now hardware.graphics
     enable = true;
-#    enable32Bit = true;
+    enable32Bit = true;
     extraPackages = with pkgs; [        
         
         amdvlk
@@ -51,7 +51,7 @@ in
   boot.kernelModules = ["nvidia_uvm" "nvidia_modeset" "nvidia_drm" "nvidia" ];
   
   #Set kernel params
-  boot.kernelParams = [ "nvidia-drm.modeset=1"]; #Required by Hyprland
+  boot.kernelParams = [ "nvidia-drm.modeset=1" "nvidia-drm.fbdev=1" "ibt=off" ]; #Required by Hyprland
   #boot.kernelParams = ["nvidia-drm.fbdev=1"];
 
   hardware.nvidia = {
