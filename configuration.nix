@@ -436,7 +436,7 @@
 
   # Setup neovim
   programs.neovim = {
-    enable = true;
+    enable = false;
     viAlias = true;
     vimAlias = true;
     defaultEditor = true;
@@ -462,11 +462,11 @@
         # loaded on launch
         start = [
           #tokyonight-nvim
-          vim-lsp
-          vim-lsp-settings
-          nvim-treesitter
-          cmp-nvim-lsp
-          nvim-cmp
+          #vim-lsp
+          #vim-lsp-settings
+          #nvim-treesitter
+          #cmp-nvim-lsp
+          #nvim-cmp
         ];
         # manually loadable by calling `:packadd $plugin-name`
         opt = [

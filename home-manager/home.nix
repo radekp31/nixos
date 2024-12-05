@@ -7,7 +7,6 @@
 
 let
   unstable = import <nixpkgs> { };
-  font = "MesloLGL Nerd Font"; # default monospace
 
 in
 
@@ -1073,9 +1072,9 @@ in
       	#white   = '#acb0d0'
     '';
   };
-  #};
 
   #Enable NVIM
+    #Enable NVIM
   programs.neovim = {
     enable = true;
     viAlias = true;
