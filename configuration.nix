@@ -1,11 +1,11 @@
-# Edit this configuration file to define what should be installed on
+#/nix/store/kkin0nrpavpdpkinh2w9rrb8fxyr9l6b-init.vim Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 #TODO
 #1/ fix hardcoded values
-#2/ keep only relevant config in configuration.nix 
-#   split into more .nix files or move it to home.nix  
+#2/ keep only relevant config in configuration.nix
+#   split into more .nix files or move it to home.nix
 #4/ fix ugly formatting (extraneous comments, indentation)
 #5/ test removing some configs that might be included by default (openssh, ...)
 #6/ Make the config functional for fresh machines via git pull
@@ -13,34 +13,38 @@
 #	- automatic user creation from list - https://discourse.nixos.org/t/creating-users-from-a-list/34014/5
 #	- multiple profiles available instead of just having modules/default.nix
 
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
-{ config, pkgs, lib,  ... }:
+#let
 
-#let 
-
-  #vars in needed
+#vars in needed
 
 #in
 
-
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      #<home-manager/nixos>
-      "${builtins.fetchTarball {
+  imports = [
+    # Include the results of the hardware scan.
+    #<home-manager/nixos>
+    "${
+      builtins.fetchTarball {
         url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
-        }
-      }/nixos"
-      ./hardware-configuration.nix
-      ./nvidia-drivers.nix
-      ./modules/default.nix
-      #./modules/apps/qmk/qmk.nix
-
-      #./modules/apps/qemu/qemu.nix
-      #./modules/services/fancontrol.nix
+      }
+    }/nixos"
+    ./hardware-configuration.nix
+    ./nvidia-drivers.nix
+    ./modules/default.nix
+    #./modules/apps/qmk/qmk.nix
 
 
-    ];
+    #./modules/apps/qemu/qemu.nix
+    #./modules/services/fancontrol.nix
+
+  ];
 
   # Enable experimental features
   nix.extraOptions = ''
@@ -52,47 +56,52 @@
     allowUnfree = true;
     channels = {
       enable = true;
-      urls = ["https://nixos.org/channels/nixpkgs-unstable"];
+
+      urls = [ "https://nixos.org/channels/nixpkgs-unstable" ];
     };
     packageOverrides = pkgs: {
-      unstable = import <nixos-unstable> {config = pkgs.config; };
-      };
+      unstable = import <nixos-unstable> { config = pkgs.config; };
+    };
     overlays = [
-      (import (builtins.fetchTarball {
-        url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
-      }))
+      (import (
+        builtins.fetchTarball {
+          url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
+        }
+      ))
     ];
   };
 
   security.sudo = {
     enable = true;
     wheelNeedsPassword = true; # Require password for sudo
-    extraRules = [{
-      commands = [
-        {
-          command = "/run/current-system/sw/bin/nvidia-settings";
-          options = [ "NOPASSWD" ];
-        }
-	{
-	  command = "/run/current-system/sw/bin/journalctl";
-	  options = [ "NOPASSWD" ];
-	}
-	{
-	  command = "/run/current-system/sw/bin/dmesg";
-	  options = [ "NOPASSWD" ];
-	}
-      ];
-    groups = [ "wheel" ];
-  }];
 
+    extraRules = [
+      {
+        commands = [
+          {
+            command = "/run/current-system/sw/bin/nvidia-settings";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "/run/current-system/sw/bin/journalctl";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "/run/current-system/sw/bin/dmesg";
+            options = [ "NOPASSWD" ];
+          }
+        ];
+        groups = [ "wheel" ];
+      }
+    ];
   };
-  
+
   #setup SSH
 
   services.openssh = {
     enable = true;
     settings = {
-      PasswordAuthentication = true ;
+      PasswordAuthentication = true;
     };
   };
 
@@ -100,12 +109,13 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.blacklistedKernelModules = [ "nouveau" ];
-  boot.initrd.availableKernelModules = [ "nvidia" "nvme" "vesafb" "xhci_pci" "usbhid" ];  
-
-  boot.initrd = {
-    enable = true;
-  };
-
+  boot.initrd.availableKernelModules = [
+    "nvidia"
+    "nvme"
+    "vesafb"
+    "xhci_pci"
+    "usbhid"
+  ];
 
   #boot.loader.systemd-boot.enable = false;
   #boot.loader.efi.canTouchEfiVariables = true;
@@ -145,23 +155,25 @@
     logo = "${pkgs.nixos-icons}/share/icons/hicolor/48x48/apps/nix-snowflake.png";
     font = "${pkgs.dejavu_fonts}/share/fonts/truetype/DejaVuSans.ttf";
 
-  };
+  boot.extraModprobeConfig = ''
+    options nvidia-drm modeset=1
+  '';
 
   powerManagement.cpuFreqGovernor = "performance";
 
-    boot.kernelParams = [
-      "quiet"
-      #"splash"
-      "boot.shell_on_fail"
-      #"fsck.mode=skip"
-      "tsc=unstable"
-      "trace_clock=local"
-      
-      #Disable USB power management
-      "usbcore.autosuspend=-1"
-      "usbcore.debug=1"
-      "video=1920x1080"
-    ];
+  boot.kernelParams = [
+    #"quiet"
+    #"splash"
+    "boot.shell_on_fail"
+    #"fsck.mode=skip"
+    "tsc=unstable"
+    "trace_clock=local"
+
+    #Disable USB power management
+    "usbcore.autosuspend=-1"
+    "usbcore.debug=1"
+    "video=1920x1080"
+  ];
 
   networking.hostName = "nixos-desktop"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -175,17 +187,27 @@
 
   # Environment variables
   environment.variables = {
-	EDITOR = "nvim";
-	VISUAL = "nvim";
-	TERM = lib.mkDefault "xterm-256color";
-	LD_LIBRARY_PATH="${pkgs.libglvnd}/lib";
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+    TERM = lib.mkDefault "xterm-256color";
+    LD_LIBRARY_PATH = "${pkgs.libglvnd}/lib";
+    XAUTHORITY = "/run/user/0/.Xauthority";
+    XDG_CACHE_HOME = "$HOME/.cache";
+    XDG_CONFIG_DIRS = "/etc/xdg";
+    XDG_CONFIG_HOME = "$HOME/.config";
+    #XDG_DATA_DIRS = "/usr/local/share/:/usr/share/";
+    XDG_DATA_HOME = "$HOME/.local/share";
+    XDG_STATE_HOME = "$HOME/.local/state";
   };
   # Enable virtualization
   #virtualisation.libvirtd.enable = true;
-  boot.kernelModules = [ "kvm-amd" "kvm-intel" ];
+  boot.kernelModules = [
+    "kvm-amd"
+    "kvm-intel"
+  ];
 
   # Set your time zone.
-  time.timeZone = "Europe/Prague"; #value before "Europe/Amsterdam"
+  time.timeZone = "Europe/Prague"; # value before "Europe/Amsterdam"
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
@@ -202,71 +224,103 @@
     LC_TIME = "en_US.UTF-8";
   };
 
- 
   #Add udev rules for GMMK2
   services.udev.extraRules = ''
-	SUBSYSTEM=="usb", ATTR{idVendor}=="320f", ATTR{idProduct}=="504b", MODE="0666"  	
+    SUBSYSTEM=="usb", ATTR{idVendor}=="320f", ATTR{idProduct}=="504b", MODE="0666"  	
   '';
 
   #Enable Android Debug Bridge
   programs.adb.enable = true;
 
   # Enable the X11 windowing system.
-  services.xserver.enable = true;
-  
+  # services.xserver.enable = true;
   # Enable Budgie desktop
-  services.xserver.desktopManager.budgie.enable = true;
+
+  #services.xserver.desktopManager.budgie.enable = true;
   #services.xserver.displayManager.lightdm.enable = true;
   
   # Enable bspwm
   services.xserver.windowManager.bspwm.enable = true;
-  services.displayManager.defaultSession = "none+bspwm";
- 
+  services.displayManager.defaultSession = "hyprland-uwsm";
+
   # Enable ly
   services.displayManager.ly.enable = true;
 
+  # Wayland + Hyprland attempt
+  #programs.uwsm.enable = true;
+  programs.hyprland.enable = true;
+  programs.hyprland.withUWSM = true;
+  #services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
+  services.xserver.enable = true;
+  #services.xserver.deviceSection = ''
+  #        Identifier "NVIDIA GPU"
+  #        Driver "nvidia"
+  #        Option "PrimaryGPU" "Yes"
+  #        Option "ConnectedMonitor" "DFP-2,DFP-3"
+  #	  Option "MetaModes" "2560x1440 +0+0, 1680x1050 -2560+0"
+  #'';
+  services.greetd = {
+    enable = true;
+    settings.default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --asterisks --time --time-format '%I:%M %p | %a -- %h | %F' --cmd Hyprland";
+  };
+  #services.displayManager.sddm.enable = true;
+  #services.displayManager.sddm.wayland.enable = true;
+  #services.displayManager.sddm.enableHidpi = true;
+  services.xserver.desktopManager.plasma5.enable = true;
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.graphics.enable = true; # hardware.opengl.enable on older versions
+  hardware.nvidia.modesetting.enable = true;
+
+  xdg.portal = {
+    enable = true;
+  };
+
+  # End of Hyprland attempt
+
+  #layout = user.services.xserver.layout;
+  #xkbVariant = user.services.xserver.xkbVariant;
   #Enable picom
-  services.picom.enable = true;
+  services.picom.enable = false;
   services.picom.settings = {
-    
-      # Enable shadows
-      shadow = true;
-      shadow-radius = 12;
-      shadow-opacity = 0.7;
-      shadow-offset-x = -7;
-      shadow-offset-y = -7;
 
-      # Enable fading
-      fading = true;
-      fade-delta = 5;
-      fade-in-step = 0.03;
-      fade-out-step = 0.03;
+    # Enable shadows
+    shadow = true;
+    shadow-radius = 12;
+    shadow-opacity = 0.7;
+    shadow-offset-x = -7;
+    shadow-offset-y = -7;
 
-      # Enable transparency for inactive windows
-      inactive-opacity = 0.9;
-      active-opacity = 1.0;
-      frame-opacity = 0.8;
-      inactive-opacity-override = false;
+    # Enable fading
+    fading = true;
+    fade-delta = 5;
+    fade-in-step = 0.03;
+    fade-out-step = 0.03;
 
-      # Blur background of transparent windows
-      blur = {
-        method = "kernel";
-        strength = 5;
-      };
+    # Enable transparency for inactive windows
+    inactive-opacity = 0.9;
+    active-opacity = 1.0;
+    frame-opacity = 0.8;
+    inactive-opacity-override = false;
 
-      # Enable vsync to avoid screen tearing
-      vsync = true;
-
-      # Use rounded corners
-      corner-radius = 0;
-
-      # Disable shadows for specific applications
-      shadow-exclude = [
-        "class_g = 'Polybar'"
-        "class_g = 'feh'"
-        "class_g = 'Alacritty'"
-      ];
+    # Blur background of transparent windows
+    blur = {
+      method = "kernel";
+      strength = 5;
     };
+
+    # Enable vsync to avoid screen tearing
+    vsync = true;
+
+    # Use rounded corners
+    corner-radius = 0;
+
+    # Disable shadows for specific applications
+    shadow-exclude = [
+      "class_g = 'Polybar'"
+      "class_g = 'feh'"
+      "class_g = 'Alacritty'"
+    ];
+  };
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -299,29 +353,33 @@
   users.users.radekp = {
     isNormalUser = true;
     description = "Radek Polasek";
-    extraGroups = [ "wheel" "networkmanager" "video" ];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "video"
+      "input"
+    ];
     #home.file = pkgs.lib.mkForce /home/radekp/.config/nixpkgs/home.nix; # nonsense - but it will have to be crated on autonated user creation
     packages = with pkgs; [
-    #  thunderbird
+      #  thunderbird
     ];
   };
 
+  home-manager.users.radekp = import /etc/nixos/home-manager/home.nix;
 
-   home-manager.users.radekp = import /etc/nixos/home-manager/home.nix;
-    
-   # home-manager.users.radekp = {
-      
-    #  import = /etc/nixos/home-manager/home.nix;
+  # home-manager.users.radekp = {
 
-     # home.stateVersion = "24.05";
-    #home.packages = with pkgs; [
-      # Add any other packages you want here
-    #];
+  #  import = /etc/nixos/home-manager/home.nix;
 
-    # Shell configuration
- 
- # Optionally enable other services
-    #programs.git.enable = true;
+  # home.stateVersion = "24.05";
+  #home.packages = with pkgs; [
+  # Add any other packages you want here
+  #];
+
+  # Shell configuration
+
+  # Optionally enable other services
+  #programs.git.enable = true;
   #};
 
   #Set up Steam
@@ -331,212 +389,215 @@
     dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
     localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
-  
- # nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
- #   "steam"
- #   "steam-original"
- #   "steam-run"
- # ];
-  
+
+  # nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+  #   "steam"
+  #   "steam-original"
+  #   "steam-run"
+  # ];
+
   #Set up ZSH
   users.defaultUserShell = pkgs.zsh;
   programs.zsh = {
-  enable = true;
-  promptInit = ''
-    source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-  '';
-  enableCompletion = true;
-  autosuggestions.enable = true;
-  syntaxHighlighting.enable = true;
-  shellInit = ''
-    #Enable fzf plugin
-    source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
-  '';
-
-  shellAliases = {
-    update = "sudo nixos-rebuild switch";
-    edit = "sudoedit /etc/nixos/configuration.nix";
-    update-vm = "sudo nixos-rebuild switch build-vm && dunstify \"NixOS Rebuild\" \"VM is ready.\"";
-    rebuild = "sudo nixos-rebuild test && dunstify \"NixOS Rebuild\" \"Test rebuild is done.\"";
-    rebuild-switch = "sudo nixos-rebuild switch && dunstify \"NixOS Rebuild\"\"Switch rebuild is done.\"";
-    manix = ''
-      manix "" | grep '^# ' | sed 's/^# \\(.*\\) (.*/\\1/;s/ (.*//;s/^# //' | fzf --preview="manix '{}'" | xargs manix
-    '';
-    
-    ll = "eza -lahg --all";
-    llt = "eza -lahg --tree --git-ignore";
-    lld = "eza -lahgd";
-    man = "tldr";
-    cat = "bat -pp";
-
-  };
-
-  ohMyZsh = {
     enable = true;
-    plugins = [ "git" "sudo" "fzf" "eza"
-    ];
-    theme = "robbyrussell";
-  };
+    promptInit = ''
+      source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+    '';
+    enableCompletion = true;
+    autosuggestions.enable = true;
+    syntaxHighlighting.enable = true;
+    shellInit = ''
+      #Enable fzf plugin
+      source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
+    '';
+
+    shellAliases = {
+      update = "sudo nixos-rebuild switch";
+      edit = "sudoedit /etc/nixos/configuration.nix";
+      update-vm = "sudo nixos-rebuild switch build-vm && dunstify \"NixOS Rebuild\" \"VM is ready.\"";
+      rebuild = "sudo nixos-rebuild test && dunstify \"NixOS Rebuild\" \"Test rebuild is done.\"";
+      rebuild-switch = "sudo nixos-rebuild switch && dunstify \"NixOS Rebuild\"\"Switch rebuild is done.\"";
+      manix = ''
+        manix "" | grep '^# ' | sed 's/^# \\(.*\\) (.*/\\1/;s/ (.*//;s/^# //' | fzf --preview="manix '{}'" | xargs manix
+      '';
+
+      ll = "eza -lahg --all";
+      llt = "eza -lahg --tree --git-ignore";
+      lld = "eza -lahgd";
+      man = "tldr";
+      cat = "bat -pp";
+      icat = "kitty icat";
+
+    };
+
+    ohMyZsh = {
+      enable = true;
+      plugins = [
+        "git"
+        "sudo"
+        "fzf"
+        "eza"
+      ];
+      theme = "robbyrussell";
+    };
 
   };
-
- 
 
   # Install firefox.
   programs.firefox.enable = true;
 
   # Setup neovim
-    programs.neovim = {
-    	enable = true;
-    	viAlias = true;
-    	vimAlias = true;
-	defaultEditor = true;
-	package = pkgs.neovim-unwrapped;
+  programs.neovim = {
+    enable = true;
+    viAlias = true;
+    vimAlias = true;
+    defaultEditor = true;
+    package = pkgs.neovim-unwrapped;
     # Neovim configure section for custom RC and plugins
-    	configure = {
-      		customRC = ''
+    configure = {
+      customRC = ''
+                " Enable Tokyo Night color scheme
+        	colorscheme tokyonight-night
 
-      colorscheme tokyonight-night
+        	" Enable row numbers
+                set number
+                set relativenumber
 
-      set number
-      set relativenumber
+                " Clear screen after exit
+        	lua vim.api.nvim_create_autocmd("VimLeavePre", { command = "silent !clear" })
+              
+        	'';
 
-      lua vim.api.nvim_create_autocmd("VimLeavePre", { command = "silent !clear" })
-	'';
+      #colorscheme tokyonight-night
+      packages.myVimPackage = with pkgs.vimPlugins; {
 
-
-		#colorscheme tokyonight-night
-    		packages.myVimPackage = with pkgs.vimPlugins; {
-    			
-			# loaded on launch
-    			start = [ tokyonight-nvim ];
-    			# manually loadable by calling `:packadd $plugin-name`
-    			opt = [ tokyonight-nvim ];
-  		};
-    	};
+        # loaded on launch
+        start = [
+          #tokyonight-nvim
+          vim-lsp
+          vim-lsp-settings
+          nvim-treesitter
+          cmp-nvim-lsp
+          nvim-cmp
+        ];
+        # manually loadable by calling `:packadd $plugin-name`
+        opt = [
+          #tokyonight-nvim
+        ];
+      };
     };
+  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
+    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    #  wget
 
-  #git # this thing basically doesnt function properly without git
+    #git # this thing basically doesnt function properly without git
 
-  # TEST
-  qmk
-  qmk_hid
-  qmk-udev-rules
-  udiskie
-  unzip
-  p7zip
+    # TEST
+    qmk
+    qmk_hid
+    qmk-udev-rules
+    udiskie
+    unzip
+    p7zip
 
-  pciutils
-  smartmontools
-  thinkfan
-  lm_sensors
-  unetbootin
-  nixos-icons
-  dejavu_fonts
-  
-  #nvidia
-  libdrm
+    pciutils
+    smartmontools
+    thinkfan
+    lm_sensors
+    unetbootin
+    nixos-icons
+    dejavu_fonts
 
-  # Packages
+    # Wayland + Hyprland
+    xorg.xhost
+    # Packages
 
-  neofetch #distro stats
-  manix # nix options manual
-  curl
-  git
-  openssh
-  htop #system monitor
-  eza #ls on steroids 
-  fzf # fuzzy finder
-  plymouth # boot customization
-  feh # lighweight wallpaper management
-  gwe # fan control for Nvidia GPUs
-  qemu_kvm # virtualisation
-  spice-vdagent # copy/paste agent for VMs
-  virt-viewer # VM viewer
-  tree # dir tree structure viewer
-  polybarFull # status bar
-  alacritty #GPU accelerated terminal emulator
-  alacritty-theme
-  rofi # awesome launch menu
-  rofi-power-menu #awesome power menu
-  #yazi #cli based file manager - its awesome, check nix options as well!
-  picom #x11 lightweight compositor
-  ly # TUI login screen
-  ntfs3g
-  betterlockscreen # cool lockscreen built on i3 lock
-  shutter # snipping tool
-  dunst #notification tool
-  lld_18
-  opera
-  jq
-  yt-dlp
-  ffmpeg
-  nmon
-  bat
-  tldr
-  btop
+    neofetch # distro stats
+    manix # nix options manual
+    curl
+    git
+    openssh
+    htop # system monitor
+    eza # ls on steroids
+    fzf # fuzzy finder
+    plymouth # boot customization
+    feh # lighweight wallpaper management
+    gwe # fan control for Nvidia GPUs
+    qemu_kvm # virtualisation
+    spice-vdagent # copy/paste agent for VMs
+    virt-viewer # VM viewer
+    tree # dir tree structure viewer
+    polybarFull # status bar
+    alacritty # GPU accelerated terminal emulator
+    alacritty-theme
+    #kitty
+    rofi # awesome launch menu
+    rofi-power-menu # awesome power menu
+    #yazi #cli based file manager - its awesome, check nix options as well!
+    picom # x11 lightweight compositor
+    ly # TUI login screen
+    ntfs3g
+    betterlockscreen # cool lockscreen built on i3 lock
+    shutter # snipping tool
+    dunst # notification tool
+    lld_18
+    opera
+    jq
+    yt-dlp
+    ffmpeg
+    nmon
+    bat
+    tldr
+    btop
 
+    # Zsh
 
- 
-  # Zsh
+    zsh # I use zsh btw
+    oh-my-zsh # I use fancy zsh btw
+    zsh-powerlevel10k # I use ultra fancy zsh btw
+    zsh-fzf-tab
+    zsh-fzf-history-search
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+    meslo-lgs-nf # font
 
-  zsh #I use zsh btw
-  oh-my-zsh # I use fancy zsh btw
-  zsh-powerlevel10k # I use ultra fancy zsh btw
-  zsh-fzf-tab
-  zsh-fzf-history-search 
-  zsh-autosuggestions 
-  zsh-syntax-highlighting
-  meslo-lgs-nf # font
+    # NVIM
+    vimPlugins.tokyonight-nvim
+    xclip
+    wl-clipboard
+    # Uncomment the next line if rnix-lsp is desired
+    # rnix-lsp
 
-  # NVIM
-  vimPlugins.tokyonight-nvim
-  lua-language-server
-  xclip
-  wl-clipboard
-  # Uncomment the next line if rnix-lsp is desired
-  # rnix-lsp
+    # Home manager
+    home-manager
 
-  # Home manager
-  home-manager 
+    # Libre Office
 
-  # Libre Office
+    libreoffice-qt # libre office
+    hunspell # grammar checking for libre office
+    hunspellDicts.en_US-large # enUS dictionary for grammar checking
+    hunspellDicts.en_GB-large # enGB dictionary for grammar checking
+    hunspellDicts.cs_CZ # csCz dictionary for grammar checking
 
-  libreoffice-qt # libre office
-  hunspell # grammar checking for libre office
-  hunspellDicts.en_US-large # enUS dictionary for grammar checking
-  hunspellDicts.en_GB-large # enGB dictionary for grammar checking
-  hunspellDicts.cs_CZ # csCz dictionary for grammar checking
+    # Fonts
+    nerd-fonts.fira-code
+    nerd-fonts.fira-mono
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.dejavu-sans-mono
+    nerd-fonts.inconsolata
+    nerd-fonts.meslo-lg
+    nerd-fonts.space-mono
+    nerd-fonts.ubuntu
+    nerd-fonts.ubuntu-sans
+    nerd-fonts.agave
+    nerd-fonts.hack
+    nerd-fonts.symbols-only
   ];
-  
-  # Install fonts from NerdFonts
-  fonts.packages = with pkgs; [
 
-    (nerdfonts.override { fonts = [ 
-    "FiraCode"
-    "Inconsolata"
-    "Meslo"
-    "SpaceMono"
-    "Ubuntu"
-    "UbuntuSans"
-    "UbuntuMono"
-    "0xProto"
-    "Agave"
-    "CommitMono"
-    "GeistMono"
-    "Hack"
-    "Lilex"
-    "MartianMono"
-    "SpaceMono"
-    ]; })
-  ];
-  
   # Enable dconf
   programs.dconf.enable = true;
 
@@ -568,4 +629,3 @@
   system.stateVersion = "unstable"; # Did you read the comment?
 
 }
-
