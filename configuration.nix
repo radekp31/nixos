@@ -40,6 +40,7 @@
     ./modules/default.nix
     #./modules/apps/qmk/qmk.nix
 
+
     #./modules/apps/qemu/qemu.nix
     #./modules/services/fancontrol.nix
 
@@ -55,6 +56,7 @@
     allowUnfree = true;
     channels = {
       enable = true;
+
       urls = [ "https://nixos.org/channels/nixpkgs-unstable" ];
     };
     packageOverrides = pkgs: {
@@ -72,6 +74,7 @@
   security.sudo = {
     enable = true;
     wheelNeedsPassword = true; # Require password for sudo
+
     extraRules = [
       {
         commands = [
@@ -91,7 +94,6 @@
         groups = [ "wheel" ];
       }
     ];
-
   };
 
   #setup SSH
@@ -114,10 +116,6 @@
     "xhci_pci"
     "usbhid"
   ];
-
-  boot.initrd = {
-    enable = true;
-  };
 
   #boot.loader.systemd-boot.enable = false;
   #boot.loader.efi.canTouchEfiVariables = true;
@@ -143,6 +141,19 @@
   #  enable = true;
   #  algorithm = "lz4"; #lz4 works
   #};
+
+  #Setup plymouth
+  boot.plymouth = {
+    enable = true;
+    #themePackages = [ "breeze" ]; #if multiple then []
+    theme = "breeze";
+    # logo - example
+    #pkgs.fetchurl {
+    #  url = "https://nixos.org/logo/nixos-hires.png";
+    #  sha256 = "1ivzgd7iz0i06y36p8m5w48fd8pjqwxhdaavc0pxs7w1g7mcy5si";
+    #}
+    logo = "${pkgs.nixos-icons}/share/icons/hicolor/48x48/apps/nix-snowflake.png";
+    font = "${pkgs.dejavu_fonts}/share/fonts/truetype/DejaVuSans.ttf";
 
   boot.extraModprobeConfig = ''
     options nvidia-drm modeset=1
@@ -224,15 +235,16 @@
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
   # Enable Budgie desktop
+
   #services.xserver.desktopManager.budgie.enable = true;
   #services.xserver.displayManager.lightdm.enable = true;
-
+  
   # Enable bspwm
   services.xserver.windowManager.bspwm.enable = true;
   services.displayManager.defaultSession = "hyprland-uwsm";
 
   # Enable ly
-  #services.displayManager.ly.enable = true;
+  services.displayManager.ly.enable = true;
 
   # Wayland + Hyprland attempt
   #programs.uwsm.enable = true;

@@ -727,6 +727,7 @@ in
       "X"
     ];
 
+
   };
 
   xsession.windowManager.bspwm.settings = {

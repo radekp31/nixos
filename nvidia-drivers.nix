@@ -25,6 +25,7 @@ in
   # Enable OpenGL
   hardware.graphics = {
     # formerly hardware.opengl, now hardware.graphics
+
     enable = true;
     enable32Bit = true;
     extraPackages = with pkgs; [
@@ -66,6 +67,7 @@ in
     "nvidia-drm.fbdev=1"
     "ibt=off"
   ]; # Required by Hyprland
+
   #boot.kernelParams = ["nvidia-drm.fbdev=1"];
 
   hardware.nvidia = {
@@ -107,7 +109,6 @@ in
       persistencedSha256 = "sha256-hdszsACWNqkCh8G4VBNitDT85gk9gJe1BlQ8LdrYIkg=";
       patchesOpen = [ drm_fop_flags_linux_612_patch ];
     };
-
   };
 
   #Packages related to NVIDIA
