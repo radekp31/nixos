@@ -27,6 +27,9 @@ in
     name = "Bibata-Modern-Ice";
     size = 22;
   };
+  home.sessionPath = [
+    "/home/radekp/.nix-profile/bin/" # Required by Neovim and plugins (?)
+  ];
 
   # Alacritty overwrites the env vars, put them into alacritty.toml below
   #  home.sessionVariables = {
@@ -669,6 +672,7 @@ in
 
     # Neovim
     nixd # LSP server
+    vimPlugins.nvim-lspconfig
     nixpkgs-fmt # Nix file formatter
     nixfmt-rfc-style # Nix file formatter
     alejandra # Nix file formatter
@@ -1090,7 +1094,7 @@ in
                         packadd! nvim-lspconfig
                         lua << END
           	      require("lspconfig").nixd.setup({
-                          cmd = { "${pkgs.nixd}/bin/nixd" },
+                          cmd = { "nixd" },
                           settings = {
                             nixd = {
                               nixpkgs = {
@@ -1098,9 +1102,9 @@ in
           		      expr = 'import <home-manager/modules> { configuration = /etc/nixos/home-manager/home.nix; pkgs = import <nixpkgs> {}; }).options',
                               },
                               formatting = {
-                                command = { "${pkgs.nixfmt}/bin/nixfmt" }, -- or nixfmt or nixpkgs-fmt
+                                command = { "nixfmt" }, -- or nixfmt or nixpkgs-fmt
                               },
-          		    home_manager = {
+          		      home-manager = {
                 		       expr = 'import <home-manager/modules> { configuration = /etc/nixos/home-manager/home.nix; pkgs = import <nixpkgs> {}; }).options',
                    	    },
                             },
@@ -1120,7 +1124,7 @@ in
             defaults = {
               mappings = {
                 i = {
-                  ["<C-n>"] = require('telescope.actions').cycle_history_next,
+                  ["<C-n>"] = require('telescope.a
                   ["<C-p>"] = require('telescope.actions').cycle_history_prev,
                 },
               },
@@ -1132,19 +1136,45 @@ in
     ];
 
     extraConfig = ''
-      	" Enable Tokyo Night color scheme
-      	colorscheme tokyonight-night
+            	" Enable Tokyo Night color scheme
+            	colorscheme tokyonight-night
 
-      	" Enable row numbers
-              set number
-              set relativenumber
+            	" Enable row numbers
+                    set number
+                    set relativenumber
 
-              " Clear screen after exit
-      	lua vim.api.nvim_create_autocmd("VimLeavePre", { command = "silent !clear" })
-
-      	'';
+                " Clear screen after exit
+            	lua vim.api.nvim_create_autocmd("VimLeavePre", { command = "silent !clear" })
+		
+		" Configure Lsp server
+		lua << EOF
+local nvim_lsp = require("lspconfig")
+nvim_lsp.nixd.setup({
+   cmd = { "nixd" },
+   settings = {
+      nixd = {
+         nixpkgs = {
+            expr = "import <nixpkgs> { }",
+         },
+         formatting = {
+            command = { "nixfmt" },
+         },
+         options = {
+            nixos = {
+               expr = '(builtins.getFlake ("git+file://" + toString ./.)).nixosConfigurations.k-on.options',
+            },
+            home_manager = {
+               expr = '(builtins.getFlake ("git+file://" + toString ./.)).homeConfigurations."ruixi@k-on".options',
+            },
+         },
+      },
+   },
+})
+EOF
+'';
 
     extraPackages = with pkgs; [
+      nixd
       lua-language-server
       xclip
       wl-clipboard
