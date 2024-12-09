@@ -12,6 +12,7 @@ in
 
 {
 
+
   #Let Home Manager install and manage itself
   programs.home-manager.enable = true;
 
@@ -1379,7 +1380,7 @@ in
   #Enable NVIM
     #Enable NVIM
   programs.neovim = {
-    enable = true;
+    enable = false;
     viAlias = true;
     vimAlias = true;
     vimdiffAlias = true;
@@ -1392,28 +1393,6 @@ in
       # Plugin 2: nvim-treesitter
       {
         plugin = pkgs.vimPlugins.nvim-lspconfig;
-        config = ''
-                        packadd! nvim-lspconfig
-                        lua << END
-          	      require("lspconfig").nixd.setup({
-                          cmd = { "nixd" },
-                          settings = {
-                            nixd = {
-                              nixpkgs = {
-                                expr = "import <nixpkgs> { }",
-          		      expr = 'import <home-manager/modules> { configuration = /etc/nixos/home-manager/home.nix; pkgs = import <nixpkgs> {}; }).options',
-                              },
-                              formatting = {
-                                command = { "nixfmt" }, -- or nixfmt or nixpkgs-fmt
-                              },
-          		      home-manager = {
-                		       expr = 'import <home-manager/modules> { configuration = /etc/nixos/home-manager/home.nix; pkgs = import <nixpkgs> {}; }).options',
-                   	    },
-                            },
-                          },
-                        })
-                END
-        '';
       }
 
       # Plugin 3: telescope.nvim
@@ -1457,18 +1436,15 @@ nvim_lsp.nixd.setup({
       nixd = {
          nixpkgs = {
             expr = "import <nixpkgs> { }",
-         },
+	 },
          formatting = {
             command = { "nixfmt" },
          },
-         options = {
-            nixos = {
-               expr = '(builtins.getFlake ("git+file://" + toString ./.)).nixosConfigurations.k-on.options',
-            },
-            home_manager = {
-               expr = '(builtins.getFlake ("git+file://" + toString ./.)).homeConfigurations."ruixi@k-on".options',
-            },
-         },
+	 options = {
+	   nixos = {
+	     expr = "(builtins.getFlake \"/home/lyc/flakes\").nixosConfigurations.adrastea.options"
+	   },
+	 },
       },
    },
 })
@@ -1482,4 +1458,6 @@ EOF
       wl-clipboard
     ];
   };
+
+
 }

@@ -20,11 +20,14 @@
   ...
 }:
 
-#let
+let
+  nixvim = import (builtins.fetchGit {
+    url = "https://github.com/nix-community/nixvim";
+    # If you are not running an unstable channel of nixpkgs, select the corresponding branch of nixvim.
+     ref = "nixos-24.11";
+  });
+in
 
-#vars in needed
-
-#in
 
 {
   imports = [
@@ -35,16 +38,51 @@
         url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
       }
     }/nixos"
+    
+    nixvim.nixosModules.nixvim
+
     ./hardware-configuration.nix
     ./nvidia-drivers.nix
     ./modules/default.nix
+    
     #./modules/apps/qmk/qmk.nix
-
     #./modules/apps/qemu/qemu.nix
-    #./modules/services/fancontrol.nix
 
 
   ];
+
+  programs.nixvim = { 
+    enable = true;
+    colorschemes.tokyonight = {
+      enable = true;
+      settings = {
+        style = "night";
+      };
+    };
+    plugins.lightline = {
+      enable = true;
+      settings = {
+        colorscheme = "Tomorrow_Night_Blue";
+    plugins.nvim-tree = {
+      enable = true;
+      view = {
+        relativenumber = true;
+	number = true;
+      };
+    };
+    plugins.lsp = {
+      enable = true;
+      servers = {
+        nixd = {
+	  enable = true;
+	  
+	};
+      };
+    };
+
+      };
+    };
+  };
 
   # Enable experimental features
   nix.extraOptions = ''
