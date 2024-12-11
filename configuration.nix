@@ -39,6 +39,7 @@
     #./modules/apps/qemu/qemu.nix
 
 
+
   ];
 
   # Enable experimental features
@@ -69,6 +70,27 @@
   security.sudo = {
     enable = true;
     wheelNeedsPassword = true; # Require password for sudo
+    extraRules = [
+      {
+        commands = [
+          {
+            command = "/run/current-system/sw/bin/nvidia-settings";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "/run/current-system/sw/bin/journalctl";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "/run/current-system/sw/bin/dmesg";
+            options = [ "NOPASSWD" ];
+          }
+        ];
+        groups = [ "wheel" ];
+      }
+    ];
+
+
     extraRules = [
       {
         commands = [
@@ -261,7 +283,37 @@
     enable = true;
   };
 
+  # Wayland + Hyprland attempt
+  #programs.uwsm.enable = true;
+  programs.hyprland.enable = true;
+  programs.hyprland.withUWSM = true;
+  #services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
+  services.xserver.enable = true;
+  #services.xserver.deviceSection = ''
+  #        Identifier "NVIDIA GPU"
+  #        Driver "nvidia"
+  #        Option "PrimaryGPU" "Yes"
+  #        Option "ConnectedMonitor" "DFP-2,DFP-3"
+  #	  Option "MetaModes" "2560x1440 +0+0, 1680x1050 -2560+0"
+  #'';
+  services.greetd = {
+    enable = true;
+    settings.default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --asterisks --time --time-format '%I:%M %p | %a -- %h | %F' --cmd Hyprland";
+  };
+  #services.displayManager.sddm.enable = true;
+  #services.displayManager.sddm.wayland.enable = true;
+  #services.displayManager.sddm.enableHidpi = true;
+  services.xserver.desktopManager.plasma5.enable = true;
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.graphics.enable = true; # hardware.opengl.enable on older versions
+  hardware.nvidia.modesetting.enable = true;
+
+  xdg.portal = {
+    enable = true;
+  };
+
   # End of Hyprland attempt
+
 
   #layout = user.services.xserver.layout;
   #xkbVariant = user.services.xserver.xkbVariant;
