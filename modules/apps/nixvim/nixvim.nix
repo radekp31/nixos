@@ -4,7 +4,7 @@ let
 
         nixvim = import (builtins.fetchGit {
           url = "https://github.com/nix-community/nixvim";
-          ref = "nixos-24.05";
+          ref = "nixos-24.11";
         });
 
         get_bufnrs.__raw = ''
@@ -30,13 +30,84 @@ let
     programs.nixvim = {
   #Includes functions get_bufnrs
     enable = true;
-    colorschemes.tokyonight.enable = true;
+    colorschemes.tokyonight = {
+      enable = true;
+      settings = {
+        style = "night";
+      };
+    };
     plugins.lualine.enable = true;
     clipboard = {
       register = "unnamedplus";
-      providers.xclip.enable = true;
+      providers.wl-copy.enable = true;
     };
     plugins = {
+      telescope = {
+        enable = true;
+	keymaps = {
+	  "<leader>ff" = {
+	    action = "find_files";
+	    options = {
+	      desc = "Telescope Files";
+	    };
+	  };
+	  "<leader>fg" = {
+	    action = "live_grep";
+	    options = {
+	      desc = "Telescope Live Grep";
+	    };
+	  };
+	  "<leader>fb" = {
+	    action = "buffers";
+	    options = {
+	      desc = "Telescope Buffers";
+	    };
+	  };
+	  "<leader>fh" = {
+	    action = "help_tags";
+	    options = {
+	      desc = "Telescope Help";
+	    };
+	  };
+	};
+	settings = {
+          defaults = {
+	    file_ignore_patterns = [
+	      "^.git/"
+	      "^.mypy_cache/"
+	      "^__pycache__/"
+	      "^output/"
+	      "^data/"
+	      "%.ipynb"
+	      "^result"
+	    ];
+	    layout_config = {
+	      prompt_position = "bottom";
+	    };
+	    #mappings = {
+	    #  i = {
+	    #    "<A-j>" = {
+	    #      __raw = "require('telescope.actions').move_selection_next";
+	    #    };
+	    #    "<A-k>" = {
+	    #      __raw = "require('telescope.actions').move_selection_previous";
+	    #    };
+	    #  };
+	    #};
+	    selection_caret = "> ";
+	    set_env = {
+	      COLORTERM = "truecolor";
+	    };
+	    sorting_strategy = "ascending";
+	  };
+	};
+      };
+      lightline = {
+        enable = true;
+	settings = {
+	  colorcheme = "Tommorow_Night_Blue";
+	};
+      };
      lsp = {
        enable = true;
        servers = {
@@ -82,7 +153,10 @@ let
             };
           }
           {
-             name = "buffer";
+            name = "fuzzy-buffer";
+          }
+          {
+            name = "fuzzy-path";
           }
           ];
           mapping = {
@@ -99,14 +173,23 @@ let
       cmp-buffer = {
         enable = true;
       };
+      cmp-fuzzy-buffer = {
+        enable = true;
+      };
+      cmp-fuzzy-path = {
+        enable = true;
+      };
       treesitter = {
+        enable = true;
+      };
+      web-devicons = {
         enable = true;
       };
     };  
     extraPlugins = [
       pkgs.vimPlugins.nvim-lspconfig
     ];
-    extraPackages = [ pkgs.wl-clipboard pkgs.xsel ];
+    extraPackages = [ pkgs.wl-clipboard pkgs.xsel pkgs.ripgrep];
     };
 
 

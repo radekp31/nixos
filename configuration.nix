@@ -20,11 +20,6 @@
   ...
 }:
 
-#let
-
-#vars in needed
-
-#in
 
 {
   imports = [
@@ -35,13 +30,14 @@
         url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
       }
     }/nixos"
+    
     ./hardware-configuration.nix
     ./nvidia-drivers.nix
     ./modules/default.nix
+    ./modules/apps/nixvim/nixvim.nix
     #./modules/apps/qmk/qmk.nix
-
     #./modules/apps/qemu/qemu.nix
-    #./modules/services/fancontrol.nix
+
 
 
   ];
@@ -74,7 +70,6 @@
   security.sudo = {
     enable = true;
     wheelNeedsPassword = true; # Require password for sudo
-
     extraRules = [
       {
         commands = [
@@ -612,8 +607,7 @@
     vimPlugins.tokyonight-nvim
     xclip
     wl-clipboard
-    # Uncomment the next line if rnix-lsp is desired
-    # rnix-lsp
+    nil
 
     # Home manager
     home-manager
