@@ -20,14 +20,6 @@
   ...
 }:
 
-let
-  nixvim = import (builtins.fetchGit {
-    url = "https://github.com/nix-community/nixvim";
-    # If you are not running an unstable channel of nixpkgs, select the corresponding branch of nixvim.
-     ref = "nixos-24.11";
-  });
-in
-
 
 {
   imports = [
@@ -39,61 +31,15 @@ in
       }
     }/nixos"
     
-    nixvim.nixosModules.nixvim
-
     ./hardware-configuration.nix
     ./nvidia-drivers.nix
     ./modules/default.nix
-    
+    ./modules/apps/nixvim/nixvim.nix
     #./modules/apps/qmk/qmk.nix
     #./modules/apps/qemu/qemu.nix
 
 
   ];
-
-  programs.nixvim = { 
-    enable = true;
-    colorschemes.tokyonight = {
-      enable = true;
-      settings = {
-        style = "night";
-      };
-    };
-    plugins.lightline = {
-      enable = true;
-      settings = {
-        colorscheme = "Tomorrow_Night_Blue";
-    plugins.nvim-tree = {
-      enable = true;
-      view = {
-        relativenumber = true;
-	number = true;
-      };
-    };
-    plugins.lsp = {
-      enable = true;
-      servers = {
-        nixd = {
-	  enable = true;
-	};
-	lua-ls = {
-	  enable = true;
-	};
-      };
-    };
-    plugins.nvim-cmp = {
-      enable = true;
-      autoEnableSources = true;
-      sources = [
-        {name = "nvim_lsp";}
-	{name = "path";}
-	{name = "buffer";}
-      ];
-    };
-
-      };
-    };
-  };
 
   # Enable experimental features
   nix.extraOptions = ''
@@ -609,8 +555,7 @@ in
     vimPlugins.tokyonight-nvim
     xclip
     wl-clipboard
-    # Uncomment the next line if rnix-lsp is desired
-    # rnix-lsp
+    nil
 
     # Home manager
     home-manager
