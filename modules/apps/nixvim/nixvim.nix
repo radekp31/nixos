@@ -80,7 +80,11 @@ let
             option = {
               inherit get_bufnrs;
             };
-          }];
+          }
+          {
+             name = "buffer";
+          }
+          ];
           mapping = {
             "<C-Left>" = "cmp.mapping.select_prev_item()";
             "<C-Right>" = "cmp.mapping.select_next_item()";
@@ -91,6 +95,9 @@ let
             "<C-Down>" = "cmp.mapping.scroll_docs(-4)";
           };
         };
+      };
+      cmp-buffer = {
+        enable = true;
       };
       treesitter = {
         enable = true;
