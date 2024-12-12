@@ -12,7 +12,6 @@ in
 
 {
 
-
   #Let Home Manager install and manage itself
   programs.home-manager.enable = true;
 
@@ -292,6 +291,43 @@ in
     };
   };
 
+  # Enable Hyprlock
+  programs.hyprlock = {
+    enable = true;
+    settings = {
+      general = {
+        disable_loading_bar = true;
+        grace = 300;
+        hide_cursor = true;
+        no_fade_in = false;
+      };
+
+      background = [
+        {
+          path = "screenshot";
+          blur_passes = 3;
+          blur_size = 8;
+        }
+      ];
+
+      input-field = [
+        {
+          size = "200, 50";
+          position = "0, -80";
+          monitor = "";
+          dots_center = true;
+          fade_on_empty = false;
+          font_color = "rgb(202, 211, 245)";
+          inner_color = "rgb(91, 96, 120)";
+          outer_color = "rgb(24, 25, 38)";
+          outline_thickness = 5;
+          placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
+          shadow_passes = 2; 
+	}
+      ];
+    };
+  };
+
   #Create power_menu.xml for waybar
   home.file.".config/waybar/power_menu.xml".text = ''
       <?xml version="1.0" encoding="UTF-8"?>
@@ -339,6 +375,7 @@ in
     theme = "tokyo-night.rasi";
   };
 
+<<<<<<< HEAD
   # Rofi TokyoNight theme
   home.file.".config/rofi/tokyo-night.rasi".text = ''
         /*
@@ -639,6 +676,8 @@ in
     };
   };
 
+=======
+>>>>>>> 3d0ffe0 (update on 2024-12-12 20:49:54)
   # Rofi TokyoNight theme
   home.file.".config/rofi/tokyo-night.rasi".text = ''
         /*
@@ -806,7 +845,6 @@ in
       splash_offset = 2.0;
 
       preload = [ "/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg" ];
-
       wallpaper = [
         "DP-2,/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg"
         "DP-3,/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg"
@@ -939,8 +977,7 @@ in
     };
   };
 
- 
-   # Home packages
+  # Home packages
   home.packages = with pkgs; [
     unstable.vlc
     git
@@ -1376,7 +1413,7 @@ in
   };
 
   #Enable NVIM
-    #Enable NVIM
+  #Enable NVIM
   programs.neovim = {
     enable = false;
     viAlias = true;
@@ -1415,39 +1452,39 @@ in
     ];
 
     extraConfig = ''
-            	" Enable Tokyo Night color scheme
-            	colorscheme tokyonight-night
+                  	" Enable Tokyo Night color scheme
+                  	colorscheme tokyonight-night
 
-            	" Enable row numbers
-                    set number
-                    set relativenumber
+                  	" Enable row numbers
+                          set number
+                          set relativenumber
 
-                " Clear screen after exit
-            	lua vim.api.nvim_create_autocmd("VimLeavePre", { command = "silent !clear" })
-		
-		" Configure Lsp server
-		lua << EOF
-local nvim_lsp = require("lspconfig")
-nvim_lsp.nixd.setup({
-   cmd = { "nixd" },
-   settings = {
-      nixd = {
-         nixpkgs = {
-            expr = "import <nixpkgs> { }",
-	 },
-         formatting = {
-            command = { "nixfmt" },
+                      " Clear screen after exit
+                  	lua vim.api.nvim_create_autocmd("VimLeavePre", { command = "silent !clear" })
+      		
+      		" Configure Lsp server
+      		lua << EOF
+      local nvim_lsp = require("lspconfig")
+      nvim_lsp.nixd.setup({
+         cmd = { "nixd" },
+         settings = {
+            nixd = {
+               nixpkgs = {
+                  expr = "import <nixpkgs> { }",
+      	 },
+               formatting = {
+                  command = { "nixfmt" },
+               },
+      	 options = {
+      	   nixos = {
+      	     expr = "(builtins.getFlake \"/home/lyc/flakes\").nixosConfigurations.adrastea.options"
+      	   },
+      	 },
+            },
          },
-	 options = {
-	   nixos = {
-	     expr = "(builtins.getFlake \"/home/lyc/flakes\").nixosConfigurations.adrastea.options"
-	   },
-	 },
-      },
-   },
-})
-EOF
-'';
+      })
+      EOF
+    '';
 
     extraPackages = with pkgs; [
       nixd
@@ -1456,6 +1493,5 @@ EOF
       wl-clipboard
     ];
   };
-
 
 }
