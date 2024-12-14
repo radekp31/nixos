@@ -7,7 +7,6 @@
 }:
 
 let
-
   nixvim = import (
     builtins.fetchGit {
       url = "https://github.com/nix-community/nixvim";
@@ -139,7 +138,6 @@ in
           };
         };
       };
-
       lspkind = {
         enable = true;
         cmp = {
@@ -177,6 +175,7 @@ in
             {
               name = "fuzzy-path";
             }
+
           ];
           mapping = {
             "<C-Left>" = "cmp.mapping.select_prev_item()";
@@ -214,5 +213,4 @@ in
       pkgs.ripgrep
     ];
   };
-
 }

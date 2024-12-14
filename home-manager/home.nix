@@ -14,6 +14,7 @@ in
 
 {
 
+
   #Let Home Manager install and manage itself
   programs.home-manager.enable = true;
 
@@ -674,7 +675,8 @@ in
     };
   };
 
-  # Home packages
+ 
+   # Home packages
   home.packages = with pkgs; [
     unstable.vlc
     git
@@ -1184,7 +1186,6 @@ in
       })
       EOF
     '';
-
     extraPackages = with pkgs; [
       nixd
       lua-language-server
@@ -1192,5 +1193,4 @@ in
       wl-clipboard
     ];
   };
-
 }
