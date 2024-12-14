@@ -7,7 +7,9 @@
 
 let
   unstable = import <nixpkgs> { };
-
+    nix-alien-pkgs = import (
+    builtins.fetchTarball "https://github.com/thiagokokada/nix-alien/tarball/master"
+  ) { };
 in
 
 {
@@ -55,6 +57,13 @@ in
         "$mod, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
         "$mod, space, exec, rofi -show combi"
         "$mod, G, exec, rofi -show games "
+	"$mod, LEFT, workspace, -1"
+	"$mod, RIGHT, workspace, +1"
+	"$mod, 1, workspace, 1"
+	"$mod, 2, workspace, 2"
+	"$mod, 3, workspace, 3"
+	"$mod, 4, workspace, 4"
+	"$mod, 5, workspace, 5"
       ];
       monitor = [
         #Monitor setup
@@ -219,23 +228,12 @@ in
         "sway/mode" = {
           format = "{}";
         };
-        #"hyprland/workspaces" = {
-        #  format = "{name}";
-        #  format-icons = {
-        #    "1" = "";
-        #    "2" = "";
-        #    "3" = "";
-        #    "4" = "";
-        #    "5" = "";
-        #    "active" = "";
-        #    "default" = "";
-        #  };
-        #  persistent-workspaces = {
-        #    "*" = [ "2" "3" "4" "5" ]; # 2-5 on every monitor
-        #    # "HDMI-A-1" = [ 1 ]; # but only workspace 1 on HDMI-A-1
-        #  };
-        #};
-
+        # Modules configuration
+         "hyprland/workspaces" = {
+	   persistent-workspaces = {
+             "*" = 5; #5 workspaces by default on every monitor
+       };
+         };
         # modules-center
         "hyprland/window" = {
           format = "{title}";
@@ -291,6 +289,44 @@ in
       };
     };
   };
+
+
+  # Enable Hyprlock
+  #programs.hyprlock = {
+  #  enable = false;
+  #  settings = {
+  #    general = {
+  #      disable_loading_bar = true;
+  #      grace = 300;
+  #      hide_cursor = true;
+  #      no_fade_in = false;
+  #    };
+
+  #    background = [
+  #      {
+  #        path = "screenshot";
+  #        blur_passes = 3;
+  #        blur_size = 8;
+  #      }
+  #    ];
+
+  #    input-field = [
+  #      {
+  #        size = "200, 50";
+  #        position = "0, -80";
+  #        monitor = "";
+  #        dots_center = true;
+  #        fade_on_empty = false;
+  #        font_color = "rgb(202, 211, 245)";
+  #        inner_color = "rgb(91, 96, 120)";
+  #        outer_color = "rgb(24, 25, 38)";
+  #        outline_thickness = 5;
+  #        placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
+  #        shadow_passes = 2; 
+  #      }
+  #    ];
+  #  };
+  #};
 
   #Create power_menu.xml for waybar
   home.file.".config/waybar/power_menu.xml".text = ''
@@ -639,306 +675,6 @@ in
     };
   };
 
-  # Rofi TokyoNight theme
-  home.file.".config/rofi/tokyo-night.rasi".text = ''
-        /*
-     * Tokyonight colorscheme for rofi
-     * User: w8ste
-     */
-
-
-    // define colors etc.
-    * {
-        bg: #1A1B26;
-        hv: #9274ca; // selector highlight
-        primary: #C0CAF5; 
-        ug: #0B2447;
-        font: "Inconsolata 11";
-        background-color: @bg;
-        //dark: @bg;
-        border: 0px;
-        kl: #C0CAF5; //font color
-        black: #000000;
-
-        transparent: rgba(46,52,64,0);
-    }
-
-    // defines different aspects of the window
-    window {
-        width: 700;
-        /*since line wont work with height, i comment it out 
-        if you rather control the size via height
-        just comment it out */
-        //height: 500;
-
-        orientation: horizontal;
-        location: center;
-        anchor: center;
-        transparency: "screenshot";
-        border-color: @transparent;   
-        border: 0px;
-        border-radius: 6px;
-        spacing: 0;
-        children: [ mainbox ];
-    }
-
-    mainbox {
-        spacing: 0;
-        children: [ inputbar, message, listview ];
-    }
-
-    inputbar {
-        color: @kl;
-        padding: 11px;
-        border: 3px 3px 2px 3px;
-        border-color: @primary;
-        border-radius: 6px 6px 0px 0px;
-    }
-
-    message {
-        padding: 0;
-        border-color: @primary;
-        border: 0px 1px 1px 1px;
-    }
-
-    entry, prompt, case-indicator {
-        text-font: inherit;
-        text-color: inherit;
-    }
-
-    entry {
-        cursor: pointer;
-    }
-
-    prompt {
-        margin: 0px 5px 0px 0px;
-    }
-
-    listview {
-        layout: vertical;
-        //spacing: 5px;
-        padding: 8px;
-        lines: 12;
-        columns: 1;
-        border: 0px 3px 3px 3px; 
-        border-radius: 0px 0px 6px 6px;
-        border-color: @primary;
-        dynamic: false;
-    }
-
-    element {
-        padding: 2px;
-        vertical-align: 1;
-        color: @kl;
-        font: inherit;
-    }
-
-    element-text {
-        background-color: inherit;
-        text-color: inherit;
-    }
-
-    element selected.normal {
-        color: @black;
-        background-color: @hv;
-    }
-
-    element normal active {
-        background-color: @hv;
-        color: @black;
-    }
-
-    element-text, element-icon {
-        background-color: inherit;
-        text-color: inherit;
-    }
-
-    element normal urgent {
-        background-color: @primary;
-    }
-
-    element selected active {
-        background: @hv;
-        foreground: @bg;
-    }
-
-    button {
-        padding: 6px;
-        color: @primary;
-        horizonatal-align: 0.5;
-
-        border: 2px 0px 2px 2px;
-        border-radius: 4px 0px 0px 4px;
-        border-color: @primary;
-    }
-
-    button selected normal {
-        border: 2px 0px 2px 2px;
-        border-color: @primary;
-    }
-
-    scrollbar {
-        enabled: true;
-    } 
-  '';
-
-  #Configure Swappy
-  #Create keybind: grim -g "$(slurp)" - | swappy -f -
-
-  home.file.".config/swappy/config".text = ''
-    [Default]
-    save_dir=${config.home.homeDirectory}/Pictures
-    save_filename_format=swappy-%Y%m%d-%H%M%S.png
-    show_panel=false
-    line_size=5
-    text_size=20
-    text_font=sans-serif
-    paint_mode=brush
-    early_exit=false
-    fill_shape=false
-  '';
-
-  services.hyprpaper = {
-    enable = true;
-    settings = {
-      ipc = "on";
-      splash = false;
-      splash_offset = 2.0;
-
-      preload = [ "/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg" ];
-
-      wallpaper = [
-        "DP-2,/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg"
-        "DP-3,/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg"
-      ];
-    };
-  };
-
-  programs.wofi = {
-    enable = true;
-    settings = {
-      location = "center";
-      allow_markup = true;
-      width = 250;
-    };
-    style = ''
-      * {
-        font-family: monospace;
-      }
-
-      window {
-        background-color: #1a1b26;
-      }
-    '';
-  };
-
-  programs.yazi = {
-    enable = true;
-    enableZshIntegration = true;
-    #flavors = {
-    #  This is some kind of variation of themes - there is tokyonight available - get it!
-    #};
-    keymap = {
-      input.keymap = [
-        {
-          exec = "close";
-          on = [ "<C-q>" ];
-        }
-        {
-          exec = "close --submit";
-          on = [ "<Enter>" ];
-        }
-        {
-          exec = "escape";
-          on = [ "<Esc>" ];
-        }
-        {
-          exec = "backspace";
-          on = [ "<Backspace>" ];
-        }
-      ];
-      manager.keymap = [
-        {
-          exec = "escape";
-          on = [ "<Esc>" ];
-        }
-        {
-          exec = "quit";
-          on = [ "q" ];
-        }
-        {
-          exec = "close";
-          on = [ "<C-q>" ];
-        }
-      ];
-    };
-    settings = {
-      log = {
-        enabled = false;
-      };
-      manager = {
-        show_hidden = false;
-        sort_by = "modified";
-        sort_dir_first = true;
-      };
-    };
-  };
-
-  #Hyprland - kitty is used by default
-  programs.kitty = {
-    enable = true;
-    #themeFile = "${pkgs.kitty-themes}/share/kitty-themes/themes/tokyo_night_night.conf";
-    extraConfig = ''
-      include ${pkgs.kitty-themes}/share/kitty-themes/themes/tokyo_night_night.conf
-    '';
-    environment = {
-
-      "TERM" = "xterm-256color";
-      "EDITOR" = "nvim";
-      "VISUAL" = "nvim";
-      "BAT_THEME" = "ansi";
-      "MANPAGER" = "nvim +Man!";
-      "PATH" = "${pkgs.kitty}/bin:$PATH";
-      # #WaybarLife
-      "WAYBAR_LOG_LEVEL" = "debug waybar";
-      "WAYLAND_DISPLAY" = "wayland-1";
-      #Cursor
-      "XCURSOR_THEME" = "${pkgs.bibata-cursors}/share/icons/Bibata-Modern-ice/cursor.theme";
-      "XCURSOR_SIZE" = "24";
-      #Wayland life
-      "DISPLAY" = ":0";
-      "XAUTHORITY" = "/run/user/1000/.Xauthority";
-      #"AQ_DRM_DEVICES" = "/dev/dri/card0";
-      #"WLR_NO_HARDWARE_CURSORS" = "1";
-      #"GBM_BACKEND" = "/run/opengl-driver/lib/dri/nvidia_gbm.so";
-      # Set Wayland-related variables
-
-      #"WAYLAND_DISPLAY" = ":1"; # included in wayland.windowManager.hyprland.systemd.enable
-      "XDG_SESSION_TYPE" = "wayland";
-      #"XDG_CURRENT_DESKTOP" = "Hyprland"; # included in wayland.windowManager.hyprland.systemd.enable
-      "MOZ_ENABLE_WAYLAND" = "1"; # Enable Wayland for Firefox, if applicable
-      "QT_QPA_PLATFORM" = "wayland"; # Use Wayland for Qt apps
-    };
-    font = {
-      package = pkgs.nerd-fonts.inconsolata;
-      name = "Inconsolata";
-      size = 14.0;
-    };
-    keybindings = {
-      "ctrl+c" = "copy_or_interrupt";
-    };
-    settings = {
-      scrollback_lines = 10000;
-      enable_audio_bell = false;
-      update_check_interval = 0;
-    };
-    shellIntegration = {
-      enableBashIntegration = true;
-      enableZshIntegration = true;
-      mode = "no-rc";
-    };
-  };
-
  
    # Home packages
   home.packages = with pkgs; [
@@ -970,6 +706,8 @@ in
     nerd-fonts.inconsolata
     adwaita-icon-theme
     bibata-cursors
+    hyprlock # Custom package hyprlock-git
+    nix-alien-pkgs.nix-alien
 
     # Neovim
     nixd # LSP server
@@ -1376,7 +1114,7 @@ in
   };
 
   #Enable NVIM
-    #Enable NVIM
+  #Enable NVIM
   programs.neovim = {
     enable = false;
     viAlias = true;
@@ -1415,40 +1153,39 @@ in
     ];
 
     extraConfig = ''
-            	" Enable Tokyo Night color scheme
-            	colorscheme tokyonight-night
+                  	" Enable Tokyo Night color scheme
+                  	colorscheme tokyonight-night
 
-            	" Enable row numbers
-                    set number
-                    set relativenumber
+                  	" Enable row numbers
+                          set number
+                          set relativenumber
 
-                " Clear screen after exit
-            	lua vim.api.nvim_create_autocmd("VimLeavePre", { command = "silent !clear" })
-		
-		" Configure Lsp server
-		lua << EOF
-local nvim_lsp = require("lspconfig")
-nvim_lsp.nixd.setup({
-   cmd = { "nixd" },
-   settings = {
-      nixd = {
-         nixpkgs = {
-            expr = "import <nixpkgs> { }",
-	 },
-         formatting = {
-            command = { "nixfmt" },
+                      " Clear screen after exit
+                  	lua vim.api.nvim_create_autocmd("VimLeavePre", { command = "silent !clear" })
+      		
+      		" Configure Lsp server
+      		lua << EOF
+      local nvim_lsp = require("lspconfig")
+      nvim_lsp.nixd.setup({
+         cmd = { "nixd" },
+         settings = {
+            nixd = {
+               nixpkgs = {
+                  expr = "import <nixpkgs> { }",
+      	 },
+               formatting = {
+                  command = { "nixfmt" },
+               },
+      	 options = {
+      	   nixos = {
+      	     expr = "(builtins.getFlake \"/home/lyc/flakes\").nixosConfigurations.adrastea.options"
+      	   },
+      	 },
+            },
          },
-	 options = {
-	   nixos = {
-	     expr = "(builtins.getFlake \"/home/lyc/flakes\").nixosConfigurations.adrastea.options"
-	   },
-	 },
-      },
-   },
-})
-EOF
-'';
-
+      })
+      EOF
+    '';
     extraPackages = with pkgs; [
       nixd
       lua-language-server
@@ -1456,6 +1193,4 @@ EOF
       wl-clipboard
     ];
   };
-
-
 }
