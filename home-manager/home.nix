@@ -7,7 +7,9 @@
 
 let
   unstable = import <nixpkgs> { };
-
+    nix-alien-pkgs = import (
+    builtins.fetchTarball "https://github.com/thiagokokada/nix-alien/tarball/master"
+  ) { };
 in
 
 {
@@ -54,6 +56,13 @@ in
         "$mod, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
         "$mod, space, exec, rofi -show combi"
         "$mod, G, exec, rofi -show games "
+	"$mod, LEFT, workspace, -1"
+	"$mod, RIGHT, workspace, +1"
+	"$mod, 1, workspace, 1"
+	"$mod, 2, workspace, 2"
+	"$mod, 3, workspace, 3"
+	"$mod, 4, workspace, 4"
+	"$mod, 5, workspace, 5"
       ];
       monitor = [
         #Monitor setup
@@ -218,23 +227,12 @@ in
         "sway/mode" = {
           format = "{}";
         };
-        #"hyprland/workspaces" = {
-        #  format = "{name}";
-        #  format-icons = {
-        #    "1" = "";
-        #    "2" = "";
-        #    "3" = "";
-        #    "4" = "";
-        #    "5" = "";
-        #    "active" = "";
-        #    "default" = "";
-        #  };
-        #  persistent-workspaces = {
-        #    "*" = [ "2" "3" "4" "5" ]; # 2-5 on every monitor
-        #    # "HDMI-A-1" = [ 1 ]; # but only workspace 1 on HDMI-A-1
-        #  };
-        #};
-
+        # Modules configuration
+         "hyprland/workspaces" = {
+	   persistent-workspaces = {
+             "*" = 5; #5 workspaces by default on every monitor
+       };
+         };
         # modules-center
         "hyprland/window" = {
           format = "{title}";
@@ -291,42 +289,43 @@ in
     };
   };
 
+
   # Enable Hyprlock
-  programs.hyprlock = {
-    enable = true;
-    settings = {
-      general = {
-        disable_loading_bar = true;
-        grace = 300;
-        hide_cursor = true;
-        no_fade_in = false;
-      };
+  #programs.hyprlock = {
+  #  enable = false;
+  #  settings = {
+  #    general = {
+  #      disable_loading_bar = true;
+  #      grace = 300;
+  #      hide_cursor = true;
+  #      no_fade_in = false;
+  #    };
 
-      background = [
-        {
-          path = "screenshot";
-          blur_passes = 3;
-          blur_size = 8;
-        }
-      ];
+  #    background = [
+  #      {
+  #        path = "screenshot";
+  #        blur_passes = 3;
+  #        blur_size = 8;
+  #      }
+  #    ];
 
-      input-field = [
-        {
-          size = "200, 50";
-          position = "0, -80";
-          monitor = "";
-          dots_center = true;
-          fade_on_empty = false;
-          font_color = "rgb(202, 211, 245)";
-          inner_color = "rgb(91, 96, 120)";
-          outer_color = "rgb(24, 25, 38)";
-          outline_thickness = 5;
-          placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
-          shadow_passes = 2; 
-	}
-      ];
-    };
-  };
+  #    input-field = [
+  #      {
+  #        size = "200, 50";
+  #        position = "0, -80";
+  #        monitor = "";
+  #        dots_center = true;
+  #        fade_on_empty = false;
+  #        font_color = "rgb(202, 211, 245)";
+  #        inner_color = "rgb(91, 96, 120)";
+  #        outer_color = "rgb(24, 25, 38)";
+  #        outline_thickness = 5;
+  #        placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
+  #        shadow_passes = 2; 
+  #      }
+  #    ];
+  #  };
+  #};
 
   #Create power_menu.xml for waybar
   home.file.".config/waybar/power_menu.xml".text = ''
@@ -705,6 +704,8 @@ in
     nerd-fonts.inconsolata
     adwaita-icon-theme
     bibata-cursors
+    hyprlock # Custom package hyprlock-git
+    nix-alien-pkgs.nix-alien
 
     # Neovim
     nixd # LSP server
