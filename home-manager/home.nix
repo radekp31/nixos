@@ -63,6 +63,7 @@ in
 	"$mod, 3, workspace, 3"
 	"$mod, 4, workspace, 4"
 	"$mod, 5, workspace, 5"
+	"$mod, N, exec"
       ];
       monitor = [
         #Monitor setup
@@ -120,9 +121,10 @@ in
   programs.waybar = {
     enable = true;
     systemd.enable = true;
+    #font-family: Source Code Pro;
     style = ''
         *     {
-              font-family: Source Code Pro;
+              font-family: "FiraCode Nerd Font";
               font-size: 13px;
       	}
 
@@ -158,7 +160,31 @@ in
       	#workspaces button.active {
       	    background-color: #285577;
       	}
-
+	/* Default keyboard state styling */
+	#keyboard-state {
+	    color: #16191C;
+	    background-color: #16191C;
+	    /*padding: 5px; */
+	    /*border-radius: 5px; */
+	}
+	
+	/* When Caps Lock is enabled (unlocked but active) */
+	#keyboard-state label.capslock {
+	    color: #AAB2BF; /* Yellow text for active Caps Lock */
+	    background-color: #16191C; /* Optional background change */
+	    min-width: 100px; /* Set a fixed width */
+    	    /*display: inline-block; */ /* Ensure the element respects the fixed width */
+    	    /*text-align: center; */ /* Optional: center the text inside */
+	}
+	
+	/* When Caps Lock is locked */
+	#keyboard-state label.capslock.locked {
+	    color: #AAB2BF; /* Red text for locked Caps Lock */
+	    background-color: #285577; /* Optional background change */
+	    min-width: 100px; /* Set a fixed width */
+    	    /*display: inline-block; */ /* Ensure the element respects the fixed width */
+    	    /*text-align: center; */ /* Optional: center the text inside */
+	}
       	#clock,
       	#battery,
       	#cpu,
@@ -209,8 +235,8 @@ in
         position = "top";
         spacing = 5;
         height = 30;
-        output = [ "DP-2" ];
-
+        #output = [ "DP-2" ];
+	output = ["*"];
         modules-left = [ "hyprland/workspaces" ]; # put back sway/mode if needed
         modules-center = [ "hyprland/window" ];
         modules-right = [
@@ -239,14 +265,25 @@ in
         };
 
         # modules-right
+        #"keyboard-state" = {
+        #  numlock = true;
+        #  capslock = true;
+        #  format = "{name} {icon}";
+        #  format-icons = {
+        #    locked = " ";
+        #    unlocked = " ";
+        #  };
+        #};
         "keyboard-state" = {
-          numlock = true;
+          #numlock = true;
           capslock = true;
-          format = "{name} {icon}";
-          format-icons = {
-            locked = "";
-            unlocked = "";
-          };
+	    keyboard-state = {
+   	      format = "{name}";
+    	      #format-capslock = "Caps Lock On";
+    	      format-icons = {
+              capslock = "Caps";
+              };
+            };
         };
         "disk" = {
           interval = 30;
@@ -702,10 +739,13 @@ in
     slurp # screenshots
     swappy # screenshots
     nerd-fonts.inconsolata
+    nerd-fonts.fira-code
     adwaita-icon-theme
     bibata-cursors
     hyprlock # Custom package hyprlock-git
+    font-awesome_6
     nix-alien-pkgs.nix-alien
+    
 
     # Neovim
     nixd # LSP server
