@@ -39,6 +39,8 @@ in
       xorg.libXrandr
       libglvnd
       libdrm
+      vulkan-loader
+      vulkan-tools
     ];
   };
 
@@ -59,7 +61,6 @@ in
     "nvidia_drm"
     "nvidia"
   ];
-
 
   #Set kernel params
   boot.kernelParams = [
@@ -118,8 +119,5 @@ in
     gwe
     nvtopPackages.nvidia
     virtualglLib
-    vulkan-loader
-    vulkan-tools
-
   ];
 }

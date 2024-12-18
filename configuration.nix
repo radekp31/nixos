@@ -20,7 +20,6 @@
   ...
 }:
 
-
 {
   imports = [
     # Include the results of the hardware scan.
@@ -30,15 +29,13 @@
         url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
       }
     }/nixos"
-    
+
     ./hardware-configuration.nix
     ./nvidia-drivers.nix
     ./modules/default.nix
     ./modules/apps/nixvim/nixvim.nix
     #./modules/apps/qmk/qmk.nix
     #./modules/apps/qemu/qemu.nix
-
-
 
   ];
 
@@ -91,7 +88,6 @@
     ];
   };
 
-
   #setup SSH
 
   services.openssh = {
@@ -116,7 +112,6 @@
   boot.initrd = {
     enable = true;
   };
-
 
   #boot.loader.systemd-boot.enable = false;
   #boot.loader.efi.canTouchEfiVariables = true;
@@ -226,7 +221,6 @@
   #services.xserver.desktopManager.budgie.enable = true;
   #services.xserver.displayManager.lightdm.enable = true;
 
-
   # Enable bspwm
   services.xserver.windowManager.bspwm.enable = true;
   services.displayManager.defaultSession = "hyprland-uwsm";
@@ -262,9 +256,8 @@
   xdg.portal = {
     enable = true;
   };
- 
- # End of Hyprland attempt
 
+  # End of Hyprland attempt
 
   #layout = user.services.xserver.layout;
   #xkbVariant = user.services.xserver.xkbVariant;

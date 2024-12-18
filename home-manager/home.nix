@@ -7,9 +7,6 @@
 
 let
   unstable = import <nixpkgs> { };
-    nix-alien-pkgs = import (
-    builtins.fetchTarball "https://github.com/thiagokokada/nix-alien/tarball/master"
-  ) { };
 in
 
 {
@@ -51,19 +48,19 @@ in
 
       bind = [
         # Keybindings
-        "$mod, F, exec, opera"
+        "$mod, F, fullscreen"
         "$mod, Return, exec, kitty"
         "$mod, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
         "$mod, space, exec, rofi -show combi"
         "$mod, G, exec, rofi -show games "
-	"$mod, LEFT, workspace, -1"
-	"$mod, RIGHT, workspace, +1"
-	"$mod, 1, workspace, 1"
-	"$mod, 2, workspace, 2"
-	"$mod, 3, workspace, 3"
-	"$mod, 4, workspace, 4"
-	"$mod, 5, workspace, 5"
-	"$mod, N, exec"
+        "$mod, LEFT, workspace, -1"
+        "$mod, RIGHT, workspace, +1"
+        "$mod, 1, workspace, 1"
+        "$mod, 2, workspace, 2"
+        "$mod, 3, workspace, 3"
+        "$mod, 4, workspace, 4"
+        "$mod, 5, workspace, 5"
+        "$mod, P, exec, /etc/nixos/modules/scripts/game-mode.sh"
       ];
       monitor = [
         #Monitor setup
@@ -72,16 +69,7 @@ in
       ];
     };
 
-    extraConfig = ''
-      #exec-once = systemctl --user enable --now waybar.service
-      #exec-once = waybar
-
-      #monitor = DP-2, 2560x1440@144, 0x0, 1
-      #monitor = DP-3, 1680x1050@60, -1650x0, auto
-
-
-
-    '';
+    extraConfig = '''';
     #settings = {
     #  decoration = {
     #    shadow_offset = 0.5;
@@ -123,110 +111,110 @@ in
     systemd.enable = true;
     #font-family: Source Code Pro;
     style = ''
-        *     {
-              font-family: "FiraCode Nerd Font";
-              font-size: 13px;
-      	}
+              *     {
+                    font-family: "FiraCode Nerd Font";
+                    font-size: 13px;
+            	}
 
-      	#waybar {
+            	#waybar {
+            	    background-color: #16191C;
+            	    color: #AAB2BF;
+            	}
+
+            	button {
+            	    box-shadow: inset 0 -3px transparent;
+            	    border: none;
+            	    border-radius: 0;
+            	    padding: 0 5px;
+            	}
+
+            	#workspaces button {
+            	    background-color: #5f676a;
+            	    color: #ffffff;
+            	}
+
+            	#workspaces button:hover {
+            	    background: rgba(0,0,0,0.2);
+            	}
+
+            	#workspaces button.focused {
+            	    background-color: #285577;
+            	}
+
+            	#workspaces button.urgent {
+            	    background-color: #900000;
+            	}
+
+            	#workspaces button.active {
+            	    background-color: #285577;
+            	}
+      	/* Default keyboard state styling */
+      	#keyboard-state {
+      	    color: #16191C;
       	    background-color: #16191C;
-      	    color: #AAB2BF;
+      	    /*padding: 5px; */
+      	    /*border-radius: 5px; */
       	}
-
-      	button {
-      	    box-shadow: inset 0 -3px transparent;
-      	    border: none;
-      	    border-radius: 0;
-      	    padding: 0 5px;
+      	
+      	/* When Caps Lock is enabled (unlocked but active) */
+      	#keyboard-state label.capslock {
+      	    color: #AAB2BF; /* Yellow text for active Caps Lock */
+      	    background-color: #16191C; /* Optional background change */
+      	    min-width: 100px; /* Set a fixed width */
+          	    /*display: inline-block; */ /* Ensure the element respects the fixed width */
+          	    /*text-align: center; */ /* Optional: center the text inside */
       	}
-
-      	#workspaces button {
-      	    background-color: #5f676a;
-      	    color: #ffffff;
+      	
+      	/* When Caps Lock is locked */
+      	#keyboard-state label.capslock.locked {
+      	    color: #AAB2BF; /* Red text for locked Caps Lock */
+      	    background-color: #285577; /* Optional background change */
+      	    min-width: 100px; /* Set a fixed width */
+          	    /*display: inline-block; */ /* Ensure the element respects the fixed width */
+          	    /*text-align: center; */ /* Optional: center the text inside */
       	}
-
-      	#workspaces button:hover {
-      	    background: rgba(0,0,0,0.2);
-      	}
-
-      	#workspaces button.focused {
-      	    background-color: #285577;
-      	}
-
-      	#workspaces button.urgent {
-      	    background-color: #900000;
-      	}
-
-      	#workspaces button.active {
-      	    background-color: #285577;
-      	}
-	/* Default keyboard state styling */
-	#keyboard-state {
-	    color: #16191C;
-	    background-color: #16191C;
-	    /*padding: 5px; */
-	    /*border-radius: 5px; */
-	}
-	
-	/* When Caps Lock is enabled (unlocked but active) */
-	#keyboard-state label.capslock {
-	    color: #AAB2BF; /* Yellow text for active Caps Lock */
-	    background-color: #16191C; /* Optional background change */
-	    min-width: 100px; /* Set a fixed width */
-    	    /*display: inline-block; */ /* Ensure the element respects the fixed width */
-    	    /*text-align: center; */ /* Optional: center the text inside */
-	}
-	
-	/* When Caps Lock is locked */
-	#keyboard-state label.capslock.locked {
-	    color: #AAB2BF; /* Red text for locked Caps Lock */
-	    background-color: #285577; /* Optional background change */
-	    min-width: 100px; /* Set a fixed width */
-    	    /*display: inline-block; */ /* Ensure the element respects the fixed width */
-    	    /*text-align: center; */ /* Optional: center the text inside */
-	}
-      	#clock,
-      	#battery,
-      	#cpu,
-      	#memory,
-      	#pulseaudio,
-      	#tray,
-      	#mode,
-      	#idle_inhibitor,
-      	#window,
-      	#workspaces {
-      	    margin: 0 5px;
-      	}
+            	#clock,
+            	#battery,
+            	#cpu,
+            	#memory,
+            	#pulseaudio,
+            	#tray,
+            	#mode,
+            	#idle_inhibitor,
+            	#window,
+            	#workspaces {
+            	    margin: 0 5px;
+            	}
 
 
-      	.modules-left > widget:first-child > #workspaces {
-      	    margin-left: 0;
-      	}
+            	.modules-left > widget:first-child > #workspaces {
+            	    margin-left: 0;
+            	}
 
 
-      	.modules-right > widget:last-child > #workspaces {
-      	    margin-right: 0;
-      	}
+            	.modules-right > widget:last-child > #workspaces {
+            	    margin-right: 0;
+            	}
 
-      	@keyframes blink {
-      	    to {
-      		background-color: #ffffff;
-      		color: #000000;
-      	    }
-      	}
+            	@keyframes blink {
+            	    to {
+            		background-color: #ffffff;
+            		color: #000000;
+            	    }
+            	}
 
-      	label:focus {
-      	    background-color: #000000;
-      	}
+            	label:focus {
+            	    background-color: #000000;
+            	}
 
-      	#tray > .passive {
-      	    -gtk-icon-effect: dim;
-      	}
+            	#tray > .passive {
+            	    -gtk-icon-effect: dim;
+            	}
 
-      	#tray > .needs-attention {
-      	    -gtk-icon-effect: highlight;
-      	    background-color: #eb4d4b;
-      	}
+            	#tray > .needs-attention {
+            	    -gtk-icon-effect: highlight;
+            	    background-color: #eb4d4b;
+            	}
 
     '';
     settings = {
@@ -236,7 +224,7 @@ in
         spacing = 5;
         height = 30;
         #output = [ "DP-2" ];
-	output = ["*"];
+        output = [ "*" ];
         modules-left = [ "hyprland/workspaces" ]; # put back sway/mode if needed
         modules-center = [ "hyprland/window" ];
         modules-right = [
@@ -254,11 +242,11 @@ in
           format = "{}";
         };
         # Modules configuration
-         "hyprland/workspaces" = {
-	   persistent-workspaces = {
-             "*" = 5; #5 workspaces by default on every monitor
-       };
-         };
+        "hyprland/workspaces" = {
+          persistent-workspaces = {
+            "*" = 5; # 5 workspaces by default on every monitor
+          };
+        };
         # modules-center
         "hyprland/window" = {
           format = "{title}";
@@ -277,13 +265,13 @@ in
         "keyboard-state" = {
           #numlock = true;
           capslock = true;
-	    keyboard-state = {
-   	      format = "{name}";
-    	      #format-capslock = "Caps Lock On";
-    	      format-icons = {
+          keyboard-state = {
+            format = "{name}";
+            #format-capslock = "Caps Lock On";
+            format-icons = {
               capslock = "Caps";
-              };
             };
+          };
         };
         "disk" = {
           interval = 30;
@@ -326,7 +314,6 @@ in
     };
   };
 
-
   # Enable Hyprlock
   #programs.hyprlock = {
   #  enable = false;
@@ -358,7 +345,7 @@ in
   #        outer_color = "rgb(24, 25, 38)";
   #        outline_thickness = 5;
   #        placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
-  #        shadow_passes = 2; 
+  #        shadow_passes = 2;
   #      }
   #    ];
   #  };
@@ -744,8 +731,6 @@ in
     bibata-cursors
     hyprlock # Custom package hyprlock-git
     font-awesome_6
-    nix-alien-pkgs.nix-alien
-    
 
     # Neovim
     nixd # LSP server
