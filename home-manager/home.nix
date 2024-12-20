@@ -112,7 +112,7 @@ in
     #font-family: Source Code Pro;
     style = ''
               *     {
-                    font-family: "FiraCode Nerd Font";
+                    font-family: "Incosolata Nerd Font";
                     font-size: 13px;
             	}
 

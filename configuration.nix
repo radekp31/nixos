@@ -67,11 +67,18 @@
   security.sudo = {
     enable = true;
     wheelNeedsPassword = true; # Require password for sudo
+    extraConfig = ''
+      user ALL=(ALL) NOPASSWD: /usr/bin/nvidia-settings *
+    '';
     extraRules = [
       {
         commands = [
           {
             command = "/run/current-system/sw/bin/nvidia-settings";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "/run/current-system/sw/bin/nvidia-smi";
             options = [ "NOPASSWD" ];
           }
           {

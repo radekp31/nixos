@@ -39,8 +39,8 @@ in
       xorg.libXrandr
       libglvnd
       libdrm
-      vulkan-loader
-      vulkan-tools
+      #vulkan-loader
+      #vulkan-tools
     ];
   };
 
@@ -82,6 +82,8 @@ in
     # of just the bare essentials.
     powerManagement.enable = false;
 
+    
+
     # Fine-grained power management. Turns off GPU when not in use.
     # Experimental and only works on modern Nvidia GPUs (Turing or newer).
     powerManagement.finegrained = false;
@@ -119,5 +121,31 @@ in
     gwe
     nvtopPackages.nvidia
     virtualglLib
+    vulkan-tools
+    vulkan-loader
   ];
+
+  # Fan control on Wayland
+  # maybe use system.activationScripts ?
+
+    systemd.services.fancontrol = {
+    enable = true;
+    description = "Wayland fan control service";
+    path = [ pkgs.sudo pkgs.xorg.xhost "/run/current-system/sw/bin/nvidia-smi"];
+    environment = {
+      DISPLAY = ":0";
+      WAYLAND_DISPLAY = "wayland-0";
+    };
+    unitConfig = {
+      Type = "simple";
+      # ...
+    };
+    serviceConfig = {
+      ExecStart = "/etc/nixos/modules/scripts/fan-control.sh";
+      Environment = "XAUTHORITY=/run/user/1000/.Xauthority";
+      # ...
+    };
+    wantedBy = [ "multi-user.target" ];
+    # ...
+  };
 }
