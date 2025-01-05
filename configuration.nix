@@ -104,6 +104,9 @@
     };
   };
 
+  qt.enable = true;
+
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -177,6 +180,7 @@
 
   # Environment variables
   environment.variables = {
+    DISPLAY = ":0";
     EDITOR = "nvim";
     VISUAL = "nvim";
     TERM = lib.mkDefault "xterm-256color";

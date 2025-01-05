@@ -667,6 +667,7 @@ in
       #Wayland life
       "DISPLAY" = ":0";
       "XAUTHORITY" = "/run/user/1000/.Xauthority";
+      #"QT_QPA_PLATFORM" = "xcb"; #OneDrivegui needs this  
       #"AQ_DRM_DEVICES" = "/dev/dri/card0";
       #"WLR_NO_HARDWARE_CURSORS" = "1";
       #"GBM_BACKEND" = "/run/opengl-driver/lib/dri/nvidia_gbm.so";
@@ -676,7 +677,7 @@ in
       "XDG_SESSION_TYPE" = "wayland";
       #"XDG_CURRENT_DESKTOP" = "Hyprland"; # included in wayland.windowManager.hyprland.systemd.enable
       "MOZ_ENABLE_WAYLAND" = "1"; # Enable Wayland for Firefox, if applicable
-      "QT_QPA_PLATFORM" = "wayland"; # Use Wayland for Qt apps
+      #"QT_QPA_PLATFORM" = "wayland"; # Use Wayland for Qt apps
     };
     font = {
       package = pkgs.nerd-fonts.inconsolata;
@@ -715,6 +716,7 @@ in
     john
     johnny
     libre
+    ventoy-full
 
     # Hyprland
     kitty-themes
@@ -731,6 +733,9 @@ in
     bibata-cursors
     hyprlock # Custom package hyprlock-git
     font-awesome_6
+    onedrive
+    onedrivegui
+    qadwaitadecorations-qt6
 
     # Neovim
     nixd # LSP server
@@ -738,6 +743,11 @@ in
     nixpkgs-fmt # Nix file formatter
     nixfmt-rfc-style # Nix file formatter
     alejandra # Nix file formatter
+
+    # GPU
+    mangohud
+
+
   ];
 
   # Setup bspwm

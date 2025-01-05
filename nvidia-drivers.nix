@@ -123,18 +123,35 @@ in
     virtualglLib
     vulkan-tools
     vulkan-loader
+    powertop
+    tuxclocker
+    lm_sensors
+    
   ];
+
+  # GPU runs hot due to lots of power fed to it
+  powerManagement.powertop.enable = true;
+
+  #tuxclocker setup
+  xdg = {
+    portal = {
+      enable = true;
+      lxqt.enable = true;
+    };
+  };
 
   # Fan control on Wayland
   # maybe use system.activationScripts ?
-
+  # powertop handles it well
+  
     systemd.services.fancontrol = {
     enable = true;
     description = "Wayland fan control service";
-    path = [ pkgs.sudo pkgs.xorg.xhost "/run/current-system/sw/bin/nvidia-smi"];
+    path = [ pkgs.sudo pkgs.xorg.xhost "/run/current-system/sw/bin/nvidia-smi" "/run/current-system/sw/bin/nvidia-settings" ];
     environment = {
       DISPLAY = ":0";
       WAYLAND_DISPLAY = "wayland-0";
+      XAUTHORITY = "/run/user/1000/.Xauthority";
     };
     unitConfig = {
       Type = "simple";
