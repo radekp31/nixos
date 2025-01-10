@@ -118,10 +118,10 @@
     "xhci_pci"
     "usbhid"
   ];
-
   boot.initrd = {
     enable = true;
   };
+  boot.supportedFilesystems = [ "ntfs" ];
 
   #boot.loader.systemd-boot.enable = false;
   #boot.loader.efi.canTouchEfiVariables = true;

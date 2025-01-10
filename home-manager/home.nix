@@ -717,6 +717,9 @@ in
     johnny
     libre
     ventoy-full
+    rclone
+    ntfs3g
+
 
     # Hyprland
     kitty-themes
