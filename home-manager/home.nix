@@ -29,6 +29,12 @@ in
     "/home/radekp/.nix-profile/bin/" # Required by Neovim and plugins (?)
   ];
 
+  #  home.activation.connectOneDrive = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  #  # Command to run after user login
+  #  fusermount -uz /media/WDRED/OneDrive #unmount remote, just in case its broken
+  #  rclone cmount --vfs-cache-mode writes onedrive: /media/WDRED/OneDrive #mount the remote
+  #'';
+
   # Alacritty overwrites the env vars, put them into alacritty.toml below
   #  home.sessionVariables = {
   #	EDITOR = "nvim";
@@ -720,6 +726,7 @@ in
     rclone
     ntfs3g
 
+    mpv
 
     # Hyprland
     kitty-themes

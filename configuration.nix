@@ -400,8 +400,23 @@
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
     shellInit = ''
-      #Enable fzf plugin
+      # Enable fzf plugin
       source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
+    
+      # Command to run after user login
+      
+      # unmount remote, just in case its broken
+      # redirection of stderr to some log file could be more useful
+      #fusermount -uz /media/WDRED/OneDrive > /dev/null 2>&1
+
+      # mount the remote
+      # redirection of stderr to some log file could be more useful
+      #nohup rclone cmount --vfs-cache-mode writes onedrive: /media/WDRED/OneDrive > /dev/null 2>&1 < /dev/null &! disown > /dev/null 2>&1
+
+      if [ $(ls -A /media/WDRED/OneDrive | wc -l) -eq 0 ]; then
+      nohup rclone cmount --vfs-cache-mode writes onedrive: /media/WDRED/OneDrive > /dev/null 2>&1 < /dev/null &! disown > /dev/null 2>&1
+      fi
+
     '';
 
     shellAliases = {
