@@ -80,7 +80,7 @@ in
     # Enable this if you have graphical corruption issues or application crashes after waking
     # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead
     # of just the bare essentials.
-    powerManagement.enable = false;
+    powerManagement.enable = true;
 
     
 
@@ -123,8 +123,7 @@ in
     virtualglLib
     vulkan-tools
     vulkan-loader
-    powertop
-    tuxclocker
+    #powertop
     lm_sensors
     
   ];
@@ -132,14 +131,9 @@ in
   # GPU runs hot due to lots of power fed to it
   powerManagement.powertop.enable = true;
 
-  #tuxclocker setup
-  xdg = {
-    portal = {
-      enable = true;
-      lxqt.enable = true;
-    };
+  programs.tuxclocker = {
+    enable = true;
   };
-
   # Fan control on Wayland
   # maybe use system.activationScripts ?
   # powertop handles it well

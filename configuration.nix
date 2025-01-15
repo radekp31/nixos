@@ -104,9 +104,6 @@
     };
   };
 
-  qt.enable = true;
-
-
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -383,11 +380,11 @@
     localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
 
-  # nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-  #   "steam"
-  #   "steam-original"
-  #   "steam-run"
-  # ];
+   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+     "steam"
+     "steam-original"
+     "steam-run"
+   ];
 
   #Set up ZSH
   users.defaultUserShell = pkgs.zsh;
@@ -413,9 +410,9 @@
       # redirection of stderr to some log file could be more useful
       #nohup rclone cmount --vfs-cache-mode writes onedrive: /media/WDRED/OneDrive > /dev/null 2>&1 < /dev/null &! disown > /dev/null 2>&1
 
-      if [ $(ls -A /media/WDRED/OneDrive | wc -l) -eq 0 ]; then
-      nohup rclone cmount --vfs-cache-mode writes onedrive: /media/WDRED/OneDrive > /dev/null 2>&1 < /dev/null &! disown > /dev/null 2>&1
-      fi
+      #if [ $(ls -A /media/WDRED/OneDrive | wc -l) -eq 0 ]; then
+      #nohup rclone cmount --vfs-cache-mode writes onedrive: /media/WDRED/OneDrive > /dev/null 2>&1 < /dev/null &! disown > /dev/null 2>&1
+      #fi
 
     '';
 

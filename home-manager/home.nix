@@ -29,6 +29,25 @@ in
     "/home/radekp/.nix-profile/bin/" # Required by Neovim and plugins (?)
   ];
 
+  systemd.user.services.mountOneDrive = {
+    Unit = {
+      Description = "Mount OneDrive remote using rclone";
+      AssertPathIsDirectory = "/media/WDRED/OneDrive";
+      After = "netowork-online.target";
+    };
+    Install = {
+      WantedBy = [ "default.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.rclone}/bin/rclone cmount --vfs-cache-mode writes onedrive: /media/WDRED/OneDrive
+      ";
+      ExecStop = "/run/wrappers/bin/fusermount -u /media/WDRED/OneDrive";
+      RestartSec = "10";
+    };
+  };
+
+
   #  home.activation.connectOneDrive = lib.hm.dag.entryAfter ["writeBoundary"] ''
   #  # Command to run after user login
   #  fusermount -uz /media/WDRED/OneDrive #unmount remote, just in case its broken
@@ -725,8 +744,10 @@ in
     ventoy-full
     rclone
     ntfs3g
-
+    lact
     mpv
+    coolercontrol.coolercontrold
+    coolercontrol.coolercontrol-gui
 
     # Hyprland
     kitty-themes
