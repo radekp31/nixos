@@ -68,7 +68,10 @@ in
       #  shadow_offset = "0 5";
       #  "col.shadow" = "rgba(00000099)";
       #};
-
+      
+      # Run EWW top bar
+      #"exec-once" = "eww open bar --force-wayland";  
+      "exec-once" = "waybar";
       "$mod" = "SUPER";
 
       bind = [
@@ -78,20 +81,59 @@ in
         "$mod, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
         "$mod, space, exec, rofi -show combi"
         "$mod, G, exec, rofi -show games "
-        "$mod, LEFT, workspace, -1"
-        "$mod, RIGHT, workspace, +1"
-        "$mod, 1, workspace, 1"
-        "$mod, 2, workspace, 2"
-        "$mod, 3, workspace, 3"
-        "$mod, 4, workspace, 4"
-        "$mod, 5, workspace, 5"
+       # "$mod, LEFT, workspace, -1"
+       # "$mod, RIGHT, workspace, +1"
+       # "$mod, 1, workspace, 1"
+       # "$mod, 2, workspace, 2"
+       # "$mod, 3, workspace, 3"
+       # "$mod, 4, workspace, 4"
+       # "$mod, 5, workspace, 5"
         "$mod, P, exec, /etc/nixos/modules/scripts/game-mode.sh"
+
+	# Hyprsome
+	#  move - move window, stay in current workspace
+	#  movefocus - move window, switch to the new workspace
+	#  workspace - create new workspace
+	#  focus - no idea, errors out
+
+	# Workspace - switching between windows
+	"$mod, 1, exec, hyprsome workspace 1"
+	"$mod, 2, exec, hyprsome workspace 2"
+	"$mod, 3, exec, hyprsome workspace 3"
+	"$mod, 4, exec, hyprsome workspace 4"
+	"$mod, 5, exec, hyprsome workspace 5"
+
+	# Workspace - moving windows
+	"$mod SHIFT, 1, exec, hyprsome move 1"
+	"$mod SHIFT, 2, exec, hyprsome move 2"
+	"$mod SHIFT, 3, exec, hyprsome move 3"
+	"$mod SHIFT, 4, exec, hyprsome move 4"
+	"$mod SHIFT, 5, exec, hyprsome move 5"
       ];
       monitor = [
         #Monitor setup
         "DP-2, 2560x1440@144, 0x0, auto"
         "DP-3, 1680x1050@60, -1680x0, auto"
       ];
+
+      workspace = [
+      #DP-2 Workspaces
+        "DP-1,1"
+        "1,monitor:DP-2"
+        "2,monitor:DP-2"
+        "3,monitor:DP-2"
+        "4,monitor:DP-2"
+        "5,monitor:DP-2"
+
+      #DP-3 Workspaces
+        "DP-3,11"
+        "11,monitor:DP-3"
+        "12,monitor:DP-3"
+        "13,monitor:DP-3"
+        "14,monitor:DP-3"
+        "15,monitor:DP-3"
+      ];
+
     };
 
     extraConfig = '''';
@@ -130,6 +172,13 @@ in
     Exec=Hyprland
     Type=Application
   '';
+  
+  programs.eww = {
+    enable = true;
+    package = pkgs.eww;
+    configDir = "/etc/nixos/modules/configs/eww"; 
+  };
+
 
   programs.waybar = {
     enable = true;
@@ -255,6 +304,7 @@ in
         modules-right = [
           "keyboard-state"
           "disk"
+	  "network"
           "cpu"
           "memory"
           "pulseaudio"
@@ -268,14 +318,42 @@ in
         };
         # Modules configuration
         "hyprland/workspaces" = {
-          persistent-workspaces = {
-            "*" = 5; # 5 workspaces by default on every monitor
-          };
+	  disable-scroll = true;
+	  all-outputs = false;
+	  active-only = false;
+	  on-click = "activate";
+	  disablle-scroll = true;
+	  on-scroll-up = "hyprctl dispatch workspace -1";
+	  on-scroll-down = "hyprctl dispatch workspace +1";
+	  #persistent-workspaces = {
+          #  "DP-2" = [ "1" "2" "3" "4" "5" ];
+          #  "DP-3" = [ "6" "7" "8" "9" "10" ]; 
+          #};
         };
         # modules-center
         "hyprland/window" = {
           format = "{title}";
+	  separate-outputs = true;
         };
+
+	"network" = {
+	  interval = 2;
+          format-icons = [
+            "󰤯"
+            "󰤟"
+            "󰤢"
+            "󰤥"
+            "󰤨"
+          ];
+          format-ethernet = "Down: {bandwidthDownBytes} Up: {bandwidthUpBytes}";
+          format-wifi = "{icon} {signalStrength}%";
+          format-disconnected = "󰤮";
+          tooltip = false;
+        };
+        "tray" = {
+          spacing = 12;
+	};
+
 
         # modules-right
         #"keyboard-state" = {
@@ -303,11 +381,11 @@ in
           format = "/ {percentage_used}% ";
         };
         "cpu" = {
-          interval = 10;
+          interval = 2;
           format = "CPU: {usage}%";
         };
         "memory" = {
-          interval = 10;
+          interval = 2;
           format = "RAM: {percentage}%";
         };
         "pulseaudio" = {
@@ -763,6 +841,9 @@ in
     adwaita-icon-theme
     bibata-cursors
     hyprlock # Custom package hyprlock-git
+    eww
+    hyprsome
+    wmctrl # probably not needed and works only win X server
     font-awesome_6
     onedrive
     onedrivegui
