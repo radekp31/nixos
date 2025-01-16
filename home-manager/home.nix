@@ -79,7 +79,7 @@ in
         "$mod, F, fullscreen"
         "$mod, Return, exec, kitty"
         "$mod, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
-        "$mod, space, exec, rofi -show combi"
+        "$mod, space, exec, rofi -show window"
         "$mod, G, exec, rofi -show games "
        # "$mod, LEFT, workspace, -1"
        # "$mod, RIGHT, workspace, +1"
@@ -497,6 +497,9 @@ in
       pkgs.rofi-games
       pkgs.rofi-wayland
     ];
+    extraConfig = {
+      modi = "window,run";
+    };
     terminal = "\${pkgs.kitty}/bin/kitty";
     theme = "tokyo-night.rasi";
   };
