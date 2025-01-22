@@ -1,7 +1,8 @@
 {
   pkgs,
-  lib,
+  inputs,
   config,
+  lib,
   ...
 }:
 
@@ -61,6 +62,7 @@ in
   #  };
 
   # Hyprland attempt
+
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
@@ -69,18 +71,29 @@ in
       #  "col.shadow" = "rgba(00000099)";
       #};
       
-      # Run EWW top bar
-      #"exec-once" = "eww open bar --force-wayland";  
-      "exec-once" = "waybar";
       "$mod" = "SUPER";
+
+      exec-once = [
+        "clipse --listen"
+	"wl-paste --type text --watch cliphist store" #Stores only text data
+	"wl-paste --type image --watch cliphist store" #Stores only image data
+	"wl-paste -p -t text --watch clipman store -P --histpath=\"~/.local/share/clipman-primary.json\""
+      ];
+
+      windowrulev2 = [
+        "float,class:(clipse)" # ensure you have a floating window class set if you want this behavior
+	"size 622 652,class:(clipse)" # set the size of the window as necessary
+      ];
 
       bind = [
         # Keybindings
         "$mod, F, fullscreen"
-        "$mod, Return, exec, kitty"
+        #"$mod, Return, exec, kitty"
+        "$mod, Return, exec, wezterm"
         "$mod, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
         "$mod, space, exec, rofi -show window"
-        "$mod, G, exec, rofi -show games "
+        #"$mod, G, exec, rofi -show games "
+	"$mod, V, exec, kitty --class clipse -e 'clipse'"
        # "$mod, LEFT, workspace, -1"
        # "$mod, RIGHT, workspace, +1"
        # "$mod, 1, workspace, 1"
@@ -88,7 +101,7 @@ in
        # "$mod, 3, workspace, 3"
        # "$mod, 4, workspace, 4"
        # "$mod, 5, workspace, 5"
-        "$mod, P, exec, /etc/nixos/modules/scripts/game-mode.sh"
+        "$mod, G, exec, /etc/nixos/modules/scripts/game-mode.sh"
 
 	# Hyprsome
 	#  move - move window, stay in current workspace
@@ -173,13 +186,6 @@ in
     Type=Application
   '';
   
-  programs.eww = {
-    enable = true;
-    package = pkgs.eww;
-    configDir = "/etc/nixos/modules/configs/eww"; 
-  };
-
-
   programs.waybar = {
     enable = true;
     systemd.enable = true;
@@ -751,7 +757,7 @@ in
 
   #Hyprland - kitty is used by default
   programs.kitty = {
-    enable = true;
+    enable = false;
     #themeFile = "${pkgs.kitty-themes}/share/kitty-themes/themes/tokyo_night_night.conf";
     extraConfig = ''
       include ${pkgs.kitty-themes}/share/kitty-themes/themes/tokyo_night_night.conf
@@ -766,6 +772,7 @@ in
       "PATH" = "${pkgs.kitty}/bin:$PATH";
       # #WaybarLife
       "WAYBAR_LOG_LEVEL" = "debug waybar";
+      #"WAYLAND_DISPLAY" = "wayland-0";
       "WAYLAND_DISPLAY" = "wayland-1";
       #Cursor
       "XCURSOR_THEME" = "${pkgs.bibata-cursors}/share/icons/Bibata-Modern-ice/cursor.theme";
@@ -803,6 +810,141 @@ in
       enableZshIntegration = true;
       mode = "no-rc";
     };
+  };
+
+  programs.wezterm = {
+    enable = true;
+    enableZshIntegration = true;
+    extraConfig = ''
+	local wezterm = require 'wezterm'
+	local act = wezterm.action
+	local config = {}
+
+	if wezterm.config_builder
+	then
+	  config = wezterm.config_builder()
+	  config:set_strict_mode(true)
+	end
+
+	-- General settings
+
+	config.max_fps = 144
+	config.animation_fps = 144
+	config.front_end = "WebGpu"
+	config.webgpu_power_preference = "HighPerformance"
+	config.audible_bell = "Disabled"
+
+	-- Appearance
+	config.color_scheme = 'Tokyo Night Moon'
+	config.window_decorations = "NONE"
+	config.use_fancy_tab_bar = false
+	config.window_frame = {
+	  font_size = 13.0
+	}
+	-- config.font = wezterm.font 'Hack'
+	config.font = wezterm.font 'Inconsolata'
+
+	-- Keymaps
+	config.keys = {
+
+	  -- Pane splitting
+	  {
+	    key = 'mapped:+',
+	    mods = 'SHIFT|ALT',
+	    action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' },
+	  },
+	  {
+	    key = 'mapped:_',
+	    mods = 'SHIFT|ALT',
+	    action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
+	  },
+	  -- Pane focus movement
+	  { 
+	    key = 'LeftArrow', 
+	    mods = 'ALT', 
+	    action = act.ActivatePaneDirection 'Left' 
+	  },
+	  { 
+	    key = 'RightArrow', 
+	    mods = 'ALT', 
+	    action = act.ActivatePaneDirection 'Right' 
+	  },
+	  { 
+	    key = 'UpArrow', 
+	    mods = 'ALT', 
+	    action = act.ActivatePaneDirection 'Up' 
+	  },
+	  { 
+	    key = 'DownArrow', 
+	    mods = 'ALT', 
+	    action = act.ActivatePaneDirection 'Down'
+	  },
+
+	  -- Pane movement
+	  {
+	    key = 'LeftArrow',
+	    mods = 'SHIFT|ALT',
+	    action = act.RotatePanes 'CounterClockwise',
+	  },
+	  { key = 'RightArrow',
+	    mods = 'SHIFT|ALT',
+	    action = act.RotatePanes 'Clockwise'
+	  },
+
+	  -- Lanch launch_menu
+	  {
+	    key = 'l',
+	    mods = 'ALT',
+	    action = wezterm.action.ShowLauncher
+	  },
+	}
+
+	-- Right click Copy
+
+	config.mouse_bindings = {
+	  {
+	   event = { Down = { streak = 1, button = "Right" } },
+	   mods = "NONE",
+	   action = wezterm.action_callback(function(window, pane)
+	     local has_selection = window:get_selection_text_for_pane(pane) ~= ""
+	     if has_selection then
+	       window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
+	       window:perform_action(act.ClearSelection, pane)
+	     else
+	       window:perform_action(act({ PasteFrom = "Clipboard" }), pane)
+	     end
+	   end),
+	  },
+	 }
+
+	-- Adding lanch menu items 
+	config.launch_menu = {
+	  {
+	    -- Optional label to show in the launcher. If omitted, a label
+	    -- is derived from the `args`
+	    -- label = 'PowerShell',
+	    -- The argument array to spawn.  If omitted the default program
+	    -- will be used as described in the documentation above
+	    
+	    -- args = { 'pwsh.exe' },
+
+	    -- You can specify an alternative current working directory;
+	    -- if you don't specify one then a default based on the OSC 7
+	    -- escape sequence will be used (see the Shell Integration
+	    -- docs), falling back to the home directory.
+	    
+	    -- cwd = { 'C:\\' },
+
+	    -- You can override environment variables just for this command
+	    -- by setting this here.  It has the same semantics as the main
+	    -- set_environment_variables configuration option described above
+	    -- set_environment_variables = { FOO = "bar" },
+	  }
+	}
+	return config
+
+
+    '';
   };
 
   # Home packages
@@ -844,9 +986,10 @@ in
     adwaita-icon-theme
     bibata-cursors
     hyprlock # Custom package hyprlock-git
-    eww
     hyprsome
-    wmctrl # probably not needed and works only win X server
+    clipse
+    wezterm
+    xterm
     font-awesome_6
     onedrive
     onedrivegui
@@ -1190,7 +1333,7 @@ in
     enable = true;
   };
   #Enable Alacritty
-  programs.alacritty.enable = true;
+  programs.alacritty.enable = false;
 
   home.file.".config/alacritty/alacritty.toml" = {
     text = ''

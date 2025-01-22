@@ -240,6 +240,39 @@
   #programs.uwsm.enable = true;
   programs.hyprland.enable = true;
   programs.hyprland.withUWSM = true;
+  # Attempt to fix Hyprland high VRAM usage
+  environment.etc = {
+    "nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.txt" = {
+      text = ''
+        {
+            "rules": [
+        	{
+        	    "pattern": {
+        		"feature": "procname",
+        		"matches": "Hyprland"
+        	    },
+        	    "profile": "Limit Free Buffer Pool On Wayland Compositors"
+        	}
+            ],
+            "profiles": [
+        	{
+        	    "name": "Limit Free Buffer Pool On Wayland Compositors",
+        	    "settings": [
+        		{
+        		    "key": "GLVidHeapReuseRatio",
+        		    "value": 1
+        		}
+        	    ]
+        	}
+            ]
+        }
+      '';
+
+      # The UNIX file mode bits
+      mode = "0777";
+    };
+  };
+  
   #services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
   services.xserver.enable = true;
   #services.xserver.deviceSection = ''
@@ -431,7 +464,8 @@
       lld = "eza -lahgd";
       man = "tldr";
       cat = "bat -pp";
-      icat = "kitty icat";
+      #icat = "kitty icat";
+      icat = "wezterm imgcat";
 
     };
 
@@ -558,6 +592,7 @@
     bat
     tldr
     btop
+    #wezterm
 
     # Zsh
 

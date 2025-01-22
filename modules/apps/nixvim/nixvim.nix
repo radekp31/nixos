@@ -41,7 +41,8 @@ in
     colorschemes.tokyonight = {
       enable = true;
       settings = {
-        style = "night";
+        #style = "night";
+        style = "moon";
       };
     };
     plugins.lualine.enable = true;
