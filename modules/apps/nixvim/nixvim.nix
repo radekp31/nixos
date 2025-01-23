@@ -12,6 +12,10 @@ let
     builtins.fetchGit {
       url = "https://github.com/nix-community/nixvim";
       ref = "nixos-24.11";
+      #owner = "nix-community";
+      #repo = "nixvim";
+      rev = "85bef9e19191000db4a13337198266359cefb9b6";
+      #sha256 = "gyP1Ds62ySpWszHCL9kzWzdLg2WFIuFcDc1kDIGBgB0=";
     }
   );
 

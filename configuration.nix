@@ -27,6 +27,7 @@
     "${
       builtins.fetchTarball {
         url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
+	sha256 = "wJQCxyMRc4P26zDrHmZiRD5bbfcJpqPG3e2djdGG3pk=";
       }
     }/nixos"
 
@@ -40,9 +41,7 @@
   ];
 
   # Enable experimental features
-  nix.extraOptions = ''
-    experimental-features = nix-command flakes
-  '';
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   # Configure Nixpkgs to use the unstable channel for system-wide packages
   nixpkgs.config = {
@@ -59,6 +58,7 @@
       (import (
         builtins.fetchTarball {
           url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
+	  sha2656 = "wJQCxyMRc4P26zDrHmZiRD5bbfcJpqPG3e2djdGG3pk=";
         }
       ))
     ];
@@ -551,10 +551,8 @@
     polybarFull # status bar
     alacritty # GPU accelerated terminal emulator
     alacritty-theme
-    #kitty
     rofi # awesome launch menu
     rofi-power-menu # awesome power menu
-    #yazi #cli based file manager - its awesome, check nix options as well!
     picom # x11 lightweight compositor
     ly # TUI login screen
     ntfs3g
@@ -570,7 +568,7 @@
     bat
     tldr
     btop
-    #wezterm
+    nurl # get tarball hashes
 
     # Zsh
 
