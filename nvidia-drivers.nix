@@ -39,6 +39,8 @@ in
       xorg.libXrandr
       libglvnd
       libdrm
+      #vulkan-loader
+      #vulkan-tools
     ];
   };
 
@@ -60,7 +62,6 @@ in
     "nvidia"
   ];
 
-
   #Set kernel params
   boot.kernelParams = [
     "nvidia-drm.modeset=1"
@@ -79,7 +80,9 @@ in
     # Enable this if you have graphical corruption issues or application crashes after waking
     # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead
     # of just the bare essentials.
-    powerManagement.enable = false;
+    powerManagement.enable = true;
+
+    
 
     # Fine-grained power management. Turns off GPU when not in use.
     # Experimental and only works on modern Nvidia GPUs (Turing or newer).
@@ -118,8 +121,42 @@ in
     gwe
     nvtopPackages.nvidia
     virtualglLib
-    vulkan-loader
     vulkan-tools
-
+    vulkan-loader
+    #powertop
+    lm_sensors
+    
   ];
+
+  # GPU runs hot due to lots of power fed to it
+  powerManagement.powertop.enable = true;
+
+  programs.tuxclocker = {
+    enable = true;
+  };
+  # Fan control on Wayland
+  # maybe use system.activationScripts ?
+  # powertop handles it well
+  
+    systemd.services.fancontrol = {
+    enable = true;
+    description = "Wayland fan control service";
+    path = [ pkgs.sudo pkgs.xorg.xhost "/run/current-system/sw/bin/nvidia-smi" "/run/current-system/sw/bin/nvidia-settings" ];
+    environment = {
+      DISPLAY = ":0";
+      WAYLAND_DISPLAY = "wayland-0";
+      XAUTHORITY = "/run/user/1000/.Xauthority";
+    };
+    unitConfig = {
+      Type = "simple";
+      # ...
+    };
+    serviceConfig = {
+      ExecStart = "/etc/nixos/modules/scripts/fan-control.sh";
+      Environment = "XAUTHORITY=/run/user/1000/.Xauthority";
+      # ...
+    };
+    wantedBy = [ "multi-user.target" ];
+    # ...
+  };
 }

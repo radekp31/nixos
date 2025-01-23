@@ -14,6 +14,13 @@ let
     }
   );
 
+  nixvim = import (
+    builtins.fetchGit {
+      url = "https://github.com/nix-community/nixvim";
+      ref = "nixos-24.11";
+    }
+  );
+
   get_bufnrs.__raw = ''
     function()
       local buf_size_limit = 1024 * 1024
@@ -40,7 +47,8 @@ in
     colorschemes.tokyonight = {
       enable = true;
       settings = {
-        style = "night";
+        #style = "night";
+        style = "moon";
       };
     };
     plugins.lualine.enable = true;
@@ -51,6 +59,13 @@ in
     plugins = {
       telescope = {
         enable = true;
+	extensions = {
+	  live-grep-args = {
+	    settings = {
+	      search_dirs = ["/etc/mnt" "~"];
+	    };
+	  };
+	};
         keymaps = {
           "<leader>ff" = {
             action = "find_files";
@@ -138,6 +153,7 @@ in
           };
         };
       };
+
       lspkind = {
         enable = true;
         cmp = {
@@ -151,6 +167,7 @@ in
       };
       cmp = {
         enable = true;
+
         autoEnableSources = true;
         settings = {
           sources = [
@@ -175,7 +192,6 @@ in
             {
               name = "fuzzy-path";
             }
-
           ];
           mapping = {
             "<C-Left>" = "cmp.mapping.select_prev_item()";

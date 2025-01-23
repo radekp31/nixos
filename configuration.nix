@@ -20,7 +20,6 @@
   ...
 }:
 
-
 {
   imports = [
     # Include the results of the hardware scan.
@@ -30,16 +29,12 @@
         url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
       }
     }/nixos"
-    
     ./hardware-configuration.nix
     ./nvidia-drivers.nix
     ./modules/default.nix
     ./modules/apps/nixvim/nixvim.nix
     #./modules/apps/qmk/qmk.nix
     #./modules/apps/qemu/qemu.nix
-
-
-
   ];
 
   # Enable experimental features
@@ -70,11 +65,19 @@
   security.sudo = {
     enable = true;
     wheelNeedsPassword = true; # Require password for sudo
+    extraConfig = ''
+      user ALL=(ALL) NOPASSWD: /usr/bin/nvidia-settings *
+    '';
+
     extraRules = [
       {
         commands = [
           {
             command = "/run/current-system/sw/bin/nvidia-settings";
+            options = [ "NOPASSWD" ];
+          }
+          {
+            command = "/run/current-system/sw/bin/nvidia-smi";
             options = [ "NOPASSWD" ];
           }
           {
@@ -112,11 +115,10 @@
     "xhci_pci"
     "usbhid"
   ];
-
   boot.initrd = {
     enable = true;
   };
-
+  boot.supportedFilesystems = [ "ntfs" ];
 
   #boot.loader.systemd-boot.enable = false;
   #boot.loader.efi.canTouchEfiVariables = true;
@@ -175,6 +177,7 @@
 
   # Environment variables
   environment.variables = {
+    DISPLAY = ":0";
     EDITOR = "nvim";
     VISUAL = "nvim";
     TERM = lib.mkDefault "xterm-256color";
@@ -226,7 +229,6 @@
   #services.xserver.desktopManager.budgie.enable = true;
   #services.xserver.displayManager.lightdm.enable = true;
 
-
   # Enable bspwm
   services.xserver.windowManager.bspwm.enable = true;
   services.displayManager.defaultSession = "hyprland-uwsm";
@@ -238,6 +240,39 @@
   #programs.uwsm.enable = true;
   programs.hyprland.enable = true;
   programs.hyprland.withUWSM = true;
+  # Attempt to fix Hyprland high VRAM usage
+  environment.etc = {
+    "nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.txt" = {
+      text = ''
+        {
+            "rules": [
+        	{
+        	    "pattern": {
+        		"feature": "procname",
+        		"matches": "Hyprland"
+        	    },
+        	    "profile": "Limit Free Buffer Pool On Wayland Compositors"
+        	}
+            ],
+            "profiles": [
+        	{
+        	    "name": "Limit Free Buffer Pool On Wayland Compositors",
+        	    "settings": [
+        		{
+        		    "key": "GLVidHeapReuseRatio",
+        		    "value": 1
+        		}
+        	    ]
+        	}
+            ]
+        }
+      '';
+
+      # The UNIX file mode bits
+      mode = "0777";
+    };
+  };
+  
   #services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
   services.xserver.enable = true;
   #services.xserver.deviceSection = ''
@@ -262,12 +297,10 @@
   xdg.portal = {
     enable = true;
   };
- 
- # End of Hyprland attempt
+
+  # End of Hyprland attempt
 
 
-  #layout = user.services.xserver.layout;
-  #xkbVariant = user.services.xserver.xkbVariant;
   #Enable picom
   services.picom.enable = false;
   services.picom.settings = {
@@ -356,21 +389,6 @@
 
   home-manager.users.radekp = import /etc/nixos/home-manager/home.nix;
 
-  # home-manager.users.radekp = {
-
-  #  import = /etc/nixos/home-manager/home.nix;
-
-  # home.stateVersion = "24.05";
-  #home.packages = with pkgs; [
-  # Add any other packages you want here
-  #];
-
-  # Shell configuration
-
-  # Optionally enable other services
-  #programs.git.enable = true;
-  #};
-
   #Set up Steam
   programs.steam = {
     enable = true;
@@ -379,11 +397,11 @@
     localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
 
-  # nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-  #   "steam"
-  #   "steam-original"
-  #   "steam-run"
-  # ];
+   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+     "steam"
+     "steam-original"
+     "steam-run"
+   ];
 
   #Set up ZSH
   users.defaultUserShell = pkgs.zsh;
@@ -396,8 +414,23 @@
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
     shellInit = ''
-      #Enable fzf plugin
+      # Enable fzf plugin
       source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
+    
+      # Command to run after user login
+      
+      # unmount remote, just in case its broken
+      # redirection of stderr to some log file could be more useful
+      #fusermount -uz /media/WDRED/OneDrive > /dev/null 2>&1
+
+      # mount the remote
+      # redirection of stderr to some log file could be more useful
+      #nohup rclone cmount --vfs-cache-mode writes onedrive: /media/WDRED/OneDrive > /dev/null 2>&1 < /dev/null &! disown > /dev/null 2>&1
+
+      #if [ $(ls -A /media/WDRED/OneDrive | wc -l) -eq 0 ]; then
+      #nohup rclone cmount --vfs-cache-mode writes onedrive: /media/WDRED/OneDrive > /dev/null 2>&1 < /dev/null &! disown > /dev/null 2>&1
+      #fi
+
     '';
 
     shellAliases = {
@@ -415,7 +448,8 @@
       lld = "eza -lahgd";
       man = "tldr";
       cat = "bat -pp";
-      icat = "kitty icat";
+      #icat = "kitty icat";
+      icat = "wezterm imgcat";
 
     };
 
@@ -480,10 +514,6 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
-
-    #git # this thing basically doesnt function properly without git
 
     # TEST
     qmk
@@ -492,7 +522,6 @@
     udiskie
     unzip
     p7zip
-
     pciutils
     smartmontools
     thinkfan
@@ -508,7 +537,7 @@
     neofetch # distro stats
     manix # nix options manual
     curl
-    git
+    git # NixOS sucks without git
     openssh
     htop # system monitor
     eza # ls on steroids
@@ -542,6 +571,7 @@
     bat
     tldr
     btop
+    #wezterm
 
     # Zsh
 
