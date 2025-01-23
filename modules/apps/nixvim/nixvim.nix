@@ -53,6 +53,13 @@ in
     plugins = {
       telescope = {
         enable = true;
+	extensions = {
+	  live-grep-args = {
+	    settings = {
+	      search_dirs = ["/etc/mnt" "~"];
+	    };
+	  };
+	};
         keymaps = {
           "<leader>ff" = {
             action = "find_files";

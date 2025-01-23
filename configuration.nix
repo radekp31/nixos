@@ -300,8 +300,6 @@
 
   # End of Hyprland attempt
 
-  #layout = user.services.xserver.layout;
-  #xkbVariant = user.services.xserver.xkbVariant;
   #Enable picom
   services.picom.enable = false;
   services.picom.settings = {
@@ -389,21 +387,6 @@
   };
 
   home-manager.users.radekp = import /etc/nixos/home-manager/home.nix;
-
-  # home-manager.users.radekp = {
-
-  #  import = /etc/nixos/home-manager/home.nix;
-
-  # home.stateVersion = "24.05";
-  #home.packages = with pkgs; [
-  # Add any other packages you want here
-  #];
-
-  # Shell configuration
-
-  # Optionally enable other services
-  #programs.git.enable = true;
-  #};
 
   #Set up Steam
   programs.steam = {
@@ -530,10 +513,6 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    #  wget
-
-    #git # this thing basically doesnt function properly without git
 
     # TEST
     qmk
@@ -542,7 +521,6 @@
     udiskie
     unzip
     p7zip
-
     pciutils
     smartmontools
     thinkfan
@@ -558,7 +536,7 @@
     neofetch # distro stats
     manix # nix options manual
     curl
-    git
+    git # NixOS sucks without git
     openssh
     htop # system monitor
     eza # ls on steroids
