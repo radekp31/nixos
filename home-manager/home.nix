@@ -12,6 +12,7 @@ in
 
 {
 
+
   #Let Home Manager install and manage itself
   programs.home-manager.enable = true;
 
@@ -122,6 +123,7 @@ in
 	"$mod SHIFT, 3, exec, hyprsome move 3"
 	"$mod SHIFT, 4, exec, hyprsome move 4"
 	"$mod SHIFT, 5, exec, hyprsome move 5"
+
       ];
       monitor = [
         #Monitor setup
@@ -948,6 +950,7 @@ in
   };
 
   # Home packages
+
   home.packages = with pkgs; [
     unstable.vlc
     git
@@ -1477,7 +1480,7 @@ in
       })
       EOF
     '';
-
+    
     extraPackages = with pkgs; [
       nixd
       lua-language-server

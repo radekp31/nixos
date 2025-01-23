@@ -29,14 +29,12 @@
         url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
       }
     }/nixos"
-
     ./hardware-configuration.nix
     ./nvidia-drivers.nix
     ./modules/default.nix
     ./modules/apps/nixvim/nixvim.nix
     #./modules/apps/qmk/qmk.nix
     #./modules/apps/qemu/qemu.nix
-
   ];
 
   # Enable experimental features
@@ -70,6 +68,7 @@
     extraConfig = ''
       user ALL=(ALL) NOPASSWD: /usr/bin/nvidia-settings *
     '';
+
     extraRules = [
       {
         commands = [
@@ -94,6 +93,7 @@
       }
     ];
   };
+
 
   #setup SSH
 
@@ -299,6 +299,7 @@
   };
 
   # End of Hyprland attempt
+
 
   #Enable picom
   services.picom.enable = false;
