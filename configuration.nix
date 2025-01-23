@@ -40,9 +40,6 @@
 
   ];
 
-  # Enable experimental features
-  nix.settings.experimental-features = ["nix-command" "flakes"];
-
   # Configure Nixpkgs to use the unstable channel for system-wide packages
   nixpkgs.config = {
     allowUnfree = true;
@@ -62,6 +59,28 @@
         }
       ))
     ];
+  };
+
+  #System auto upgrades
+  system.autoUpgrade = {
+    enable = true;
+    dates = "weekly";
+  };
+
+  # Nix settings
+  # - automatic garbage collection
+  # - automatic store optimisation
+  # - enabling flakes
+  nix = {
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 10d";
+    };
+    settings = {
+      auto-optimise-store = true;
+      experimental-features = ["nix-command" "flakes"];
+    };
   };
 
   security.sudo = {
@@ -352,7 +371,7 @@
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
