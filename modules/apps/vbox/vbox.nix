@@ -1,17 +1,17 @@
-{ config, pkgs, lib, ...}:
+{ config, pkgs, lib, ... }:
 
 {
-	virtualisation.virtualbox.host = {
-		enable = true;
-		enableExtensionPack = true;
-	};
+  virtualisation.virtualbox.host = {
+    enable = true;
+    enableExtensionPack = true;
+  };
 
-	virtualisation.virtualbox.guest = {
-		enable = true;
-		dragAndDrop = true;
-	};
+  virtualisation.virtualbox.guest = {
+    enable = true;
+    dragAndDrop = true;
+  };
 
-	users.extraGroups.vboxusers.members = ["radekp"];
+  users.extraGroups.vboxusers.members = [ "radekp" ];
 
 }
 

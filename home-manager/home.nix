@@ -1,9 +1,8 @@
-{
-  pkgs,
-  inputs,
-  config,
-  lib,
-  ...
+{ pkgs
+, inputs
+, config
+, lib
+, ...
 }:
 
 let
@@ -70,19 +69,19 @@ in
       #  shadow_offset = "0 5";
       #  "col.shadow" = "rgba(00000099)";
       #};
-      
+
       "$mod" = "SUPER";
 
       exec-once = [
         "clipse --listen"
-	"wl-paste --type text --watch cliphist store" #Stores only text data
-	"wl-paste --type image --watch cliphist store" #Stores only image data
-	"wl-paste -p -t text --watch clipman store -P --histpath=\"~/.local/share/clipman-primary.json\""
+        "wl-paste --type text --watch cliphist store" #Stores only text data
+        "wl-paste --type image --watch cliphist store" #Stores only image data
+        "wl-paste -p -t text --watch clipman store -P --histpath=\"~/.local/share/clipman-primary.json\""
       ];
 
       windowrulev2 = [
         "float,class:(clipse)" # ensure you have a floating window class set if you want this behavior
-	"size 622 652,class:(clipse)" # set the size of the window as necessary
+        "size 622 652,class:(clipse)" # set the size of the window as necessary
       ];
 
       bind = [
@@ -93,35 +92,35 @@ in
         "$mod, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
         "$mod, space, exec, rofi -show window"
         #"$mod, G, exec, rofi -show games "
-	"$mod, V, exec, kitty --class clipse -e 'clipse'"
-       # "$mod, LEFT, workspace, -1"
-       # "$mod, RIGHT, workspace, +1"
-       # "$mod, 1, workspace, 1"
-       # "$mod, 2, workspace, 2"
-       # "$mod, 3, workspace, 3"
-       # "$mod, 4, workspace, 4"
-       # "$mod, 5, workspace, 5"
+        "$mod, V, exec, kitty --class clipse -e 'clipse'"
+        # "$mod, LEFT, workspace, -1"
+        # "$mod, RIGHT, workspace, +1"
+        # "$mod, 1, workspace, 1"
+        # "$mod, 2, workspace, 2"
+        # "$mod, 3, workspace, 3"
+        # "$mod, 4, workspace, 4"
+        # "$mod, 5, workspace, 5"
         "$mod, G, exec, /etc/nixos/modules/scripts/game-mode.sh"
 
-	# Hyprsome
-	#  move - move window, stay in current workspace
-	#  movefocus - move window, switch to the new workspace
-	#  workspace - create new workspace
-	#  focus - no idea, errors out
+        # Hyprsome
+        #  move - move window, stay in current workspace
+        #  movefocus - move window, switch to the new workspace
+        #  workspace - create new workspace
+        #  focus - no idea, errors out
 
-	# Workspace - switching between windows
-	"$mod, 1, exec, hyprsome workspace 1"
-	"$mod, 2, exec, hyprsome workspace 2"
-	"$mod, 3, exec, hyprsome workspace 3"
-	"$mod, 4, exec, hyprsome workspace 4"
-	"$mod, 5, exec, hyprsome workspace 5"
+        # Workspace - switching between windows
+        "$mod, 1, exec, hyprsome workspace 1"
+        "$mod, 2, exec, hyprsome workspace 2"
+        "$mod, 3, exec, hyprsome workspace 3"
+        "$mod, 4, exec, hyprsome workspace 4"
+        "$mod, 5, exec, hyprsome workspace 5"
 
-	# Workspace - moving windows
-	"$mod SHIFT, 1, exec, hyprsome move 1"
-	"$mod SHIFT, 2, exec, hyprsome move 2"
-	"$mod SHIFT, 3, exec, hyprsome move 3"
-	"$mod SHIFT, 4, exec, hyprsome move 4"
-	"$mod SHIFT, 5, exec, hyprsome move 5"
+        # Workspace - moving windows
+        "$mod SHIFT, 1, exec, hyprsome move 1"
+        "$mod SHIFT, 2, exec, hyprsome move 2"
+        "$mod SHIFT, 3, exec, hyprsome move 3"
+        "$mod SHIFT, 4, exec, hyprsome move 4"
+        "$mod SHIFT, 5, exec, hyprsome move 5"
       ];
       monitor = [
         #Monitor setup
@@ -130,7 +129,7 @@ in
       ];
 
       workspace = [
-      #DP-2 Workspaces
+        #DP-2 Workspaces
         "DP-1,1"
         "1,monitor:DP-2"
         "2,monitor:DP-2"
@@ -138,7 +137,7 @@ in
         "4,monitor:DP-2"
         "5,monitor:DP-2"
 
-      #DP-3 Workspaces
+        #DP-3 Workspaces
         "DP-3,11"
         "11,monitor:DP-3"
         "12,monitor:DP-3"
@@ -185,7 +184,7 @@ in
     Exec=Hyprland
     Type=Application
   '';
-  
+
   programs.waybar = {
     enable = true;
     systemd.enable = true;
@@ -310,7 +309,7 @@ in
         modules-right = [
           "keyboard-state"
           "disk"
-	  "network"
+          "network"
           "cpu"
           "memory"
           "pulseaudio"
@@ -324,14 +323,14 @@ in
         };
         # Modules configuration
         "hyprland/workspaces" = {
-	  disable-scroll = true;
-	  all-outputs = false;
-	  active-only = false;
-	  on-click = "activate";
-	  disablle-scroll = true;
-	  on-scroll-up = "hyprctl dispatch workspace -1";
-	  on-scroll-down = "hyprctl dispatch workspace +1";
-	  #persistent-workspaces = {
+          disable-scroll = true;
+          all-outputs = false;
+          active-only = false;
+          on-click = "activate";
+          disablle-scroll = true;
+          on-scroll-up = "hyprctl dispatch workspace -1";
+          on-scroll-down = "hyprctl dispatch workspace +1";
+          #persistent-workspaces = {
           #  "DP-2" = [ "1" "2" "3" "4" "5" ];
           #  "DP-3" = [ "6" "7" "8" "9" "10" ]; 
           #};
@@ -339,11 +338,11 @@ in
         # modules-center
         "hyprland/window" = {
           format = "{title}";
-	  separate-outputs = true;
+          separate-outputs = true;
         };
 
-	"network" = {
-	  interval = 2;
+        "network" = {
+          interval = 2;
           format-icons = [
             "󰤯"
             "󰤟"
@@ -358,7 +357,7 @@ in
         };
         "tray" = {
           spacing = 12;
-	};
+        };
 
 
         # modules-right
@@ -816,133 +815,133 @@ in
     enable = true;
     enableZshIntegration = true;
     extraConfig = ''
-	local wezterm = require 'wezterm'
-	local act = wezterm.action
-	local config = {}
+      	local wezterm = require 'wezterm'
+      	local act = wezterm.action
+      	local config = {}
 
-	if wezterm.config_builder
-	then
-	  config = wezterm.config_builder()
-	  config:set_strict_mode(true)
-	end
+      	if wezterm.config_builder
+      	then
+      	  config = wezterm.config_builder()
+      	  config:set_strict_mode(true)
+      	end
 
-	-- General settings
+      	-- General settings
 
-	config.max_fps = 144
-	config.animation_fps = 144
-	config.front_end = "WebGpu"
-	config.webgpu_power_preference = "HighPerformance"
-	config.audible_bell = "Disabled"
+      	config.max_fps = 144
+      	config.animation_fps = 144
+      	config.front_end = "WebGpu"
+      	config.webgpu_power_preference = "HighPerformance"
+      	config.audible_bell = "Disabled"
 
-	-- Appearance
-	config.color_scheme = 'Tokyo Night Moon'
-	config.window_decorations = "NONE"
-	config.use_fancy_tab_bar = false
-	config.window_frame = {
-	  font_size = 12.5
-	}
-	-- config.font = wezterm.font 'Hack'
-	config.font = wezterm.font 'Inconsolata'
-	config.font_size = 13.5
+      	-- Appearance
+      	config.color_scheme = 'Tokyo Night Moon'
+      	config.window_decorations = "NONE"
+      	config.use_fancy_tab_bar = false
+      	config.window_frame = {
+      	  font_size = 12.5
+      	}
+      	-- config.font = wezterm.font 'Hack'
+      	config.font = wezterm.font 'Inconsolata'
+      	config.font_size = 13.5
 
-	-- Keymaps
-	config.keys = {
+      	-- Keymaps
+      	config.keys = {
 
-	  -- Pane splitting
-	  {
-	    key = 'mapped:+',
-	    mods = 'SHIFT|ALT',
-	    action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' },
-	  },
-	  {
-	    key = 'mapped:_',
-	    mods = 'SHIFT|ALT',
-	    action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
-	  },
-	  -- Pane focus movement
-	  { 
-	    key = 'LeftArrow', 
-	    mods = 'ALT', 
-	    action = act.ActivatePaneDirection 'Left' 
-	  },
-	  { 
-	    key = 'RightArrow', 
-	    mods = 'ALT', 
-	    action = act.ActivatePaneDirection 'Right' 
-	  },
-	  { 
-	    key = 'UpArrow', 
-	    mods = 'ALT', 
-	    action = act.ActivatePaneDirection 'Up' 
-	  },
-	  { 
-	    key = 'DownArrow', 
-	    mods = 'ALT', 
-	    action = act.ActivatePaneDirection 'Down'
-	  },
+      	  -- Pane splitting
+      	  {
+      	    key = 'mapped:+',
+      	    mods = 'SHIFT|ALT',
+      	    action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' },
+      	  },
+      	  {
+      	    key = 'mapped:_',
+      	    mods = 'SHIFT|ALT',
+      	    action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
+      	  },
+      	  -- Pane focus movement
+      	  { 
+      	    key = 'LeftArrow', 
+      	    mods = 'ALT', 
+      	    action = act.ActivatePaneDirection 'Left' 
+      	  },
+      	  { 
+      	    key = 'RightArrow', 
+      	    mods = 'ALT', 
+      	    action = act.ActivatePaneDirection 'Right' 
+      	  },
+      	  { 
+      	    key = 'UpArrow', 
+      	    mods = 'ALT', 
+      	    action = act.ActivatePaneDirection 'Up' 
+      	  },
+      	  { 
+      	    key = 'DownArrow', 
+      	    mods = 'ALT', 
+      	    action = act.ActivatePaneDirection 'Down'
+      	  },
 
-	  -- Pane movement
-	  {
-	    key = 'LeftArrow',
-	    mods = 'SHIFT|ALT',
-	    action = act.RotatePanes 'CounterClockwise',
-	  },
-	  { key = 'RightArrow',
-	    mods = 'SHIFT|ALT',
-	    action = act.RotatePanes 'Clockwise'
-	  },
+      	  -- Pane movement
+      	  {
+      	    key = 'LeftArrow',
+      	    mods = 'SHIFT|ALT',
+      	    action = act.RotatePanes 'CounterClockwise',
+      	  },
+      	  { key = 'RightArrow',
+      	    mods = 'SHIFT|ALT',
+      	    action = act.RotatePanes 'Clockwise'
+      	  },
 
-	  -- Lanch launch_menu
-	  {
-	    key = 'l',
-	    mods = 'ALT',
-	    action = wezterm.action.ShowLauncher
-	  },
-	}
+      	  -- Lanch launch_menu
+      	  {
+      	    key = 'l',
+      	    mods = 'ALT',
+      	    action = wezterm.action.ShowLauncher
+      	  },
+      	}
 
-	-- Right click Copy
+      	-- Right click Copy
 
-	config.mouse_bindings = {
-	  {
-	   event = { Down = { streak = 1, button = "Right" } },
-	   mods = "NONE",
-	   action = wezterm.action_callback(function(window, pane)
-	     local has_selection = window:get_selection_text_for_pane(pane) ~= ""
-	     if has_selection then
-	       window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
-	       window:perform_action(act.ClearSelection, pane)
-	     else
-	       window:perform_action(act({ PasteFrom = "Clipboard" }), pane)
-	     end
-	   end),
-	  },
-	 }
+      	config.mouse_bindings = {
+      	  {
+      	   event = { Down = { streak = 1, button = "Right" } },
+      	   mods = "NONE",
+      	   action = wezterm.action_callback(function(window, pane)
+      	     local has_selection = window:get_selection_text_for_pane(pane) ~= ""
+      	     if has_selection then
+      	       window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
+      	       window:perform_action(act.ClearSelection, pane)
+      	     else
+      	       window:perform_action(act({ PasteFrom = "Clipboard" }), pane)
+      	     end
+      	   end),
+      	  },
+      	 }
 
-	-- Adding lanch menu items 
-	config.launch_menu = {
-	  {
-	    -- Optional label to show in the launcher. If omitted, a label
-	    -- is derived from the `args`
-	    -- label = 'PowerShell',
-	    -- The argument array to spawn.  If omitted the default program
-	    -- will be used as described in the documentation above
-	    
-	    -- args = { 'pwsh.exe' },
+      	-- Adding lanch menu items 
+      	config.launch_menu = {
+      	  {
+      	    -- Optional label to show in the launcher. If omitted, a label
+      	    -- is derived from the `args`
+      	    -- label = 'PowerShell',
+      	    -- The argument array to spawn.  If omitted the default program
+      	    -- will be used as described in the documentation above
+      	    
+      	    -- args = { 'pwsh.exe' },
 
-	    -- You can specify an alternative current working directory;
-	    -- if you don't specify one then a default based on the OSC 7
-	    -- escape sequence will be used (see the Shell Integration
-	    -- docs), falling back to the home directory.
-	    
-	    -- cwd = { 'C:\\' },
+      	    -- You can specify an alternative current working directory;
+      	    -- if you don't specify one then a default based on the OSC 7
+      	    -- escape sequence will be used (see the Shell Integration
+      	    -- docs), falling back to the home directory.
+      	    
+      	    -- cwd = { 'C:\\' },
 
-	    -- You can override environment variables just for this command
-	    -- by setting this here.  It has the same semantics as the main
-	    -- set_environment_variables configuration option described above
-	    -- set_environment_variables = { FOO = "bar" },
-	  }
-	}
-	return config
+      	    -- You can override environment variables just for this command
+      	    -- by setting this here.  It has the same semantics as the main
+      	    -- set_environment_variables configuration option described above
+      	    -- set_environment_variables = { FOO = "bar" },
+      	  }
+      	}
+      	return config
 
 
     '';

@@ -1,9 +1,8 @@
-{
-  config,
-  pkgs,
-  lib,
-  input,
-  ...
+{ config
+, pkgs
+, lib
+, input
+, ...
 }:
 
 let
@@ -57,13 +56,13 @@ in
     plugins = {
       telescope = {
         enable = true;
-	extensions = {
-	  live-grep-args = {
-	    settings = {
-	      search_dirs = ["/etc/mnt" "~"];
-	    };
-	  };
-	};
+        extensions = {
+          live-grep-args = {
+            settings = {
+              search_dirs = [ "/etc/mnt" "~" ];
+            };
+          };
+        };
         keymaps = {
           "<leader>ff" = {
             action = "find_files";
@@ -130,7 +129,7 @@ in
       };
       lsp = {
         enable = true;
-	# I need to figure this out
+        # I need to figure this out
         #keymaps = {
         #  extra = [
         #    {

@@ -1,0 +1,15 @@
+{ pkgs, ... }:
+{
+  # Used to find the project root
+  projectRootFile = "flake.nix";
+  
+  # Enable the terraform formatter
+  programs.terraform.enable = true;
+
+  # Override the default package (e.g., use a specific version of Terraform)
+  programs.terraform.package = pkgs.terraform_1;
+
+  # Override the default settings for the Terraform formatter
+  settings.formatter.terraform.excludes = [ "hello.tf" ];
+}
+

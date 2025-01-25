@@ -5,7 +5,8 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "sd_mod" ];
@@ -14,24 +15,26 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/2f3deea0-aa4e-4906-86ea-a4294a497a1b";
+    {
+      device = "/dev/disk/by-uuid/2f3deea0-aa4e-4906-86ea-a4294a497a1b";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/F874-B1A9";
+    {
+      device = "/dev/disk/by-uuid/F874-B1A9";
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };
   # Your /dev/disk/by/uuid/... and /mnt/folder will have different names!
   fileSystems."/media/WDRED" =
-      { device = "/dev/disk/by-uuid/C6541CA0541C9571";
-        fsType = "ntfs";
-        options = [ "rw" "uid=1000"];
-      };
+    {
+      device = "/dev/disk/by-uuid/C6541CA0541C9571";
+      fsType = "ntfs";
+      options = [ "rw" "uid=1000" ];
+    };
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/7eb2eadd-63c6-42c1-a6fc-e12ac6053909"; }
-    ];
+    [{ device = "/dev/disk/by-uuid/7eb2eadd-63c6-42c1-a6fc-e12ac6053909"; }];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's

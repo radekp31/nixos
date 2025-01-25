@@ -13,11 +13,10 @@
 #	- automatic user creation from list - https://discourse.nixos.org/t/creating-users-from-a-list/34014/5
 #	- multiple profiles available instead of just having modules/default.nix
 
-{
-  config,
-  pkgs,
-  lib,
-  ...
+{ config
+, pkgs
+, lib
+, ...
 }:
 
 {
@@ -55,7 +54,7 @@
       (import (
         builtins.fetchTarball {
           url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
-	  sha2656 = "wJQCxyMRc4P26zDrHmZiRD5bbfcJpqPG3e2djdGG3pk=";
+          sha2656 = "wJQCxyMRc4P26zDrHmZiRD5bbfcJpqPG3e2djdGG3pk=";
         }
       ))
     ];
@@ -79,13 +78,13 @@
     };
     settings = {
       auto-optimise-store = true;
-      experimental-features = ["nix-command" "flakes"];
+      experimental-features = [ "nix-command" "flakes" ];
     };
   };
 
   virtualisation.vmVariant = {
     virtualisation = {
-      memorySize = 2048;  # Set memory size
+      memorySize = 2048; # Set memory size
       diskSize = 10;
       cores = 2;
     };
@@ -299,7 +298,7 @@
       mode = "0777";
     };
   };
-  
+
   #services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
   services.xserver.enable = true;
   #services.xserver.deviceSection = ''
@@ -423,11 +422,11 @@
     localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
 
-   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-     "steam"
-     "steam-original"
-     "steam-run"
-   ];
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "steam"
+    "steam-original"
+    "steam-run"
+  ];
 
   #Set up ZSH
   users.defaultUserShell = pkgs.zsh;

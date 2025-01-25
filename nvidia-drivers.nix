@@ -1,9 +1,8 @@
-{
-  config,
-  lib,
-  pkgs,
-  fetchpatch,
-  ...
+{ config
+, lib
+, pkgs
+, fetchpatch
+, ...
 }:
 
 let
@@ -82,7 +81,7 @@ in
     # of just the bare essentials.
     powerManagement.enable = true;
 
-    
+
 
     # Fine-grained power management. Turns off GPU when not in use.
     # Experimental and only works on modern Nvidia GPUs (Turing or newer).
@@ -136,7 +135,7 @@ in
     vulkan-loader
     #powertop
     lm_sensors
-    
+
   ];
 
   # GPU runs hot due to lots of power fed to it
@@ -148,8 +147,8 @@ in
   # Fan control on Wayland
   # maybe use system.activationScripts ?
   # powertop handles it well
-  
-    systemd.services.fancontrol = {
+
+  systemd.services.fancontrol = {
     enable = true;
     description = "Wayland fan control service";
     path = [ pkgs.sudo pkgs.xorg.xhost "/run/current-system/sw/bin/nvidia-smi" "/run/current-system/sw/bin/nvidia-settings" ];
