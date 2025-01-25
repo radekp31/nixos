@@ -83,6 +83,14 @@
     };
   };
 
+  virtualisation.vmVariant = {
+    virtualisation = {
+      memorySize = 2048;  # Set memory size
+      diskSize = 10;
+      cores = 2;
+    };
+  };
+
   security.sudo = {
     enable = true;
     wheelNeedsPassword = true; # Require password for sudo

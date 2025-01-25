@@ -839,10 +839,11 @@ in
 	config.window_decorations = "NONE"
 	config.use_fancy_tab_bar = false
 	config.window_frame = {
-	  font_size = 13.0
+	  font_size = 12.5
 	}
 	-- config.font = wezterm.font 'Hack'
 	config.font = wezterm.font 'Inconsolata'
+	config.font_size = 13.5
 
 	-- Keymaps
 	config.keys = {
