@@ -6,7 +6,7 @@
 }:
 
 let
-  unstable = import <nixpkgs> { };
+
 in
 
 {
@@ -951,7 +951,7 @@ in
 
   # Home packages
   home.packages = with pkgs; [
-    unstable.vlc
+    vlc
     git
     alacritty
     alacritty-theme
