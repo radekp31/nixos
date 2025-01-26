@@ -26,7 +26,8 @@
     "${
       builtins.fetchTarball {
         url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
-	sha256 = "wJQCxyMRc4P26zDrHmZiRD5bbfcJpqPG3e2djdGG3pk=";
+	#sha256 = "wJQCxyMRc4P26zDrHmZiRD5bbfcJpqPG3e2djdGG3pk=";
+        sha256 = "00wp0s9b5nm5rsbwpc1wzfrkyxxmqjwsc1kcibjdbfkh69arcpsn";
       }
     }/nixos"
 
@@ -446,7 +447,8 @@
   programs.zsh = {
     enable = true;
     promptInit = ''
-      source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+      #source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+      eval "$(starship init zsh)"
     '';
     enableCompletion = true;
     autosuggestions.enable = true;
