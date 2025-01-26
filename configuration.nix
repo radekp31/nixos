@@ -93,26 +93,27 @@
   security.sudo = {
     enable = true;
     wheelNeedsPassword = true; # Require password for sudo
+    #Impure absolute paths
     extraConfig = ''
-      user ALL=(ALL) NOPASSWD: /usr/bin/nvidia-settings *
+      user ALL=(ALL) NOPASSWD: ${pkgs.linuxPackages.nvidia_x11.settings}
     '';
     extraRules = [
       {
         commands = [
           {
-            command = "/run/current-system/sw/bin/nvidia-settings";
+            command = "${pkgs.linuxPackages.nvidia_x11.settings}";
             options = [ "NOPASSWD" ];
           }
           {
-            command = "/run/current-system/sw/bin/nvidia-smi";
+            command = "${pkgs.linuxPackages.nvidia_x11.bin}";
             options = [ "NOPASSWD" ];
           }
           {
-            command = "/run/current-system/sw/bin/journalctl";
+            command = "${pkgs.systemd}/bin/journalctl";
             options = [ "NOPASSWD" ];
           }
           {
-            command = "/run/current-system/sw/bin/dmesg";
+            command = "${pkgs.util-linux}/bin/dmesg";
             options = [ "NOPASSWD" ];
           }
         ];
@@ -136,6 +137,10 @@
   boot.blacklistedKernelModules = [ "nouveau" ];
   boot.initrd.availableKernelModules = [
     "nvidia"
+    "i915"
+    "nvidia_modeset"
+    "nvidia_uvm"
+    "nvidia_drm"
     "nvme"
     "vesafb"
     "xhci_pci"
@@ -202,13 +207,14 @@
   networking.networkmanager.enable = true;
 
   # Environment variables
+  # Impure paths ?
   environment.variables = {
     DISPLAY = ":0";
     EDITOR = "nvim";
     VISUAL = "nvim";
     TERM = lib.mkDefault "xterm-256color";
     LD_LIBRARY_PATH = "${pkgs.libglvnd}/lib";
-    XAUTHORITY = "/run/user/0/.Xauthority";
+    #XAUTHORITY = "/run/user/0/.Xauthority";
     XDG_CACHE_HOME = "$HOME/.cache";
     XDG_CONFIG_DIRS = "/etc/xdg";
     XDG_CONFIG_HOME = "$HOME/.config";
@@ -260,13 +266,14 @@
   services.displayManager.defaultSession = "hyprland-uwsm";
 
   # Enable ly
-  services.displayManager.ly.enable = true;
+  services.displayManager.ly.enable = false;
 
   # Wayland + Hyprland attempt
   #programs.uwsm.enable = true;
   programs.hyprland.enable = true;
   programs.hyprland.withUWSM = true;
   # Attempt to fix Hyprland high VRAM usage
+  # Impure path ? 
   environment.etc = {
     "nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.txt" = {
       text = ''
@@ -295,7 +302,7 @@
       '';
 
       # The UNIX file mode bits
-      mode = "0777";
+      mode = "0644";
     };
   };
 
@@ -308,13 +315,17 @@
   #        Option "ConnectedMonitor" "DFP-2,DFP-3"
   #	  Option "MetaModes" "2560x1440 +0+0, 1680x1050 -2560+0"
   #'';
+
+
   services.greetd = {
     enable = true;
     settings.default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --asterisks --time --time-format '%I:%M %p | %a -- %h | %F' --cmd Hyprland";
   };
+
   #services.displayManager.sddm.enable = true;
   #services.displayManager.sddm.wayland.enable = true;
   #services.displayManager.sddm.enableHidpi = true;
+
   services.xserver.desktopManager.plasma5.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.graphics.enable = true; # hardware.opengl.enable on older versions
@@ -412,7 +423,9 @@
     ];
   };
 
-  home-manager.users.radekp = import /etc/nixos/home-manager/home.nix;
+  # Impure path 
+  #home-manager.users.radekp = import /etc/nixos/home-manager/home.nix;
+  home-manager.users.radekp = import ./home-manager/home.nix;
 
   #Set up Steam
   programs.steam = {
@@ -438,24 +451,10 @@
     enableCompletion = true;
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
+    # Impure paths? 
     shellInit = ''
       # Enable fzf plugin
       source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
-    
-      # Command to run after user login
-      
-      # unmount remote, just in case its broken
-      # redirection of stderr to some log file could be more useful
-      #fusermount -uz /media/WDRED/OneDrive > /dev/null 2>&1
-
-      # mount the remote
-      # redirection of stderr to some log file could be more useful
-      #nohup rclone cmount --vfs-cache-mode writes onedrive: /media/WDRED/OneDrive > /dev/null 2>&1 < /dev/null &! disown > /dev/null 2>&1
-
-      #if [ $(ls -A /media/WDRED/OneDrive | wc -l) -eq 0 ]; then
-      #nohup rclone cmount --vfs-cache-mode writes onedrive: /media/WDRED/OneDrive > /dev/null 2>&1 < /dev/null &! disown > /dev/null 2>&1
-      #fi
-
     '';
 
     shellAliases = {
@@ -597,6 +596,7 @@
     tldr
     btop
     nurl # get tarball hashes
+    hyprland-workspaces
 
     # Zsh
 

@@ -148,7 +148,8 @@ in
 
     };
 
-    extraConfig = '''';
+    extraConfig = ''
+    '';
     #settings = {
     #  decoration = {
     #    shadow_offset = 0.5;
@@ -176,6 +177,7 @@ in
         #"XDG_CURRENT_DESKTOP"
       ];
     };
+    plugins = [ pkgs.hyprlandPlugins.hyprfocus pkgs.hyprlandPlugins.hyprtrails ];
   };
 
   home.file.".local/share/wayland-sessions/hyprland.desktop".text = ''
@@ -994,6 +996,8 @@ in
     onedrive
     onedrivegui
     qadwaitadecorations-qt6
+    file
+    nautilus
 
     # Neovim
     nixd # LSP server

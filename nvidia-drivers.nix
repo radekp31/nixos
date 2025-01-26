@@ -59,7 +59,11 @@ in
     "nvidia_modeset"
     "nvidia_drm"
     "nvidia"
+    "i915"
   ];
+
+  #Load kernel modules attempt #2
+  boot.initrd.kernelModules = [ "nvidia" "i915" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
 
   #Set kernel params
   boot.kernelParams = [
