@@ -953,7 +953,7 @@ in
     enable = true;
     enableZshIntegration = true;
     settings = {
-      add_newline = false;
+      add_newline = true;
       format = lib.concatStrings [
         "$username"
         "$hostname"
@@ -975,29 +975,31 @@ in
       continuation_prompt = "[ ](bold green)";
       directory = {
         style = "purple";
+        truncate_to_repo = false;
       };
       git_branch = {
         format = "[$branch]($style)";
-        style = "bright-black";
+        style = "bright-blue";
       };
       git_status = {
         format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)";
         style = "cyan";
-        conflicted = "​";
-        untracked = "​";
-        modified = "​";
-        staged = "​";
-        renamed = "​";
-        deleted = "​";
-        stashed = "≡";
+        conflicted = "[X]"; # ASCII code for conflicted files
+        untracked = "[?]"; # ASCII code for untracked files
+        modified = "[M]"; # ASCII code for modified files
+        staged = "[S]"; # ASCII code for staged files
+        renamed = "[R]"; # ASCII code for renamed files
+        deleted = "[D]"; # ASCII code for deleted files
+        stashed = "[≡]"; # ASCII code for stashed changes
+        ahead_behind = "[↑]"; # ASCII code for ahead/behind status
       };
       git_state = {
         format = "\\([$state( $progress_current/$progress_total)]($style)\\) ";
-        style = "bright-black";
+        style = "yellow";
       };
       cmd_duration = {
         format = "[$duration]($style) ";
-        style = "yellow";
+        style = "bright-green";
       };
       python = {
         format = "[$virtualenv]($style) ";
