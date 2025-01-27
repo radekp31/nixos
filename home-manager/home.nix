@@ -984,14 +984,13 @@ in
       git_status = {
         format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)";
         style = "cyan";
-        conflicted = "[X]"; # ASCII code for conflicted files
-        untracked = "[?]"; # ASCII code for untracked files
-        modified = "[M]"; # ASCII code for modified files
-        staged = "[S]"; # ASCII code for staged files
-        renamed = "[R]"; # ASCII code for renamed files
-        deleted = "[D]"; # ASCII code for deleted files
-        stashed = "[≡]"; # ASCII code for stashed changes
-        ahead_behind = "[↑]"; # ASCII code for ahead/behind status
+        conflicted = "​";
+        untracked = "​";
+        modified = "​";
+        staged = "​";
+        renamed = "​";
+        deleted = "​";
+        stashed = "≡";
       };
       git_state = {
         format = "\\([$state( $progress_current/$progress_total)]($style)\\) ";
