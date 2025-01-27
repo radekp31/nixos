@@ -594,7 +594,6 @@
     yt-dlp
     ffmpeg
     nmon
-    bat
     tldr
     btop
     nurl # get tarball hashes

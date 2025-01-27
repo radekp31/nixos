@@ -89,7 +89,8 @@ in
         "$mod, F, fullscreen"
         #"$mod, Return, exec, kitty"
         "$mod, Return, exec, wezterm"
-        "$mod, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
+        "$mod_SHIFT, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
+        "$mod, grave, exec, grim -g \"$(slurp -d)\" - | wl-copy"
         "$mod, space, exec, rofi -show window"
         #"$mod, G, exec, rofi -show games "
         "$mod, V, exec, kitty --class clipse -e 'clipse'"
@@ -964,6 +965,7 @@ in
         "$cmd_duration"
         "$line_break"
         "$python"
+        "$nix_shell"
         "$character"
       ];
       scan_timeout = 10;
@@ -1004,8 +1006,50 @@ in
         format = "[$virtualenv]($style) ";
         style = "bright-black";
       };
+      nix_shell = {
+        disabled = false;
+        impure_msg = "[impure](bold red)";
+        pure_msg = "[pure](bold green)";
+        unknown_msg = "[unknown](bold yellow)";
+        format = "via(bold blue) [ $state( \\($name\\))](bold blue) ";
+      };
     };
   };
+
+  programs.bat = {
+    enable = true;
+    config = {
+      paging = "never";
+      theme = "tokyo-night-storm";
+      decorations = "never";
+    };
+    themes = {
+      dracula = {
+        src = pkgs.fetchFromGitHub {
+          owner = "dracula";
+          repo = "sublime"; # Bat uses sublime syntax for its themes
+          rev = "26c57ec282abcaa76e57e055f38432bd827ac34e";
+          sha256 = "019hfl4zbn4vm4154hh3bwk6hm7bdxbr1hdww83nabxwjn99ndhv";
+        };
+        file = "Dracula.tmTheme";
+      };
+      tokyo-night-day = {
+        src = "${pkgs.vimPlugins.tokyonight-nvim}/extras/sublime/tokyonight_day.tmTheme";
+      };
+      tokyo-night-moon = {
+        src = "${pkgs.vimPlugins.tokyonight-nvim}/extras/sublime/tokyonight_moon.tmTheme";
+      };
+      tokyo-night-night = {
+        src = "${pkgs.vimPlugins.tokyonight-nvim}/extras/sublime/tokyonight_night.tmTheme";
+      };
+      tokyo-night-storm = {
+        src = "${pkgs.vimPlugins.tokyonight-nvim}/extras/sublime/tokyonight_storm.tmTheme";
+      };
+    };
+    extraPackages = with pkgs.bat-extras; [ batdiff batman batgrep batwatch ];
+  };
+
+  programs.lesspipe.enable = true;
 
   # Home packages
   home.packages = with pkgs; [
@@ -1027,6 +1071,8 @@ in
     ventoy-full
     rclone
     ntfs3g
+    usbutils
+    fastfetch
     lact
     mpv
     coolercontrol.coolercontrold
