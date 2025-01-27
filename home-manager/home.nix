@@ -954,41 +954,17 @@ in
     enableZshIntegration = true;
     settings = {
       add_newline = false;
-      #format = lib.concatStrings [
-      #  "$line_break"
-      #  "$package"
-      #  "$line_break"
-      #  "$character"
-      #];
-      # format = lib.concatStrings [
-      #   #"$all"
-      #   """"
-      #   "$username\\"
-      #   "$hostname\\"
-      #   "$directory\\"
-      #   "$git_branch\\"
-      #   "$git_state\\"
-      #   "$git_status\\"
-      #   "$cmd_duration\\"
-      #   "$line_break\\"
-      #   "$python\\"
-      #   "$character"
-      #   """"
-      # ];
-      format = [
-        ""
-        "
-	$username\
-	$hostname\
-	$directory\
-	$git_branch\
-	$git_state\
-	$git_status\
-	$cmd_duration\
-	$line_break\
-	$python\
-	$character"
-        ""
+      format = lib.concatStrings [
+        "$username"
+        "$hostname"
+        "$directory"
+        "$git_branch"
+        "$git_state"
+        "$git_status"
+        "$cmd_duration"
+        "$line_break"
+        "$python"
+        "$character"
       ];
       scan_timeout = 10;
       character = {
