@@ -3,15 +3,14 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 #TODO
-#1/ fix hardcoded values
 #2/ keep only relevant config in configuration.nix
 #   split into more .nix files or move it to home.nix
-#4/ fix ugly formatting (extraneous comments, indentation)
 #5/ test removing some configs that might be included by default (openssh, ...)
 #6/ Make the config functional for fresh machines via git pull
 #7/ Make the config "interactive"
 #	- automatic user creation from list - https://discourse.nixos.org/t/creating-users-from-a-list/34014/5
 #	- multiple profiles available instead of just having modules/default.nix
+#       - autodecide on video drivers install 
 
 { config
 , pkgs
@@ -568,7 +567,7 @@
     git # NixOS sucks without git
     openssh
     htop # system monitor
-    eza # ls on steroids
+    #eza # ls on steroids
     fzf # fuzzy finder
     plymouth # boot customization
     feh # lighweight wallpaper management

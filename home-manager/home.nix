@@ -6,10 +6,13 @@
 }:
 
 let
-
+  xdgConfigHome = builtins.getEnv "XDG_CONFIG_HOME";
 in
 
 {
+
+  imports = [
+  ];
 
   #Let Home Manager install and manage itself
   programs.home-manager.enable = true;
@@ -1049,10 +1052,34 @@ in
     extraPackages = with pkgs.bat-extras; [ batdiff batman batgrep batwatch ];
   };
 
+  programs.eza = {
+    enable = true;
+    enableZshIntegration = true;
+    icons = false;
+    package = pkgs.eza;
+    extraOptions = [
+      "--group-directories-first"
+      "--header"
+    ];
+  };
+
+  # Set eza tokyonight coloscheme
+
+  home.file."${config.xdg.configHome}/eza/theme.yml" = {
+    source = "${pkgs.vimPlugins.tokyonight-nvim}/extras/eza/tokyonight.yml";
+  };
+
+
   programs.lesspipe.enable = true;
 
   # Home packages
+
   home.packages = with pkgs; [
+
+    # Test derivations
+
+    # Packages 
+
     vlc
     git
     alacritty
