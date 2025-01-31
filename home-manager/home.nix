@@ -32,6 +32,13 @@ in
     "/home/radekp/.nix-profile/bin/" # Required by Neovim and plugins (?)
   ];
 
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+      allowUnfreePredicate = (_: true);
+    };
+  };
+
   systemd.user.services.mountOneDrive = {
     Unit = {
       Description = "Mount OneDrive remote using rclone";
@@ -48,6 +55,11 @@ in
       ExecStop = "/run/wrappers/bin/fusermount -u /media/WDRED/OneDrive";
       RestartSec = "10";
     };
+  };
+
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
   };
 
 
@@ -1016,6 +1028,17 @@ in
         unknown_msg = "[unknown](bold yellow)";
         format = "via(bold blue) [ $state( \\($name\\))](bold blue) ";
       };
+      env_var.DIRENV_DIR = {
+        format = "[$env_value]($style)";
+        style = "yellow";
+        variable = "DIREV_DIR";
+        disabled = "false";
+      };
+      custom.direnv_loading = {
+        command = "echo $DIRENV_LOADING";
+        when = "test -n \"DIRENV_LOADING\"";
+        format = "[loading env...](yellow)";
+      };
     };
   };
 
@@ -1100,6 +1123,7 @@ in
     ntfs3g
     usbutils
     fastfetch
+    opera
     lact
     mpv
     coolercontrol.coolercontrold

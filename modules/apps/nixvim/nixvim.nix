@@ -148,6 +148,10 @@ in
               nixpkgs.expr = "import <nixpkgs> { }";
             };
           };
+          gopls = {
+            enable = true;
+            #settings = {};
+          };
         };
       };
 
@@ -161,6 +165,12 @@ in
             path = "[path]";
           };
         };
+      };
+      luasnip = {
+        enable = true;
+        fromVscode = [
+          { }
+        ];
       };
       cmp = {
         enable = true;
@@ -187,6 +197,9 @@ in
             }
             {
               name = "fuzzy-path";
+            }
+            {
+              name = "luasnip";
             }
           ];
           mapping = {
@@ -215,9 +228,19 @@ in
       web-devicons = {
         enable = true;
       };
+      cmp_luasnip = {
+        enable = true;
+      };
+      cmp-nvim-lsp = {
+        enable = true;
+      };
+      cmp-path = {
+        enable = true;
+      };
     };
     extraPlugins = [
       pkgs.vimPlugins.nvim-lspconfig
+      pkgs.vimPlugins.friendly-snippets
     ];
     extraPackages = [
       pkgs.wl-clipboard

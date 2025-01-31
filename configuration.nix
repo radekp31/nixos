@@ -447,7 +447,8 @@
     enable = true;
     promptInit = ''
       #source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-      eval "$(starship init zsh)"
+      eval "$(starship init zsh)" # Enable Starship
+      eval "$(direnv hook zsh)" # Enable direnv
     '';
     enableCompletion = true;
     autosuggestions.enable = true;
@@ -588,7 +589,7 @@
     shutter # snipping tool
     dunst # notification tool
     lld_18
-    opera
+    #opera
     jq
     yt-dlp
     ffmpeg
