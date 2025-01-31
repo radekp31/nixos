@@ -1,9 +1,8 @@
-{
-  config,
-  pkgs,
-  lib,
-  input,
-  ...
+{ config
+, pkgs
+, lib
+, input
+, ...
 }:
 
 let
@@ -11,13 +10,10 @@ let
     builtins.fetchGit {
       url = "https://github.com/nix-community/nixvim";
       ref = "nixos-24.11";
-    }
-  );
-
-  nixvim = import (
-    builtins.fetchGit {
-      url = "https://github.com/nix-community/nixvim";
-      ref = "nixos-24.11";
+      #owner = "nix-community";
+      #repo = "nixvim";
+      rev = "85bef9e19191000db4a13337198266359cefb9b6";
+      #sha256 = "gyP1Ds62ySpWszHCL9kzWzdLg2WFIuFcDc1kDIGBgB0=";
     }
   );
 
@@ -59,13 +55,13 @@ in
     plugins = {
       telescope = {
         enable = true;
-	extensions = {
-	  live-grep-args = {
-	    settings = {
-	      search_dirs = ["/etc/mnt" "~"];
-	    };
-	  };
-	};
+        extensions = {
+          live-grep-args = {
+            settings = {
+              search_dirs = [ "/etc/mnt" "~" ];
+            };
+          };
+        };
         keymaps = {
           "<leader>ff" = {
             action = "find_files";
@@ -132,7 +128,7 @@ in
       };
       lsp = {
         enable = true;
-	# I need to figure this out
+        # I need to figure this out
         #keymaps = {
         #  extra = [
         #    {
@@ -151,6 +147,10 @@ in
               nixpkgs.expr = "import <nixpkgs> { }";
             };
           };
+          gopls = {
+            enable = true;
+            #settings = {};
+          };
         };
       };
 
@@ -164,6 +164,12 @@ in
             path = "[path]";
           };
         };
+      };
+      luasnip = {
+        enable = true;
+        fromVscode = [
+          { }
+        ];
       };
       cmp = {
         enable = true;
@@ -192,6 +198,9 @@ in
             {
               name = "fuzzy-path";
             }
+            {
+              name = "luasnip";
+            }
           ];
           mapping = {
             "<C-Left>" = "cmp.mapping.select_prev_item()";
@@ -219,9 +228,19 @@ in
       web-devicons = {
         enable = true;
       };
+      cmp_luasnip = {
+        enable = true;
+      };
+      cmp-nvim-lsp = {
+        enable = true;
+      };
+      cmp-path = {
+        enable = true;
+      };
     };
     extraPlugins = [
       pkgs.vimPlugins.nvim-lspconfig
+      pkgs.vimPlugins.friendly-snippets
     ];
     extraPackages = [
       pkgs.wl-clipboard

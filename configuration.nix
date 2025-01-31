@@ -3,21 +3,19 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 #TODO
-#1/ fix hardcoded values
 #2/ keep only relevant config in configuration.nix
 #   split into more .nix files or move it to home.nix
-#4/ fix ugly formatting (extraneous comments, indentation)
 #5/ test removing some configs that might be included by default (openssh, ...)
 #6/ Make the config functional for fresh machines via git pull
 #7/ Make the config "interactive"
 #	- automatic user creation from list - https://discourse.nixos.org/t/creating-users-from-a-list/34014/5
 #	- multiple profiles available instead of just having modules/default.nix
+#       - autodecide on video drivers install 
 
-{
-  config,
-  pkgs,
-  lib,
-  ...
+{ config
+, pkgs
+, lib
+, ...
 }:
 
 {
@@ -27,8 +25,11 @@
     "${
       builtins.fetchTarball {
         url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
+	#sha256 = "wJQCxyMRc4P26zDrHmZiRD5bbfcJpqPG3e2djdGG3pk=";
+        sha256 = "00wp0s9b5nm5rsbwpc1wzfrkyxxmqjwsc1kcibjdbfkh69arcpsn";
       }
     }/nixos"
+
     ./hardware-configuration.nix
     ./nvidia-drivers.nix
     ./modules/default.nix
@@ -36,11 +37,6 @@
     #./modules/apps/qmk/qmk.nix
     #./modules/apps/qemu/qemu.nix
   ];
-
-  # Enable experimental features
-  nix.extraOptions = ''
-    experimental-features = nix-command flakes
-  '';
 
   # Configure Nixpkgs to use the unstable channel for system-wide packages
   nixpkgs.config = {
@@ -57,35 +53,66 @@
       (import (
         builtins.fetchTarball {
           url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
+          sha2656 = "wJQCxyMRc4P26zDrHmZiRD5bbfcJpqPG3e2djdGG3pk=";
         }
       ))
     ];
   };
 
+  #System auto upgrades
+  system.autoUpgrade = {
+    enable = true;
+    dates = "weekly";
+  };
+
+  # Nix settings
+  # - automatic garbage collection
+  # - automatic store optimisation
+  # - enabling flakes
+  nix = {
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 10d";
+    };
+    settings = {
+      auto-optimise-store = true;
+      experimental-features = [ "nix-command" "flakes" ];
+    };
+  };
+
+  virtualisation.vmVariant = {
+    virtualisation = {
+      memorySize = 2048; # Set memory size
+      diskSize = 10;
+      cores = 2;
+    };
+  };
+
   security.sudo = {
     enable = true;
     wheelNeedsPassword = true; # Require password for sudo
+    #Impure absolute paths
     extraConfig = ''
-      user ALL=(ALL) NOPASSWD: /usr/bin/nvidia-settings *
+      user ALL=(ALL) NOPASSWD: ${pkgs.linuxPackages.nvidia_x11.settings}
     '';
-
     extraRules = [
       {
         commands = [
           {
-            command = "/run/current-system/sw/bin/nvidia-settings";
+            command = "${pkgs.linuxPackages.nvidia_x11.settings}";
             options = [ "NOPASSWD" ];
           }
           {
-            command = "/run/current-system/sw/bin/nvidia-smi";
+            command = "${pkgs.linuxPackages.nvidia_x11.bin}";
             options = [ "NOPASSWD" ];
           }
           {
-            command = "/run/current-system/sw/bin/journalctl";
+            command = "${pkgs.systemd}/bin/journalctl";
             options = [ "NOPASSWD" ];
           }
           {
-            command = "/run/current-system/sw/bin/dmesg";
+            command = "${pkgs.util-linux}/bin/dmesg";
             options = [ "NOPASSWD" ];
           }
         ];
@@ -110,6 +137,10 @@
   boot.blacklistedKernelModules = [ "nouveau" ];
   boot.initrd.availableKernelModules = [
     "nvidia"
+    "i915"
+    "nvidia_modeset"
+    "nvidia_uvm"
+    "nvidia_drm"
     "nvme"
     "vesafb"
     "xhci_pci"
@@ -176,13 +207,14 @@
   networking.networkmanager.enable = true;
 
   # Environment variables
+  # Impure paths ?
   environment.variables = {
     DISPLAY = ":0";
     EDITOR = "nvim";
     VISUAL = "nvim";
     TERM = lib.mkDefault "xterm-256color";
     LD_LIBRARY_PATH = "${pkgs.libglvnd}/lib";
-    XAUTHORITY = "/run/user/0/.Xauthority";
+    #XAUTHORITY = "/run/user/0/.Xauthority";
     XDG_CACHE_HOME = "$HOME/.cache";
     XDG_CONFIG_DIRS = "/etc/xdg";
     XDG_CONFIG_HOME = "$HOME/.config";
@@ -234,7 +266,7 @@
   services.displayManager.defaultSession = "hyprland-uwsm";
 
   # Enable ly
-  services.displayManager.ly.enable = true;
+  services.displayManager.ly.enable = false;
 
   # Wayland + Hyprland attempt
   #programs.uwsm.enable = true;
@@ -267,12 +299,11 @@
             ]
         }
       '';
-
       # The UNIX file mode bits
-      mode = "0777";
+      mode = "0644";
     };
   };
-  
+
   #services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
   services.xserver.enable = true;
   #services.xserver.deviceSection = ''
@@ -282,13 +313,17 @@
   #        Option "ConnectedMonitor" "DFP-2,DFP-3"
   #	  Option "MetaModes" "2560x1440 +0+0, 1680x1050 -2560+0"
   #'';
+
+
   services.greetd = {
     enable = true;
     settings.default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --asterisks --time --time-format '%I:%M %p | %a -- %h | %F' --cmd Hyprland";
   };
+
   #services.displayManager.sddm.enable = true;
   #services.displayManager.sddm.wayland.enable = true;
   #services.displayManager.sddm.enableHidpi = true;
+
   services.xserver.desktopManager.plasma5.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.graphics.enable = true; # hardware.opengl.enable on older versions
@@ -299,7 +334,6 @@
   };
 
   # End of Hyprland attempt
-
 
   #Enable picom
   services.picom.enable = false;
@@ -353,7 +387,7 @@
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -387,7 +421,9 @@
     ];
   };
 
-  home-manager.users.radekp = import /etc/nixos/home-manager/home.nix;
+  # Impure path 
+  #home-manager.users.radekp = import /etc/nixos/home-manager/home.nix;
+  home-manager.users.radekp = import ./home-manager/home.nix;
 
   #Set up Steam
   programs.steam = {
@@ -397,22 +433,25 @@
     localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
 
-   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-     "steam"
-     "steam-original"
-     "steam-run"
-   ];
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "steam"
+    "steam-original"
+    "steam-run"
+  ];
 
   #Set up ZSH
   users.defaultUserShell = pkgs.zsh;
   programs.zsh = {
     enable = true;
     promptInit = ''
-      source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+      #source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
+      eval "$(starship init zsh)" # Enable Starship
+      eval "$(direnv hook zsh)" # Enable direnv
     '';
     enableCompletion = true;
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
+    # Impure paths? 
     shellInit = ''
       # Enable fzf plugin
       source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
@@ -450,7 +489,12 @@
       cat = "bat -pp";
       #icat = "kitty icat";
       icat = "wezterm imgcat";
+   
+      nix-push-config = "nix fmt && git fetch --all && git add . && git commit -m \"update on $(date '+%Y-%m-%d %H:%M:%S')\" && git push";
 
+      lg1 = "git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all";
+      lg2 = "git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'";
+      lg = "lg1";
     };
 
     ohMyZsh = {
@@ -540,7 +584,7 @@
     git # NixOS sucks without git
     openssh
     htop # system monitor
-    eza # ls on steroids
+    #eza # ls on steroids
     fzf # fuzzy finder
     plymouth # boot customization
     feh # lighweight wallpaper management
@@ -552,10 +596,8 @@
     polybarFull # status bar
     alacritty # GPU accelerated terminal emulator
     alacritty-theme
-    #kitty
     rofi # awesome launch menu
     rofi-power-menu # awesome power menu
-    #yazi #cli based file manager - its awesome, check nix options as well!
     picom # x11 lightweight compositor
     ly # TUI login screen
     ntfs3g
@@ -563,15 +605,15 @@
     shutter # snipping tool
     dunst # notification tool
     lld_18
-    opera
+    #opera
     jq
     yt-dlp
     ffmpeg
     nmon
-    bat
     tldr
     btop
-    #wezterm
+    nurl # get tarball hashes
+    hyprland-workspaces
 
     # Zsh
 

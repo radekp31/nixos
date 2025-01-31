@@ -14,10 +14,10 @@
   # Create user
   users.users.gcis = {
     group = "gcis";
-    isSystemUser=true;
+    isSystemUser = true;
   };
 
- # Add user to the libvirtd group
+  # Add user to the libvirtd group
   users.users.gcis.extraGroups = [ "libvirtd" ];
 
   # Define system packages
@@ -36,7 +36,7 @@
   virtualisation.libvirtd = {
     enable = true;
     qemu = {
-      swtpm.enable = true;  # Enable TPM emulation
+      swtpm.enable = true; # Enable TPM emulation
       ovmf = {
         enable = true;
         packages = [ pkgs.OVMFFull.fd ];

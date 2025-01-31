@@ -1,9 +1,8 @@
-{
-  config,
-  lib,
-  pkgs,
-  fetchpatch,
-  ...
+{ config
+, lib
+, pkgs
+, fetchpatch
+, ...
 }:
 
 let
@@ -60,7 +59,11 @@ in
     "nvidia_modeset"
     "nvidia_drm"
     "nvidia"
+    "i915"
   ];
+
+  #Load kernel modules attempt #2
+  boot.initrd.kernelModules = [ "nvidia" "i915" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
 
   #Set kernel params
   boot.kernelParams = [
@@ -82,11 +85,12 @@ in
     # of just the bare essentials.
     powerManagement.enable = true;
 
-    
-
     # Fine-grained power management. Turns off GPU when not in use.
     # Experimental and only works on modern Nvidia GPUs (Turing or newer).
     powerManagement.finegrained = false;
+
+    # Ampere and newer (RTX 30xx) :(
+    dynamicBoost.enable = false;
 
     # Use the NVidia open source kernel module (not to be confused with the
     # independent third-party "nouveau" open source driver).
@@ -104,14 +108,22 @@ in
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     # package = config.boot.kernelPackages.nvidiaPackages.beta;
     package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-      version = "565.57.01";
-      sha256_64bit = "sha256-buvpTlheOF6IBPWnQVLfQUiHv4GcwhvZW3Ks0PsYLHo=";
-      sha256_aarch64 = "sha256-aDVc3sNTG4O3y+vKW87mw+i9AqXCY29GVqEIUlsvYfE=";
-      openSha256 = "sha256-/tM3n9huz1MTE6KKtTCBglBMBGGL/GOHi5ZSUag4zXA=";
-      settingsSha256 = "sha256-H7uEe34LdmUFcMcS6bz7sbpYhg9zPCb/5AmZZFTx1QA=";
-      persistencedSha256 = "sha256-hdszsACWNqkCh8G4VBNitDT85gk9gJe1BlQ8LdrYIkg=";
-      patchesOpen = [ drm_fop_flags_linux_612_patch ];
+      version = "565.77";
+      sha256_64bit = "sha256-CnqnQsRrzzTXZpgkAtF7PbH9s7wbiTRNcM0SPByzFHw=";
+      sha256_aarch64 = "sha256-CnqnQsRrzzTXZpgkAtF7PbH9s7wbiTRNcM0SPByzFHw=";
+      openSha256 = "sha256-Fxo0t61KQDs71YA8u7arY+503wkAc1foaa51vi2Pl5I=";
+      settingsSha256 = "sha256-VUetj3LlOSz/LB+DDfMCN34uA4bNTTpjDrb6C6Iwukk=";
+      persistencedSha256 = "sha256-wnDjC099D8d9NJSp9D0CbsL+vfHXyJFYYgU3CwcqKww=";
     };
+    #package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
+    #  version = "565.57.01";
+    #  sha256_64bit = "sha256-buvpTlheOF6IBPWnQVLfQUiHv4GcwhvZW3Ks0PsYLHo=";
+    #  sha256_aarch64 = "sha256-aDVc3sNTG4O3y+vKW87mw+i9AqXCY29GVqEIUlsvYfE=";
+    #  openSha256 = "sha256-/tM3n9huz1MTE6KKtTCBglBMBGGL/GOHi5ZSUag4zXA=";
+    #  settingsSha256 = "sha256-H7uEe34LdmUFcMcS6bz7sbpYhg9zPCb/5AmZZFTx1QA=";
+    #  persistencedSha256 = "sha256-hdszsACWNqkCh8G4VBNitDT85gk9gJe1BlQ8LdrYIkg=";
+    #  patchesOpen = [ drm_fop_flags_linux_612_patch ];
+    #};
   };
 
   #Packages related to NVIDIA
@@ -125,7 +137,7 @@ in
     vulkan-loader
     #powertop
     lm_sensors
-    
+
   ];
 
   # GPU runs hot due to lots of power fed to it
@@ -137,8 +149,8 @@ in
   # Fan control on Wayland
   # maybe use system.activationScripts ?
   # powertop handles it well
-  
-    systemd.services.fancontrol = {
+
+  systemd.services.fancontrol = {
     enable = true;
     description = "Wayland fan control service";
     path = [ pkgs.sudo pkgs.xorg.xhost "/run/current-system/sw/bin/nvidia-smi" "/run/current-system/sw/bin/nvidia-settings" ];
