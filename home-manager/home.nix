@@ -1128,6 +1128,10 @@ in
     mpv
     coolercontrol.coolercontrold
     coolercontrol.coolercontrol-gui
+    ytfzf
+    dmenu
+    ueberzug
+    #ueberzugpp
 
     # Hyprland
     kitty-themes
