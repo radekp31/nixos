@@ -88,6 +88,7 @@ in
       "$mod" = "SUPER";
 
       exec-once = [
+        "waybar"
         "clipse --listen"
         "wl-paste --type text --watch cliphist store" #Stores only text data
         "wl-paste --type image --watch cliphist store" #Stores only image data
@@ -1100,6 +1101,7 @@ in
   home.packages = with pkgs; [
 
     # Test derivations
+    ungoogled-chromium
 
     # Packages 
 
