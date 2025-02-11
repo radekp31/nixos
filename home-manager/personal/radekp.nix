@@ -441,42 +441,42 @@ in
     };
   };
 
-  # Enable Hyprlock
-  #programs.hyprlock = {
-  #  enable = false;
-  #  settings = {
-  #    general = {
-  #      disable_loading_bar = true;
-  #      grace = 300;
-  #      hide_cursor = true;
-  #      no_fade_in = false;
-  #    };
+  #Enable Hyprlock
+  # programs.hyprlock = {
+  #   enable = true;
+  #   settings = {
+  #     general = {
+  #       disable_loading_bar = true;
+  #       grace = 300;
+  #       hide_cursor = true;
+  #       no_fade_in = false;
+  #     };
 
-  #    background = [
-  #      {
-  #        path = "screenshot";
-  #        blur_passes = 3;
-  #        blur_size = 8;
-  #      }
-  #    ];
+  #     background = [
+  #       {
+  #         path = "screenshot";
+  #         blur_passes = 3;
+  #         blur_size = 8;
+  #       }
+  #     ];
 
-  #    input-field = [
-  #      {
-  #        size = "200, 50";
-  #        position = "0, -80";
-  #        monitor = "";
-  #        dots_center = true;
-  #        fade_on_empty = false;
-  #        font_color = "rgb(202, 211, 245)";
-  #        inner_color = "rgb(91, 96, 120)";
-  #        outer_color = "rgb(24, 25, 38)";
-  #        outline_thickness = 5;
-  #        placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
-  #        shadow_passes = 2;
-  #      }
-  #    ];
-  #  };
-  #};
+  #     input-field = [
+  #       {
+  #         size = "200, 50";
+  #         position = "0, -80";
+  #         monitor = "";
+  #         dots_center = true;
+  #         fade_on_empty = false;
+  #         font_color = "rgb(202, 211, 245)";
+  #         inner_color = "rgb(91, 96, 120)";
+  #         outer_color = "rgb(24, 25, 38)";
+  #         outline_thickness = 5;
+  #         placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
+  #         shadow_passes = 2;
+  #       }
+  #     ];
+  #   };
+  # };
 
   #Create power_menu.xml for waybar
   home.file.".config/waybar/power_menu.xml".text = ''
@@ -1133,7 +1133,8 @@ in
     ytfzf
     dmenu
     ueberzug
-    #ueberzugpp
+    glance
+
 
     # Hyprland
     kitty-themes
@@ -1568,6 +1569,11 @@ in
       	#cyan    = '#0db9d7'
       	#white   = '#acb0d0'
     '';
+  };
+
+  #Glance config
+  home.file."${config.xdg.configHome}/glance/glance.yaml" = {
+    source = ../glance/glance.yml;
   };
 
   #Enable NVIM

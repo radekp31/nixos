@@ -10,10 +10,11 @@
 
   };
 
-  outputs = { self, nixpkgs, alejandra, ... }@inputs:
+  outputs = { self, nixpkgs, alejandra, home-manager, ... }@inputs:
 
     let
 
+      inherit (self) outputs;
       system = "x86_64-linux";
 
     in
@@ -29,6 +30,14 @@
           ./configuration.nix
 
         ];
+      };
+
+      homeConfigurations = {
+        "radekp@nixos-desktop" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          extraSpecialArgs = { inherit inputs outputs; };
+          modules = [ ./home-manager/personal/radekp.nix ];
+        };
       };
 
       # Formatter

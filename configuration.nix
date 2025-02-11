@@ -423,9 +423,8 @@
     ];
   };
 
-  # Impure path 
   #home-manager.users.radekp = import /etc/nixos/home-manager/home.nix;
-  home-manager.users.radekp = import ./home-manager/home.nix;
+  #home-manager.users.radekp = import ./home-manager/home.nix;
 
   #Set up Steam
   programs.steam = {
