@@ -88,7 +88,7 @@ in
       "$mod" = "SUPER";
 
       exec-once = [
-        "waybar"
+        #"waybar"
         "clipse --listen"
         "wl-paste --type text --watch cliphist store" #Stores only text data
         "wl-paste --type image --watch cliphist store" #Stores only image data
@@ -1079,7 +1079,7 @@ in
   programs.eza = {
     enable = true;
     enableZshIntegration = true;
-    icons = false;
+    icons = null;
     package = pkgs.eza;
     extraOptions = [
       "--group-directories-first"
