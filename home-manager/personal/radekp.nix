@@ -84,7 +84,7 @@ in
       #  shadow_offset = "0 5";
       #  "col.shadow" = "rgba(00000099)";
       #};
-      
+
       "$mod" = "SUPER";
 
       exec-once = [
@@ -203,7 +203,7 @@ in
     Exec=Hyprland
     Type=Application
   '';
-  
+
   programs.waybar = {
     enable = true;
     systemd.enable = true;
