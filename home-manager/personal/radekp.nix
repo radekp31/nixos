@@ -1104,7 +1104,6 @@ in
     ungoogled-chromium
 
     # Packages 
-
     vlc
     git
     alacritty
@@ -1577,85 +1576,4 @@ in
   };
 
   #Enable NVIM
-  #Enable NVIM
-  programs.neovim = {
-    enable = false;
-    viAlias = true;
-    vimAlias = true;
-    vimdiffAlias = true;
-    plugins = [
-      # Plugin 1: nvim-colorizer-lua
-      {
-        plugin = pkgs.vimPlugins.tokyonight-nvim;
-      }
-
-      # Plugin 2: nvim-treesitter
-      {
-        plugin = pkgs.vimPlugins.nvim-lspconfig;
-      }
-
-      # Plugin 3: telescope.nvim
-      {
-        plugin = pkgs.vimPlugins.telescope-nvim;
-        config = ''
-                        packadd! telescope.nvim
-                        lua << END
-                require('telescope').setup{
-            defaults = {
-              mappings = {
-                i = {
-                  ["<C-n>"] = require('telescope.a
-                  ["<C-p>"] = require('telescope.actions').cycle_history_prev,
-                },
-              },
-            }
-          }
-          END
-        '';
-      }
-    ];
-
-    extraConfig = ''
-                  	" Enable Tokyo Night color scheme
-                  	colorscheme tokyonight-night
-
-                  	" Enable row numbers
-                          set number
-                          set relativenumber
-
-                      " Clear screen after exit
-                  	lua vim.api.nvim_create_autocmd("VimLeavePre", { command = "silent !clear" })
-      		
-      		" Configure Lsp server
-      		lua << EOF
-      local nvim_lsp = require("lspconfig")
-      nvim_lsp.nixd.setup({
-         cmd = { "nixd" },
-         settings = {
-            nixd = {
-               nixpkgs = {
-                  expr = "import <nixpkgs> { }",
-      	 },
-               formatting = {
-                  command = { "nixfmt" },
-               },
-      	 options = {
-      	   nixos = {
-      	     expr = "(builtins.getFlake \"/home/lyc/flakes\").nixosConfigurations.adrastea.options"
-      	   },
-      	 },
-            },
-         },
-      })
-      EOF
-    '';
-
-    extraPackages = with pkgs; [
-      nixd
-      lua-language-server
-      xclip
-      wl-clipboard
-    ];
-  };
-
 }

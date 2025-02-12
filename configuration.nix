@@ -324,49 +324,6 @@
 
   # End of Hyprland attempt
 
-  ##Enable picom
-  #services.picom.enable = false;
-  #services.picom.settings = {
-
-  #  # Enable shadows
-  #  shadow = true;
-  #  shadow-radius = 12;
-  #  shadow-opacity = 0.7;
-  #  shadow-offset-x = -7;
-  #  shadow-offset-y = -7;
-
-  #  # Enable fading
-  #  fading = true;
-  #  fade-delta = 5;
-  #  fade-in-step = 0.03;
-  #  fade-out-step = 0.03;
-
-  #  # Enable transparency for inactive windows
-  #  inactive-opacity = 0.9;
-  #  active-opacity = 1.0;
-  #  frame-opacity = 0.8;
-  #  inactive-opacity-override = false;
-
-  #  # Blur background of transparent windows
-  #  blur = {
-  #    method = "kernel";
-  #    strength = 5;
-  #  };
-
-  #  # Enable vsync to avoid screen tearing
-  #  vsync = true;
-
-  #  # Use rounded corners
-  #  corner-radius = 0;
-
-  #  # Disable shadows for specific applications
-  #  shadow-exclude = [
-  #    "class_g = 'Polybar'"
-  #    "class_g = 'feh'"
-  #    "class_g = 'Alacritty'"
-  #  ];
-  #};
-
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
@@ -486,48 +443,6 @@
 
   # Install firefox.
   programs.firefox.enable = true;
-
-  # Setup neovim
-  #programs.neovim = {
-  #  enable = false;
-  #  viAlias = true;
-  #  vimAlias = true;
-  #  defaultEditor = true;
-  #  package = pkgs.neovim-unwrapped;
-  #  # Neovim configure section for custom RC and plugins
-  #  configure = {
-  #    customRC = ''
-  #              " Enable Tokyo Night color scheme
-  #      	colorscheme tokyonight-night
-
-  #      	" Enable row numbers
-  #              set number
-  #              set relativenumber
-
-  #              " Clear screen after exit
-  #      	lua vim.api.nvim_create_autocmd("VimLeavePre", { command = "silent !clear" })
-  #            
-  #      	'';
-
-  #    #colorscheme tokyonight-night
-  #    packages.myVimPackage = with pkgs.vimPlugins; {
-
-  #      # loaded on launch
-  #      start = [
-  #        #tokyonight-nvim
-  #        #vim-lsp
-  #        #vim-lsp-settings
-  #        #nvim-treesitter
-  #        #cmp-nvim-lsp
-  #        #nvim-cmp
-  #      ];
-  #      # manually loadable by calling `:packadd $plugin-name`
-  #      opt = [
-  #        #tokyonight-nvim
-  #      ];
-  #    };
-  #  };
-  #};
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
