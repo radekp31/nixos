@@ -4,7 +4,6 @@
 
 #TODO
 #2/ keep only relevant config in configuration.nix
-#   split into more .nix files or move it to home.nix
 #5/ test removing some configs that might be included by default (openssh, ...)
 #6/ Make the config functional for fresh machines via git pull
 #7/ Make the config "interactive"
@@ -92,7 +91,6 @@
   security.sudo = {
     enable = true;
     wheelNeedsPassword = true; # Require password for sudo
-    #Impure absolute paths
     extraConfig = ''
       user ALL=(ALL) NOPASSWD: ${pkgs.linuxPackages.nvidia_x11.settings}
     '';
@@ -137,7 +135,6 @@
   boot.blacklistedKernelModules = [ "nouveau" ];
   boot.initrd.availableKernelModules = [
     "nvidia"
-    "i915"
     "nvidia_modeset"
     "nvidia_uvm"
     "nvidia_drm"
@@ -176,9 +173,9 @@
   #  algorithm = "lz4"; #lz4 works
   #};
 
-  boot.extraModprobeConfig = ''
-    options nvidia-drm modeset=1
-  '';
+  #boot.extraModprobeConfig = ''
+  #  options nvidia-drm modeset=1
+  #'';
 
   powerManagement.cpuFreqGovernor = "performance";
 
@@ -207,7 +204,6 @@
   networking.networkmanager.enable = true;
 
   # Environment variables
-  # Impure paths ?
   environment.variables = {
     DISPLAY = ":0";
     EDITOR = "nvim";
@@ -304,25 +300,17 @@
     };
   };
 
-  #services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
   services.xserver.enable = true;
-  #services.xserver.deviceSection = ''
-  #        Identifier "NVIDIA GPU"
-  #        Driver "nvidia"
-  #        Option "PrimaryGPU" "Yes"
-  #        Option "ConnectedMonitor" "DFP-2,DFP-3"
-  #	  Option "MetaModes" "2560x1440 +0+0, 1680x1050 -2560+0"
-  #'';
 
 
-  services.greetd = {
-    enable = true;
-    settings.default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --asterisks --time --time-format '%I:%M %p | %a -- %h | %F' --cmd Hyprland";
-  };
+  # services.greetd = {
+  #   enable = false;
+  #   settings.default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --asterisks --time --time-format '%I:%M %p | %a -- %h | %F' --cmd Hyprland";
+  # };
 
-  #services.displayManager.sddm.enable = true;
-  #services.displayManager.sddm.wayland.enable = true;
-  #services.displayManager.sddm.enableHidpi = true;
+  services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
+  services.displayManager.sddm.enableHidpi = true;
 
   services.xserver.desktopManager.plasma5.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
@@ -334,49 +322,6 @@
   };
 
   # End of Hyprland attempt
-
-  #Enable picom
-  services.picom.enable = false;
-  services.picom.settings = {
-
-    # Enable shadows
-    shadow = true;
-    shadow-radius = 12;
-    shadow-opacity = 0.7;
-    shadow-offset-x = -7;
-    shadow-offset-y = -7;
-
-    # Enable fading
-    fading = true;
-    fade-delta = 5;
-    fade-in-step = 0.03;
-    fade-out-step = 0.03;
-
-    # Enable transparency for inactive windows
-    inactive-opacity = 0.9;
-    active-opacity = 1.0;
-    frame-opacity = 0.8;
-    inactive-opacity-override = false;
-
-    # Blur background of transparent windows
-    blur = {
-      method = "kernel";
-      strength = 5;
-    };
-
-    # Enable vsync to avoid screen tearing
-    vsync = true;
-
-    # Use rounded corners
-    corner-radius = 0;
-
-    # Disable shadows for specific applications
-    shadow-exclude = [
-      "class_g = 'Polybar'"
-      "class_g = 'feh'"
-      "class_g = 'Alacritty'"
-    ];
-  };
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -421,9 +366,8 @@
     ];
   };
 
-  # Impure path 
   #home-manager.users.radekp = import /etc/nixos/home-manager/home.nix;
-  home-manager.users.radekp = import ./home-manager/home.nix;
+  #home-manager.users.radekp = import ./home-manager/home.nix;
 
   #Set up Steam
   programs.steam = {
@@ -512,48 +456,6 @@
 
   # Install firefox.
   programs.firefox.enable = true;
-
-  # Setup neovim
-  programs.neovim = {
-    enable = false;
-    viAlias = true;
-    vimAlias = true;
-    defaultEditor = true;
-    package = pkgs.neovim-unwrapped;
-    # Neovim configure section for custom RC and plugins
-    configure = {
-      customRC = ''
-                " Enable Tokyo Night color scheme
-        	colorscheme tokyonight-night
-
-        	" Enable row numbers
-                set number
-                set relativenumber
-
-                " Clear screen after exit
-        	lua vim.api.nvim_create_autocmd("VimLeavePre", { command = "silent !clear" })
-              
-        	'';
-
-      #colorscheme tokyonight-night
-      packages.myVimPackage = with pkgs.vimPlugins; {
-
-        # loaded on launch
-        start = [
-          #tokyonight-nvim
-          #vim-lsp
-          #vim-lsp-settings
-          #nvim-treesitter
-          #cmp-nvim-lsp
-          #nvim-cmp
-        ];
-        # manually loadable by calling `:packadd $plugin-name`
-        opt = [
-          #tokyonight-nvim
-        ];
-      };
-    };
-  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget

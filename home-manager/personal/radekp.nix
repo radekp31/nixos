@@ -88,6 +88,7 @@ in
       "$mod" = "SUPER";
 
       exec-once = [
+        #"waybar"
         "clipse --listen"
         "wl-paste --type text --watch cliphist store" #Stores only text data
         "wl-paste --type image --watch cliphist store" #Stores only image data
@@ -439,42 +440,42 @@ in
     };
   };
 
-  # Enable Hyprlock
-  #programs.hyprlock = {
-  #  enable = false;
-  #  settings = {
-  #    general = {
-  #      disable_loading_bar = true;
-  #      grace = 300;
-  #      hide_cursor = true;
-  #      no_fade_in = false;
-  #    };
+  #Enable Hyprlock
+  # programs.hyprlock = {
+  #   enable = true;
+  #   settings = {
+  #     general = {
+  #       disable_loading_bar = true;
+  #       grace = 300;
+  #       hide_cursor = true;
+  #       no_fade_in = false;
+  #     };
 
-  #    background = [
-  #      {
-  #        path = "screenshot";
-  #        blur_passes = 3;
-  #        blur_size = 8;
-  #      }
-  #    ];
+  #     background = [
+  #       {
+  #         path = "screenshot";
+  #         blur_passes = 3;
+  #         blur_size = 8;
+  #       }
+  #     ];
 
-  #    input-field = [
-  #      {
-  #        size = "200, 50";
-  #        position = "0, -80";
-  #        monitor = "";
-  #        dots_center = true;
-  #        fade_on_empty = false;
-  #        font_color = "rgb(202, 211, 245)";
-  #        inner_color = "rgb(91, 96, 120)";
-  #        outer_color = "rgb(24, 25, 38)";
-  #        outline_thickness = 5;
-  #        placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
-  #        shadow_passes = 2;
-  #      }
-  #    ];
-  #  };
-  #};
+  #     input-field = [
+  #       {
+  #         size = "200, 50";
+  #         position = "0, -80";
+  #         monitor = "";
+  #         dots_center = true;
+  #         fade_on_empty = false;
+  #         font_color = "rgb(202, 211, 245)";
+  #         inner_color = "rgb(91, 96, 120)";
+  #         outer_color = "rgb(24, 25, 38)";
+  #         outline_thickness = 5;
+  #         placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
+  #         shadow_passes = 2;
+  #       }
+  #     ];
+  #   };
+  # };
 
   #Create power_menu.xml for waybar
   home.file.".config/waybar/power_menu.xml".text = ''
@@ -1077,7 +1078,7 @@ in
   programs.eza = {
     enable = true;
     enableZshIntegration = true;
-    icons = false;
+    icons = null;
     package = pkgs.eza;
     extraOptions = [
       "--group-directories-first"
@@ -1099,9 +1100,9 @@ in
   home.packages = with pkgs; [
 
     # Test derivations
+    ungoogled-chromium
 
     # Packages 
-
     vlc
     git
     alacritty
@@ -1127,6 +1128,11 @@ in
     mpv
     coolercontrol.coolercontrold
     coolercontrol.coolercontrol-gui
+    ytfzf
+    dmenu
+    ueberzug
+    glance
+
 
     # Hyprland
     kitty-themes
@@ -1563,86 +1569,10 @@ in
     '';
   };
 
-  #Enable NVIM
-  #Enable NVIM
-  programs.neovim = {
-    enable = false;
-    viAlias = true;
-    vimAlias = true;
-    vimdiffAlias = true;
-    plugins = [
-      # Plugin 1: nvim-colorizer-lua
-      {
-        plugin = pkgs.vimPlugins.tokyonight-nvim;
-      }
-
-      # Plugin 2: nvim-treesitter
-      {
-        plugin = pkgs.vimPlugins.nvim-lspconfig;
-      }
-
-      # Plugin 3: telescope.nvim
-      {
-        plugin = pkgs.vimPlugins.telescope-nvim;
-        config = ''
-                        packadd! telescope.nvim
-                        lua << END
-                require('telescope').setup{
-            defaults = {
-              mappings = {
-                i = {
-                  ["<C-n>"] = require('telescope.a
-                  ["<C-p>"] = require('telescope.actions').cycle_history_prev,
-                },
-              },
-            }
-          }
-          END
-        '';
-      }
-    ];
-
-    extraConfig = ''
-                  	" Enable Tokyo Night color scheme
-                  	colorscheme tokyonight-night
-
-                  	" Enable row numbers
-                          set number
-                          set relativenumber
-
-                      " Clear screen after exit
-                  	lua vim.api.nvim_create_autocmd("VimLeavePre", { command = "silent !clear" })
-      		
-      		" Configure Lsp server
-      		lua << EOF
-      local nvim_lsp = require("lspconfig")
-      nvim_lsp.nixd.setup({
-         cmd = { "nixd" },
-         settings = {
-            nixd = {
-               nixpkgs = {
-                  expr = "import <nixpkgs> { }",
-      	 },
-               formatting = {
-                  command = { "nixfmt" },
-               },
-      	 options = {
-      	   nixos = {
-      	     expr = "(builtins.getFlake \"/home/lyc/flakes\").nixosConfigurations.adrastea.options"
-      	   },
-      	 },
-            },
-         },
-      })
-      EOF
-    '';
-
-    extraPackages = with pkgs; [
-      nixd
-      lua-language-server
-      xclip
-      wl-clipboard
-    ];
+  #Glance config
+  home.file."${config.xdg.configHome}/glance/glance.yaml" = {
+    source = ../glance/glance.yml;
   };
 
+  #Enable NVIM
 }
