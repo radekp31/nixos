@@ -1,23 +1,13 @@
 { config
-, lib
 , pkgs
-, fetchpatch
 , ...
 }:
 
-let
-
-  # Fixes drm device not working with linux 6.12
-  # https://github.com/NVIDIA/open-gpu-kernel-modules/issues/712
-  drm_fop_flags_linux_612_patch = pkgs.fetchpatch {
-    url = "https://github.com/Binary-Eater/open-gpu-kernel-modules/commit/8ac26d3c66ea88b0f80504bdd1e907658b41609d.patch";
-    hash = "sha256-+SfIu3uYNQCf/KXhv4PWvruTVKQSh4bgU1moePhe57U=";
-  };
-
-in
+#let
+#
+#in
 
 {
-
   #Accept NVIDIA licence
   nixpkgs.config.nvidia.acceptLicense = true;
 
@@ -38,41 +28,11 @@ in
       xorg.libXrandr
       libglvnd
       libdrm
-      #vulkan-loader
-      #vulkan-tools
     ];
   };
 
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = [ "nvidia" ];
-
-  #NVIDIA env vars
-  environment.variables = {
-    GBM_BACKEND = "nvidia-drm";
-    LIBVA_DRIVER_NAME = "nvidia";
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-  };
-
-  #Load kernel Modules
-  boot.kernelModules = [
-    "nvidia_uvm"
-    "nvidia_modeset"
-    "nvidia_drm"
-    "nvidia"
-    "i915"
-  ];
-
-  #Load kernel modules attempt #2
-  boot.initrd.kernelModules = [ "nvidia" "i915" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
-
-  #Set kernel params
-  boot.kernelParams = [
-    "nvidia-drm.modeset=1"
-    "nvidia-drm.fbdev=1"
-    "ibt=off"
-  ]; # Required by Hyprland
-
-  #boot.kernelParams = ["nvidia-drm.fbdev=1"];
 
   hardware.nvidia = {
 
@@ -84,8 +44,6 @@ in
     # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead
     # of just the bare essentials.
     powerManagement.enable = true;
-
-
 
     # Fine-grained power management. Turns off GPU when not in use.
     # Experimental and only works on modern Nvidia GPUs (Turing or newer).
@@ -121,15 +79,6 @@ in
       settingsSha256 = "sha256-VUetj3LlOSz/LB+DDfMCN34uA4bNTTpjDrb6C6Iwukk=";
       persistencedSha256 = "sha256-wnDjC099D8d9NJSp9D0CbsL+vfHXyJFYYgU3CwcqKww=";
     };
-    #package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-    #  version = "565.57.01";
-    #  sha256_64bit = "sha256-buvpTlheOF6IBPWnQVLfQUiHv4GcwhvZW3Ks0PsYLHo=";
-    #  sha256_aarch64 = "sha256-aDVc3sNTG4O3y+vKW87mw+i9AqXCY29GVqEIUlsvYfE=";
-    #  openSha256 = "sha256-/tM3n9huz1MTE6KKtTCBglBMBGGL/GOHi5ZSUag4zXA=";
-    #  settingsSha256 = "sha256-H7uEe34LdmUFcMcS6bz7sbpYhg9zPCb/5AmZZFTx1QA=";
-    #  persistencedSha256 = "sha256-hdszsACWNqkCh8G4VBNitDT85gk9gJe1BlQ8LdrYIkg=";
-    #  patchesOpen = [ drm_fop_flags_linux_612_patch ];
-    #};
   };
 
   #Packages related to NVIDIA
@@ -141,7 +90,6 @@ in
     virtualglLib
     vulkan-tools
     vulkan-loader
-    #powertop
     lm_sensors
 
   ];
@@ -149,9 +97,6 @@ in
   # GPU runs hot due to lots of power fed to it
   powerManagement.powertop.enable = true;
 
-  programs.tuxclocker = {
-    enable = true;
-  };
   # Fan control on Wayland
   # maybe use system.activationScripts ?
   # powertop handles it well
