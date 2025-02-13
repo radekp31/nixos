@@ -430,7 +430,7 @@ in
           menu = "on-click";
           menu-file = "$HOME/.config/waybar/power_menu.xml"; # Menu file in resources folder
           menu-actions = {
-            shutdown = "shutdown";
+            shutdown = "shutdown now";
             reboot = "reboot";
             suspend = "systemctl suspend";
             hibernate = "systemctl hibernate";
