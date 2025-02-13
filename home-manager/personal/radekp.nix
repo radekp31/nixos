@@ -163,6 +163,44 @@ in
         "15,monitor:DP-3"
       ];
 
+      general = {
+        gaps_in = 5;
+        gaps_out = 10;
+        border_size = 2;
+        "col.active_border" = "rgba(c0caf5ee)";
+        "col.inactive_border" = "rgba(1a1b26aa)";
+        layout = "dwindle";
+      };
+
+      decoration = {
+        rounding = 15;
+
+        blur = {
+          enabled = true;
+          size = 5;
+          passes = 2;
+          new_optimizations = true;
+          ignore_opacity = true;
+        };
+
+        active_opacity = 0.95;
+        inactive_opacity = 0.85;
+        fullscreen_opacity = 1.0;
+
+        # Updated shadow configuration with newest syntax
+        shadow = {
+          enabled = true;
+          range = 15; # Shadow range in layout pixels
+          render_power = 3; # Power 3 for balanced falloff
+          ignore_window = true;
+          scale = 1.0;
+          offset = "3 3";
+          color = "0xee1a1b26"; # Matching your theme with high alpha
+          color_inactive = "0x661a1b26"; # Same color but more transparent for inactive
+        };
+
+      };
+
     };
 
     extraConfig = ''
