@@ -130,8 +130,11 @@
   };
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  #boot.loader.systemd-boot.enable = true;
+  boot.loader.efi = {
+    canTouchEfiVariables = true;
+    efiSysMountPoint = "/boot";
+  };
   boot.blacklistedKernelModules = [ "nouveau" ];
   boot.initrd.availableKernelModules = [
     "nvidia"
@@ -145,18 +148,27 @@
   ];
   boot.initrd = {
     enable = true;
+    services = {
+      lvm = {
+        enable = false;
+      };
+    };
   };
-  boot.supportedFilesystems = [ "ntfs" ];
+
+  services.lvm.enable = false;
+
+  boot.supportedFilesystems = [ "ntfs" "vfat" "ext4" ];
+  boot.initrd.supportedFilesystems = [ "ntfs" "vfat" "ext4" ];
 
   #boot.loader.systemd-boot.enable = false;
   #boot.loader.efi.canTouchEfiVariables = true;
-  #boot.loader.grub.enable = true;
-  #boot.loader.grub.device = "/dev/sda";
+  boot.loader.grub.enable = true;
+  boot.loader.grub.device = "nodev";
   #boot.loader.grub.useOSProber = true;
-  #boot.loader.grub.extraEntries = ''
-  #  set gfxpayload=keep
-  #  set gfxmode=auto
-  #'';
+  boot.loader.grub.efiSupport = true;
+  boot.loader.grub.gfxmodeEfi = "1366x768";
+  boot.loader.grub.gfxmodeBios = "1366x768";
+  boot.loader.grub.theme = null;
   #boot.loader.timeout = 1; #F
   #boot.consoleLogLevel = 0;
   #boot.loader.grub.timeoutStyle = "menu";
@@ -203,6 +215,17 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
+  # Session variables
+  environment.sessionVariables = {
+    LIBVA_DRIVER_NAME = "nvidia";
+    GBM_BACKEND = "nvidia-drm";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    WLR_NO_HARDWARE_CURSORS = "1";
+    GDK_SCALE = "1";
+    GDK_DPI_SCALE = "1";
+    XCURSOR_SCALE = "24";
+  };
+
   # Environment variables
   environment.variables = {
     DISPLAY = ":0";
@@ -212,7 +235,7 @@
     LD_LIBRARY_PATH = "${pkgs.libglvnd}/lib";
     #XAUTHORITY = "/run/user/0/.Xauthority";
     XDG_CACHE_HOME = "$HOME/.cache";
-    XDG_CONFIG_DIRS = "/etc/xdg";
+    #XDG_CONFIG_DIRS = "/etc/xdg";
     XDG_CONFIG_HOME = "$HOME/.config";
     #XDG_DATA_DIRS = "/usr/local/share/:/usr/share/";
     XDG_DATA_HOME = "$HOME/.local/share";
@@ -229,7 +252,8 @@
   time.timeZone = "Europe/Prague"; # value before "Europe/Amsterdam"
 
   # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
+  #i18n.defaultLocale = "en_US.UTF-8";
+  i18n.defaultLocale = "en_US.utf8";
 
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_US.UTF-8";
@@ -258,11 +282,7 @@
   #services.xserver.displayManager.lightdm.enable = true;
 
   # Enable bspwm
-  services.xserver.windowManager.bspwm.enable = true;
-  services.displayManager.defaultSession = "hyprland-uwsm";
-
-  # Enable ly
-  services.displayManager.ly.enable = false;
+  #services.xserver.windowManager.bspwm.enable = true;
 
   # Wayland + Hyprland attempt
   #programs.uwsm.enable = true;
@@ -310,11 +330,16 @@
 
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
-  services.displayManager.sddm.enableHidpi = true;
+  #services.displayManager.sddm.enableHidpi = true;
+  services.desktopManager.plasma6.enable = true;
+  services.displayManager.defaultSession = "hyprland-uwsm";
 
-  services.xserver.desktopManager.plasma5.enable = true;
+  services.tlp.enable = false;
+  services.fwupd.enable = false;
   services.xserver.videoDrivers = [ "nvidia" ];
+
   hardware.graphics.enable = true; # hardware.opengl.enable on older versions
+
   hardware.nvidia.modesetting.enable = true;
 
   xdg.portal = {
@@ -365,6 +390,8 @@
       #  thunderbird
     ];
   };
+
+  users.users.sddm.extraGroups = [ "video" ];
 
   #home-manager.users.radekp = import /etc/nixos/home-manager/home.nix;
   #home-manager.users.radekp = import ./home-manager/home.nix;
@@ -470,7 +497,6 @@
     p7zip
     pciutils
     smartmontools
-    thinkfan
     lm_sensors
     unetbootin
     nixos-icons
@@ -478,6 +504,11 @@
 
     # Wayland + Hyprland
     xorg.xhost
+    aha
+    busybox
+    clinfo
+    wayland-utils
+    wayland-protocols
     # Packages
 
     neofetch # distro stats
@@ -486,24 +517,21 @@
     git # NixOS sucks without git
     openssh
     htop # system monitor
-    #eza # ls on steroids
     fzf # fuzzy finder
     plymouth # boot customization
-    feh # lighweight wallpaper management
-    gwe # fan control for Nvidia GPUs
+    #feh # lighweight wallpaper management
+    #gwe # fan control for Nvidia GPUs
     qemu_kvm # virtualisation
     spice-vdagent # copy/paste agent for VMs
     virt-viewer # VM viewer
     tree # dir tree structure viewer
-    polybarFull # status bar
-    alacritty # GPU accelerated terminal emulator
-    alacritty-theme
+    #alacritty # GPU accelerated terminal emulator
+    #alacritty-theme
     rofi # awesome launch menu
     rofi-power-menu # awesome power menu
-    picom # x11 lightweight compositor
-    ly # TUI login screen
+    #picom # x11 lightweight compositor
     ntfs3g
-    betterlockscreen # cool lockscreen built on i3 lock
+    #betterlockscreen # cool lockscreen built on i3 lock
     shutter # snipping tool
     dunst # notification tool
     lld_18

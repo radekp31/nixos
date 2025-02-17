@@ -141,8 +141,7 @@ in
       ];
       monitor = [
         #Monitor setup
-        "DP-2, 2560x1440@144, 0x0, auto"
-        "DP-3, 1680x1050@60, -1680x0, auto"
+        ",2560x1440@144,auto,1"
       ];
 
       workspace = [
@@ -222,7 +221,6 @@ in
     systemd = {
       enable = true;
       extraCommands = [
-        "systemctl --user start hyprland-session.target"
       ];
       variables = [
         "--all" # hope this works
@@ -500,11 +498,11 @@ in
       splash = false;
       splash_offset = 2.0;
 
-      preload = [ "/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg" ];
+      preload = [ "../../wallpapers/Tokyo2018_Everingham_SH_-9.jpg" ];
 
       wallpaper = [
-        "DP-2,/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg"
-        "DP-3,/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg"
+        "DP-2,../../wallpapers/Tokyo2018_Everingham_SH_-9.jpg"
+        "DP-3,../../wallpapers/Tokyo2018_Everingham_SH_-9.jpg"
       ];
     };
   };
@@ -596,8 +594,8 @@ in
       "PATH" = "${pkgs.kitty}/bin:$PATH";
       # #WaybarLife
       "WAYBAR_LOG_LEVEL" = "debug waybar";
-      #"WAYLAND_DISPLAY" = "wayland-0";
-      "WAYLAND_DISPLAY" = "wayland-1";
+      "WAYLAND_DISPLAY" = "wayland-0";
+      #WAYLAND_DISPLAY" = "wayland-1";
       #Cursor
       "XCURSOR_THEME" = "${pkgs.bibata-cursors}/share/icons/Bibata-Modern-ice/cursor.theme";
       "XCURSOR_SIZE" = "24";
