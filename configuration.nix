@@ -33,7 +33,7 @@
     ./nvidia-drivers.nix
     ./modules/default.nix
     ./modules/apps/nixvim/nixvim.nix
-    #./modules/apps/qmk/qmk.nix
+    ./modules/apps/qmk/qmk.nix
     #./modules/apps/qemu/qemu.nix
   ];
 
@@ -482,6 +482,7 @@
   };
 
   # Install firefox.
+  # Dont forget to use Tokyonight extension, or any other of your choice
   programs.firefox.enable = true;
 
   # List packages installed in system profile. To search, run:
