@@ -24,6 +24,13 @@
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
+  fileSystems."/media/WDRED" =
+    {
+      device = "/dev/disk/by-uuid/C6541CA0541C9571";
+      fsType = "ntfs";
+      options = [ "rw" "uid=1000" ];
+    };
+
   swapDevices = [ ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking

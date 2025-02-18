@@ -498,11 +498,11 @@ in
       splash = false;
       splash_offset = 2.0;
 
-      preload = [ "../../wallpapers/Tokyo2018_Everingham_SH_-9.jpg" ];
+      preload = [ "/etc/nixos/wallpapers/Tokyo2018_Everingham_SH_-9.jpg" ];
 
       wallpaper = [
-        "DP-2,../../wallpapers/Tokyo2018_Everingham_SH_-9.jpg"
-        "DP-3,../../wallpapers/Tokyo2018_Everingham_SH_-9.jpg"
+        "DP-2,/etc/nixos/wallpapers/Tokyo2018_Everingham_SH_-9.jpg"
+        "DP-3,/etc/nixos/wallpapers/Tokyo2018_Everingham_SH_-9.jpg"
       ];
     };
   };
