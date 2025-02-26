@@ -178,16 +178,19 @@
 
   #Fix OOM freezes
   #boot.kernelPackages = pkgs.linuxPackages_6_6; # works with beta nvidia driver
-  boot.kernelPackages = pkgs.linuxPackages_zen;
+  boot.kernelPackages = pkgs.linuxPackages_6_12;
 
-  #zramSwap = {
-  #  enable = true;
-  #  algorithm = "lz4"; #lz4 works
-  #};
-
-  #boot.extraModprobeConfig = ''
-  #  options nvidia-drm modeset=1
-  #'';
+  #Install TKG kernel patches
+  boot.kernelPatches =
+    [
+      {
+        name = "TKG_Kernel";
+        patch = pkgs.fetchurl {
+          url = "https://raw.githubusercontent.com/Frogging-Family/linux-tkg/master/linux-tkg-patches/6.12/0014-OpenRGB.patch";
+          hash = "sha256-iZ9F0ICEioOuvZpxDm/a0sNzHqsPxFWvmsKcew9M6s8=";
+        };
+      }
+    ];
 
   powerManagement.cpuFreqGovernor = "performance";
 
