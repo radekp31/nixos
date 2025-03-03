@@ -218,6 +218,11 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
+  #PiHole setup
+  networking.nameservers = [
+    "192.168.50.63"
+  ];
+
   # Session variables
   environment.sessionVariables = {
     LIBVA_DRIVER_NAME = "nvidia";
@@ -227,6 +232,8 @@
     GDK_SCALE = "1";
     GDK_DPI_SCALE = "1";
     XCURSOR_SCALE = "24";
+    QT_QPA_PLATFORMTHEME = "qt6ct"; # dark mode for Qt apps
+
   };
 
   # Environment variables

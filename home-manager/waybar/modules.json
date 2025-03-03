@@ -56,7 +56,11 @@
         "tooltip": true
     },
     "memory": {
-        "format": "  {}%",
+        "format": "  {}%",
+	"tooltip": true
+    },
+    "disk": {
+        "format": "󰋊  {percentage_used}%",
 	"tooltip": true
     },
     "temperature": {

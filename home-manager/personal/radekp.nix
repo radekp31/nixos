@@ -87,12 +87,19 @@ in
 
       "$mod" = "SUPER";
 
+      env = [
+
+      ];
+
       exec-once = [
         #"waybar"
         "clipse --listen"
         "wl-paste --type text --watch cliphist store" #Stores only text data
         "wl-paste --type image --watch cliphist store" #Stores only image data
         "wl-paste -p -t text --watch clipman store -P --histpath=\"~/.local/share/clipman-primary.json\""
+        "gsettings set org.gnome.desktop.interface gtk-theme \"Yaru\"" # for GTK3 apps
+        "gsettings set org.gnome.desktop.interface color-scheme \"prefer-dark\"" # for GTK4 apps
+
       ];
 
       windowrulev2 = [
@@ -937,6 +944,8 @@ in
     dmenu
     ueberzug
     glance
+    librewolf-wayland
+
 
 
     # Hyprland
@@ -977,312 +986,6 @@ in
 
   ];
 
-  # Setup bspwm
-
-  xsession.windowManager.bspwm.enable = true;
-  xsession.windowManager.bspwm.extraConfigEarly = ''
-    	# Start sxhkd if it is not running
-    	pgrep -x sxhkd > /dev/null || sxhkd &
-
-    	# Wait for a bit before starting Polybar to ensure services are ready
-    	sleep 1
-
-    	#Apply nvidia-settings profile
-    	nvidia-settings -l
-
-    	# Kill any existing Polybar instances before starting a new one
-    	killall -q polybar
-    	while pgrep -x polybar >/dev/null; do sleep 1; done
-
-    	# Start Polybar
-    	polybar -c ~/.config/polybar/example/config.ini example > /tmp/polybar.log 2>&1 &
-    	
-
-    	# Set wallpaper
-    	feh --bg-center /etc/nixos/wallpapers/nix-wallpaper-binary-black.jpg
-
-            # Set cursor to pointer
-    	xsetroot -cursor_name left_ptr &
-  '';
-  xsession.windowManager.bspwm.extraConfig = ''
-    	
-            sudo /run/current-system/sw/bin/nvidia-settings -c :0 -a '[gpu:0]/GPUFanControlState=1'
-            sudo /run/current-system/sw/bin/nvidia-settings -c :0 -a GPUTargetFanSpeed=35
-            sudo /run/current-system/sw/bin/nvidia-settings -a "DigitalVibrance=0"
-            ##sudo /run/current-system/sw/bin/nvidia-settings -l
-  '';
-
-  xsession.windowManager.bspwm.monitors = {
-    DP-2 = [
-      "I"
-      "II"
-      "III"
-      "IV"
-      "V"
-      "VI"
-      "VII"
-      "VIII"
-      "IX"
-      "X"
-    ];
-
-  };
-
-  xsession.windowManager.bspwm.settings = {
-
-    border_width = 2;
-    window_gap = 12;
-    split_ratio = 0.52;
-    borderless_monocle = true;
-    gapless_monocle = true;
-  };
-
-  xsession.windowManager.bspwm.rules = {
-    "Gimp" = {
-      desktop = "^8";
-      state = "floating";
-      follow = true;
-    };
-    "Screenkey" = {
-      manage = true;
-    };
-  };
-
-  # Enable sxhkd
-  services.sxhkd.enable = true;
-
-  services.sxhkd.keybindings = {
-    # wm independent hotkeys
-    "super + Return" = "kitty";
-    "super + space" = "rofi -show combi";
-    "alt + F1" = "rofi -show window";
-    "alt + F2" = "rofi -show run";
-    "alt + F4" = "rofi -show power-menu -modi power-menu:rofi-power-menu";
-    "super + Escape" = "pkill -USR1 -x sxhkd";
-    "super + e" = "alacritty --command yazi";
-    "alt + Escape" = "betterlockscreen -l dim";
-    "Print" = "flameshot gui";
-    "Shift + Print" = "/etc/nixos/modules/scripts/screenshot.sh";
-
-    # bspwm hotkeys
-    "super + f" = "bspc node -t ~fullscreen";
-    "super + alt + q" = "bspc quit";
-    "super + alt + r" = "bspc wm -r";
-    "super + w" = "bspc node -c";
-    "super + shift + w" = "bspc node -k";
-    "super + m" = "bspc desktop -l next";
-    "super + y" = "bspc node newest.marked.local -n newest.!automatic.local";
-    "super + g" = "bspc node -s biggest.window";
-
-    # state/flags
-    "super + t" = "bspc node -t tiled";
-    "super + shift + t" = "bspc node -t pseudo_tiled";
-    "super + s" = "bspc node -t floating";
-    #  "super + f" = "bspc node -t fullscreen";
-    "super + ctrl + m" = "bspc node -g marked";
-    "super + ctrl + x" = "bspc node -g locked";
-    "super + ctrl + y" = "bspc node -g sticky";
-    "super + ctrl + z" = "bspc node -g private";
-
-    # focus/swap
-    "super + h" = "bspc node -f west";
-    "super + j" = "bspc node -f south";
-    "super + k" = "bspc node -f north";
-    "super + l" = "bspc node -f east";
-    "super + shift + h" = "bspc node -s west";
-    "super + shift + j" = "bspc node -s south";
-    "super + shift + k" = "bspc node -s north";
-    "super + shift + l" = "bspc node -s east";
-    "super + p" = "bspc node -f @parent";
-    "super + b" = "bspc node -f @brother";
-    "super + comma" = "bspc node -f @first";
-    "super + period" = "bspc node -f @second";
-    "super + c" = "bspc node -f next.local.!hidden.window";
-    "super + shift + c" = "bspc node -f prev.local.!hidden.window";
-    "super + bracketleft" = "bspc desktop -f prev.local";
-    "super + bracketright" = "bspc desktop -f next.local";
-    "super + grave" = "bspc node -f last";
-    "super + Tab" = "bspc desktop -f last";
-    "super + o" = "bspc wm -h off; bspc node older -f; bspc wm -h on";
-    "super + i" = "bspc wm -h off; bspc node newer -f; bspc wm -h on";
-    "super + 1" = "bspc desktop -f ^1";
-    "super + {_,shift + }{1-9,0}" = "bspc {desktop -f, node -d} '^{1-9,10}' --follow";
-    #"super + shift + <x>" = "bspc node -d ^<x>"; per workspace binding
-
-    # preselect
-    "super + ctrl + h" = "bspc node -p west";
-    "super + ctrl + j" = "bspc node -p south";
-    "super + ctrl + k" = "bspc node -p north";
-    "super + ctrl + l" = "bspc node -p east";
-    "super + ctrl + 1" = "bspc node -o 0.1";
-    "super + ctrl + 2" = "bspc node -o 0.2";
-    "super + ctrl + 3" = "bspc node -o 0.3";
-    "super + ctrl + 4" = "bspc node -o 0.4";
-    "super + ctrl + 5" = "bspc node -o 0.5";
-    "super + ctrl + 6" = "bspc node -o 0.6";
-    "super + ctrl + 7" = "bspc node -o 0.7";
-    "super + ctrl + 8" = "bspc node -o 0.8";
-    "super + ctrl + 9" = "bspc node -o 0.9";
-    "super + ctrl + space" = "bspc node -p cancel";
-    "super + ctrl + shift + space" = "bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel";
-
-    # move/resize
-    "super + alt + h" = "bspc node -z left -20 0";
-    "super + alt + j" = "bspc node -z bottom 0 20";
-    "super + alt + k" = "bspc node -z top 0 -20";
-    "super + alt + l" = "bspc node -z right 20 0";
-    "super + alt + shift + h" = "bspc node -z right -20 0";
-    "super + alt + shift + j" = "bspc node -z top 0 20";
-    "super + alt + shift + k" = "bspc node -z bottom 0 -20";
-    "super + alt + shift + l" = "bspc node -z left 20 0";
-    "super + Left" = "bspc node -v -20 0";
-    "super + Down" = "bspc node -v 0 20";
-    "super + Up" = "bspc node -v 0 -20";
-    "super + Right" = "bspc node -v 20 0";
-  };
-
-  home.file.".config/polybar/example/config.ini".text = ''
-    [bar/example]
-    width = 100%
-    height = 24pt
-    radius = 6
-
-    background = #282A2E
-    foreground = #C5C8C6
-
-    line-size = 3pt
-
-    border-size = 4pt
-    border-color = #00000000
-
-    padding-left = 0
-    padding-right = 1
-
-    module-margin = 1
-
-    separator = |
-    separator-foreground = #707880
-
-    font-0 = monospace;2
-
-    modules-left = xworkspaces xwindow
-    modules-right = filesystem pulseaudio xkeyboard memory cpu wlan eth date
-
-    cursor-click = pointer
-    cursor-scroll = ns-resize
-
-    enable-ipc = true
-
-    [module/systray]
-    type = internal/tray
-
-    format-margin = 8pt
-    tray-spacing = 16pt
-
-    [module/xworkspaces]
-    type = internal/xworkspaces
-
-    label-active = %name%
-    label-active-background = #373B41
-    label-active-underline = #F0C674
-    label-active-padding = 1
-
-    label-occupied = %name%
-    label-occupied-padding = 1
-
-    label-urgent = %name%
-    label-urgent-background = #A54242
-    label-urgent-padding = 1
-
-    label-empty = %name%
-    label-empty-foreground = #707880
-    label-empty-padding = 1
-
-    [module/xwindow]
-    type = internal/xwindow
-    label = %title:0:60:...%
-
-    [module/filesystem]
-    type = internal/fs
-    interval = 25
-
-    mount-0 = /
-
-    label-mounted = %{F#F0C674}%mountpoint%%{F-} %percentage_used%%
-
-    label-unmounted = %mountpoint% not mounted
-    label-unmounted-foreground = #707880
-
-    [module/pulseaudio]
-    type = internal/pulseaudio
-
-    format-volume-prefix = "VOL "
-    format-volume-prefix-foreground = #F0C674
-    format-volume = <label-volume>
-
-    label-volume = %percentage%%
-
-    label-muted = muted
-    label-muted-foreground = #707880
-
-    [module/xkeyboard]
-    type = internal/xkeyboard
-    blacklist-0 = num lock
-
-    label-layout = %layout%
-    label-layout-foreground = #F0C674
-
-    label-indicator-padding = 2
-    label-indicator-margin = 1
-    label-indicator-foreground = #282A2E
-    label-indicator-background = #8ABEB7
-
-    [module/memory]
-    type = internal/memory
-    interval = 2
-    format-prefix = "RAM "
-    format-prefix-foreground = #F0C674
-    label = %percentage_used:2%%
-
-    [module/cpu]
-    type = internal/cpu
-    interval = 2
-    format-prefix = "CPU "
-    format-prefix-foreground = #F0C674
-    label = %percentage:2%%
-
-    [network-base]
-    type = internal/network
-    interval = 5
-    format-connected = <label-connected>
-    format-disconnected = <label-disconnected>
-    label-disconnected = %{F#F0C674}%ifname%%{F#707880} disconnected
-
-    [module/wlan]
-    inherit = network-base
-    interface-type = wireless
-    label-connected = %{F#F0C674}%ifname%%{F-} %essid% %local_ip%
-
-    [module/eth]
-    inherit = network-base
-    interface-type = wired
-    label-connected = %{F#F0C674}%ifname%%{F-} %local_ip%
-
-    [module/date]
-    type = internal/date
-    interval = 1
-
-    date = %H:%M
-    date-alt = %Y-%m-%d %H:%M:%S
-
-    label = %date%
-    label-foreground = #F0C674
-
-    [settings]
-    screenchange-reload = true
-    pseudo-transparency = true
-  '';
-
   #Setup and configure git
   programs.git = {
     enable = true;
@@ -1301,77 +1004,6 @@ in
   };
   xdg = {
     enable = true;
-  };
-  #Enable Alacritty
-  programs.alacritty.enable = false;
-
-  home.file.".config/alacritty/alacritty.toml" = {
-    text = ''
-              [general]
-      	import = ["${pkgs.alacritty-theme}/tokyo-night.toml"]
-
-      	[font]
-      	size = 13.0
-      	#normal = {family = "Hack", style = "Regular"}
-      	#bold = {family = "Hack", style = "Bold"}
-      	#italic = {family = "Hack", style = "Italic"}
-      	#bold_italic = {family = "Hack", style = "Bold Italic"}
-        
-      	[cursor]
-      	style = { shape = "Underline", blinking = "Always" }
-
-      	[mouse]
-      	bindings = [
-      	{ mouse = "Right", mods = "Shift", action = "Copy" },
-      	{ mouse = "Right", action = "Paste" },
-      	]
-
-      	[selection]
-      	semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
-      	save_to_clipboard = true
-
-      	[env]
-      	TERM = "xterm-256color"
-      	EDITOR = "nvim"
-      	VISUAL = "nvim"
-      	BAT_THEME = "ansi"
-      	MANPAGER = "nvim +Man!"
-      	
-      	# Set Wayland-related variables
-              
-      	#WAYLAND_DISPLAY = ":1" # included in wayland.windowManager.hyprland.systemd.enable
-      	#XDG_SESSION_TYPE = "wayland"
-        	#XDG_CURRENT_DESKTOP = "Hyprland" # included in wayland.windowManager.hyprland.systemd.enable
-      	MOZ_ENABLE_WAYLAND = "1" # Enable Wayland for Firefox, if applicable
-      	QT_QPA_PLATFORM = "wayland" # Use Wayland for Qt apps
-
-      	[colors.primary]
-      	
-      	background = '#1a1b26'
-      	foreground = '#a9b1d6'
-      	
-      	# Normal colors
-      	#[colors.normal]
-      	#black   = '#32344a'
-      	#red     = '#f7768e'
-      	#green   = '#9ece6a'
-      	#yellow  = '#e0af68'
-      	#blue    = '#7aa2f7'
-      	#magenta = '#ad8ee6'
-      	#cyan    = '#449dab'
-      	#white   = '#787c99'
-      	#
-      	## Bright colors
-      	#[colors.bright]
-      	#black   = '#444b6a'
-      	#red     = '#ff7a93'
-      	#green   = '#b9f27c'
-      	#yellow  = '#ff9e64'
-      	#blue    = '#7da6ff'
-      	#magenta = '#bb9af7'
-      	#cyan    = '#0db9d7'
-      	#white   = '#acb0d0'
-    '';
   };
 
   #Glance config
