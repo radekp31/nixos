@@ -148,7 +148,8 @@ in
       ];
       monitor = [
         #Monitor setup
-        ",2560x1440@144,auto,1"
+        "DP-2,2560x1440@144,auto,1"
+        "DP-3,1680x1050,0x0,1"
       ];
 
       workspace = [
@@ -904,6 +905,21 @@ in
     source = "${pkgs.vimPlugins.tokyonight-nvim}/extras/eza/tokyonight.yml";
   };
 
+  programs.librewolf = {
+    enable = true;
+    settings = {
+      "privacy.resistFingerprinting" = false;
+      "privacy.resistFingerprinting.letteboxing" = true;
+      "privacy.resistFingerprintingautoDeclineNoUserInputCanvasPrompts" = true;
+      "privacy.fingerprintingProtection" = true;
+      "privacy.fingerprintingProtection.overrides" = "+AllTargets,-CSSPrefersColorScheme";
+      "webgl.disabled" = false;
+      # setup tokyonight extension
+      # setup ublock origin
+      # setup canvasblocker
+    };
+  };
+
 
   programs.lesspipe.enable = true;
 
@@ -944,7 +960,7 @@ in
     dmenu
     ueberzug
     glance
-    librewolf-wayland
+    #librewolf-wayland
 
 
 
