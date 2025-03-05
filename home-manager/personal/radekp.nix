@@ -110,20 +110,11 @@ in
       bind = [
         # Keybindings
         "$mod, F, fullscreen"
-        #"$mod, Return, exec, kitty"
         "$mod, Return, exec, wezterm"
         "$mod_SHIFT, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
         "$mod, grave, exec, grim -g \"$(slurp -d)\" - | wl-copy"
         "$mod, space, exec, rofi -show window"
-        #"$mod, G, exec, rofi -show games "
         "$mod, V, exec, kitty --class clipse -e 'clipse'"
-        # "$mod, LEFT, workspace, -1"
-        # "$mod, RIGHT, workspace, +1"
-        # "$mod, 1, workspace, 1"
-        # "$mod, 2, workspace, 2"
-        # "$mod, 3, workspace, 3"
-        # "$mod, 4, workspace, 4"
-        # "$mod, 5, workspace, 5"
         "$mod, G, exec, /etc/nixos/modules/scripts/game-mode.sh"
 
         # Hyprsome
@@ -145,7 +136,12 @@ in
         "$mod SHIFT, 3, exec, hyprsome move 3"
         "$mod SHIFT, 4, exec, hyprsome move 4"
         "$mod SHIFT, 5, exec, hyprsome move 5"
+
+        # Scroll through existing workspaces with mainMod + scroll
+        "SUPER, mouse_down, workspace, +1"
+        "SUPER, mouse_up, workspace, -1"
       ];
+
       monitor = [
         #Monitor setup
         "DP-2,2560x1440@144,auto,1"
@@ -154,7 +150,6 @@ in
 
       workspace = [
         #DP-2 Workspaces
-        "DP-1,1"
         "1,monitor:DP-2"
         "2,monitor:DP-2"
         "3,monitor:DP-2"
@@ -162,7 +157,6 @@ in
         "5,monitor:DP-2"
 
         #DP-3 Workspaces
-        "DP-3,11"
         "11,monitor:DP-3"
         "12,monitor:DP-3"
         "13,monitor:DP-3"
@@ -177,6 +171,10 @@ in
         "col.active_border" = "rgba(c0caf5ee)";
         "col.inactive_border" = "rgba(1a1b26aa)";
         layout = "dwindle";
+      };
+
+      animations = {
+        enabled = true;
       };
 
       decoration = {
