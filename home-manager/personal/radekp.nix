@@ -670,8 +670,8 @@ in
       	  font_size = 12.5
       	}
       	-- config.font = wezterm.font 'Hack'
-      	config.font = wezterm.font 'Inconsolata'
-      	config.font_size = 13.5
+      	--config.font = wezterm.font 'Inconsolata'
+      	config.font_size = 13
 
       	-- Keymaps
       	config.keys = {

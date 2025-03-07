@@ -2,7 +2,7 @@
     "custom/arch": {
         "format": " ",
         "tooltip": true,
-        "tooltip-format": "Don't trust anything that's not explicitly declared in their configuration file – not even your own sanity."
+        "tooltip-format": "Don't trust anything that's not explicitly declared in your configuration file – not even your own sanity."
     },
 
 
