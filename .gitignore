@@ -6,3 +6,6 @@
 # But do not ignore .nix files
 #!.config/**/*.nix
 #!/etc/nixos/**/*.nix
+
+#Ignore hardware-configuration.nix - it gets generated at install
+hardware-configuration.nix

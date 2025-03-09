@@ -19,6 +19,7 @@
         "network",
         "cpu",
         "memory",
+	"disk",
         "temperature",
         "hyprland/language",
         "battery",

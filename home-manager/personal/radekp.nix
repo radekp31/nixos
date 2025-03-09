@@ -6,7 +6,9 @@
 }:
 
 let
-  xdgConfigHome = builtins.getEnv "XDG_CONFIG_HOME";
+
+  tokyonight-rofi-theme = import ../rofi-themes/rofi-themes.nix { inherit pkgs; };
+
 in
 
 {
@@ -87,12 +89,19 @@ in
 
       "$mod" = "SUPER";
 
+      env = [
+
+      ];
+
       exec-once = [
         #"waybar"
         "clipse --listen"
         "wl-paste --type text --watch cliphist store" #Stores only text data
         "wl-paste --type image --watch cliphist store" #Stores only image data
         "wl-paste -p -t text --watch clipman store -P --histpath=\"~/.local/share/clipman-primary.json\""
+        "gsettings set org.gnome.desktop.interface gtk-theme \"Yaru\"" # for GTK3 apps
+        "gsettings set org.gnome.desktop.interface color-scheme \"prefer-dark\"" # for GTK4 apps
+
       ];
 
       windowrulev2 = [
@@ -103,20 +112,12 @@ in
       bind = [
         # Keybindings
         "$mod, F, fullscreen"
-        #"$mod, Return, exec, kitty"
         "$mod, Return, exec, wezterm"
         "$mod_SHIFT, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
         "$mod, grave, exec, grim -g \"$(slurp -d)\" - | wl-copy"
-        "$mod, space, exec, rofi -show window"
-        #"$mod, G, exec, rofi -show games "
+        #"$mod, space, exec, rofi -show window"
+        "$mod, space, exec, rofi -show"
         "$mod, V, exec, kitty --class clipse -e 'clipse'"
-        # "$mod, LEFT, workspace, -1"
-        # "$mod, RIGHT, workspace, +1"
-        # "$mod, 1, workspace, 1"
-        # "$mod, 2, workspace, 2"
-        # "$mod, 3, workspace, 3"
-        # "$mod, 4, workspace, 4"
-        # "$mod, 5, workspace, 5"
         "$mod, G, exec, /etc/nixos/modules/scripts/game-mode.sh"
 
         # Hyprsome
@@ -138,16 +139,20 @@ in
         "$mod SHIFT, 3, exec, hyprsome move 3"
         "$mod SHIFT, 4, exec, hyprsome move 4"
         "$mod SHIFT, 5, exec, hyprsome move 5"
+
+        # Scroll through existing workspaces with mainMod + scroll
+        "SUPER, mouse_down, workspace, +1"
+        "SUPER, mouse_up, workspace, -1"
       ];
+
       monitor = [
         #Monitor setup
-        "DP-2, 2560x1440@144, 0x0, auto"
-        "DP-3, 1680x1050@60, -1680x0, auto"
+        "DP-2,2560x1440@144,auto,1"
+        "DP-3,1680x1050,0x0,1"
       ];
 
       workspace = [
         #DP-2 Workspaces
-        "DP-1,1"
         "1,monitor:DP-2"
         "2,monitor:DP-2"
         "3,monitor:DP-2"
@@ -155,13 +160,54 @@ in
         "5,monitor:DP-2"
 
         #DP-3 Workspaces
-        "DP-3,11"
         "11,monitor:DP-3"
         "12,monitor:DP-3"
         "13,monitor:DP-3"
         "14,monitor:DP-3"
         "15,monitor:DP-3"
       ];
+
+      general = {
+        gaps_in = 5;
+        gaps_out = 10;
+        border_size = 2;
+        "col.active_border" = "rgba(c0caf5ee)";
+        "col.inactive_border" = "rgba(1a1b26aa)";
+        layout = "dwindle";
+      };
+
+      animations = {
+        enabled = true;
+      };
+
+      decoration = {
+        rounding = 15;
+
+        blur = {
+          enabled = true;
+          size = 5;
+          passes = 2;
+          new_optimizations = true;
+          ignore_opacity = true;
+        };
+
+        active_opacity = 0.95;
+        inactive_opacity = 0.85;
+        fullscreen_opacity = 1.0;
+
+        # Updated shadow configuration with newest syntax
+        shadow = {
+          enabled = true;
+          range = 15; # Shadow range in layout pixels
+          render_power = 3; # Power 3 for balanced falloff
+          ignore_window = true;
+          scale = 1.0;
+          offset = "3 3";
+          color = "0xee1a1b26"; # Matching your theme with high alpha
+          color_inactive = "0x661a1b26"; # Same color but more transparent for inactive
+        };
+
+      };
 
     };
 
@@ -184,7 +230,6 @@ in
     systemd = {
       enable = true;
       extraCommands = [
-        "systemctl --user start hyprland-session.target"
       ];
       variables = [
         "--all" # hope this works
@@ -278,25 +323,30 @@ in
       </interface>
   '';
 
-  # Configure Rofi app launcher
+  # Configure Rofi app launcher original
   programs.rofi = {
     enable = true;
     cycle = true;
-    font = "Inconsolata";
-    location = "center";
+    font = "JetBrains Mono";
+    location = "top";
     plugins = [
       pkgs.rofi-calc
       pkgs.rofi-games
       pkgs.rofi-wayland
     ];
     extraConfig = {
-      modi = "window,run";
+      modi = "drun,window";
+      show-icons = true;
+      width = 50; # Increase width (percentage of screen)
+      height = 60; # Increase height (percentage of screen)
+      drun-display-format = "{name}";
     };
-    terminal = "\${pkgs.kitty}/bin/kitty";
-    theme = "tokyo-night.rasi";
+    terminal = "${pkgs.wezterm}/bin/wezterm";
+    #theme = "tokyo-night.rasi";
+    theme = "${tokyonight-rofi-theme}/share/rofi/themes/tokyonight_big2.rasi";
   };
 
-  # Rofi TokyoNight theme
+  #Rofi TokyoNight theme original
   home.file.".config/rofi/tokyo-night.rasi".text = ''
         /*
      * Tokyonight colorscheme for rofi
@@ -439,6 +489,10 @@ in
     } 
   '';
 
+
+  #/////////////////////////////////////////
+
+
   #Configure Swappy
   #Create keybind: grim -g "$(slurp)" - | swappy -f -
 
@@ -462,11 +516,11 @@ in
       splash = false;
       splash_offset = 2.0;
 
-      preload = [ "/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg" ];
+      preload = [ "/etc/nixos/wallpapers/Tokyo2018_Everingham_SH_-9.jpg" ];
 
       wallpaper = [
-        "DP-2,/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg"
-        "DP-3,/home/radekp/Pictures/Tokyo2018_Everingham_SH_-9.jpg"
+        "DP-2,/etc/nixos/wallpapers/Tokyo2018_Everingham_SH_-9.jpg"
+        "DP-3,/etc/nixos/wallpapers/Tokyo2018_Everingham_SH_-9.jpg"
       ];
     };
   };
@@ -558,8 +612,8 @@ in
       "PATH" = "${pkgs.kitty}/bin:$PATH";
       # #WaybarLife
       "WAYBAR_LOG_LEVEL" = "debug waybar";
-      #"WAYLAND_DISPLAY" = "wayland-0";
-      "WAYLAND_DISPLAY" = "wayland-1";
+      "WAYLAND_DISPLAY" = "wayland-0";
+      #WAYLAND_DISPLAY" = "wayland-1";
       #Cursor
       "XCURSOR_THEME" = "${pkgs.bibata-cursors}/share/icons/Bibata-Modern-ice/cursor.theme";
       "XCURSOR_SIZE" = "24";
@@ -628,8 +682,8 @@ in
       	  font_size = 12.5
       	}
       	-- config.font = wezterm.font 'Hack'
-      	config.font = wezterm.font 'Inconsolata'
-      	config.font_size = 13.5
+      	--config.font = wezterm.font 'Inconsolata'
+      	config.font_size = 13
 
       	-- Keymaps
       	config.keys = {
@@ -861,6 +915,21 @@ in
     source = "${pkgs.vimPlugins.tokyonight-nvim}/extras/eza/tokyonight.yml";
   };
 
+  programs.librewolf = {
+    enable = true;
+    settings = {
+      "privacy.resistFingerprinting" = false;
+      "privacy.resistFingerprinting.letteboxing" = true;
+      "privacy.resistFingerprintingautoDeclineNoUserInputCanvasPrompts" = true;
+      "privacy.fingerprintingProtection" = true;
+      "privacy.fingerprintingProtection.overrides" = "+AllTargets,-CSSPrefersColorScheme";
+      "webgl.disabled" = false;
+      # setup tokyonight extension
+      # setup ublock origin
+      # setup canvasblocker
+    };
+  };
+
 
   programs.lesspipe.enable = true;
 
@@ -901,6 +970,8 @@ in
     dmenu
     ueberzug
     glance
+    #librewolf-wayland
+
 
 
     # Hyprland
@@ -941,312 +1012,6 @@ in
 
   ];
 
-  # Setup bspwm
-
-  xsession.windowManager.bspwm.enable = true;
-  xsession.windowManager.bspwm.extraConfigEarly = ''
-    	# Start sxhkd if it is not running
-    	pgrep -x sxhkd > /dev/null || sxhkd &
-
-    	# Wait for a bit before starting Polybar to ensure services are ready
-    	sleep 1
-
-    	#Apply nvidia-settings profile
-    	nvidia-settings -l
-
-    	# Kill any existing Polybar instances before starting a new one
-    	killall -q polybar
-    	while pgrep -x polybar >/dev/null; do sleep 1; done
-
-    	# Start Polybar
-    	polybar -c ~/.config/polybar/example/config.ini example > /tmp/polybar.log 2>&1 &
-    	
-
-    	# Set wallpaper
-    	feh --bg-center /etc/nixos/wallpapers/nix-wallpaper-binary-black.jpg
-
-            # Set cursor to pointer
-    	xsetroot -cursor_name left_ptr &
-  '';
-  xsession.windowManager.bspwm.extraConfig = ''
-    	
-            sudo /run/current-system/sw/bin/nvidia-settings -c :0 -a '[gpu:0]/GPUFanControlState=1'
-            sudo /run/current-system/sw/bin/nvidia-settings -c :0 -a GPUTargetFanSpeed=35
-            sudo /run/current-system/sw/bin/nvidia-settings -a "DigitalVibrance=0"
-            ##sudo /run/current-system/sw/bin/nvidia-settings -l
-  '';
-
-  xsession.windowManager.bspwm.monitors = {
-    DP-2 = [
-      "I"
-      "II"
-      "III"
-      "IV"
-      "V"
-      "VI"
-      "VII"
-      "VIII"
-      "IX"
-      "X"
-    ];
-
-  };
-
-  xsession.windowManager.bspwm.settings = {
-
-    border_width = 2;
-    window_gap = 12;
-    split_ratio = 0.52;
-    borderless_monocle = true;
-    gapless_monocle = true;
-  };
-
-  xsession.windowManager.bspwm.rules = {
-    "Gimp" = {
-      desktop = "^8";
-      state = "floating";
-      follow = true;
-    };
-    "Screenkey" = {
-      manage = true;
-    };
-  };
-
-  # Enable sxhkd
-  services.sxhkd.enable = true;
-
-  services.sxhkd.keybindings = {
-    # wm independent hotkeys
-    "super + Return" = "kitty";
-    "super + space" = "rofi -show combi";
-    "alt + F1" = "rofi -show window";
-    "alt + F2" = "rofi -show run";
-    "alt + F4" = "rofi -show power-menu -modi power-menu:rofi-power-menu";
-    "super + Escape" = "pkill -USR1 -x sxhkd";
-    "super + e" = "alacritty --command yazi";
-    "alt + Escape" = "betterlockscreen -l dim";
-    "Print" = "flameshot gui";
-    "Shift + Print" = "/etc/nixos/modules/scripts/screenshot.sh";
-
-    # bspwm hotkeys
-    "super + f" = "bspc node -t ~fullscreen";
-    "super + alt + q" = "bspc quit";
-    "super + alt + r" = "bspc wm -r";
-    "super + w" = "bspc node -c";
-    "super + shift + w" = "bspc node -k";
-    "super + m" = "bspc desktop -l next";
-    "super + y" = "bspc node newest.marked.local -n newest.!automatic.local";
-    "super + g" = "bspc node -s biggest.window";
-
-    # state/flags
-    "super + t" = "bspc node -t tiled";
-    "super + shift + t" = "bspc node -t pseudo_tiled";
-    "super + s" = "bspc node -t floating";
-    #  "super + f" = "bspc node -t fullscreen";
-    "super + ctrl + m" = "bspc node -g marked";
-    "super + ctrl + x" = "bspc node -g locked";
-    "super + ctrl + y" = "bspc node -g sticky";
-    "super + ctrl + z" = "bspc node -g private";
-
-    # focus/swap
-    "super + h" = "bspc node -f west";
-    "super + j" = "bspc node -f south";
-    "super + k" = "bspc node -f north";
-    "super + l" = "bspc node -f east";
-    "super + shift + h" = "bspc node -s west";
-    "super + shift + j" = "bspc node -s south";
-    "super + shift + k" = "bspc node -s north";
-    "super + shift + l" = "bspc node -s east";
-    "super + p" = "bspc node -f @parent";
-    "super + b" = "bspc node -f @brother";
-    "super + comma" = "bspc node -f @first";
-    "super + period" = "bspc node -f @second";
-    "super + c" = "bspc node -f next.local.!hidden.window";
-    "super + shift + c" = "bspc node -f prev.local.!hidden.window";
-    "super + bracketleft" = "bspc desktop -f prev.local";
-    "super + bracketright" = "bspc desktop -f next.local";
-    "super + grave" = "bspc node -f last";
-    "super + Tab" = "bspc desktop -f last";
-    "super + o" = "bspc wm -h off; bspc node older -f; bspc wm -h on";
-    "super + i" = "bspc wm -h off; bspc node newer -f; bspc wm -h on";
-    "super + 1" = "bspc desktop -f ^1";
-    "super + {_,shift + }{1-9,0}" = "bspc {desktop -f, node -d} '^{1-9,10}' --follow";
-    #"super + shift + <x>" = "bspc node -d ^<x>"; per workspace binding
-
-    # preselect
-    "super + ctrl + h" = "bspc node -p west";
-    "super + ctrl + j" = "bspc node -p south";
-    "super + ctrl + k" = "bspc node -p north";
-    "super + ctrl + l" = "bspc node -p east";
-    "super + ctrl + 1" = "bspc node -o 0.1";
-    "super + ctrl + 2" = "bspc node -o 0.2";
-    "super + ctrl + 3" = "bspc node -o 0.3";
-    "super + ctrl + 4" = "bspc node -o 0.4";
-    "super + ctrl + 5" = "bspc node -o 0.5";
-    "super + ctrl + 6" = "bspc node -o 0.6";
-    "super + ctrl + 7" = "bspc node -o 0.7";
-    "super + ctrl + 8" = "bspc node -o 0.8";
-    "super + ctrl + 9" = "bspc node -o 0.9";
-    "super + ctrl + space" = "bspc node -p cancel";
-    "super + ctrl + shift + space" = "bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel";
-
-    # move/resize
-    "super + alt + h" = "bspc node -z left -20 0";
-    "super + alt + j" = "bspc node -z bottom 0 20";
-    "super + alt + k" = "bspc node -z top 0 -20";
-    "super + alt + l" = "bspc node -z right 20 0";
-    "super + alt + shift + h" = "bspc node -z right -20 0";
-    "super + alt + shift + j" = "bspc node -z top 0 20";
-    "super + alt + shift + k" = "bspc node -z bottom 0 -20";
-    "super + alt + shift + l" = "bspc node -z left 20 0";
-    "super + Left" = "bspc node -v -20 0";
-    "super + Down" = "bspc node -v 0 20";
-    "super + Up" = "bspc node -v 0 -20";
-    "super + Right" = "bspc node -v 20 0";
-  };
-
-  home.file.".config/polybar/example/config.ini".text = ''
-    [bar/example]
-    width = 100%
-    height = 24pt
-    radius = 6
-
-    background = #282A2E
-    foreground = #C5C8C6
-
-    line-size = 3pt
-
-    border-size = 4pt
-    border-color = #00000000
-
-    padding-left = 0
-    padding-right = 1
-
-    module-margin = 1
-
-    separator = |
-    separator-foreground = #707880
-
-    font-0 = monospace;2
-
-    modules-left = xworkspaces xwindow
-    modules-right = filesystem pulseaudio xkeyboard memory cpu wlan eth date
-
-    cursor-click = pointer
-    cursor-scroll = ns-resize
-
-    enable-ipc = true
-
-    [module/systray]
-    type = internal/tray
-
-    format-margin = 8pt
-    tray-spacing = 16pt
-
-    [module/xworkspaces]
-    type = internal/xworkspaces
-
-    label-active = %name%
-    label-active-background = #373B41
-    label-active-underline = #F0C674
-    label-active-padding = 1
-
-    label-occupied = %name%
-    label-occupied-padding = 1
-
-    label-urgent = %name%
-    label-urgent-background = #A54242
-    label-urgent-padding = 1
-
-    label-empty = %name%
-    label-empty-foreground = #707880
-    label-empty-padding = 1
-
-    [module/xwindow]
-    type = internal/xwindow
-    label = %title:0:60:...%
-
-    [module/filesystem]
-    type = internal/fs
-    interval = 25
-
-    mount-0 = /
-
-    label-mounted = %{F#F0C674}%mountpoint%%{F-} %percentage_used%%
-
-    label-unmounted = %mountpoint% not mounted
-    label-unmounted-foreground = #707880
-
-    [module/pulseaudio]
-    type = internal/pulseaudio
-
-    format-volume-prefix = "VOL "
-    format-volume-prefix-foreground = #F0C674
-    format-volume = <label-volume>
-
-    label-volume = %percentage%%
-
-    label-muted = muted
-    label-muted-foreground = #707880
-
-    [module/xkeyboard]
-    type = internal/xkeyboard
-    blacklist-0 = num lock
-
-    label-layout = %layout%
-    label-layout-foreground = #F0C674
-
-    label-indicator-padding = 2
-    label-indicator-margin = 1
-    label-indicator-foreground = #282A2E
-    label-indicator-background = #8ABEB7
-
-    [module/memory]
-    type = internal/memory
-    interval = 2
-    format-prefix = "RAM "
-    format-prefix-foreground = #F0C674
-    label = %percentage_used:2%%
-
-    [module/cpu]
-    type = internal/cpu
-    interval = 2
-    format-prefix = "CPU "
-    format-prefix-foreground = #F0C674
-    label = %percentage:2%%
-
-    [network-base]
-    type = internal/network
-    interval = 5
-    format-connected = <label-connected>
-    format-disconnected = <label-disconnected>
-    label-disconnected = %{F#F0C674}%ifname%%{F#707880} disconnected
-
-    [module/wlan]
-    inherit = network-base
-    interface-type = wireless
-    label-connected = %{F#F0C674}%ifname%%{F-} %essid% %local_ip%
-
-    [module/eth]
-    inherit = network-base
-    interface-type = wired
-    label-connected = %{F#F0C674}%ifname%%{F-} %local_ip%
-
-    [module/date]
-    type = internal/date
-    interval = 1
-
-    date = %H:%M
-    date-alt = %Y-%m-%d %H:%M:%S
-
-    label = %date%
-    label-foreground = #F0C674
-
-    [settings]
-    screenchange-reload = true
-    pseudo-transparency = true
-  '';
-
   #Setup and configure git
   programs.git = {
     enable = true;
@@ -1265,77 +1030,6 @@ in
   };
   xdg = {
     enable = true;
-  };
-  #Enable Alacritty
-  programs.alacritty.enable = false;
-
-  home.file.".config/alacritty/alacritty.toml" = {
-    text = ''
-              [general]
-      	import = ["${pkgs.alacritty-theme}/tokyo-night.toml"]
-
-      	[font]
-      	size = 13.0
-      	#normal = {family = "Hack", style = "Regular"}
-      	#bold = {family = "Hack", style = "Bold"}
-      	#italic = {family = "Hack", style = "Italic"}
-      	#bold_italic = {family = "Hack", style = "Bold Italic"}
-        
-      	[cursor]
-      	style = { shape = "Underline", blinking = "Always" }
-
-      	[mouse]
-      	bindings = [
-      	{ mouse = "Right", mods = "Shift", action = "Copy" },
-      	{ mouse = "Right", action = "Paste" },
-      	]
-
-      	[selection]
-      	semantic_escape_chars = ",│`|:\"' ()[]{}<>\t"
-      	save_to_clipboard = true
-
-      	[env]
-      	TERM = "xterm-256color"
-      	EDITOR = "nvim"
-      	VISUAL = "nvim"
-      	BAT_THEME = "ansi"
-      	MANPAGER = "nvim +Man!"
-      	
-      	# Set Wayland-related variables
-              
-      	#WAYLAND_DISPLAY = ":1" # included in wayland.windowManager.hyprland.systemd.enable
-      	#XDG_SESSION_TYPE = "wayland"
-        	#XDG_CURRENT_DESKTOP = "Hyprland" # included in wayland.windowManager.hyprland.systemd.enable
-      	MOZ_ENABLE_WAYLAND = "1" # Enable Wayland for Firefox, if applicable
-      	QT_QPA_PLATFORM = "wayland" # Use Wayland for Qt apps
-
-      	[colors.primary]
-      	
-      	background = '#1a1b26'
-      	foreground = '#a9b1d6'
-      	
-      	# Normal colors
-      	#[colors.normal]
-      	#black   = '#32344a'
-      	#red     = '#f7768e'
-      	#green   = '#9ece6a'
-      	#yellow  = '#e0af68'
-      	#blue    = '#7aa2f7'
-      	#magenta = '#ad8ee6'
-      	#cyan    = '#449dab'
-      	#white   = '#787c99'
-      	#
-      	## Bright colors
-      	#[colors.bright]
-      	#black   = '#444b6a'
-      	#red     = '#ff7a93'
-      	#green   = '#b9f27c'
-      	#yellow  = '#ff9e64'
-      	#blue    = '#7da6ff'
-      	#magenta = '#bb9af7'
-      	#cyan    = '#0db9d7'
-      	#white   = '#acb0d0'
-    '';
   };
 
   #Glance config

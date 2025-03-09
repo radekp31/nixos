@@ -2,7 +2,7 @@
     "custom/arch": {
         "format": " ",
         "tooltip": true,
-        "tooltip-format": "btw"
+        "tooltip-format": "Don't trust anything that's not explicitly declared in your configuration file – not even your own sanity."
     },
 
 
@@ -56,7 +56,11 @@
         "tooltip": true
     },
     "memory": {
-        "format": "  {}%",
+        "format": "  {}%",
+	"tooltip": true
+    },
+    "disk": {
+        "format": "󰋊  {percentage_used}%",
 	"tooltip": true
     },
     "temperature": {
