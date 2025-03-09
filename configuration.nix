@@ -499,6 +499,13 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
 
+    # Git and fetchers and other QOL
+    git
+    nix-prefetch-git
+    nix-prefetch
+    nix-prefetch-docker
+    nix-prefetch-scripts
+
     # TEST
     qmk
     qmk_hid

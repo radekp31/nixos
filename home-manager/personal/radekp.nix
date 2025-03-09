@@ -6,7 +6,9 @@
 }:
 
 let
-  xdgConfigHome = builtins.getEnv "XDG_CONFIG_HOME";
+
+  tokyonight-rofi-theme = import ../rofi-themes/rofi-themes.nix { inherit pkgs; };
+
 in
 
 {
@@ -113,7 +115,8 @@ in
         "$mod, Return, exec, wezterm"
         "$mod_SHIFT, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
         "$mod, grave, exec, grim -g \"$(slurp -d)\" - | wl-copy"
-        "$mod, space, exec, rofi -show window"
+        #"$mod, space, exec, rofi -show window"
+        "$mod, space, exec, rofi -show"
         "$mod, V, exec, kitty --class clipse -e 'clipse'"
         "$mod, G, exec, /etc/nixos/modules/scripts/game-mode.sh"
 
@@ -320,25 +323,30 @@ in
       </interface>
   '';
 
-  # Configure Rofi app launcher
+  # Configure Rofi app launcher original
   programs.rofi = {
     enable = true;
     cycle = true;
-    font = "Inconsolata";
-    location = "center";
+    font = "JetBrains Mono";
+    location = "top";
     plugins = [
       pkgs.rofi-calc
       pkgs.rofi-games
       pkgs.rofi-wayland
     ];
     extraConfig = {
-      modi = "window,run";
+      modi = "drun,window";
+      show-icons = true;
+      width = 50; # Increase width (percentage of screen)
+      height = 60; # Increase height (percentage of screen)
+      drun-display-format = "{name}";
     };
-    terminal = "\${pkgs.kitty}/bin/kitty";
-    theme = "tokyo-night.rasi";
+    terminal = "${pkgs.wezterm}/bin/wezterm";
+    #theme = "tokyo-night.rasi";
+    theme = "${tokyonight-rofi-theme}/share/rofi/themes/tokyonight_big2.rasi";
   };
 
-  # Rofi TokyoNight theme
+  #Rofi TokyoNight theme original
   home.file.".config/rofi/tokyo-night.rasi".text = ''
         /*
      * Tokyonight colorscheme for rofi
@@ -480,6 +488,10 @@ in
         enabled: true;
     } 
   '';
+
+
+  #/////////////////////////////////////////
+
 
   #Configure Swappy
   #Create keybind: grim -g "$(slurp)" - | swappy -f -
