@@ -31,10 +31,10 @@
 
     ./hardware-configuration.nix
     ./nvidia-drivers.nix
-    ./modules/default.nix
-    ./modules/apps/nixvim/nixvim.nix
-    ./modules/apps/qmk/qmk.nix
-    #./modules/apps/qemu/qemu.nix
+    ../../modules/default.nix
+    ../../modules/apps/nixvim/nixvim.nix
+    ../../modules/apps/qmk/qmk.nix
+    #../../modules/apps/qemu/qemu.nix
   ];
 
   # Configure Nixpkgs to use the unstable channel for system-wide packages
