@@ -141,10 +141,22 @@
     openssh = {
       authorizedKeys = {
         keys = [
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL3+0V2ZkKsLpfRroxEBBOSrfdP2N/AbYoaMwqMeELWj polasek.31@seznam.cz"
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIzoVRVWpxFy1dOe0vVrtv2c/i9GixoyUDKpgsuruSG2 radekp@nixos-desktop"
         ];
       };
     };
+  };
+
+  programs.bash = {
+    shellInit = ''
+      bind "set show-all-if-ambiguous on"
+      bind "TAB:menu-complete"
+    '';
+  };
+
+  programs.fzf = {
+    keybindings = true;
+    fuzzyCompletion = true;
   };
 
   # programs.firefox.enable = true;
