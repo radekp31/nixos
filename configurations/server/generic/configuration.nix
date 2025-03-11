@@ -131,7 +131,8 @@
   };
 
   users.users.root = {
-    isNormalUser = true;
+    isSystemUser = true;
+    shell = lib.mkForce pkgs.bash;
     extraGroups = [ "wheel" ];
     packages = with pkgs; [
       git
