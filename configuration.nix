@@ -88,6 +88,9 @@
     };
   };
 
+  #VMware
+  virtualisation.vmware.host.enable = true;
+
   security.sudo = {
     enable = true;
     wheelNeedsPassword = true; # Require password for sudo
@@ -505,6 +508,8 @@
     nix-prefetch
     nix-prefetch-docker
     nix-prefetch-scripts
+    nixos-anywhere
+
 
     # TEST
     qmk

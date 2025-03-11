@@ -333,6 +333,7 @@ in
       pkgs.rofi-calc
       pkgs.rofi-games
       pkgs.rofi-wayland
+      pkgs.rofi-power-menu
     ];
     extraConfig = {
       modi = "drun,window";
