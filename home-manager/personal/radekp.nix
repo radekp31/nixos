@@ -333,6 +333,7 @@ in
       pkgs.rofi-calc
       pkgs.rofi-games
       pkgs.rofi-wayland
+      pkgs.rofi-power-menu
     ];
     extraConfig = {
       modi = "drun,window";
@@ -679,7 +680,7 @@ in
       	config.window_decorations = "NONE"
       	config.use_fancy_tab_bar = false
       	config.window_frame = {
-      	  font_size = 12.5
+      	  font_size = 13.5
       	}
       	-- config.font = wezterm.font 'Hack'
       	--config.font = wezterm.font 'Inconsolata'
