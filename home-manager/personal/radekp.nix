@@ -924,11 +924,34 @@ in
       "privacy.resistFingerprintingautoDeclineNoUserInputCanvasPrompts" = true;
       "privacy.fingerprintingProtection" = true;
       "privacy.fingerprintingProtection.overrides" = "+AllTargets,-CSSPrefersColorScheme";
+      "privacy.trackingprotection.enabled" = true;
+      "privacy.trackingprotection.excludelist" = "https://anthropic.com,https://api.anthropic.com,https://claude.ai";
       "webgl.disabled" = false;
-      # setup tokyonight extension
-      # setup ublock origin
-      # setup canvasblocker
+
+      #Zoom 120%
+      "layout.css.devPixelsPerPx" = "1.2";
+
     };
+  };
+
+  #LibreWolf extensions
+  # setup tokyonight extension
+  # setup ublock origin
+  # setup canvasblocker
+  home.file = {
+    ".librewolf/profile/extensions/ublock@raymondhill.net.xpi".source = builtins.fetchurl {
+      url = "https://addons.mozilla.org/firefox/downloads/file/4121906/ublock_origin-1.55.0.xpi";
+      sha256 = "1cx5nzyjznhlyahlrb3pywanp7nk8qqkfvlr2wzqqlhbww1q0q8h";
+    };
+  };
+
+  #Bitwarden, link is changing, needs update
+  home.file = {
+    ".librewolf/profile/extensions/{446900e4-71c2-419f-a6a7-df9c091e268b}.xpi".source = builtins.fetchurl {
+      url = "https://addons.mozilla.org/firefox/downloads/file/4440363/bitwarden_password_manager-2025.2.0.xpi";
+      sha256 = "0x53sdqmz1nw1vwcs90g34aza69wrrzsrvah5x4215i6l9az7my4";
+    };
+
   };
 
 
