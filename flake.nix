@@ -8,18 +8,17 @@
 
     alejandra.url = "github:kamadorueda/alejandra";
 
-    #nixos-anywhere inputs
-    #inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable"; #seems incorrect, needs testing
-
     disko.url = "github:nix-community/disko";
 
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
     nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
 
+    sops-nix.url = "github:Mic92/sops-nix";
+
   };
 
-  outputs = { self, nixpkgs, alejandra, home-manager, disko, ... }@inputs:
+  outputs = { self, nixpkgs, alejandra, home-manager, disko, sops-nix, ... }@inputs: #It should not be neccessary to include all input names in outputs = {}, while @inputs is defined. Using specialArgs = {inherit inputs;}; in configurations should be sufficient
 
     let
 
@@ -33,17 +32,21 @@
       nixosConfigurations.nixos-desktop = nixpkgs.lib.nixosSystem {
         #system = "x86_64-linux";
         system = system;
+        specialArgs = { inherit inputs; };
         modules = [
           ./configurations/nixos-desktop/configuration.nix
-
+          ./modules/secrets/sops.nix
+          #sops-nix.nixosModules.sops
         ];
       };
 
 
       nixosConfigurations.generic-server = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
         modules = [
           ./configurations/server/generic/configuration.nix
+          #sops-nix.nixosModules.sops
         ];
       };
 
@@ -64,7 +67,10 @@
         "radekp" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.x86_64-linux;
           extraSpecialArgs = { inherit inputs outputs; };
-          modules = [ ./home-manager/personal/radekp.nix ];
+          modules = [
+            ./home-manager/personal/radekp.nix
+            sops-nix.homeManagerModules.sops
+          ];
         };
       };
 

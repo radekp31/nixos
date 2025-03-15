@@ -928,8 +928,8 @@ in
       "privacy.trackingprotection.excludelist" = "https://anthropic.com,https://api.anthropic.com,https://claude.ai";
       "webgl.disabled" = false;
 
-      #Zoom 120%
-      "layout.css.devPixelsPerPx" = "1.2";
+      #Zoom 110%
+      "layout.css.devPixelsPerPx" = "1.1";
 
     };
   };

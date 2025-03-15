@@ -509,6 +509,8 @@
     nix-prefetch-docker
     nix-prefetch-scripts
     nixos-anywhere
+    age
+    sops
 
     # TEST
     qmk
