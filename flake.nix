@@ -18,7 +18,8 @@
 
   };
 
-  outputs = { self, nixpkgs, alejandra, home-manager, disko, sops-nix, ... }@inputs: #It should not be neccessary to include all input names in outputs = {}, while @inputs is defined. Using specialArgs = {inherit inputs;}; in configurations should be sufficient
+  #outputs = { self, nixpkgs, alejandra, home-manager, disko, sops-nix, ... }@inputs: #It should not be neccessary to include all input names in outputs = {}, while @inputs is defined. Using specialArgs = {inherit inputs;}; in configurations should be sufficient
+  outputs = { self, nixpkgs, home-manager, alejandra, ... }@inputs: #It should not be neccessary to include all input names in outputs = {}, while @inputs is defined. Using specialArgs = {inherit inputs;}; in configurations should be sufficient
 
     let
 
@@ -56,8 +57,9 @@
 
       nixosConfigurations.deployment-generic-server = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
         modules = [
-          disko.nixosModules.disko
+          #disko.nixosModules.disko
           ./deployments/server/generic/configuration.nix
           ./deployments/server/generic/hardware-configuration.nix
         ];
@@ -69,7 +71,7 @@
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [
             ./home-manager/personal/radekp.nix
-            sops-nix.homeManagerModules.sops
+            #sops-nix.homeManagerModules.sops
           ];
         };
       };
