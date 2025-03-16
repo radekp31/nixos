@@ -18,8 +18,7 @@
 
   };
 
-  #outputs = { self, nixpkgs, alejandra, home-manager, disko, sops-nix, ... }@inputs: #It should not be neccessary to include all input names in outputs = {}, while @inputs is defined. Using specialArgs = {inherit inputs;}; in configurations should be sufficient
-  outputs = { self, nixpkgs, home-manager, alejandra, ... }@inputs: #It should not be neccessary to include all input names in outputs = {}, while @inputs is defined. Using specialArgs = {inherit inputs;}; in configurations should be sufficient
+  outputs = { self, nixpkgs, alejandra, home-manager, disko, sops-nix, ... }@inputs:
 
     let
 
@@ -41,15 +40,27 @@
         ];
       };
 
-
       nixosConfigurations.generic-server = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
           ./configurations/server/generic/configuration.nix
+          ./modules/secrets/sops.nix
           #sops-nix.nixosModules.sops
         ];
       };
+
+      nixosConfigurations.web-server = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./configurations/server/generic/configuration.nix
+          ./modules/secrets/sops.nix
+          ./modules/server/webserver/configuration.nix
+          sops-nix.nixosModules.sops
+        ];
+      };
+
 
       #Remote deployments with nixos-anywhere
       #Run with:
@@ -59,9 +70,10 @@
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
-          #disko.nixosModules.disko
+          disko.nixosModules.disko
           ./deployments/server/generic/configuration.nix
           ./deployments/server/generic/hardware-configuration.nix
+          ./modules/secrets/sops.nix
         ];
       };
 

@@ -1,15 +1,7 @@
 # flakes need to be enabled
-# nixpkgs nees to be added to channels
 # shell need to be forced by mkForce to bash
-# $NIX_PATH is broken - use this for rebuild: 
-#
-# <export NIX_PATH=nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixpkgs:nixos-config=/etc/nixos/configuration.nix
-#nixos-rebuild switch
-#
-#
 # port 22 needs to be opened
-#
-# nixpkgs need to be added via nix-channel --add https://nixos.org/channels/nixos-24.11 nixpkgs
+# After deployment - AGE key will be generated. It has to be added to .sops.yaml. Without it, the server wont be able to decrypt the secrets/secrets.yaml
 
 { modulesPath
 , lib
@@ -40,15 +32,8 @@
       auto-optimise-store = true;
       experimental-features = [ "nix-command" "flakes" ];
     };
-    nixPath = [
-      "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixpkgs"
-      "nixos-config=/etc/nixos/configuration.nix"
-      "/nix/var/nix/profiles/per-user/root/channels"
-      "/nix/var/nix/profiles/system/channels"
-    ];
   };
 
-  #Fix nix-channel?
 
   # Configure Nixpkgs to use the unstable channel for system-wide packages
   nixpkgs.config = {
@@ -64,7 +49,7 @@
     enable = true;
     # Optional: Configure SSH settings
     settings = {
-      PasswordAuthentication = true; # Set to false to disable password login
+      PasswordAuthentication = false; # Set to false to disable password login
     };
   };
 
@@ -74,6 +59,7 @@
     allowedTCPPorts = [ 22 ]; # Allow SSH connections
     # Optional: if you're using IPv6
     # allowedTCPPorts = [ 22 ];       # Same for IPv6
+    rejectPackets = false; #Drop packets instead of REJECT
   };
 
   environment.systemPackages = map lib.lowPrio [
@@ -81,22 +67,22 @@
     pkgs.gitMinimal
   ];
 
-  users.users.radekp = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-    initialHashedPassword = "$y$j9T$qsPcS6PZU.ikacpJSivZw.$PcGv5mJTBRGSIQ1lzFUpzvPIb2cDpX3EDqWuvQQjOE2";
-    packages = with pkgs; [
-      tree
-      git
-      curl
-      vim
-    ];
-  };
+  #users.users.radekp = {
+  #  isNormalUser = true;
+  #  extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+  #  initialHashedPassword = "$y$j9T$qsPcS6PZU.ikacpJSivZw.$PcGv5mJTBRGSIQ1lzFUpzvPIb2cDpX3EDqWuvQQjOE2";
+  #  packages = with pkgs; [
+  #    tree
+  #    git
+  #    curl
+  #    vim
+  #  ];
+  #};
 
-  users.users.root.initialHashedPassword = "$y$j9T$qsPcS6PZU.ikacpJSivZw.$PcGv5mJTBRGSIQ1lzFUpzvPIb2cDpX3EDqWuvQQjOE2";
+  #users.users.root.initialHashedPassword = "$y$j9T$qsPcS6PZU.ikacpJSivZw.$PcGv5mJTBRGSIQ1lzFUpzvPIb2cDpX3EDqWuvQQjOE2";
   users.users.root.openssh.authorizedKeys.keys = [
     # change this to your ssh key
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL3+0V2ZkKsLpfRroxEBBOSrfdP2N/AbYoaMwqMeELWj polasek.31@seznam.cz"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIzoVRVWpxFy1dOe0vVrtv2c/i9GixoyUDKpgsuruSG2 radekp@nixos-desktop"
   ];
 
   #Force root shell to bash

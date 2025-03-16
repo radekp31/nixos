@@ -1,8 +1,10 @@
 keys:
-  #- &hosts_nixos-desktop age1hrntn7v7psk7lpdx5vna99fun480le75lk66rmqmqk744w3plqjqnrcj0x
-  - &hosts_nixos-desktop >- ${SOPS_AGE_KEY_FILE:-/var/lib/sops-nix/keys.txt}
+  - &hosts_nixos-desktop age1hrntn7v7psk7lpdx5vna99fun480le75lk66rmqmqk744w3plqjqnrcj0x
+  - &hosts_contabovps1 age1fr9lpceue3swhp8tkqzptud6s5f2ft509grc5r52h2u6zufp7flq9fdlma
+  #- &hosts_nixos-desktop >- ${SOPS_AGE_KEY_FILE:-/var/lib/sops-nix/keys.txt}
 creation_rules:
   - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       -  age:
            -  *hosts_nixos-desktop
+           -  *hosts_contabovps1

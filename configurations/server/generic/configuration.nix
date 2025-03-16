@@ -62,14 +62,10 @@
     };
   };
 
-  services.nginx = {
-    enable = false;
-  };
-
-  # Open port 22 in the firewall
   networking.firewall = {
     enable = true; # Enable the firewall
     allowedTCPPorts = [ 22 ]; # Allow SSH connections ; 80 is testing of remote deployment from localhost
+    allowedUDPPorts = [ 53 123 ]; # Allow DNS and NTP
     # Optional: if you're using IPv6
     # allowedTCPPorts = [ 22 ];       # Same for IPv6
     extraCommands = ''

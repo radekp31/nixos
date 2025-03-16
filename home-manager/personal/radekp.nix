@@ -64,6 +64,9 @@ in
     nix-direnv.enable = true;
   };
 
+  programs.floorp = {
+    enable = true;
+  };
 
   #  home.activation.connectOneDrive = lib.hm.dag.entryAfter ["writeBoundary"] ''
   #  # Command to run after user login
@@ -929,7 +932,7 @@ in
       "webgl.disabled" = false;
 
       #Zoom 110%
-      "layout.css.devPixelsPerPx" = "1.1";
+      #"layout.css.devPixelsPerPx" = "1.1";
 
     };
   };

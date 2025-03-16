@@ -10,6 +10,10 @@
     enable = true;
   };
 
+  environment.sessionVariables = {
+    SOPS_AGE_KEY_FILE = "/var/lib/sops-nix/keys.txt";
+  };
+
   sops = {
     defaultSopsFile = ../../secrets/secrets.yaml;
 
@@ -29,20 +33,38 @@
     secrets = {
       "radekp-password" = {
         sopsFile = ../../secrets/secrets.yaml;
-        owner = "radekp";
+        #owner = "radekp";
+        owner = if config.networking.hostName == "nixos-desktop" then "radekp" else "root";
         mode = "0400";
+        format = "yaml";
       };
 
       "ssh-keys/contabovps1" = {
         sopsFile = ../../secrets/secrets.yaml;
-        owner = "radekp";
+        owner = "root";
         mode = "0400";
+        format = "yaml";
       };
 
       "ssh-keys/nixos-desktop" = {
         sopsFile = ../../secrets/secrets.yaml;
-        owner = "radekp";
+        owner = "root";
         mode = "0400";
+        format = "yaml";
+      };
+
+      "IPs/homenetwork" = {
+        sopsFile = ../../secrets/secrets.yaml;
+        owner = "root";
+        mode = "0400";
+        format = "yaml";
+      };
+
+      "IPs/contabovps1" = {
+        sopsFile = ../../secrets/secrets.yaml;
+        owner = "root";
+        mode = "0400";
+        format = "yaml";
       };
     };
   };
