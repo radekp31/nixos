@@ -288,17 +288,7 @@
   #Enable Android Debug Bridge
   programs.adb.enable = true;
 
-  # Enable the X11 windowing system.
-  # services.xserver.enable = true;
-  # Enable Budgie desktop
-  #services.xserver.desktopManager.budgie.enable = true;
-  #services.xserver.displayManager.lightdm.enable = true;
-
-  # Enable bspwm
-  #services.xserver.windowManager.bspwm.enable = true;
-
   # Wayland + Hyprland attempt
-  #programs.uwsm.enable = true;
   programs.hyprland.enable = true;
   programs.hyprland.withUWSM = true;
   # Attempt to fix Hyprland high VRAM usage
@@ -334,12 +324,6 @@
   };
 
   services.xserver.enable = true;
-
-
-  # services.greetd = {
-  #   enable = false;
-  #   settings.default_session.command = "${pkgs.greetd.tuigreet}/bin/tuigreet --asterisks --time --time-format '%I:%M %p | %a -- %h | %F' --cmd Hyprland";
-  # };
 
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
@@ -398,7 +382,6 @@
       "video"
       "input"
     ];
-    #home.file = pkgs.lib.mkForce /home/radekp/.config/nixpkgs/home.nix; # nonsense - but it will have to be crated on autonated user creation
     packages = with pkgs; [
       #  thunderbird
     ];
@@ -494,10 +477,6 @@
 
   };
 
-  # Install firefox.
-  # Dont forget to use Tokyonight extension, or any other of your choice
-  programs.firefox.enable = true;
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -509,6 +488,8 @@
     nix-prefetch-docker
     nix-prefetch-scripts
     nixos-anywhere
+
+    #Secrets Management
     age
     sops
 
@@ -533,8 +514,8 @@
     clinfo
     wayland-utils
     wayland-protocols
-    # Packages
 
+    # Packages
     neofetch # distro stats
     manix # nix options manual
     curl
@@ -543,23 +524,16 @@
     htop # system monitor
     fzf # fuzzy finder
     plymouth # boot customization
-    #feh # lighweight wallpaper management
-    #gwe # fan control for Nvidia GPUs
     qemu_kvm # virtualisation
     spice-vdagent # copy/paste agent for VMs
     virt-viewer # VM viewer
     tree # dir tree structure viewer
-    #alacritty # GPU accelerated terminal emulator
-    #alacritty-theme
     rofi # awesome launch menu
     rofi-power-menu # awesome power menu
-    #picom # x11 lightweight compositor
     ntfs3g
-    #betterlockscreen # cool lockscreen built on i3 lock
     shutter # snipping tool
     dunst # notification tool
     lld_18
-    #opera
     jq
     yt-dlp
     ffmpeg

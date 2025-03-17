@@ -48,12 +48,26 @@ in
         style = "moon";
       };
     };
-    plugins.lualine.enable = true;
     clipboard = {
       register = "unnamedplus";
       providers.wl-copy.enable = true;
     };
     plugins = {
+      lualine = {
+        enable = true;
+        settings = {
+          sections = {
+            lualine_c = [
+              {
+                __unkeyed-1 = "filename";
+                path = 3;
+                #shorting_target = 150;
+              }
+              "diff"
+            ];
+          };
+        };
+      };
       telescope = {
         enable = true;
         extensions = {
