@@ -44,7 +44,6 @@ in
     colorschemes.tokyonight = {
       enable = true;
       settings = {
-        #style = "night";
         style = "moon";
       };
     };
@@ -61,7 +60,6 @@ in
               {
                 __unkeyed-1 = "filename";
                 path = 3;
-                #shorting_target = 150;
               }
               "diff"
             ];
@@ -253,6 +251,8 @@ in
         enable = true;
       };
     };
+    extraConfigLua = ''
+    '';
     extraPlugins = [
       pkgs.vimPlugins.nvim-lspconfig
       pkgs.vimPlugins.friendly-snippets

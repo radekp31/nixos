@@ -223,6 +223,7 @@
 
   #PiHole setup
   networking.nameservers = [
+    #"192.168.50.1"
     "192.168.50.63"
   ];
 
@@ -480,6 +481,8 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    
+    docker_27
 
     # Git and fetchers and other QOL
     git
@@ -506,6 +509,8 @@
     unetbootin
     nixos-icons
     dejavu_fonts
+    docker_27
+    rustdesk
 
     # Wayland + Hyprland
     xorg.xhost

@@ -64,21 +64,11 @@ in
     nix-direnv.enable = true;
   };
 
-  programs.floorp = {
-    enable = true;
-  };
-
   #  home.activation.connectOneDrive = lib.hm.dag.entryAfter ["writeBoundary"] ''
   #  # Command to run after user login
   #  fusermount -uz /media/WDRED/OneDrive #unmount remote, just in case its broken
   #  rclone cmount --vfs-cache-mode writes onedrive: /media/WDRED/OneDrive #mount the remote
   #'';
-
-  # Alacritty overwrites the env vars, put them into alacritty.toml below
-  #  home.sessionVariables = {
-  #	EDITOR = "nvim";
-  #	VISUAL = "nvim";
-  #  };
 
   # Hyprland attempt
 
@@ -104,7 +94,11 @@ in
         "wl-paste -p -t text --watch clipman store -P --histpath=\"~/.local/share/clipman-primary.json\""
         "gsettings set org.gnome.desktop.interface gtk-theme \"Yaru\"" # for GTK3 apps
         "gsettings set org.gnome.desktop.interface color-scheme \"prefer-dark\"" # for GTK4 apps
+	"steam &"  # launch steam, it takes some time
 
+	#"[workspace Term silent] wezterm" # its not getting assigned to workspace
+	#"[workspace Browser silent] librewolf"
+	#"[workspace Steam silent] steam"
       ];
 
       windowrulev2 = [
@@ -122,6 +116,7 @@ in
         "$mod, space, exec, rofi -show"
         "$mod, V, exec, kitty --class clipse -e 'clipse'"
         "$mod, G, exec, /etc/nixos/modules/scripts/game-mode.sh"
+	"Alt, F4, exec, rofi -show p -modi p:'rofi-power-menu --symbols-font \"Symbols Nerd Font Mono\"' -font \"JetBrains Mono NF 16\""
 
         # Hyprsome
         #  move - move window, stay in current workspace
@@ -150,12 +145,15 @@ in
 
       monitor = [
         #Monitor setup
-        "DP-2,2560x1440@144,auto,1"
-        "DP-3,1680x1050,0x0,1"
+        "DP-2,2560x1440@144,0x0,1"
+        "DP-3,1680x1050@59.95,auto-left,1"
       ];
 
       workspace = [
         #DP-2 Workspaces
+        #"Term,monitor:DP-2"
+        #"Browser,monitor:DP-2"
+        "Steam,monitor:DP-2"
         "1,monitor:DP-2"
         "2,monitor:DP-2"
         "3,monitor:DP-2"

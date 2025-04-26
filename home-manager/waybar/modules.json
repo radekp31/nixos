@@ -7,7 +7,9 @@
 
 
     "hyprland/workspaces": {
-        "disable-scroll": true,
+        "disable-scroll": false,
+	"on-scroll-up": "hyprctl dispatch workspace e+1",
+	"on-scroll-down": "hyprctl dispatch workspace e-1",
         "all-outputs": true,
         "warp-on-scroll": false,
         "format": "{name}",
