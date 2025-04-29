@@ -94,7 +94,7 @@ in
         "wl-paste -p -t text --watch clipman store -P --histpath=\"~/.local/share/clipman-primary.json\""
         "gsettings set org.gnome.desktop.interface gtk-theme \"Yaru\"" # for GTK3 apps
         "gsettings set org.gnome.desktop.interface color-scheme \"prefer-dark\"" # for GTK4 apps
-	"steam &"  # launch steam, it takes some time
+	"steam -silent"  # launch steam, it takes some time
 
 	#"[workspace Term silent] wezterm" # its not getting assigned to workspace
 	#"[workspace Browser silent] librewolf"
@@ -125,18 +125,18 @@ in
         #  focus - no idea, errors out
 
         # Workspace - switching between windows
-        "$mod, 1, exec, hyprsome workspace 1"
-        "$mod, 2, exec, hyprsome workspace 2"
-        "$mod, 3, exec, hyprsome workspace 3"
-        "$mod, 4, exec, hyprsome workspace 4"
-        "$mod, 5, exec, hyprsome workspace 5"
+        #"$mod, 1, exec, hyprsome workspace 1"
+        #"$mod, 2, exec, hyprsome workspace 2"
+        #"$mod, 3, exec, hyprsome workspace 3"
+        #"$mod, 4, exec, hyprsome workspace 4"
+        #"$mod, 5, exec, hyprsome workspace 5"
 
         # Workspace - moving windows
-        "$mod SHIFT, 1, exec, hyprsome move 1"
-        "$mod SHIFT, 2, exec, hyprsome move 2"
-        "$mod SHIFT, 3, exec, hyprsome move 3"
-        "$mod SHIFT, 4, exec, hyprsome move 4"
-        "$mod SHIFT, 5, exec, hyprsome move 5"
+        #"$mod SHIFT, 1, exec, hyprsome move 1"
+        #"$mod SHIFT, 2, exec, hyprsome move 2"
+        #"$mod SHIFT, 3, exec, hyprsome move 3"
+        #"$mod SHIFT, 4, exec, hyprsome move 4"
+        #"$mod SHIFT, 5, exec, hyprsome move 5"
 
         # Scroll through existing workspaces with mainMod + scroll
         "SUPER, mouse_down, workspace, +1"
@@ -153,19 +153,19 @@ in
         #DP-2 Workspaces
         #"Term,monitor:DP-2"
         #"Browser,monitor:DP-2"
-        "Steam,monitor:DP-2"
-        "1,monitor:DP-2"
-        "2,monitor:DP-2"
-        "3,monitor:DP-2"
-        "4,monitor:DP-2"
-        "5,monitor:DP-2"
+        #Steam,monitor:DP-2"
+        #"1,monitor:DP-2"
+        #"2,monitor:DP-2"
+        #"3,monitor:DP-2"
+        #"4,monitor:DP-2"
+        #"5,monitor:DP-2"
 
         #DP-3 Workspaces
-        "11,monitor:DP-3"
-        "12,monitor:DP-3"
-        "13,monitor:DP-3"
-        "14,monitor:DP-3"
-        "15,monitor:DP-3"
+        #"11,monitor:DP-3"
+        #"12,monitor:DP-c"
+        #"13,monitor:DP-3"
+        #"14,monitor:DP-3"
+        #"15,monitor:DP-3"
       ];
 
       general = {
@@ -256,41 +256,41 @@ in
   };
 
   #Enable Hyprlock
-  # programs.hyprlock = {
-  #   enable = true;
-  #   settings = {
-  #     general = {
-  #       disable_loading_bar = true;
-  #       grace = 300;
-  #       hide_cursor = true;
-  #       no_fade_in = false;
-  #     };
+   programs.hyprlock = {
+     enable = true;
+     settings = {
+       general = {
+         disable_loading_bar = true;
+         grace = 300;
+         hide_cursor = true;
+         no_fade_in = false;
+       };
 
-  #     background = [
-  #       {
-  #         path = "screenshot";
-  #         blur_passes = 3;
-  #         blur_size = 8;
-  #       }
-  #     ];
+       background = [
+         {
+           path = "screenshot";
+           blur_passes = 3;
+           blur_size = 8;
+         }
+       ];
 
-  #     input-field = [
-  #       {
-  #         size = "200, 50";
-  #         position = "0, -80";
-  #         monitor = "";
-  #         dots_center = true;
-  #         fade_on_empty = false;
-  #         font_color = "rgb(202, 211, 245)";
-  #         inner_color = "rgb(91, 96, 120)";
-  #         outer_color = "rgb(24, 25, 38)";
-  #         outline_thickness = 5;
-  #         placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
-  #         shadow_passes = 2;
-  #       }
-  #     ];
-  #   };
-  # };
+       input-field = [
+         {
+           size = "200, 50";
+           position = "0, -80";
+           monitor = "";
+           dots_center = true;
+           fade_on_empty = false;
+           font_color = "rgb(202, 211, 245)";
+           inner_color = "rgb(91, 96, 120)";
+           outer_color = "rgb(24, 25, 38)";
+           outline_thickness = 5;
+           placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
+           shadow_passes = 2;
+         }
+       ];
+     };
+   };
 
   #Create power_menu.xml for waybar
   home.file.".config/waybar/power_menu.xml".text = ''
