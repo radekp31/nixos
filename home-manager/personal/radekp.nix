@@ -151,21 +151,17 @@ in
 
       workspace = [
         #DP-2 Workspaces
-        #"Term,monitor:DP-2"
-        #"Browser,monitor:DP-2"
-        #Steam,monitor:DP-2"
-        #"1,monitor:DP-2"
-        #"2,monitor:DP-2"
-        #"3,monitor:DP-2"
-        #"4,monitor:DP-2"
-        #"5,monitor:DP-2"
+        "1, name:BROWSER, monitor:DP-2"
+        "2, name:CODE, monitor:DP-2"
+        "3, name:TERM1, monitor:DP-2"
+        "4, name:TERM2, monitor:DP-2"
+        "5, name:SOCIAL, monitor:DP-2"
+        "6, name:STEAM, monitor:DP-2"
 
         #DP-3 Workspaces
-        #"11,monitor:DP-3"
-        #"12,monitor:DP-c"
-        #"13,monitor:DP-3"
-        #"14,monitor:DP-3"
-        #"15,monitor:DP-3"
+        "7, name:SYSTEM, monitor:DP-3"
+        "8, name:LOGS, monitor:DP-c"
+        "9, name:STUFF, monitor:DP-3"
       ];
 
       general = {
