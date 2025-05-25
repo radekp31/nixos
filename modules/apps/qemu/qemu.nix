@@ -1,52 +1,49 @@
-{ config, pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
-  # Enable dconf program
-  programs.dconf.enable = true;
 
-  # Create group
-  users.groups = {
-    gcis = {
-      gid = 1002;
-    };
+programs.virt-manager.enable = true;
+
+users.groups.libvirtd.members = ["your_username"];
+
+virtualisation.libvirtd.enable = true;
+
+boot.kernelModules = [ "kvm-amd" "kvm-intel" ];
+
+virtualisation.spiceUSBRedirection.enable = true;
+
+users.users.radekp.extraGroups = [ "libvirtd" "qemu-libvirtd"];
+
+programs.dconf = {
+  enable = true;
+  profiles = {
+    radekp.databases = [
+      {
+        settings = {
+          "org/virt-manager/virt-manager/connections" = {
+            autoconnect = ["qemu:///system"];
+            uris = ["qemu:///system"];
+          };
+	};
+      }
+    ];
   };
-
-  # Create user
-  users.users.gcis = {
-    group = "gcis";
-    isSystemUser = true;
-  };
-
-  # Add user to the libvirtd group
-  users.users.gcis.extraGroups = [ "libvirtd" ];
+};
 
   # Define system packages
   environment.systemPackages = with pkgs; [
-    virt-manager
-    virt-viewer
-    spice
+    
+    qemu_kvm
     spice-gtk
     spice-protocol
-    virtio-win
-    win-spice
-    gnome.adwaita-icon-theme
+    spice-autorandr
+    spice-vdagent
+    spice-vdagent
+    virt-viewer
+    virt-manager
+    OVMF
+    #quickemu
+    #quickgui
   ];
 
-  # Virtualization configuration
-  virtualisation.libvirtd = {
-    enable = true;
-    qemu = {
-      swtpm.enable = true; # Enable TPM emulation
-      ovmf = {
-        enable = true;
-        packages = [ pkgs.OVMFFull.fd ];
-      };
-    };
-  };
-
-  # Enable SPICE USB redirection
-  virtualisation.spiceUSBRedirection.enable = true;
-
-  # Enable the SPICE vdagent service
-  services.spice-vdagentd.enable = true;
 }

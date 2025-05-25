@@ -34,7 +34,8 @@
     ../../modules/default.nix
     ../../modules/apps/nixvim/nixvim.nix
     ../../modules/apps/qmk/qmk.nix
-    #../../modules/apps/qemu/qemu.nix
+    ../../modules/apps/qemu/qemu.nix
+    ../../drivers/brother/DCPL2622DW.nix
   ];
 
   # Configure Nixpkgs to use the unstable channel for system-wide packages
@@ -179,12 +180,6 @@
   # Enable "Silent Boot"
   #boot.consoleLogLevel = 0;
 
-  fileSystems."/boot" = { 
-    device = "/dev/disk/by-label/boot";
-    fsType = "vfat";
-    options = [ "defaults" "size=1G" ]; # Increase size
-  };
-
   boot.kernelPackages = pkgs.linuxPackages_6_13;
 
   #Install TKG kernel patches
@@ -315,7 +310,7 @@
     EDITOR = "nvim";
     VISUAL = "nvim";
     TERM = lib.mkDefault "xterm-256color";
-    LD_LIBRARY_PATH = "${pkgs.libglvnd}/lib";
+    #LD_LIBRARY_PATH = "${pkgs.libglvnd}/lib"; #conflict with brother drivers
     #XAUTHORITY = "/run/user/0/.Xauthority";
     XDG_CACHE_HOME = "$HOME/.cache";
     #XDG_CONFIG_DIRS = "/etc/xdg";
@@ -402,7 +397,8 @@
   services.displayManager.defaultSession = "hyprland-uwsm";
 
   services.tlp.enable = false;
-  services.fwupd.enable = false;
+  #services.fwupd.enable = false;
+  services.fwupd.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
 
   hardware.graphics.enable = true; # hardware.opengl.enable on older versions
@@ -422,6 +418,11 @@
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
+  systemd.services.cups = {
+    environment = {
+      LD_LIBRARY_PATH = lib.mkForce "";
+    };
+  };
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
@@ -553,7 +554,7 @@
     
     docker_27
 
-    # Git and fetchers and other QOL
+    #Git and fetchers and other QOL
     git
     nix-prefetch-git
     nix-prefetch
@@ -566,6 +567,7 @@
     sops
 
     # TEST
+    fwupd
     qmk
     qmk_hid
     qmk-udev-rules
@@ -578,7 +580,6 @@
     unetbootin
     nixos-icons
     dejavu_fonts
-    docker_27
     rustdesk
 
     # Wayland + Hyprland
