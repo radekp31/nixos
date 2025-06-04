@@ -6,36 +6,56 @@
 
 {
   imports =
-    [
-      # Include the results of the hardware scan.
+    [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       <nixpkgs/nixos/modules/virtualisation/hyperv-guest.nix>
     ];
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-
-  boot.blacklistedKernelModules = [ "hyperv_fb" "modesetting" ];
-  boot.kernelModules = [ "hv_balloon" "hv_netvsc" "hv_storvsc" "hv_vmbus" "hv_utils" "hv_uio_fcopy" ];
+  virtualisation.hypervGuest.enable = true;
+  
+  boot.kernelPackages = pkgs.linuxPackages_6_6;
+  
+  boot.blacklistedKernelModules = ["hyperv_fb" "modesetting" "uio" "uio_hv_generic"];
+  boot.kernelModules = ["hv_balloon" "hv_netvsc" "hv_storvsc" "hv_vmbus" "hv_utils" "hv_uio_fcopy"]; 
+  #boot.kernelParams = ["hv_balloon" "hv_netvsc" "hv_storvsc" "hv_vmbus" "hv_utils" "hv_uio_fcopy"]; 
 
   boot.plymouth.enable = true;
 
+  # Use the GRUB 2 boot loader.
   boot.loader = {
+    #efi = {
+    #  canTouchEfiVariables = true;
+    #  efiSysMountPoint = "/boot/efi";
+    #};
     grub = {
+      #efiSupport = true;
       device = "/dev/sda";
     };
   };
 
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+    extraPackages = with pkgs; [
+      vulkan-tools
+      libva-vdpau-driver
+      libvdpau-va-gl
+      libva1
+      nvidia-vaapi-driver
+    ];
+  };
+
+  #services.displayManager.autoLogin.enable = true; #The cant be local and remote sessions active at once for single user. False is inconvenient.
+  services.displayManager.sddm.enable = true;
   services.xserver = {
     enable = true;
-    layout = "us";
-    xkbVariant = "";
-    displayManager = {
-      autoLogin.enable = true;
-      autoLogin.user = "radekp";
-      lightdm.enable = true;
+    xkb = {
+      layout = "us";
+      variant = "";
+      options = "eurosign:e,caps:escape";
     };
-    desktopManager.budgie.enable = true;
-    videoDrivers = [ "fbdev" "vesa" ];
+    desktopManager.plasma5.enable = true;
+    videoDrivers = ["fbdev" "vesa"];
   };
 
   nixpkgs.config.allowUnfree = true;
@@ -43,7 +63,7 @@
   console.keyMap = "us";
 
   #Making Xterm not being eye cancer
-
+  
   environment.etc."X11/Xresources".text = ''
     xterm*background: black
     xterm*foreground: white
@@ -55,57 +75,84 @@
     xterm*renderFont: true
   '';
 
+  programs.git = {
+    enable = true;
+  };
 
-  programs.bash.interactiveShellInit = ''
-    if [ "$TERM" = "xterm" ] || [ "$TERM" = "xterm-256color"]; then
-      xrdb -merge /etc/X11/Xresources
-    fi 
-  '';
+
+  programs.bash = {
+  completion.enable = true;
+  enableLsColors = true;  
+  shellInit = ''
+      bind "set show-all-if-ambiguous on"
+      bind "TAB:menu-complete"
+      source ${pkgs.git}/share/git/contrib/completion/git-prompt.sh
+      '';
+    interactiveShellInit =''
+      if [ "$TERM" = "xterm" ] || [ "$TERM" = "xterm-256color"]; then
+        xrdb -merge /etc/X11/Xresources
+      fi 
+    '';
+  };
 
   services.xrdp = {
     enable = true;
-    defaultWindowManager = "budgie-desktop";
+    defaultWindowManager = "startplasma-x11";
+    openFirewall = true;
   };
 
   services.dbus.enable = true;
+  
+  services.gnome.core-utilities.enable = true; 
 
-  services.gnome.core-utilities.enable = true;
+  #networking.hostName = "nixos"; # Define your hostname. Important for k8s where every node required its own unique hostname
+  # Pick only one of the below networking options.
+  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
 
-  virtualisation.hypervGuest.enable = true;
-
-  networking.hostName = "nixos-hyperv";
-  networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
+  networking.enableIPv6 = false;
+  boot.kernel.sysctl."net.ipv6.conf.eth0.disable_ipv6" = true;
 
   # Set your time zone.
   time.timeZone = "Europe/Amsterdam";
 
+  # Configure network proxy if necessary
+  # networking.proxy.default = "http://user:password@proxy:port/";
+  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
+  # console = {
+  #   font = "Lat2-Terminus16";
+  #   keyMap = "us";
+  #   useXkbConfig = true; # use xkb.options in tty.
+  # };
 
-  # Configure keymap in X11
-  services.xserver.xkb.layout = "us";
-  services.xserver.xkb.options = "eurosign:e,caps:escape";
+  # Enable sound.
+  # hardware.pulseaudio.enable = true;
+  # OR
+  # services.pipewire = {
+  #   enable = true;
+  #   pulse.enable = true;
+  # };
+
+  # Enable touchpad support (enabled default in most desktopManager).
+  # services.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.radekp = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-    packages = with pkgs; [
-      tree
+   users.users.radekp = {
+     isNormalUser = true;
+     extraGroups = [ "wheel"]; # Enable ‘sudo’ for the user.
+     packages = with pkgs; [
+       tree
+    
+     ];
+   };
 
-    ];
-  };
-
-  #Supply corporations with your private data
   programs.firefox.enable = true;
-
+  
   #Making bash nicer place to live in
-  programs.bash = {
-    shellInit = ''
-      bind "set show-all-if-ambiguous on"
-      bind "TAB:menu-complete"
-    '';
-  };
+  # TODO - maybe try bash-it easy theme
 
   programs.fzf = {
     keybindings = true;
@@ -122,21 +169,37 @@
     xclip
     xsel
     freerdp
+    xrdp
     autocutsel
     dbus
     linuxKernel.packages.linux_6_13.hyperv-daemons
     fzf
     shellharden
+    cifs-utils
+    jq
   ];
+
+  # Some programs need SUID wrappers, can be configured further or are
+  # started in user sessions.
+  # programs.mtr.enable = true;
+   programs.gnupg.agent = {
+     enable = true;
+     enableSSHSupport = true;
+   };
+
+  # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
-
+  programs.ssh.askPassword = lib.mkForce "${pkgs.x11_ssh_askpass}/libexec/x11_ssh_askpass";
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
+  # networking.firewall.allowedTCPPorts = [ 10257 10259 6443 443 8888 ];
+  # networking.firewall.allowedUDPPorts = [ 10257 10259 6443 443 8888 ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
+  #networking.extraHosts = ''
+  #  172.28.200.82 api.kube
+  #'';
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
