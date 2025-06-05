@@ -32,7 +32,6 @@ programs.dconf = {
 
   # Define system packages
   environment.systemPackages = with pkgs; [
-    
     qemu_kvm
     spice-gtk
     spice-protocol
@@ -42,8 +41,6 @@ programs.dconf = {
     virt-viewer
     virt-manager
     OVMF
-    #quickemu
-    #quickgui
   ];
 
 }

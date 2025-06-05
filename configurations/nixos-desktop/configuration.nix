@@ -288,7 +288,8 @@
   #PiHole setup
   networking.nameservers = [
     #"192.168.50.1"
-    "192.168.50.63"
+    #"192.168.50.63"
+    "$(cat ${config.sops.secrets."IPs/pi".path})"
   ];
 
   # Session variables
@@ -392,9 +393,20 @@
 
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
-  #services.displayManager.sddm.enableHidpi = true;
-  services.desktopManager.plasma6.enable = true;
   services.displayManager.defaultSession = "hyprland-uwsm";
+  services.displayManager.sddm.settings = {
+      X11 = {
+        Monitor = ''
+          Section "Monitor"
+            Identifier ""
+            Option "Primary" "false"
+            Option "Enable" "false"   # This disables HDMI-1 output
+          EndSection
+        '';
+      };
+  };
+
+  services.desktopManager.plasma6.enable = true;
 
   services.tlp.enable = false;
   #services.fwupd.enable = false;

@@ -66,6 +66,12 @@
         mode = "0400";
         format = "yaml";
       };
+      "IPs/pi" = {
+        sopsFile = ../../secrets/secrets.yaml;
+        owner = "root";
+        mode = "0400";
+        format = "yaml";
+      };
     };
   };
 
