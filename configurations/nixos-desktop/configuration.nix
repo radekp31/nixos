@@ -273,6 +273,7 @@
     "usbcore.autosuspend=-1"
     "usbcore.debug=1"
     "video=1920x1080"
+    #"video=DP-3:d" #Disables monitor permanently
   ];
 
   networking.hostName = "nixos-desktop"; # Define your hostname.
@@ -346,9 +347,9 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  #Add udev rules for GMMK2
+  #Add udev rules
   services.udev.extraRules = ''
-    SUBSYSTEM=="usb", ATTR{idVendor}=="320f", ATTR{idProduct}=="504b", MODE="0666"  	
+    SUBSYSTEM=="usb", ATTR{idVendor}=="320f", ATTR{idProduct}=="504b", MODE="0666" #GMMK 2 
   '';
 
   #Enable Android Debug Bridge
@@ -392,21 +393,17 @@
   services.xserver.enable = true;
 
   services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.settings = {
+    General = {
+      Session = "wayland";
+    };
+  };
+  services.displayManager.sddm.theme = "catppuccin-mocha";
+  services.displayManager.sddm.package = lib.mkForce pkgs.kdePackages.sddm;
   services.displayManager.sddm.wayland.enable = true;
   services.displayManager.defaultSession = "hyprland-uwsm";
-  services.displayManager.sddm.settings = {
-      X11 = {
-        Monitor = ''
-          Section "Monitor"
-            Identifier ""
-            Option "Primary" "false"
-            Option "Enable" "false"   # This disables HDMI-1 output
-          EndSection
-        '';
-      };
-  };
-
   services.desktopManager.plasma6.enable = true;
+  
 
   services.tlp.enable = false;
   #services.fwupd.enable = false;
@@ -593,6 +590,15 @@
     nixos-icons
     dejavu_fonts
     rustdesk
+    wlr-randr
+
+    (catppuccin-sddm.override {
+      flavor = "mocha";
+      font  = "Noto Sans";
+      fontSize = "9";
+      background = "${pkgs.catppuccin-sddm}/wallpaper.png";
+      loginBackground = true;
+    })
 
     # Wayland + Hyprland
     xorg.xhost
