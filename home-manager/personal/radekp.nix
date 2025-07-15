@@ -8,7 +8,6 @@
 let
 
   tokyonight-rofi-theme = import ../rofi-themes/rofi-themes.nix { inherit pkgs; };
-
 in
 
 {
@@ -41,34 +40,30 @@ in
     };
   };
 
-  systemd.user.services.mountOneDrive = {
-    Unit = {
-      Description = "Mount OneDrive remote using rclone";
-      AssertPathIsDirectory = "/media/WDRED/OneDrive";
-      After = "netowork-online.target";
-    };
-    Install = {
-      WantedBy = [ "default.target" ];
-    };
-    Service = {
-      Type = "simple";
-      ExecStart = "${pkgs.rclone}/bin/rclone cmount --vfs-cache-mode writes onedrive: /media/WDRED/OneDrive
-      ";
-      ExecStop = "/run/wrappers/bin/fusermount -u /media/WDRED/OneDrive";
-      RestartSec = "10";
-    };
-  };
-
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
   };
 
-  #  home.activation.connectOneDrive = lib.hm.dag.entryAfter ["writeBoundary"] ''
-  #  # Command to run after user login
-  #  fusermount -uz /media/WDRED/OneDrive #unmount remote, just in case its broken
-  #  rclone cmount --vfs-cache-mode writes onedrive: /media/WDRED/OneDrive #mount the remote
-  #'';
+  #Setup and configure git
+  programs.git = {
+    enable = true;
+    userName = "Radek Polasek";
+    userEmail = "polasek.31@seznam.cz";
+    extraConfig = {
+      init.defaultBranch = "main";
+      safe.directory = "/etc/nixos";
+      push.autoSetupRemote = "true";
+    };
+  };
+
+  #Bash is needed for XDG vars - needs testing
+  programs.bash = {
+    enable = true;
+  };
+  xdg = {
+    enable = true;
+  };
 
   # Hyprland attempt
 
@@ -145,7 +140,7 @@ in
       monitor = [
         #Monitor setup
         "DP-2,2560x1440@144,0x0,1"
-        "DP-3,1680x1050@59.95,auto-left,1"
+        "DP-3,1920x1080@60,auto-left,1"
       ];
 
       workspace = [
@@ -173,7 +168,7 @@ in
       };
 
       animations = {
-        enabled = true;
+        enabled = false;
       };
 
       decoration = {
@@ -250,42 +245,18 @@ in
     systemd.enable = true;
   };
 
-  #Enable Hyprlock
-   programs.hyprlock = {
-     enable = true;
-     settings = {
-       general = {
-         disable_loading_bar = true;
-         grace = 300;
-         hide_cursor = true;
-         no_fade_in = false;
-       };
+  #Waybar config
+  home.file."${config.xdg.configHome}/waybar/config.jsonc" = {
+    source = ../waybar/config.jsonc;
+  };
 
-       background = [
-         {
-           path = "screenshot";
-           blur_passes = 3;
-           blur_size = 8;
-         }
-       ];
+  home.file."${config.xdg.configHome}/waybar/modules.json" = {
+    source = ../waybar/modules.json;
+  };
 
-       input-field = [
-         {
-           size = "200, 50";
-           position = "0, -80";
-           monitor = "";
-           dots_center = true;
-           fade_on_empty = false;
-           font_color = "rgb(202, 211, 245)";
-           inner_color = "rgb(91, 96, 120)";
-           outer_color = "rgb(24, 25, 38)";
-           outline_thickness = 5;
-           placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
-           shadow_passes = 2;
-         }
-       ];
-     };
-   };
+  home.file."${config.xdg.configHome}/waybar/style.css" = {
+    source = ../waybar/style.css;
+  };
 
   #Create power_menu.xml for waybar
   home.file.".config/waybar/power_menu.xml".text = ''
@@ -506,6 +477,55 @@ in
     fill_shape=false
   '';
 
+  services.hypridle = {
+      enable = true;
+  };
+
+  programs.hyprlock = {
+    enable = true;
+    package = pkgs.hyprlock;
+    settings = {
+      general = {
+        disable_loading_bar = true;
+        grace = 300;
+        hide_cursor = true;
+        no_fade_in = false;
+      };
+
+      auth = {
+	pam = {
+	  enabled = true;
+	};
+      };
+    
+      background = [
+        {
+          #path = "screenshot";
+          blur_passes = 3;
+          blur_size = 8;
+        }
+      ];
+    
+      input-field = [
+        {
+          size = "200, 50";
+          position = "0, -80";
+          monitor = "";
+          dots_center = true;
+          fade_on_empty = false;
+          #font_color = "rgb(202, 211, 245)";
+          #inner_color = "rgb(91, 96, 120)";
+          #outer_color = "rgba(17, 17, 17, 1.0)";
+          outline_thickness = 5;
+	  placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
+          shadow_passes = 2;
+        }
+      ];
+    };
+  };
+
+  systemd.user.services.hypridle.Unit.After = lib.mkForce "graphical-session.target";
+
   services.hyprpaper = {
     enable = true;
     settings = {
@@ -522,132 +542,8 @@ in
     };
   };
 
-  programs.wofi = {
-    enable = true;
-    settings = {
-      location = "center";
-      allow_markup = true;
-      width = 250;
-    };
-    style = ''
-      * {
-        font-family: monospace;
-      }
+  systemd.user.services.hyprpaper.Unit.After = lib.mkForce "graphical-session.target";
 
-      window {
-        background-color: #1a1b26;
-      }
-    '';
-  };
-
-  programs.yazi = {
-    enable = true;
-    enableZshIntegration = true;
-    #flavors = {
-    #  This is some kind of variation of themes - there is tokyonight available - get it!
-    #};
-    keymap = {
-      input.keymap = [
-        {
-          exec = "close";
-          on = [ "<C-q>" ];
-        }
-        {
-          exec = "close --submit";
-          on = [ "<Enter>" ];
-        }
-        {
-          exec = "escape";
-          on = [ "<Esc>" ];
-        }
-        {
-          exec = "backspace";
-          on = [ "<Backspace>" ];
-        }
-      ];
-      manager.keymap = [
-        {
-          exec = "escape";
-          on = [ "<Esc>" ];
-        }
-        {
-          exec = "quit";
-          on = [ "q" ];
-        }
-        {
-          exec = "close";
-          on = [ "<C-q>" ];
-        }
-      ];
-    };
-    settings = {
-      log = {
-        enabled = false;
-      };
-      manager = {
-        show_hidden = false;
-        sort_by = "modified";
-        sort_dir_first = true;
-      };
-    };
-  };
-
-  #Hyprland - kitty is used by default
-  programs.kitty = {
-    enable = false;
-    #themeFile = "${pkgs.kitty-themes}/share/kitty-themes/themes/tokyo_night_night.conf";
-    extraConfig = ''
-      include ${pkgs.kitty-themes}/share/kitty-themes/themes/tokyo_night_night.conf
-    '';
-    environment = {
-
-      "TERM" = "xterm-256color";
-      "EDITOR" = "nvim";
-      "VISUAL" = "nvim";
-      "BAT_THEME" = "ansi";
-      "MANPAGER" = "nvim +Man!";
-      "PATH" = "${pkgs.kitty}/bin:$PATH";
-      # #WaybarLife
-      "WAYBAR_LOG_LEVEL" = "debug waybar";
-      "WAYLAND_DISPLAY" = "wayland-0";
-      #WAYLAND_DISPLAY" = "wayland-1";
-      #Cursor
-      "XCURSOR_THEME" = "${pkgs.bibata-cursors}/share/icons/Bibata-Modern-ice/cursor.theme";
-      "XCURSOR_SIZE" = "24";
-      #Wayland life
-      "DISPLAY" = ":0";
-      "XAUTHORITY" = "/run/user/1000/.Xauthority";
-      #"QT_QPA_PLATFORM" = "xcb"; #OneDrivegui needs this  
-      #"AQ_DRM_DEVICES" = "/dev/dri/card0";
-      #"WLR_NO_HARDWARE_CURSORS" = "1";
-      #"GBM_BACKEND" = "/run/opengl-driver/lib/dri/nvidia_gbm.so";
-      # Set Wayland-related variables
-
-      #"WAYLAND_DISPLAY" = ":1"; # included in wayland.windowManager.hyprland.systemd.enable
-      "XDG_SESSION_TYPE" = "wayland";
-      #"XDG_CURRENT_DESKTOP" = "Hyprland"; # included in wayland.windowManager.hyprland.systemd.enable
-      "MOZ_ENABLE_WAYLAND" = "1"; # Enable Wayland for Firefox, if applicable
-      #"QT_QPA_PLATFORM" = "wayland"; # Use Wayland for Qt apps
-    };
-    font = {
-      package = pkgs.nerd-fonts.inconsolata;
-      name = "Inconsolata";
-      size = 14.0;
-    };
-    keybindings = {
-      "ctrl+c" = "copy_or_interrupt";
-    };
-    settings = {
-      scrollback_lines = 10000;
-      enable_audio_bell = false;
-      update_check_interval = 0;
-    };
-    shellIntegration = {
-      enableBashIntegration = true;
-      enableZshIntegration = true;
-      mode = "no-rc";
-    };
-  };
 
   programs.wezterm = {
     enable = true;
@@ -681,6 +577,13 @@ in
       	-- config.font = wezterm.font 'Hack'
       	--config.font = wezterm.font 'Inconsolata'
       	config.font_size = 13
+
+	-- Lazy loading
+
+	config.tab_bar_at_bottom = false
+	config.scrollback_lines = 5000 -- Limit scrollback to reduce memory
+	config.enable_scroll_bar = false -- Disable scroll bar for performance
+	config.harfbuzz_features = {} -- Minimal font features initially
 
       	-- Keymaps
       	config.keys = {
@@ -785,83 +688,6 @@ in
     '';
   };
 
-  programs.starship = {
-    enable = true;
-    enableZshIntegration = true;
-    settings = {
-      add_newline = true;
-      format = lib.concatStrings [
-        "$username"
-        "$hostname"
-        "$directory"
-        "$git_branch"
-        "$git_state"
-        "$git_status"
-        "$cmd_duration"
-        "$line_break"
-        "$python"
-        "$nix_shell"
-        "$character"
-      ];
-      scan_timeout = 10;
-      character = {
-        success_symbol = "[ ](bold green)";
-        error_symbol = "[ ](red)";
-        #vimcmd_symbol = "[❮](green)"
-      };
-      continuation_prompt = "[ ](bold green)";
-      directory = {
-        style = "purple";
-        truncate_to_repo = false;
-      };
-      git_branch = {
-        format = "[$branch]($style)";
-        style = "bright-blue";
-      };
-      git_status = {
-        format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)";
-        style = "cyan";
-        conflicted = "​";
-        untracked = "​";
-        modified = "​";
-        staged = "​";
-        renamed = "​";
-        deleted = "​";
-        stashed = "≡";
-      };
-      git_state = {
-        format = "\\([$state( $progress_current/$progress_total)]($style)\\) ";
-        style = "yellow";
-      };
-      cmd_duration = {
-        format = "[$duration]($style) ";
-        style = "bright-green";
-      };
-      python = {
-        format = "[$virtualenv]($style) ";
-        style = "bright-black";
-      };
-      nix_shell = {
-        disabled = false;
-        impure_msg = "[impure](bold red)";
-        pure_msg = "[pure](bold green)";
-        unknown_msg = "[unknown](bold yellow)";
-        format = "via(bold blue) [ $state( \\($name\\))](bold blue) ";
-      };
-      env_var.DIRENV_DIR = {
-        format = "[$env_value]($style)";
-        style = "yellow";
-        variable = "DIREV_DIR";
-        disabled = "false";
-      };
-      custom.direnv_loading = {
-        command = "echo $DIRENV_LOADING";
-        when = "test -n \"DIRENV_LOADING\"";
-        format = "[loading env...](yellow)";
-      };
-    };
-  };
-
   programs.bat = {
     enable = true;
     config = {
@@ -950,21 +776,17 @@ in
 
   };
 
-
-  programs.lesspipe.enable = true;
+  #TODO - Explore this
+  #programs.lesspipe.enable = true;
 
   # Home packages
 
   home.packages = with pkgs; [
 
-    # Test derivations
-    ungoogled-chromium
-
-    # Packages 
+    # Packages
+    delta # fancy git diff
     vlc
     git
-    alacritty
-    alacritty-theme
     flameshot
     nomacs
     qpdf
@@ -973,8 +795,6 @@ in
     pdftk
     poppler_utils
     ghostscript
-    john
-    johnny
     libre
     ventoy-full
     rclone
@@ -986,16 +806,12 @@ in
     mpv
     coolercontrol.coolercontrold
     coolercontrol.coolercontrol-gui
-    ytfzf
     dmenu
     ueberzug
     glance
     #librewolf-wayland
 
-
-
     # Hyprland
-    kitty-themes
     pipewire
     wireplumber
     webcord # Discord is apparently a pain to run, so this is alternative
@@ -1007,14 +823,11 @@ in
     nerd-fonts.fira-code
     adwaita-icon-theme
     bibata-cursors
-    hyprlock # Custom package hyprlock-git
+    hyprlock # Install git version of this, nixos packages doesnt work
     hyprsome
     clipse
     wezterm
-    xterm
     font-awesome_6
-    onedrive
-    onedrivegui
     qadwaitadecorations-qt6
     file
     nautilus
@@ -1028,46 +841,8 @@ in
 
     # GPU
     mangohud
-
-
   ];
 
-  #Setup and configure git
-  programs.git = {
-    enable = true;
-    userName = "Radek Polasek";
-    userEmail = "polasek.31@seznam.cz";
-    extraConfig = {
-      init.defaultBranch = "main";
-      safe.directory = "/etc/nixos";
-      push.autoSetupRemote = "true";
-    };
-  };
 
-  #Bash is needed for XDG vars - needs testing
-  programs.bash = {
-    enable = true;
-  };
-  xdg = {
-    enable = true;
-  };
-
-  #Glance config
-  home.file."${config.xdg.configHome}/glance/glance.yaml" = {
-    source = ../glance/glance.yml;
-  };
-
-  #Waybar config
-  home.file."${config.xdg.configHome}/waybar/config.jsonc" = {
-    source = ../waybar/config.jsonc;
-  };
-
-  home.file."${config.xdg.configHome}/waybar/modules.json" = {
-    source = ../waybar/modules.json;
-  };
-
-  home.file."${config.xdg.configHome}/waybar/style.css" = {
-    source = ../waybar/style.css;
-  };
 
 }

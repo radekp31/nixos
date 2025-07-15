@@ -38,6 +38,7 @@
     ../../drivers/brother/DCPL2622DW.nix
   ];
 
+  nixpkgs.config.segger-jlink.acceptLicense = true;
   # Configure Nixpkgs to use the unstable channel for system-wide packages
   nixpkgs.config = {
     allowUnfree = true;
@@ -89,9 +90,6 @@
     };
   };
 
-  #VMware
-  virtualisation.vmware.host.enable = true;
-
   security.sudo = {
     enable = true;
     wheelNeedsPassword = true; # Require password for sudo
@@ -123,6 +121,31 @@
     ];
   };
 
+  environment.etc."pam.d/common-auth" = {
+    source = pkgs.writeText "common-auth" ''
+      auth required pam_unix.so
+      auth optional pam_gnome_keyring.so
+    '';
+  };
+
+  security.pam.services.hyprlock = {
+    text = ''
+      # Account management
+      account required pam_unix.so
+  
+      # Authentication management
+      auth required pam_unix.so likeauth nullok try_first_pass
+  
+      # Password management
+      password sufficient pam_unix.so nullok yescrypt
+  
+      # Session management
+      session required pam_unix.so
+    '';
+  };
+
+
+  #security.pam.services.hyprlock = {};
 
   #setup SSH
 
@@ -391,19 +414,32 @@
   };
 
   services.xserver.enable = true;
-
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.settings = {
-    General = {
-      Session = "wayland";
+    Wayland = {
+      CompositorCommand = "${pkgs.writeShellScript "sddm-kwin-wrapper" ''
+        # Start KWin in background
+        ${pkgs.kdePackages.kwin}/bin/kwin_wayland --no-global-shortcuts --no-kactivities --no-lockscreen --locale1 &
+        KWIN_PID=$!
+        
+        # Wait for KWin to fully initialize
+        sleep 5
+        
+        # Try to disable secondary monitor
+        export WAYLAND_DISPLAY=wayland-0
+        ${pkgs.wlr-randr}/bin/wlr-randr --output DP-3 --off 2>/dev/null || true
+        
+        # Wait for KWin process
+        wait $KWIN_PID
+      ''}";
     };
   };
+  services.displayManager.sddm.autoNumlock = true;
   services.displayManager.sddm.theme = "catppuccin-mocha";
   services.displayManager.sddm.package = lib.mkForce pkgs.kdePackages.sddm;
   services.displayManager.sddm.wayland.enable = true;
   services.displayManager.defaultSession = "hyprland-uwsm";
   services.desktopManager.plasma6.enable = true;
-  
 
   services.tlp.enable = false;
   #services.fwupd.enable = false;
@@ -491,32 +527,18 @@
   programs.zsh = {
     enable = true;
     promptInit = ''
-      #source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
-      eval "$(starship init zsh)" # Enable Starship
-      eval "$(direnv hook zsh)" # Enable direnv
+      # Enable direnv
+      eval "$(direnv hook zsh)"
+
+      # Add new line on each prompt
+      precmd() { echo }
     '';
     enableCompletion = true;
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
-    # Impure paths? 
     shellInit = ''
       # Enable fzf plugin
       source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
-    
-      # Command to run after user login
-      
-      # unmount remote, just in case its broken
-      # redirection of stderr to some log file could be more useful
-      #fusermount -uz /media/WDRED/OneDrive > /dev/null 2>&1
-
-      # mount the remote
-      # redirection of stderr to some log file could be more useful
-      #nohup rclone cmount --vfs-cache-mode writes onedrive: /media/WDRED/OneDrive > /dev/null 2>&1 < /dev/null &! disown > /dev/null 2>&1
-
-      #if [ $(ls -A /media/WDRED/OneDrive | wc -l) -eq 0 ]; then
-      #nohup rclone cmount --vfs-cache-mode writes onedrive: /media/WDRED/OneDrive > /dev/null 2>&1 < /dev/null &! disown > /dev/null 2>&1
-      #fi
-
     '';
 
     shellAliases = {
@@ -534,7 +556,6 @@
       lld = "eza -lahgd";
       man = "tldr";
       cat = "bat -pp";
-      #icat = "kitty icat";
       icat = "wezterm imgcat";
 
       nix-push-config = "nix fmt && git fetch --all && git add . && git commit -m \"update on $(date '+%Y-%m-%d %H:%M:%S')\" && git push";
@@ -552,7 +573,7 @@
         "fzf"
         "eza"
       ];
-      theme = "robbyrussell";
+      theme = "gnzh";
     };
 
   };
@@ -562,6 +583,7 @@
   environment.systemPackages = with pkgs; [
     
     docker_27
+    hyprland
 
     #Git and fetchers and other QOL
     git
@@ -576,7 +598,7 @@
     sops
 
     # TEST
-    fwupd
+    nrfutil
     qmk
     qmk_hid
     qmk-udev-rules
@@ -607,6 +629,7 @@
     clinfo
     wayland-utils
     wayland-protocols
+    pam
 
     # Packages
     neofetch # distro stats
