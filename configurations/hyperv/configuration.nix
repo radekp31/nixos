@@ -6,17 +6,18 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
+      # Include the results of the hardware scan.
       ./hardware-configuration.nix
       <nixpkgs/nixos/modules/virtualisation/hyperv-guest.nix>
     ];
 
   virtualisation.hypervGuest.enable = true;
-  
+
   boot.kernelPackages = pkgs.linuxPackages_6_6;
-  
-  boot.blacklistedKernelModules = ["hyperv_fb" "modesetting" "uio" "uio_hv_generic"];
-  boot.kernelModules = ["hv_balloon" "hv_netvsc" "hv_storvsc" "hv_vmbus" "hv_utils" "hv_uio_fcopy"]; 
+
+  boot.blacklistedKernelModules = [ "hyperv_fb" "modesetting" "uio" "uio_hv_generic" ];
+  boot.kernelModules = [ "hv_balloon" "hv_netvsc" "hv_storvsc" "hv_vmbus" "hv_utils" "hv_uio_fcopy" ];
   #boot.kernelParams = ["hv_balloon" "hv_netvsc" "hv_storvsc" "hv_vmbus" "hv_utils" "hv_uio_fcopy"]; 
 
   boot.plymouth.enable = true;
@@ -55,7 +56,7 @@
       options = "eurosign:e,caps:escape";
     };
     desktopManager.plasma5.enable = true;
-    videoDrivers = ["fbdev" "vesa"];
+    videoDrivers = [ "fbdev" "vesa" ];
   };
 
   nixpkgs.config.allowUnfree = true;
@@ -63,7 +64,7 @@
   console.keyMap = "us";
 
   #Making Xterm not being eye cancer
-  
+
   environment.etc."X11/Xresources".text = ''
     xterm*background: black
     xterm*foreground: white
@@ -81,14 +82,14 @@
 
 
   programs.bash = {
-  completion.enable = true;
-  enableLsColors = true;  
-  shellInit = ''
+    completion.enable = true;
+    enableLsColors = true;
+    shellInit = ''
       bind "set show-all-if-ambiguous on"
       bind "TAB:menu-complete"
       source ${pkgs.git}/share/git/contrib/completion/git-prompt.sh
-      '';
-    interactiveShellInit =''
+    '';
+    interactiveShellInit = ''
       if [ "$TERM" = "xterm" ] || [ "$TERM" = "xterm-256color"]; then
         xrdb -merge /etc/X11/Xresources
       fi 
@@ -102,13 +103,13 @@
   };
 
   services.dbus.enable = true;
-  
-  services.gnome.core-utilities.enable = true; 
+
+  services.gnome.core-utilities.enable = true;
 
   #networking.hostName = "nixos"; # Define your hostname. Important for k8s where every node required its own unique hostname
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+  networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
   networking.enableIPv6 = false;
   boot.kernel.sysctl."net.ipv6.conf.eth0.disable_ipv6" = true;
@@ -140,17 +141,17 @@
   # services.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-   users.users.radekp = {
-     isNormalUser = true;
-     extraGroups = [ "wheel"]; # Enable ‘sudo’ for the user.
-     packages = with pkgs; [
-       tree
-    
-     ];
-   };
+  users.users.radekp = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+    packages = with pkgs; [
+      tree
+
+    ];
+  };
 
   programs.firefox.enable = true;
-  
+
   #Making bash nicer place to live in
   # TODO - maybe try bash-it easy theme
 
@@ -182,10 +183,10 @@
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
-   programs.gnupg.agent = {
-     enable = true;
-     enableSSHSupport = true;
-   };
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
 
   # List services that you want to enable:
 

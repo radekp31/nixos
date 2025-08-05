@@ -198,7 +198,7 @@
   hardware.sane = {
     enable = true;
     extraBackends = with pkgs; [
-      brscan5  # Brother scanner backend for DCP-L2622DW
+      brscan5 # Brother scanner backend for DCP-L2622DW
     ];
     netConf = "192.168.50.239";
   };
@@ -213,13 +213,14 @@
     };
   };
 
-  hardware.sane.brscan4.enable =  false;
+  hardware.sane.brscan4.enable = false;
 
   # Allow unfree packages (Brother drivers are proprietary)
   nixpkgs.config.allowUnfree = true;
 
   # Add your user to printing and scanning groups
-  users.users.radekp = {  # Replace YOUR_USERNAME with your actual username
+  users.users.radekp = {
+    # Replace YOUR_USERNAME with your actual username
     extraGroups = [ "lp" "scanner" ];
   };
 
@@ -242,9 +243,9 @@
 
   # Optional: Install useful printing/scanning utilities
   environment.systemPackages = with pkgs; [
-    simple-scan    # GUI scanner application
-    xsane         # Advanced scanner interface
-    system-config-printer  # GUI printer configuration tool
+    simple-scan # GUI scanner application
+    xsane # Advanced scanner interface
+    system-config-printer # GUI printer configuration tool
     brscan5
   ];
 }

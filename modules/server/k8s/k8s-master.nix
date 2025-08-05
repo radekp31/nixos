@@ -1,32 +1,32 @@
-{ config, lib, pkgs, ...}:
+{ config, lib, pkgs, ... }:
 
 {
   systemd.services.setup-local-ip = {
-  
-  description = "Add current IP into /etc/hosts file";
-  wantedBy = [ "multi-user.target" ];
-  after = [ "network-online.target" ];
-  wants = [ "network-online.target" ];
-  enable = true;
 
-  path = with pkgs; [
-    iproute2
-    gawk
-    gnused
-    gnugrep
-    coreutils
-  ];
+    description = "Add current IP into /etc/hosts file";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+    enable = true;
 
-  script = ''
-    LOCAL_IP=$(ip route get 1.1.1.1 2>/dev/null | awk '{print $7}')
-    sed -i '/api\.kube/d' /etc/hosts
-    echo "$LOCAL_IP api.kube" >> /etc/hosts
-  '';
+    path = with pkgs; [
+      iproute2
+      gawk
+      gnused
+      gnugrep
+      coreutils
+    ];
 
-  serviceConfig = {
-    Type = "oneshot";
-    RemainAfterExit = false;
-  };
+    script = ''
+      LOCAL_IP=$(ip route get 1.1.1.1 2>/dev/null | awk '{print $7}')
+      sed -i '/api\.kube/d' /etc/hosts
+      echo "$LOCAL_IP api.kube" >> /etc/hosts
+    '';
+
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = false;
+    };
 
   };
 
@@ -48,8 +48,8 @@
   users.users.root.extraGroups = [ "kubernetes" ];
 
   # k8s node needs unique hostname in the cluster
-  networking.hostName = "nixkube-master"; 
-  
+  networking.hostName = "nixkube-master";
+
   # optional alias for kubectl
   programs.bash.shellAliases = {
     k = "kubectl";
@@ -66,11 +66,11 @@
   services.kubernetes.kubelet = {
     cni.packages = [ pkgs.flannel ];
     extraOpts = "--fail-swap-on=false"; #Optional, but handy just in case you forget to disable swap
-  }; 
-  
+  };
+
   # setup kubernetes cluster
   services.kubernetes = {
-    roles = ["master" "node"];
+    roles = [ "master" "node" ];
     masterAddress = "api.kube";
     addons.dns.enable = true; # this enables coredns
     flannel.enable = true;
@@ -80,7 +80,7 @@
   environment.variables = {
     KUBECONFIG = "/etc/kubernetes/cluster-admin.kubeconfig";
   };
-  
+
   # install required packages
   environment.systemPackages = with pkgs; [
     dbus

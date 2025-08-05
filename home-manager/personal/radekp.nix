@@ -88,11 +88,11 @@ in
         "wl-paste -p -t text --watch clipman store -P --histpath=\"~/.local/share/clipman-primary.json\""
         "gsettings set org.gnome.desktop.interface gtk-theme \"Yaru\"" # for GTK3 apps
         "gsettings set org.gnome.desktop.interface color-scheme \"prefer-dark\"" # for GTK4 apps
-	"steam -silent"  # launch steam, it takes some time
+        "steam -silent" # launch steam, it takes some time
 
-	#"[workspace Term silent] wezterm" # its not getting assigned to workspace
-	#"[workspace Browser silent] librewolf"
-	#"[workspace Steam silent] steam"
+        #"[workspace Term silent] wezterm" # its not getting assigned to workspace
+        #"[workspace Browser silent] lhttps://addons.mozilla.org/firefox/downloads/file/4449854/uaswitcher-1.4.89.xpaibrewolf"
+        #"[workspace Steam silent] steam"
       ];
 
       windowrulev2 = [
@@ -110,7 +110,8 @@ in
         "$mod, space, exec, rofi -show"
         "$mod, V, exec, kitty --class clipse -e 'clipse'"
         "$mod, G, exec, /etc/nixos/modules/scripts/game-mode.sh"
-	"Alt, F4, exec, rofi -show p -modi p:'rofi-power-menu --symbols-font \"Symbols Nerd Font Mono\"' -font \"JetBrains Mono NF 16\""
+        #"Alt, F4, exec, rofi -show p -modi p:'rofi-power-menu --symbols-font \"Symbols Nerd Font Mono\"' -font \"JetBrains Mono NF 16\""
+        "Alt, F4, exec, rofi -show p -modi p:'rofi-power-menu --symbols-font \"Symbols Nerd Font Mono\"' -font \"DejaVu Sans Mono\""
 
         # Hyprsome
         #  move - move window, stay in current workspace
@@ -294,7 +295,8 @@ in
   programs.rofi = {
     enable = true;
     cycle = true;
-    font = "JetBrains Mono";
+    #font = "JetBrains Mono";
+    font = "DejaVu Sans Mono";
     location = "top";
     plugins = [
       pkgs.rofi-calc
@@ -478,12 +480,14 @@ in
   '';
 
   services.hypridle = {
-      enable = true;
+    enable = true;
   };
 
+
+  # Enable hyprlock
   programs.hyprlock = {
     enable = true;
-    package = pkgs.hyprlock;
+    package = pkgs.hyprlock; # Ensure you have the correct package
     settings = {
       general = {
         disable_loading_bar = true;
@@ -491,21 +495,17 @@ in
         hide_cursor = true;
         no_fade_in = false;
       };
-
       auth = {
-	pam = {
-	  enabled = true;
-	};
+        pam = {
+          enabled = true; # Ensure PAM is enabled
+        };
       };
-    
       background = [
         {
-          #path = "screenshot";
           blur_passes = 3;
           blur_size = 8;
         }
       ];
-    
       input-field = [
         {
           size = "200, 50";
@@ -513,18 +513,14 @@ in
           monitor = "";
           dots_center = true;
           fade_on_empty = false;
-          #font_color = "rgb(202, 211, 245)";
-          #inner_color = "rgb(91, 96, 120)";
-          #outer_color = "rgba(17, 17, 17, 1.0)";
           outline_thickness = 5;
-	  placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
+          placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
           shadow_passes = 2;
         }
       ];
     };
   };
 
-  systemd.user.services.hypridle.Unit.After = lib.mkForce "graphical-session.target";
 
   services.hyprpaper = {
     enable = true;
@@ -549,140 +545,139 @@ in
     enable = true;
     enableZshIntegration = true;
     extraConfig = ''
-      	local wezterm = require 'wezterm'
-      	local act = wezterm.action
-      	local config = {}
+            	local wezterm = require 'wezterm'
+            	local act = wezterm.action
+            	local config = {}
 
-      	if wezterm.config_builder
-      	then
-      	  config = wezterm.config_builder()
-      	  config:set_strict_mode(true)
-      	end
+            	if wezterm.config_builder
+            	then
+            	  config = wezterm.config_builder()
+            	  config:set_strict_mode(true)
+            	end
 
-      	-- General settings
+            	-- General settings
 
-      	config.max_fps = 144
-      	config.animation_fps = 144
-      	config.front_end = "WebGpu"
-      	config.webgpu_power_preference = "HighPerformance"
-      	config.audible_bell = "Disabled"
+            	config.max_fps = 144
+            	config.animation_fps = 144
+            	config.front_end = "WebGpu"
+            	config.webgpu_power_preference = "HighPerformance"
+            	config.audible_bell = "Disabled"
 
-      	-- Appearance
-      	config.color_scheme = 'Tokyo Night Moon'
-      	config.window_decorations = "NONE"
-      	config.use_fancy_tab_bar = false
-      	config.window_frame = {
-      	  font_size = 13.5
-      	}
-      	-- config.font = wezterm.font 'Hack'
-      	--config.font = wezterm.font 'Inconsolata'
-      	config.font_size = 13
+            	-- Appearance
+            	config.color_scheme = 'Tokyo Night Moon'
+            	config.window_decorations = "NONE"
+            	config.use_fancy_tab_bar = false
+            	config.window_frame = {
+            	  font_size = 16.5
+            	}
+            	config.font = wezterm.font 'Dejavu Sans Mono'
+            	config.font_size = 16
 
-	-- Lazy loading
+      	-- Lazy loading
 
-	config.tab_bar_at_bottom = false
-	config.scrollback_lines = 5000 -- Limit scrollback to reduce memory
-	config.enable_scroll_bar = false -- Disable scroll bar for performance
-	config.harfbuzz_features = {} -- Minimal font features initially
+      	config.tab_bar_at_bottom = false
+      	config.scrollback_lines = 5000 -- Limit scrollback to reduce memory
+      	config.enable_scroll_bar = false -- Disable scroll bar for performance
+      	config.harfbuzz_features = {} -- Minimal font features initially
 
-      	-- Keymaps
-      	config.keys = {
+            	-- Keymaps
+            	config.keys = {
 
-      	  -- Pane splitting
-      	  {
-      	    key = 'mapped:+',
-      	    mods = 'SHIFT|ALT',
-      	    action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' },
-      	  },
-      	  {
-      	    key = 'mapped:_',
-      	    mods = 'SHIFT|ALT',
-      	    action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
-      	  },
-      	  -- Pane focus movement
-      	  { 
-      	    key = 'LeftArrow', 
-      	    mods = 'ALT', 
-      	    action = act.ActivatePaneDirection 'Left' 
-      	  },
-      	  { 
-      	    key = 'RightArrow', 
-      	    mods = 'ALT', 
-      	    action = act.ActivatePaneDirection 'Right' 
-      	  },
-      	  { 
-      	    key = 'UpArrow', 
-      	    mods = 'ALT', 
-      	    action = act.ActivatePaneDirection 'Up' 
-      	  },
-      	  { 
-      	    key = 'DownArrow', 
-      	    mods = 'ALT', 
-      	    action = act.ActivatePaneDirection 'Down'
-      	  },
+            	  -- Pane splitting
+            	  {
+            	    key = 'mapped:+',
+            	    mods = 'SHIFT|ALT',
+            	    action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' },
+            	  },
+            	  {
+            	    key = 'mapped:_',
+            	    mods = 'SHIFT|ALT',
+            	    action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
+            	  },
+            	  -- Pane focus movement
+            	  { 
+            	    key = 'LeftArrow', 
+            	    mods = 'ALT', 
+            	    action = act.ActivatePaneDirection 'Left' 
+            	  },
+            	  { 
+            	    key = 'RightArrow', 
+            	    mods = 'ALT', 
+            	    action = act.ActivatePaneDirection 'Right' 
+            	  },
+            	  { 
+            	    key = 'UpArrow', 
+            	    mods = 'ALT', 
+            	    action = act.ActivatePaneDirection 'Up' 
+            	  },
+            	  { 
+            	    key = 'DownArrow', 
+            	    mods = 'ALT', 
+            	    action = act.ActivatePaneDirection 'Down'
+            	  },
 
-      	  -- Pane movement
-      	  {
-      	    key = 'LeftArrow',
-      	    mods = 'SHIFT|ALT',
-      	    action = act.RotatePanes 'CounterClockwise',
-      	  },
-      	  { key = 'RightArrow',
-      	    mods = 'SHIFT|ALT',
-      	    action = act.RotatePanes 'Clockwise'
-      	  },
+            	  -- Pane movement
+            	  {
+            	    key = 'LeftArrow',
+            	    mods = 'SHIFT|ALT',
+            	    action = act.RotatePanes 'CounterClockwise',
+            	  },
+            	  { key = 'RightArrow',
+            	    mods = 'SHIFT|ALT',
+            	    action = act.RotatePanes 'Clockwise'
+            	  },
 
-      	  -- Lanch launch_menu
-      	  {
-      	    key = 'l',
-      	    mods = 'ALT',
-      	    action = wezterm.action.ShowLauncher
-      	  },
-      	}
+            	  -- Lanch launch_menu
+            	  {
+            	    key = 'l',
+            	    mods = 'ALT',
+            	    action = wezterm.action.ShowLauncher
+            	  },
+            	}
 
-      	-- Right click Copy
+            	-- Right click Copy
 
-      	config.mouse_bindings = {
-      	  {
-      	   event = { Down = { streak = 1, button = "Right" } },
-      	   mods = "NONE",
-      	   action = wezterm.action_callback(function(window, pane)
-      	     local has_selection = window:get_selection_text_for_pane(pane) ~= ""
-      	     if has_selection then
-      	       window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
-      	       window:perform_action(act.ClearSelection, pane)
-      	     else
-      	       window:perform_action(act({ PasteFrom = "Clipboard" }), pane)
-      	     end
-      	   end),
-      	  },
-      	 }
+            	config.mouse_bindings = {
+            	  {
+            	   event = { Down = { streak = 1, button = "Right" } },
+            	   mods = "NONE",
+            	   action = wezterm.action_callback(function(window, pane)
+            	     local has_selection = window:get_selection_text_for_pane(pane) ~= ""
+            	     if has_selection then
+            	       window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
+            	       window:perform_action(act.ClearSelection, pane)
+            	     else
+            	       window:perform_action(act({ PasteFrom = "Clipboard" }), pane)
+            	     end
+            	   end),
+            	  },
+            	 }
 
-      	-- Adding lanch menu items 
-      	config.launch_menu = {
-      	  {
-      	    -- Optional label to show in the launcher. If omitted, a label
-      	    -- is derived from the `args`
-      	    -- label = 'PowerShell',
-      	    -- The argument array to spawn.  If omitted the default program
-      	    -- will be used as described in the documentation above
-      	    
-      	    -- args = { 'pwsh.exe' },
+            	-- Adding lanch menu items 
+            	config.launch_menu = {
+            	  {
+            	    -- Optional label to show in the launcher. If omitted, a label
+            	    -- is derived from the `args`
+            	    -- label = 'PowerShell',
+            	    -- The argument array to spawn.  If omitted the default program
+            	    -- will be used as described in the documentation above
+            	    
+            	    -- args = { 'pwsh.exe' },
 
-      	    -- You can specify an alternative current working directory;
-      	    -- if you don't specify one then a default based on the OSC 7
-      	    -- escape sequence will be used (see the Shell Integration
-      	    -- docs), falling back to the home directory.
-      	    
-      	    -- cwd = { 'C:\\' },
+            	    -- You can specify an alternative current working directory;
+            	    -- if you don't specify one then a default based on the OSC 7
+            	    -- escape sequence will be used (see the Shell Integration
+            	    -- docs), falling back to the home directory.
+            	    
+            	    -- cwd = { 'C:\\' },
 
-      	    -- You can override environment variables just for this command
-      	    -- by setting this here.  It has the same semantics as the main
-      	    -- set_environment_variables configuration option described above
-      	    -- set_environment_variables = { FOO = "bar" },
-      	  }
-      	}
-      	return config
+            	    -- You can override environment variables just for this command
+            	    -- by setting this here.  It has the same semantics as the main
+            	    -- set_environment_variables configuration option described above
+            	    -- set_environment_variables = { FOO = "bar" },
+            	  }
+            	}
+            	return config
 
 
     '';
@@ -741,14 +736,13 @@ in
   programs.librewolf = {
     enable = true;
     settings = {
-      "privacy.resistFingerprinting" = false;
-      "privacy.resistFingerprinting.letteboxing" = true;
-      "privacy.resistFingerprintingautoDeclineNoUserInputCanvasPrompts" = true;
+      "privacy.resistFingerprinting" = true;
+      "privacy.resistFingerprinting.letterboxing" = true;
       "privacy.fingerprintingProtection" = true;
       "privacy.fingerprintingProtection.overrides" = "+AllTargets,-CSSPrefersColorScheme";
       "privacy.trackingprotection.enabled" = true;
       "privacy.trackingprotection.excludelist" = "https://anthropic.com,https://api.anthropic.com,https://claude.ai";
-      "webgl.disabled" = false;
+      "webgl.disabled" = true;
 
       #Zoom 110%
       #"layout.css.devPixelsPerPx" = "1.1";
@@ -760,6 +754,7 @@ in
   # setup tokyonight extension
   # setup ublock origin
   # setup canvasblocker
+  # setup privacy badger
   home.file = {
     ".librewolf/profile/extensions/ublock@raymondhill.net.xpi".source = builtins.fetchurl {
       url = "https://addons.mozilla.org/firefox/downloads/file/4121906/ublock_origin-1.55.0.xpi";
@@ -823,7 +818,6 @@ in
     nerd-fonts.fira-code
     adwaita-icon-theme
     bibata-cursors
-    hyprlock # Install git version of this, nixos packages doesnt work
     hyprsome
     clipse
     wezterm
@@ -831,6 +825,7 @@ in
     qadwaitadecorations-qt6
     file
     nautilus
+    xkbd
 
     # Neovim
     nixd # LSP server

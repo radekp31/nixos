@@ -121,31 +121,9 @@
     ];
   };
 
-  environment.etc."pam.d/common-auth" = {
-    source = pkgs.writeText "common-auth" ''
-      auth required pam_unix.so
-      auth optional pam_gnome_keyring.so
-    '';
-  };
-
-  security.pam.services.hyprlock = {
-    text = ''
-      # Account management
-      account required pam_unix.so
-  
-      # Authentication management
-      auth required pam_unix.so likeauth nullok try_first_pass
-  
-      # Password management
-      password sufficient pam_unix.so nullok yescrypt
-  
-      # Session management
-      session required pam_unix.so
-    '';
-  };
 
 
-  #security.pam.services.hyprlock = {};
+  security.pam.services.hyprlock = { };
 
   #setup SSH
 
@@ -295,7 +273,11 @@
     #Disable USB power management
     "usbcore.autosuspend=-1"
     "usbcore.debug=1"
-    "video=1920x1080"
+    #Use only 1 screen during boot
+    "console=tty1"
+    "fbcon=map:0"
+    "video=DP-2:1920x1080"
+    "video=DP-3:off"
     #"video=DP-3:d" #Disables monitor permanently
   ];
 
@@ -414,40 +396,32 @@
   };
 
   services.xserver.enable = true;
+  services.xserver.videoDrivers = [ "nvidia" ];
+
   services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
+
+  services.xserver.displayManager.setupCommands = ''
+    xrandr --output DP-2 --auto --primary
+    xrandr --output DP-3 --off
+    xsetroot -cursor_name left_ptr -display :0
+  '';
   services.displayManager.sddm.settings = {
-    Wayland = {
-      CompositorCommand = "${pkgs.writeShellScript "sddm-kwin-wrapper" ''
-        # Start KWin in background
-        ${pkgs.kdePackages.kwin}/bin/kwin_wayland --no-global-shortcuts --no-kactivities --no-lockscreen --locale1 &
-        KWIN_PID=$!
-        
-        # Wait for KWin to fully initialize
-        sleep 5
-        
-        # Try to disable secondary monitor
-        export WAYLAND_DISPLAY=wayland-0
-        ${pkgs.wlr-randr}/bin/wlr-randr --output DP-3 --off 2>/dev/null || true
-        
-        # Wait for KWin process
-        wait $KWIN_PID
-      ''}";
+    General = {
+      DisplayServer = "x11";
     };
   };
   services.displayManager.sddm.autoNumlock = true;
   services.displayManager.sddm.theme = "catppuccin-mocha";
   services.displayManager.sddm.package = lib.mkForce pkgs.kdePackages.sddm;
-  services.displayManager.sddm.wayland.enable = true;
   services.displayManager.defaultSession = "hyprland-uwsm";
   services.desktopManager.plasma6.enable = true;
 
   services.tlp.enable = false;
-  #services.fwupd.enable = false;
-  services.fwupd.enable = true;
-  services.xserver.videoDrivers = [ "nvidia" ];
 
+  #duplicate? 
   hardware.graphics.enable = true; # hardware.opengl.enable on older versions
-
+  #duplicate? 
   hardware.nvidia.modesetting.enable = true;
 
   xdg.portal = {
@@ -456,6 +430,7 @@
 
   # End of Hyprland attempt
 
+  #Unify this somewhere
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
@@ -581,7 +556,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    
+
     docker_27
     hyprland
 
@@ -616,7 +591,7 @@
 
     (catppuccin-sddm.override {
       flavor = "mocha";
-      font  = "Noto Sans";
+      font = "Noto Sans";
       fontSize = "9";
       background = "${pkgs.catppuccin-sddm}/wallpaper.png";
       loginBackground = true;
