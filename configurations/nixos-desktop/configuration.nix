@@ -134,6 +134,7 @@
     };
   };
 
+
   # Bootloader.
   #boot.loader.systemd-boot.enable = true;
   boot.loader.efi = {
@@ -292,11 +293,11 @@
   networking.networkmanager.enable = true;
 
   #PiHole setup
-  networking.nameservers = [
-    #"192.168.50.1"
-    #"192.168.50.63"
-    "$(cat ${config.sops.secrets."IPs/pi".path})"
-  ];
+  #networking.nameservers = [
+  #  #"192.168.50.1"
+  #  #"192.168.50.63"
+  #  "$(cat ${config.sops.secrets."IPs/pi".path})"
+  #];
 
   # Session variables
   environment.sessionVariables = {
@@ -558,7 +559,16 @@
   environment.systemPackages = with pkgs; [
 
     docker_27
+
     hyprland
+    dolphin
+    dunst
+    polkit-kde-agent
+    qt5.full
+    qt6.full
+    slurp
+    xdg-desktop-portal-hyprland
+    xdg-utils
 
     #Git and fetchers and other QOL
     git
@@ -607,6 +617,9 @@
     pam
 
     # Packages
+    termshark
+    discord
+    arp-scan-rs
     neofetch # distro stats
     manix # nix options manual
     curl
