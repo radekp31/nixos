@@ -6,7 +6,8 @@
 }
 
 window#waybar {
-    background: rgba(26, 27, 38, 0.75);
+    /*background: rgba(26, 27, 38, 0.75); */
+    background: rgba(36, 39, 58, 1);
     color: #c0caf5;
     font-family: 
         SpaceMono Nerd Font,

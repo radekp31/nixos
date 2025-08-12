@@ -47,6 +47,7 @@
       "nixos-config=/etc/nixos/configuration.nix"
       "/nix/var/nix/profiles/per-user/root/channels"
       "/nix/var/nix/profiles/system/channels"
+      "home-manager:$HOME/src/github.com/nix-community/home-manager"
     ];
   };
 

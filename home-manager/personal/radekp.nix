@@ -21,7 +21,7 @@ in
   # Home Manager settings
   home.username = "radekp";
   home.homeDirectory = "/home/radekp";
-  home.stateVersion = "24.05";
+  home.stateVersion = "25.05";
   home.enableNixpkgsReleaseCheck = false;
   home.pointerCursor = {
     gtk.enable = true;
@@ -39,6 +39,38 @@ in
       allowUnfreePredicate = (_: true);
     };
   };
+
+  #Niri attempt
+  xdg.configFile."niri/config.kdl".source = ../niri/config.kdl;
+  xdg.configFile."niri/pickwindow.sh".source = ../niri/pickwindow.sh;
+  #home.file."config/niri/pickwindow.sh".mode = "0755";
+
+  programs.fuzzel.enable = true; # Super+D in the default setting (app launcher)
+  programs.swaylock.enable = true; # Super+Alt+L in the default setting (screen locker)
+  #programs.waybar.enable = true; # launch on startup in the default setting (bar)
+  services.mako.enable = true; # notification daemon
+  services.swayidle.enable = true; # idle management daemon
+  services.polkit-gnome.enable = true; # polkit
+  #home.packages = with pkgs; [
+  #  swaybg # wallpaper
+  #];
+  
+  programs.alacritty = {
+    enable = true; # Super+T in Niri with the default setting (terminal)
+    settings = {
+
+      font.normal = {
+	  ##family = "JetbrainsMono Nerd Font";
+	  family = "Hack Nerd Font";
+      };
+      font.size = 14;
+      #env.DISPLAY=":0";
+    };
+    theme = "catppuccin_macchiato";
+  };
+
+
+  #--- end of Niri attempt
 
   programs.direnv = {
     enable = true;
@@ -294,6 +326,7 @@ in
   # Configure Rofi app launcher original
   programs.rofi = {
     enable = true;
+    package = pkgs.rofi-wayland;
     cycle = true;
     #font = "JetBrains Mono";
     font = "DejaVu Sans Mono";
@@ -778,6 +811,10 @@ in
 
   home.packages = with pkgs; [
 
+    #Niri
+    swaybg
+    xwayland-satellite
+
     # Packages
     delta # fancy git diff
     vlc
@@ -791,12 +828,10 @@ in
     poppler_utils
     ghostscript
     libre
-    ventoy-full
     rclone
     ntfs3g
     usbutils
     fastfetch
-    opera
     lact
     mpv
     coolercontrol.coolercontrold

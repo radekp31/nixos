@@ -10,7 +10,7 @@ pkgs.stdenv.mkDerivation {
     owner = "w8ste";
     repo = "Tokyonight-rofi-theme";
     rev = "main";
-    sha256 = "sha256-SxcZCn7ZKLJbm5GZZPeDbm8C6OI+zeiipsrN0ldDOoU=";
+    sha256 = "sha256-lv8VJO9Iw221X94zuEi+JOvT5fCGFn+6ppHZHimGfi4=";
   };
 
   buildInputs = [ pkgs.rofi ];

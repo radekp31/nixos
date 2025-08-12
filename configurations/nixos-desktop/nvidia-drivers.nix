@@ -62,8 +62,8 @@
     # https://github.com/NVIDIA/open-gpu-kernel-modules#compatible-gpus
     # Only available from driver 515.43.04+
     # Currently alpha-quality/buggy, so false is currently the recommended setting.
-    #open = false;
-    open = true;
+    open = false;
+    #open = true;
 
     # Enable DRM kernel mode setting
     forceFullCompositionPipeline = true;
@@ -73,8 +73,8 @@
     nvidiaSettings = true;
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
-    # package = config.boot.kernelPackages.nvidiaPackages.beta;
-    #package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+    # package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
     #  version = "570.86.16";
     #  sha256_64bit = "sha256-RWPqS7ZUJH9JEAWlfHLGdqrNlavhaR1xMyzs8lJhy9U=";
     #  sha256_aarch64 = "sha256-RiO2njJ+z0DYBo/1DKa9GmAjFgZFfQ1/1Ga+vXG87vA=";
@@ -83,14 +83,14 @@
     #  persistencedSha256 = "sha256-3mp9X/oV8o2TH9720NnoXROxQ4g98nNee+DucXpQy3w=";
     #};
 
-    package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-      version = "575.51.02";
-      sha256_64bit = "sha256-XZ0N8ISmoAC8p28DrGHk/YN1rJsInJ2dZNL8O+Tuaa0=";
-      sha256_aarch64 = "sha256-NNeQU9sPfH1sq3d5RUq1MWT6+7mTo1SpVfzabYSVMVI=";
-      openSha256 = "sha256-NQg+QDm9Gt+5bapbUO96UFsPnz1hG1dtEwT/g/vKHkw=";
-      settingsSha256 = "sha256-6n9mVkEL39wJj5FB1HBml7TTJhNAhS/j5hqpNGFQE4w=";
-      persistencedSha256 = "sha256-dgmco+clEIY8bedxHC4wp+fH5JavTzyI1BI8BxoeJJI=";
-    };
+    #package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
+    #  version = "575.51.02";
+    #  sha256_64bit = "sha256-XZ0N8ISmoAC8p28DrGHk/YN1rJsInJ2dZNL8O+Tuaa0=";
+    #  sha256_aarch64 = "sha256-NNeQU9sPfH1sq3d5RUq1MWT6+7mTo1SpVfzabYSVMVI=";
+    #  openSha256 = "sha256-NQg+QDm9Gt+5bapbUO96UFsPnz1hG1dtEwT/g/vKHkw=";
+    #  settingsSha256 = "sha256-6n9mVkEL39wJj5FB1HBml7TTJhNAhS/j5hqpNGFQE4w=";
+    #  persistencedSha256 = "sha256-dgmco+clEIY8bedxHC4wp+fH5JavTzyI1BI8BxoeJJI=";
+    #};
   };
 
   #Packages related to NVIDIA
@@ -113,25 +113,25 @@
   # maybe use system.activationScripts ?
   # powertop handles it well
 
-  systemd.services.fancontrol = {
-    enable = true;
-    description = "Wayland fan control service";
-    path = [ pkgs.sudo pkgs.xorg.xhost "/run/current-system/sw/bin/nvidia-smi" "/run/current-system/sw/bin/nvidia-settings" ];
-    environment = {
-      DISPLAY = ":0";
-      WAYLAND_DISPLAY = "wayland-0";
-      XAUTHORITY = "/run/user/1000/.Xauthority";
-    };
-    unitConfig = {
-      Type = "simple";
-      # ...
-    };
-    serviceConfig = {
-      ExecStart = "/etc/nixos/modules/scripts/fan-control.sh";
-      Environment = "XAUTHORITY=/run/user/1000/.Xauthority";
-      # ...
-    };
-    wantedBy = [ "multi-user.target" ];
-    # ...
-  };
+  #systemd.services.fancontrol = {
+  #  enable = true;
+  #  description = "Wayland fan control service";
+  #  path = [ pkgs.sudo pkgs.xorg.xhost "/run/current-system/sw/bin/nvidia-smi" "/run/current-system/sw/bin/nvidia-settings" ];
+  #  environment = {
+  #    DISPLAY = ":0";
+  #    WAYLAND_DISPLAY = "wayland-0";
+  #    XAUTHORITY = "/run/user/1000/.Xauthority";
+  #  };
+  #  unitConfig = {
+  #    Type = "simple";
+  #    # ...
+  #  };
+  #  serviceConfig = {
+  #    ExecStart = "/etc/nixos/modules/scripts/fan-control.sh";
+  #    Environment = "XAUTHORITY=/run/user/1000/.Xauthority";
+  #    # ...
+  #  };
+  #  wantedBy = [ "multi-user.target" ];
+  #  # ...
+  #};
 }

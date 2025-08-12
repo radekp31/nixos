@@ -21,13 +21,13 @@
   imports = [
     # Include the results of the hardware scan.
     #<home-manager/nixos>
-    "${
-      builtins.fetchTarball {
-        url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
-	#sha256 = "wJQCxyMRc4P26zDrHmZiRD5bbfcJpqPG3e2djdGG3pk=";
-        sha256 = "00wp0s9b5nm5rsbwpc1wzfrkyxxmqjwsc1kcibjdbfkh69arcpsn";
-      }
-    }/nixos"
+    #"${
+    #  builtins.fetchTarball {
+    #    url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
+    #    #sha256 = "wJQCxyMRc4P26zDrHmZiRD5bbfcJpqPG3e2djdGG3pk=";
+    #    sha256 = "00wp0s9b5nm5rsbwpc1wzfrkyxxmqjwsc1kcibjdbfkh69arcpsn";
+    #  }
+    #}/nixos"
 
     ./hardware-configuration.nix
     ./nvidia-drivers.nix
@@ -182,85 +182,9 @@
   # Enable "Silent Boot"
   #boot.consoleLogLevel = 0;
 
-  boot.kernelPackages = pkgs.linuxPackages_6_13;
+  boot.kernelPackages = pkgs.linuxPackages_6_16;
 
   #Install TKG kernel patches
-  boot.kernelPatches =
-    [
-      {
-        name = "tkg-6.13-0001";
-        patch = pkgs.fetchurl {
-          url = "https://raw.githubusercontent.com/Frogging-Family/linux-tkg/master/linux-tkg-patches/6.13/0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch";
-          hash = "sha256-8JChNZ9Cu+XUI4qosVyd+lENmf/y2JaJCFvdQEl5CWw=";
-        };
-      }
-      {
-        name = "tkg-6.13-0002";
-        patch = pkgs.fetchurl {
-          url = "https://raw.githubusercontent.com/Frogging-Family/linux-tkg/master/linux-tkg-patches/6.13/0002-clear-patches.patch";
-          hash = "sha256-LoD73d4ehEcdjGJWfMslbcHnvS1rjQ2RC5+aguZfpKo=";
-        };
-      }
-      {
-        name = "tkg-6.13-0003";
-        patch = pkgs.fetchurl {
-          url = "https://raw.githubusercontent.com/Frogging-Family/linux-tkg/master/linux-tkg-patches/6.13/0003-glitched-base.patch";
-          hash = "sha256-2T7QUZ+LNyp7+s+Oyaz8xThpGVYBBlSacyccfkkDj9c=";
-        };
-      }
-      {
-        name = "tkg-6.13-0006";
-        patch = pkgs.fetchurl {
-          url = "https://raw.githubusercontent.com/Frogging-Family/linux-tkg/master/linux-tkg-patches/6.13/0005-glitched-pds.patch";
-          hash = "sha256-/KY9FcpFAq69c+dtdJmyQ9LAPbcf9asL9c8miy5XYyA=";
-        };
-      }
-      {
-        name = "tkg-6.13-0007";
-        patch = pkgs.fetchurl {
-          url = "https://raw.githubusercontent.com/Frogging-Family/linux-tkg/master/linux-tkg-patches/6.13/0006-add-acs-overrides_iommu.patch";
-          hash = "sha256-EiE5vvw9olsAtRGemi/FmyZu0N5T82kS6eYPMofEedY=";
-        };
-      }
-      {
-        name = "tkg-6.13-0008";
-        patch = pkgs.fetchurl {
-          url = "https://raw.githubusercontent.com/Frogging-Family/linux-tkg/master/linux-tkg-patches/6.13/0007-v6.13-fsync_legacy_via_futex_waitv.patch";
-          hash = "sha256-nfYo/VMJUON9MdqFTLMU1TbzPIOTWt9cR+cSZqVfcAQ=";
-        };
-      }
-      {
-        name = "tkg-6.13-0009";
-        patch = pkgs.fetchurl {
-          url = "https://raw.githubusercontent.com/Frogging-Family/linux-tkg/master/linux-tkg-patches/6.13/0007-v6.13-ntsync.patch";
-          hash = "sha256-xi9zQDcAlHQbgUM95mNU2/8JaVKPakuxPV2nlCTbDro=";
-        };
-      }
-      {
-        name = "tkg-6.13-0013";
-        patch = pkgs.fetchurl {
-          url = "https://raw.githubusercontent.com/Frogging-Family/linux-tkg/master/linux-tkg-patches/6.13/0012-misc-additions.patch";
-          hash = "sha256-m4xkTrlOeqbQAL11SbuzYKT2hw91jFcyMKyzqLISxxw=";
-        };
-      }
-      {
-        name = "tkg-6.13-0013";
-        patch = pkgs.fetchurl {
-          url = "https://raw.githubusercontent.com/Frogging-Family/linux-tkg/master/linux-tkg-patches/6.13/0013-optimize_harder_O3.patch";
-          hash = "sha256-lIKY3/JVKn+m8Ftpi9erBaULCvdRbSuaxmTRrTj9qV8=";
-        };
-      }
-      {
-        name = "tkg-6.13-0014";
-        patch = pkgs.fetchurl {
-          #url = "https://raw.githubusercontent.com/Frogging-Family/linux-tkg/master/linux-tkg-patches/6.12/0014-OpenRGB.patch";
-          url = "https://raw.githubusercontent.com/Frogging-Family/linux-tkg/master/linux-tkg-patches/6.13/0014-OpenRGB.patch";
-          #hash = "sha256-iZ9F0ICEioOuvZpxDm/a0sNzHqsPxFWvmsKcew9M6s8=";
-          hash = "sha256-iZ9F0ICEioOuvZpxDm/a0sNzHqsPxFWvmsKcew9M6s8=";
-        };
-      }
-    ];
-
   powerManagement.cpuFreqGovernor = "performance";
 
   boot.kernelParams = [
@@ -314,7 +238,7 @@
 
   # Environment variables
   environment.variables = {
-    DISPLAY = ":0";
+    #DISPLAY = ":0";
     EDITOR = "nvim";
     VISUAL = "nvim";
     TERM = lib.mkDefault "xterm-256color";
@@ -339,7 +263,7 @@
 
   # Select internationalisation properties.
   #i18n.defaultLocale = "en_US.UTF-8";
-  i18n.defaultLocale = "en_US.utf8";
+  i18n.defaultLocale = "en_US.UTF-8";
 
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_US.UTF-8";
@@ -354,9 +278,23 @@
   };
 
   #Add udev rules
-  services.udev.extraRules = ''
-    SUBSYSTEM=="usb", ATTR{idVendor}=="320f", ATTR{idProduct}=="504b", MODE="0666" #GMMK 2 
-  '';
+  #services.udev.extraRules = ''
+  #  SUBSYSTEM=="usb", ATTR{idVendor}=="320f", ATTR{idProduct}=="504b", MODE="0666" #GMMK 2 
+  #'';
+  
+  #Niri attempt
+  programs.niri = {
+    enable = true;
+  };
+
+  services.flatpak = {
+    enable = true;
+    package = pkgs.flatpak;
+  };
+
+  security.polkit.enable = true; # polkit
+  services.gnome.gnome-keyring.enable = true; # secret service
+  security.pam.services.swaylock = {};
 
   #Enable Android Debug Bridge
   programs.adb.enable = true;
@@ -398,6 +336,8 @@
 
   services.xserver.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
+  services.xserver.displayManager.gdm.wayland = true;
+  programs.xwayland.enable = true;
 
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
@@ -415,7 +355,8 @@
   services.displayManager.sddm.autoNumlock = true;
   services.displayManager.sddm.theme = "catppuccin-mocha";
   services.displayManager.sddm.package = lib.mkForce pkgs.kdePackages.sddm;
-  services.displayManager.defaultSession = "hyprland-uwsm";
+  #services.displayManager.defaultSession = "hyprland-uwsm";
+  services.displayManager.defaultSession = "niri";
   services.desktopManager.plasma6.enable = true;
 
   services.tlp.enable = false;
@@ -558,12 +499,10 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
 
-    docker_27
-
     hyprland
-    dolphin
+    #dolphin - package renamed
     dunst
-    polkit-kde-agent
+    #polkit-kde-agent - package renamed
     qt5.full
     qt6.full
     slurp
@@ -609,6 +548,9 @@
 
     # Wayland + Hyprland
     xorg.xhost
+    xorg.xauth
+    xwayland
+    xwayland-satellite
     aha
     busybox
     clinfo
@@ -617,6 +559,9 @@
     pam
 
     # Packages
+    #flatpak
+    #flatpak-builder
+    ripgrep-all
     termshark
     discord
     arp-scan-rs
@@ -718,6 +663,6 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "unstable"; # Did you read the comment?
+  system.stateVersion = "25.11"; # Did you read the comment?
 
 }
