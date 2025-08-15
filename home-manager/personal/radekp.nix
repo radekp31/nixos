@@ -8,6 +8,27 @@
 let
 
   tokyonight-rofi-theme = import ../rofi-themes/rofi-themes.nix { inherit pkgs; };
+  
+  # Browser Extensions
+  ublock = builtins.fetchurl {
+    url = "https://addons.mozilla.org/firefox/downloads/file/4121906/ublock_origin-1.55.0.xpi";
+    sha256 = "1cx5nzyjznhlyahlrb3pywanp7nk8qqkfvlr2wzqqlhbww1q0q8h";
+  };
+
+  bitwarden = builtins.fetchurl {
+    url = "https://addons.mozilla.org/firefox/downloads/file/4440363/bitwarden_password_manager-2025.2.0.xpi";
+    sha256 = "0x53sdqmz1nw1vwcs90g34aza69wrrzsrvah5x4215i6l9az7my4";
+  };
+
+  canvasblocker = builtins.fetchurl {
+    url = "https://addons.mozilla.org/firefox/downloads/file/4097894/canvasblocker-1.6.1.xpi";
+    sha256 = "1wc7hic6arq9xcylrcfh8pmxdjqpxq6f4ykm6w9q1h65rj81xv6l";
+  };
+
+  privacybadger = builtins.fetchurl {
+    url = "https://addons.mozilla.org/firefox/downloads/file/4119137/privacy_badger-2024.2.6.xpi";
+    sha256 = "1fq98naq5ajdm25s5np82z1w4zbxmm3ps8m5bw7w2a2b8hl9b44d";
+  };
 in
 
 {
@@ -512,9 +533,9 @@ in
     fill_shape=false
   '';
 
-  services.hypridle = {
-    enable = true;
-  };
+ # services.hypridle = {
+ #   enable = true;
+ # };
 
 
   # Enable hyprlock
@@ -766,43 +787,94 @@ in
     source = "${pkgs.vimPlugins.tokyonight-nvim}/extras/eza/tokyonight.yml";
   };
 
-  programs.librewolf = {
+  #programs.librewolf = {
+  #  enable = true;
+  #  settings = {
+  #    "privacy.resistFingerprinting" = false;
+  #    "privacy.resistFingerprinting.letterboxing" = true;
+  #    "privacy.fingerprintingProtection" = true;
+  #    "privacy.fingerprintingProtection.overrides" = "+AllTargets,-CSSPrefersColorScheme";
+  #    "privacy.trackingprotection.enabled" = true;
+  #    "privacy.trackingprotection.excludelist" = "https://anthropic.com,https://api.anthropic.com,https://claude.ai";
+  #    "webgl.disabled" = true;
+
+  #    # Anonymize
+  #    "general.settings.useragent.override" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0";
+  #    intl.accept_languages = "en-US, en";
+  #    
+
+  #    #Zoom 110%
+  #    #"layout.css.devPixelsPerPx" = "1.1";
+
+  #  };
+  #};
+
+  ##LibreWolf extensions
+  ## setup tokyonight extension
+  ## setup ublock origin
+  ## setup canvasblocker
+  ## setup privacy badger
+  #home.file = {
+  #  ".librewolf/profile/extensions/ublock@raymondhill.net.xpi".source = builtins.fetchurl {
+  #    url = "https://addons.mozilla.org/firefox/downloads/file/4121906/ublock_origin-1.55.0.xpi";
+  #    sha256 = "1cx5nzyjznhlyahlrb3pywanp7nk8qqkfvlr2wzqqlhbww1q0q8h";
+  #  };
+  #};
+
+  ##Bitwarden, link is changing, needs update
+  #home.file = {
+  #  ".librewolf/profile/extensions/{446900e4-71c2-419f-a6a7-df9c091e268b}.xpi".source = builtins.fetchurl {
+  #    url = "https://addons.mozilla.org/firefox/downloads/file/4440363/bitwarden_password_manager-2025.2.0.xpi";
+  #    sha256 = "0x53sdqmz1nw1vwcs90g34aza69wrrzsrvah5x4215i6l9az7my4";
+  #  };
+
+  #};
+programs.librewolf = {
     enable = true;
     settings = {
-      "privacy.resistFingerprinting" = true;
-      "privacy.resistFingerprinting.letterboxing" = true;
+      #Anti-fingerprinting loosened for camouflage
+      "privacy.resistFingerprinting" = false;
+      "privacy.resistFingerprinting.letterboxing" = false;
       "privacy.fingerprintingProtection" = true;
       "privacy.fingerprintingProtection.overrides" = "+AllTargets,-CSSPrefersColorScheme";
+
+      #Tracking protection
       "privacy.trackingprotection.enabled" = true;
       "privacy.trackingprotection.excludelist" = "https://anthropic.com,https://api.anthropic.com,https://claude.ai";
-      "webgl.disabled" = true;
 
-      #Zoom 110%
-      #"layout.css.devPixelsPerPx" = "1.1";
+      #Spoofed user agent to mimic common Firefox on Windows
+      #"general.useragent" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0";
+      #"general.useragent.override" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0";
+      "general.appname.override" = "Netscape";
+      "general.appversion.override" = "5.0 (Windows)";
+      "general.platform.override" = "Win32";
+      "general.oscpu.override" = "Windows NT 10.0";
+      "general.buildID.override" = "20220101000000"; # optional
 
+      #Language settings
+      "intl.accept_languages" = "en-US, en";
+
+      #WebGL enabled to reduce fingerprinting entropy (disabled = unique on Linux)
+      "webgl.disabled" = false;
+
+      #Avoid timezone mismatches
+      "privacy.timezone.transition.enabled" = true;
+      "privacy.resistFingerprinting.reduceTimerPrecision" = false;
+
+      #Enable common DPI scaling (optional)
+      "layout.css.devPixelsPerPx" = "1.0";
+
+      #Fonts (optional): spoof or install common fonts manually for better blending
     };
   };
 
-  #LibreWolf extensions
-  # setup tokyonight extension
-  # setup ublock origin
-  # setup canvasblocker
-  # setup privacy badger
   home.file = {
-    ".librewolf/profile/extensions/ublock@raymondhill.net.xpi".source = builtins.fetchurl {
-      url = "https://addons.mozilla.org/firefox/downloads/file/4121906/ublock_origin-1.55.0.xpi";
-      sha256 = "1cx5nzyjznhlyahlrb3pywanp7nk8qqkfvlr2wzqqlhbww1q0q8h";
-    };
+    ".librewolf/profile/extensions/ublock@raymondhill.net.xpi".source = ublock;
+    ".librewolf/profile/extensions/{446900e4-71c2-419f-a6a7-df9c091e268b}.xpi".source = bitwarden;
+    ".librewolf/profile/extensions/CanvasBlocker@kkapsner.de.xpi".source = canvasblocker;
+    ".librewolf/profile/extensions/jid1-MnnxcxisBPnSXQ@jetpack.xpi".source = privacybadger;
   };
 
-  #Bitwarden, link is changing, needs update
-  home.file = {
-    ".librewolf/profile/extensions/{446900e4-71c2-419f-a6a7-df9c091e268b}.xpi".source = builtins.fetchurl {
-      url = "https://addons.mozilla.org/firefox/downloads/file/4440363/bitwarden_password_manager-2025.2.0.xpi";
-      sha256 = "0x53sdqmz1nw1vwcs90g34aza69wrrzsrvah5x4215i6l9az7my4";
-    };
-
-  };
 
   #TODO - Explore this
   #programs.lesspipe.enable = true;
