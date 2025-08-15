@@ -48,23 +48,23 @@
 
   #services.displayManager.autoLogin.enable = true; #The cant be local and remote sessions active at once for single user. False is inconvenient.
   services.displayManager.sddm.enable = true;
-  services.xserver = {
-    enable = true;
-    xkb = {
-      layout = "us";
-      variant = "";
-      options = "eurosign:e,caps:escape";
-    };
-    desktopManager.plasma5.enable = true;
-    videoDrivers = [ "fbdev" "vesa" ];
-  };
+  #services.xserver = {
+  #  enable = false;
+  #  xkb = {
+  #    layout = "us";
+  #    variant = "";
+  #    options = "eurosign:e,caps:escape";
+  #  };
+  #  desktopManager.plasma5.enable = true;
+  #  videoDrivers = [ "fbdev" "vesa" ];
+  #};
 
   nixpkgs.config.allowUnfree = true;
 
   console.keyMap = "us";
 
   #Making Xterm not being eye cancer
-
+  #This doesnt work though
   environment.etc."X11/Xresources".text = ''
     xterm*background: black
     xterm*foreground: white

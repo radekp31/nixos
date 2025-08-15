@@ -75,7 +75,15 @@ in
   #home.packages = with pkgs; [
   #  swaybg # wallpaper
   #];
-  
+  wayland.windowManager.sway = {
+    enable = true;
+    extraConfig =''
+      input * {
+        xkb_layout "us"
+        xkb_variant ""
+      }
+    '';
+  };
   programs.alacritty = {
     enable = true; # Super+T in Niri with the default setting (terminal)
     settings = {

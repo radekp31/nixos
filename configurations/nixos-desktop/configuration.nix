@@ -1,35 +1,13 @@
-#/nix/store/kkin0nrpavpdpkinh2w9rrb8fxyr9l6b-init.vim Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
 
-#TODO
-#2/ keep only relevant config in configuration.nix
-#5/ test removing some configs that might be included by default (openssh, ...)
-#6/ Make the config functional for fresh machines via git pull
-#7/ Make the config "interactive"
-#	- automatic user creation from list - https://discourse.nixos.org/t/creating-users-from-a-list/34014/5
-#	- multiple profiles available instead of just having modules/default.nix
-#       - autodecide on video drivers install 
-
-{ config
-, pkgs
+{ pkgs
 , lib
 , ...
 }:
 
 {
   imports = [
-    # Include the results of the hardware scan.
-    #<home-manager/nixos>
-    #"${
-    #  builtins.fetchTarball {
-    #    url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz";
-    #    #sha256 = "wJQCxyMRc4P26zDrHmZiRD5bbfcJpqPG3e2djdGG3pk=";
-    #    sha256 = "00wp0s9b5nm5rsbwpc1wzfrkyxxmqjwsc1kcibjdbfkh69arcpsn";
-    #  }
-    #}/nixos"
-
-    ./hardware-configuration.nix
+ 
+ ./hardware-configuration.nix
     ./nvidia-drivers.nix
     ../../modules/default.nix
     ../../modules/apps/nixvim/nixvim.nix
@@ -38,8 +16,9 @@
     ../../drivers/brother/DCPL2622DW.nix
   ];
 
-  nixpkgs.config.segger-jlink.acceptLicense = true;
-  # Configure Nixpkgs to use the unstable channel for system-wide packages
+  nixpkgs.config.segger-jlink.acceptLicense = true; #clean
+ 
+ # Configure Nixpkgs to use the unstable channel for system-wide packages
   nixpkgs.config = {
     allowUnfree = true;
     channels = {
@@ -82,14 +61,6 @@
     };
   };
 
-  virtualisation.vmVariant = {
-    virtualisation = {
-      memorySize = 2048; # Set memory size
-      diskSize = 10;
-      cores = 2;
-    };
-  };
-
   security.sudo = {
     enable = true;
     wheelNeedsPassword = true; # Require password for sudo
@@ -100,11 +71,11 @@
       {
         commands = [
           {
-            command = "${pkgs.linuxPackages.nvidia_x11.settings}";
+            command = "${pkgs.linuxPackages.nvidia_x11.settings}"; #remove?
             options = [ "NOPASSWD" ];
           }
           {
-            command = "${pkgs.linuxPackages.nvidia_x11.bin}";
+            command = "${pkgs.linuxPackages.nvidia_x11.bin}"; #remove?
             options = [ "NOPASSWD" ];
           }
           {
@@ -123,7 +94,7 @@
 
 
 
-  security.pam.services.hyprlock = { };
+  security.pam.services.hyprlock = { }; #remove?
 
   #setup SSH
 
@@ -161,37 +132,22 @@
     };
   };
 
-  services.lvm.enable = false;
-
   boot.supportedFilesystems = [ "ntfs" "vfat" "ext4" ];
   boot.initrd.supportedFilesystems = [ "ntfs" "vfat" "ext4" ];
 
-  #boot.loader.systemd-boot.enable = false;
-  #boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.grub.enable = true;
+  boot.loader.grub.enable = true; #clean
   boot.loader.grub.device = "nodev";
-  #boot.loader.grub.useOSProber = true;
   boot.loader.grub.efiSupport = true;
   boot.loader.grub.gfxmodeEfi = "1366x768";
   boot.loader.grub.gfxmodeBios = "1366x768";
   boot.loader.grub.theme = null;
-  #boot.loader.timeout = 1; #F
-  #boot.consoleLogLevel = 0;
-  #boot.loader.grub.timeoutStyle = "menu";
-
-  # Enable "Silent Boot"
-  #boot.consoleLogLevel = 0;
 
   boot.kernelPackages = pkgs.linuxPackages_6_16;
 
-  #Install TKG kernel patches
   powerManagement.cpuFreqGovernor = "performance";
 
   boot.kernelParams = [
-    #"quiet"
-    #"splash"
     "boot.shell_on_fail"
-    #"fsck.mode=skip"
     "tsc=unstable"
     "trace_clock=local"
 
@@ -203,25 +159,12 @@
     "fbcon=map:0"
     "video=DP-2:1920x1080"
     "video=DP-3:off"
-    #"video=DP-3:d" #Disables monitor permanently
   ];
 
-  networking.hostName = "nixos-desktop"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Enable networking
+  networking.hostName = "nixos-desktop";
+ 
+ # Enable networking
   networking.networkmanager.enable = true;
-
-  #PiHole setup
-  #networking.nameservers = [
-  #  #"192.168.50.1"
-  #  #"192.168.50.63"
-  #  "$(cat ${config.sops.secrets."IPs/pi".path})"
-  #];
 
   # Session variables
   environment.sessionVariables = {
@@ -238,20 +181,16 @@
 
   # Environment variables
   environment.variables = {
-    #DISPLAY = ":0";
     EDITOR = "nvim";
     VISUAL = "nvim";
     TERM = lib.mkDefault "xterm-256color";
-    #LD_LIBRARY_PATH = "${pkgs.libglvnd}/lib"; #conflict with brother drivers
-    #XAUTHORITY = "/run/user/0/.Xauthority";
     XDG_CACHE_HOME = "$HOME/.cache";
-    #XDG_CONFIG_DIRS = "/etc/xdg";
     XDG_CONFIG_HOME = "$HOME/.config";
-    #XDG_DATA_DIRS = "/usr/local/share/:/usr/share/";
     XDG_DATA_HOME = "$HOME/.local/share";
     XDG_STATE_HOME = "$HOME/.local/state";
   };
-  # Enable virtualization
+ 
+ # Enable virtualization # move virtualisations items to qemu.nix
   #virtualisation.libvirtd.enable = true;
   boot.kernelModules = [
     "kvm-amd"
@@ -259,10 +198,9 @@
   ];
 
   # Set your time zone.
-  time.timeZone = "Europe/Prague"; # value before "Europe/Amsterdam"
+  time.timeZone = "Europe/Prague";
 
   # Select internationalisation properties.
-  #i18n.defaultLocale = "en_US.UTF-8";
   i18n.defaultLocale = "en_US.UTF-8";
 
   i18n.extraLocaleSettings = {
@@ -277,12 +215,7 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  #Add udev rules
-  #services.udev.extraRules = ''
-  #  SUBSYSTEM=="usb", ATTR{idVendor}=="320f", ATTR{idProduct}=="504b", MODE="0666" #GMMK 2 
-  #'';
-  
-  #Niri attempt
+  #Niri attempt # clean
   programs.niri = {
     enable = true;
   };
@@ -300,8 +233,8 @@
   programs.adb.enable = true;
 
   # Wayland + Hyprland attempt
-  programs.hyprland.enable = true;
-  programs.hyprland.withUWSM = true;
+  programs.hyprland.enable = true; #remove
+  programs.hyprland.withUWSM = true; #remove
   # Attempt to fix Hyprland high VRAM usage
   environment.etc = {
     "nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.txt" = {
@@ -334,49 +267,40 @@
     };
   };
 
-  services.xserver.enable = true;
-  services.xserver.videoDrivers = [ "nvidia" ];
-  services.xserver.displayManager.gdm.wayland = true;
-  programs.xwayland.enable = true;
+  services.displayManager.gdm.wayland = true;
+  programs.xwayland.enable = true; #remove? Niri should be using xwayland-satellite
 
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
 
-  services.xserver.displayManager.setupCommands = ''
-    xrandr --output DP-2 --auto --primary
-    xrandr --output DP-3 --off
-    xsetroot -cursor_name left_ptr -display :0
-  '';
-  services.displayManager.sddm.settings = {
-    General = {
-      DisplayServer = "x11";
-    };
-  };
   services.displayManager.sddm.autoNumlock = true;
   services.displayManager.sddm.theme = "catppuccin-mocha";
   services.displayManager.sddm.package = lib.mkForce pkgs.kdePackages.sddm;
-  #services.displayManager.defaultSession = "hyprland-uwsm";
   services.displayManager.defaultSession = "niri";
   services.desktopManager.plasma6.enable = true;
 
-  services.tlp.enable = false;
+  #Backup access
+  services.xserver.desktopManager.xterm.enable = true;
 
-  #duplicate? 
-  hardware.graphics.enable = true; # hardware.opengl.enable on older versions
-  #duplicate? 
-  hardware.nvidia.modesetting.enable = true;
+  #Avoid xterm flashbang
+  #xterm*faceName: VeraMono
+  environment.etc."X11/Xresources".text = ''
+    xterm*background: black
+    xterm*foreground: white
+    xterm*faceName: DejaVu Sans Mono
+    xterm*faceSize: 13
+    xterm*saveLines: 4096
+    xterm*scrollBar: true
+    xterm*rightScrollBar: true
+    xterm*renderFont: true
+    XTerm*fullscreen: true
+  '';
 
   xdg.portal = {
     enable = true;
   };
 
   # End of Hyprland attempt
-
-  #Unify this somewhere
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-  };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -394,16 +318,7 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
   };
-
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.radekp = {
@@ -422,9 +337,6 @@
 
   users.users.sddm.extraGroups = [ "video" ];
 
-  #home-manager.users.radekp = import /etc/nixos/home-manager/home.nix;
-  #home-manager.users.radekp = import ./home-manager/home.nix;
-
   #Set up Steam
   programs.steam = {
     enable = true;
@@ -439,7 +351,12 @@
     "steam-run"
   ];
 
-  #Set up ZSH
+  programs.direnv = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  #Set up ZSH - clean
   users.defaultUserShell = pkgs.zsh;
   programs.zsh = {
     enable = true;
@@ -468,9 +385,8 @@
         manix "" | grep '^# ' | sed 's/^# \\(.*\\) (.*/\\1/;s/ (.*//;s/^# //' | fzf --preview="manix '{}'" | xargs manix
       '';
 
-      ll = "eza -lahg --all";
-      llt = "eza -lahg --tree --git-ignore";
-      lld = "eza -lahgd";
+      ll = "ls -lahg";
+      lld = "ls -lahgd";
       man = "tldr";
       cat = "bat -pp";
       icat = "wezterm imgcat";
@@ -488,7 +404,7 @@
         "git"
         "sudo"
         "fzf"
-        "eza"
+      #  "eza"
       ];
       theme = "gnzh";
     };
@@ -499,15 +415,13 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
 
-    hyprland
-    #dolphin - package renamed
-    dunst
-    #polkit-kde-agent - package renamed
-    qt5.full
-    qt6.full
-    slurp
-    xdg-desktop-portal-hyprland
-    xdg-utils
+    hyprland #remove?
+    dunst #remove?
+    qt5.full #remove?
+    qt6.full #remove?
+    slurp #keep
+    xdg-desktop-portal-hyprland #remove?
+    xdg-utils #keep
 
     #Git and fetchers and other QOL
     git
@@ -522,22 +436,22 @@
     sops
 
     # TEST
-    nrfutil
-    qmk
-    qmk_hid
-    qmk-udev-rules
-    udiskie
-    unzip
-    p7zip
-    pciutils
-    smartmontools
-    lm_sensors
-    unetbootin
-    nixos-icons
-    dejavu_fonts
-    rustdesk
-    wlr-randr
-
+    #move keyboard app to qmk.nix
+    nrfutil #clean?
+    qmk #clean?
+    qmk_hid #clean
+    qmk-udev-rules #clean
+    udiskie #remove
+    unzip #remove
+    p7zip #remove
+    pciutils#what is this? 
+    smartmontools #keep
+    lm_sensors #keep
+    unetbootin #clean?
+    nixos-icons #keep
+    dejavu_fonts #keep
+    wlr-randr #clean?
+ 
     (catppuccin-sddm.override {
       flavor = "mocha";
       font = "Noto Sans";
@@ -546,30 +460,22 @@
       loginBackground = true;
     })
 
-    # Wayland + Hyprland
-    xorg.xhost
-    xorg.xauth
-    xwayland
+    # Wayland + Hyprland # clean/remove
     xwayland-satellite
-    aha
-    busybox
-    clinfo
     wayland-utils
     wayland-protocols
     pam
 
     # Packages
-    #flatpak
-    #flatpak-builder
     ripgrep-all
     termshark
     discord
     arp-scan-rs
-    neofetch # distro stats
+    neofetch # distro stats, deprecated :( - find new one
     manix # nix options manual
     curl
     git # NixOS sucks without git
-    openssh
+    openssh  # keep
     htop # system monitor
     fzf # fuzzy finder
     plymouth # boot customization
@@ -579,24 +485,21 @@
     tree # dir tree structure viewer
     rofi # awesome launch menu
     rofi-power-menu # awesome power menu
-    ntfs3g
+    ntfs3g #Too many windows people around me
     shutter # snipping tool
     dunst # notification tool
     lld_18
     jq
     yt-dlp
     ffmpeg
-    nmon
     tldr
     btop
     nurl # get tarball hashes
-    hyprland-workspaces
 
     # Zsh
 
     zsh # I use zsh btw
     oh-my-zsh # I use fancy zsh btw
-    zsh-powerlevel10k # I use ultra fancy zsh btw
     zsh-fzf-tab
     zsh-fzf-history-search
     zsh-autosuggestions
@@ -604,10 +507,9 @@
     meslo-lgs-nf # font
 
     # NVIM
-    vimPlugins.tokyonight-nvim
     xclip
     wl-clipboard
-    nil
+    #nil
 
     # Home manager
     home-manager
