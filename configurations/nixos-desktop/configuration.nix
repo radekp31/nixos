@@ -426,6 +426,10 @@
     age
     sops
 
+    #Security scanning
+    vulnix
+    trivy
+
     # TEST
     #move keyboard app to qmk.nix
     udiskie #remove
