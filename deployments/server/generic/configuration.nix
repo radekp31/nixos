@@ -2,13 +2,12 @@
 # shell need to be forced by mkForce to bash
 # port 22 needs to be opened
 # After deployment - AGE key will be generated. It has to be added to .sops.yaml. Without it, the server wont be able to decrypt the secrets/secrets.yaml
-
-{ modulesPath
-, lib
-, pkgs
-, ...
-}:
 {
+  modulesPath,
+  lib,
+  pkgs,
+  ...
+}: {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
     (modulesPath + "/profiles/qemu-guest.nix")
@@ -30,17 +29,16 @@
     };
     settings = {
       auto-optimise-store = true;
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = ["nix-command" "flakes"];
     };
   };
-
 
   # Configure Nixpkgs to use the unstable channel for system-wide packages
   nixpkgs.config = {
     allowUnfree = true;
     channels = {
       enable = true;
-      urls = [ "https://nixos.org/channels/nixpkgs-unstable" ];
+      urls = ["https://nixos.org/channels/nixpkgs-unstable"];
     };
   };
 
@@ -56,7 +54,7 @@
   # Open port 22 in the firewall
   networking.firewall = {
     enable = true; # Enable the firewall
-    allowedTCPPorts = [ 22 ]; # Allow SSH connections
+    allowedTCPPorts = [22]; # Allow SSH connections
     # Optional: if you're using IPv6
     # allowedTCPPorts = [ 22 ];       # Same for IPv6
     rejectPackets = false; #Drop packets instead of REJECT

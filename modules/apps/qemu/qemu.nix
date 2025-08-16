@@ -1,18 +1,19 @@
-{ pkgs, config, ... }:
-
 {
-
+  pkgs,
+  config,
+  ...
+}: {
   programs.virt-manager.enable = true;
 
-  users.groups.libvirtd.members = [ "your_username" ];
+  users.groups.libvirtd.members = ["your_username"];
 
   virtualisation.libvirtd.enable = true;
 
-  boot.kernelModules = [ "kvm-amd" "kvm-intel" ];
+  boot.kernelModules = ["kvm-amd" "kvm-intel"];
 
   virtualisation.spiceUSBRedirection.enable = true;
 
-  users.users.radekp.extraGroups = [ "libvirtd" "qemu-libvirtd" ];
+  users.users.radekp.extraGroups = ["libvirtd" "qemu-libvirtd"];
 
   programs.dconf = {
     enable = true;
@@ -21,8 +22,8 @@
         {
           settings = {
             "org/virt-manager/virt-manager/connections" = {
-              autoconnect = [ "qemu:///system" ];
-              uris = [ "qemu:///system" ];
+              autoconnect = ["qemu:///system"];
+              uris = ["qemu:///system"];
             };
           };
         }
@@ -42,5 +43,4 @@
     virt-manager
     OVMF
   ];
-
 }

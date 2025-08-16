@@ -1,12 +1,11 @@
-{ config
-, pkgs
-, ...
+{
+  config,
+  pkgs,
+  ...
 }:
-
 #let
 #
 #in
-
 {
   #Accept NVIDIA licence
   nixpkgs.config.nvidia.acceptLicense = true;
@@ -17,7 +16,6 @@
     enable = true;
     enable32Bit = true;
     extraPackages = with pkgs; [
-
       amdvlk
       intel-media-driver # LIBVA_DRIVER_NAME=iHD
       libvdpau-va-gl
@@ -32,13 +30,12 @@
   };
 
   # Force modeset=1
-  boot.kernelParams = [ "nvidia_drm.fbdev=1" ];
-  boot.initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
+  boot.kernelParams = ["nvidia_drm.fbdev=1"];
+  boot.initrd.kernelModules = ["nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm"];
   # Load nvidia driver for Xorg and Wayland
-  services.xserver.videoDrivers = [ "nvidia" ];
+  services.xserver.videoDrivers = ["nvidia"];
 
   hardware.nvidia = {
-
     # Modesetting is required.
     modesetting.enable = true;
 
@@ -95,7 +92,6 @@
 
   #Packages related to NVIDIA
   environment.systemPackages = with pkgs; [
-
     clinfo
     gwe
     nvtopPackages.nvidia
@@ -103,7 +99,6 @@
     vulkan-tools
     vulkan-loader
     lm_sensors
-
   ];
 
   # GPU runs hot due to lots of power fed to it

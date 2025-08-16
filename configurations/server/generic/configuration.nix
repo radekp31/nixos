@@ -8,17 +8,16 @@
 #
 #
 # port 22 needs to be opened
-
-
-
-{ config, lib, pkgs, ... }:
-
 {
-  imports =
-    [
-      # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Use the GRUB 2 boot loader.
   boot.loader.grub.enable = true;
@@ -40,7 +39,7 @@
     };
     settings = {
       auto-optimise-store = true;
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = ["nix-command" "flakes"];
     };
     nixPath = [
       "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixpkgs"
@@ -65,8 +64,8 @@
 
   networking.firewall = {
     enable = true; # Enable the firewall
-    allowedTCPPorts = [ 22 ]; # Allow SSH connections ; 80 is testing of remote deployment from localhost
-    allowedUDPPorts = [ 53 123 ]; # Allow DNS and NTP
+    allowedTCPPorts = [22]; # Allow SSH connections ; 80 is testing of remote deployment from localhost
+    allowedUDPPorts = [53 123]; # Allow DNS and NTP
     # Optional: if you're using IPv6
     # allowedTCPPorts = [ 22 ];       # Same for IPv6
     extraCommands = ''
@@ -95,7 +94,7 @@
   users.users.root = {
     isSystemUser = true;
     shell = lib.mkForce pkgs.bash;
-    extraGroups = [ "wheel" ];
+    extraGroups = ["wheel"];
     packages = with pkgs; [
       git
       curl
@@ -122,7 +121,5 @@
     fuzzyCompletion = true;
   };
 
-
   system.stateVersion = "25.05";
-
 }

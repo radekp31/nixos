@@ -1,11 +1,10 @@
-{ config
-, pkgs
-, lib
-, input
-, ...
-}:
-
-let
+{
+  config,
+  pkgs,
+  lib,
+  input,
+  ...
+}: let
   nixvim = import (
     builtins.fetchGit {
       url = "https://github.com/nix-community/nixvim";
@@ -27,10 +26,7 @@ let
       return valid_bufs
     end
   '';
-in
-
-{
-
+in {
   imports = [
     nixvim.nixosModules.nixvim
   ];
@@ -68,7 +64,7 @@ in
         extensions = {
           live-grep-args = {
             settings = {
-              search_dirs = [ "/etc/mnt" "~" ];
+              search_dirs = ["/etc/mnt" "~"];
             };
           };
         };
@@ -153,7 +149,7 @@ in
           nixd = {
             enable = true;
             settings = {
-              formatting.command = [ "nixpkgs-fmt" ];
+              formatting.command = ["nixpkgs-fmt"];
               nixpkgs.expr = "import <nixpkgs> { }";
             };
           };
@@ -178,7 +174,7 @@ in
       luasnip = {
         enable = true;
         fromVscode = [
-          { }
+          {}
         ];
       };
       cmp = {
@@ -193,7 +189,6 @@ in
               option = {
                 inherit get_bufnrs;
               };
-
             }
             {
               name = "nixd";

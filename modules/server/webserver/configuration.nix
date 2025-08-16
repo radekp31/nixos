@@ -1,15 +1,14 @@
-{ inputs, config, lib, pkgs, ... }:
-
-let
-
-
-in
-
 {
-  imports =
-    [
-      inputs.sops-nix.nixosModules.sops #try <sops-nix/modules/sops>
-    ];
+  inputs,
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
+in {
+  imports = [
+    inputs.sops-nix.nixosModules.sops #try <sops-nix/modules/sops>
+  ];
 
   services.nginx = {
     enable = true;
@@ -33,8 +32,8 @@ in
 
   networking.firewall = {
     # Set default inbound policy to drop
-    allowedTCPPorts = [ ];
-    allowedUDPPorts = [ ];
+    allowedTCPPorts = [];
+    allowedUDPPorts = [];
 
     # Enable the firewall
     enable = true;
@@ -45,22 +44,21 @@ in
     #iptables -A INPUT -p tcp --dport 22 -s "$(cat ${config.sops.secrets."IPs/homenetwork".path})" -j ACCEPT
     #iptables -A INPUT -p tcp --dport 80 -s "$(cat ${config.sops.secrets."IPs/homenetwork".path})" -j ACCEPT
 
-
     extraCommands = ''
       # Allow inbound SSH (22) and HTTP (80) from a specific IP
       iptables -A INPUT -p tcp --dport 22 -s "$(cat ${config.sops.secrets."IPs/homenetwork".path})" -j ACCEPT
       iptables -A INPUT -p tcp --dport 80 -s "$(cat ${config.sops.secrets."IPs/homenetwork".path})" -j ACCEPT
-      
+
       # Allow established and related connections inbound
       iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-      
+
       # Reject (with proper ICMP response) all other traffic to ports 22 and 80
       iptables -A INPUT -p tcp --dport 22 -j REJECT
       iptables -A INPUT -p tcp --dport 80 -j REJECT
-      
+
       # Allow established and related connections outbound
       iptables -A OUTPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-      
+
       # Allow outbound DNS (53) and NTP (123)
       iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
       iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT
@@ -77,5 +75,4 @@ in
     # Default policy is to drop new incoming connections
     rejectPackets = true;
   };
-
 }

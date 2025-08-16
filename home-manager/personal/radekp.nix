@@ -1,14 +1,12 @@
-{ pkgs
-, inputs
-, config
-, lib
-, ...
-}:
+{
+  pkgs,
+  inputs,
+  config,
+  lib,
+  ...
+}: let
+  tokyonight-rofi-theme = import ../rofi-themes/rofi-themes.nix {inherit pkgs;};
 
-let
-
-  tokyonight-rofi-theme = import ../rofi-themes/rofi-themes.nix { inherit pkgs; };
-  
   # Browser Extensions
   ublock = builtins.fetchurl {
     url = "https://addons.mozilla.org/firefox/downloads/file/4121906/ublock_origin-1.55.0.xpi";
@@ -29,10 +27,7 @@ let
     url = "https://addons.mozilla.org/firefox/downloads/file/4119137/privacy_badger-2024.2.6.xpi";
     sha256 = "1fq98naq5ajdm25s5np82z1w4zbxmm3ps8m5bw7w2a2b8hl9b44d";
   };
-in
-
-{
-
+in {
   imports = [
   ];
 
@@ -57,7 +52,7 @@ in
   nixpkgs = {
     config = {
       allowUnfree = true;
-      allowUnfreePredicate = (_: true);
+      allowUnfreePredicate = _: true;
     };
   };
 
@@ -77,7 +72,7 @@ in
   #];
   wayland.windowManager.sway = {
     enable = true;
-    extraConfig =''
+    extraConfig = ''
       input * {
         xkb_layout "us"
         xkb_variant ""
@@ -87,17 +82,15 @@ in
   programs.alacritty = {
     enable = true; # Super+T in Niri with the default setting (terminal)
     settings = {
-
       font.normal = {
-	  ##family = "JetbrainsMono Nerd Font";
-	  family = "Hack Nerd Font";
+        ##family = "JetbrainsMono Nerd Font";
+        family = "Hack Nerd Font";
       };
       font.size = 14;
       #env.DISPLAY=":0";
     };
     theme = "catppuccin_macchiato";
   };
-
 
   #--- end of Niri attempt
 
@@ -139,7 +132,6 @@ in
       "$mod" = "SUPER";
 
       env = [
-
       ];
 
       exec-once = [
@@ -259,9 +251,7 @@ in
           color = "0xee1a1b26"; # Matching your theme with high alpha
           color_inactive = "0x661a1b26"; # Same color but more transparent for inactive
         };
-
       };
-
     };
 
     extraConfig = ''
@@ -292,7 +282,7 @@ in
         #"XDG_CURRENT_DESKTOP"
       ];
     };
-    plugins = [ pkgs.hyprlandPlugins.hyprfocus pkgs.hyprlandPlugins.hyprtrails ];
+    plugins = [pkgs.hyprlandPlugins.hyprfocus pkgs.hyprlandPlugins.hyprtrails];
   };
 
   home.file.".local/share/wayland-sessions/hyprland.desktop".text = ''
@@ -322,34 +312,34 @@ in
 
   #Create power_menu.xml for waybar
   home.file.".config/waybar/power_menu.xml".text = ''
-      <?xml version="1.0" encoding="UTF-8"?>
-      <interface>
-        <object class="GtkMenu" id="menu">
-          <child>
-    		  <object class="GtkMenuItem" id="suspend">
-    			  <property name="label">Suspend</property>
-              </object>
-    	  </child>
-    	  <child>
-              <object class="GtkMenuItem" id="hibernate">
-    			  <property name="label">Hibernate</property>
-              </object>
-    	  </child>
-          <child>
-              <object class="GtkMenuItem" id="shutdown">
-    			  <property name="label">Shutdown</property>
-              </object>
-          </child>
-          <child>
-            <object class="GtkSeparatorMenuItem" id="delimiter1"/>
-          </child>
-          <child>
-    		  <object class="GtkMenuItem" id="reboot">
-    			  <property name="label">Reboot</property>
-      		  </object>
-          </child>
-        </object>
-      </interface>
+    <?xml version="1.0" encoding="UTF-8"?>
+    <interface>
+      <object class="GtkMenu" id="menu">
+        <child>
+      <object class="GtkMenuItem" id="suspend">
+    	  <property name="label">Suspend</property>
+            </object>
+     </child>
+     <child>
+            <object class="GtkMenuItem" id="hibernate">
+    	  <property name="label">Hibernate</property>
+            </object>
+     </child>
+        <child>
+            <object class="GtkMenuItem" id="shutdown">
+    	  <property name="label">Shutdown</property>
+            </object>
+        </child>
+        <child>
+          <object class="GtkSeparatorMenuItem" id="delimiter1"/>
+        </child>
+        <child>
+      <object class="GtkMenuItem" id="reboot">
+    	  <property name="label">Reboot</property>
+    		  </object>
+        </child>
+      </object>
+    </interface>
   '';
 
   # Configure Rofi app launcher original
@@ -390,7 +380,7 @@ in
     * {
         bg: #1A1B26;
         hv: #9274ca; // selector highlight
-        primary: #C0CAF5; 
+        primary: #C0CAF5;
         ug: #0B2447;
         font: "Inconsolata 11";
         background-color: @bg;
@@ -405,7 +395,7 @@ in
     // defines different aspects of the window
     window {
         width: 700;
-        /*since line wont work with height, i comment it out 
+        /*since line wont work with height, i comment it out
         if you rather control the size via height
         just comment it out */
         //height: 500;
@@ -414,7 +404,7 @@ in
         location: center;
         anchor: center;
         transparency: "screenshot";
-        border-color: @transparent;   
+        border-color: @transparent;
         border: 0px;
         border-radius: 6px;
         spacing: 0;
@@ -459,7 +449,7 @@ in
         padding: 8px;
         lines: 12;
         columns: 1;
-        border: 0px 3px 3px 3px; 
+        border: 0px 3px 3px 3px;
         border-radius: 0px 0px 6px 6px;
         border-color: @primary;
         dynamic: false;
@@ -518,12 +508,10 @@ in
 
     scrollbar {
         enabled: true;
-    } 
+    }
   '';
 
-
   #/////////////////////////////////////////
-
 
   #Configure Swappy
   #Create keybind: grim -g "$(slurp)" - | swappy -f -
@@ -541,10 +529,9 @@ in
     fill_shape=false
   '';
 
- # services.hypridle = {
- #   enable = true;
- # };
-
+  # services.hypridle = {
+  #   enable = true;
+  # };
 
   # Enable hyprlock
   programs.hyprlock = {
@@ -583,7 +570,6 @@ in
     };
   };
 
-
   services.hyprpaper = {
     enable = true;
     settings = {
@@ -591,7 +577,7 @@ in
       splash = false;
       splash_offset = 2.0;
 
-      preload = [ "/etc/nixos/wallpapers/Tokyo2018_Everingham_SH_-9.jpg" ];
+      preload = ["/etc/nixos/wallpapers/Tokyo2018_Everingham_SH_-9.jpg"];
 
       wallpaper = [
         "DP-2,/etc/nixos/wallpapers/Tokyo2018_Everingham_SH_-9.jpg"
@@ -602,144 +588,143 @@ in
 
   systemd.user.services.hyprpaper.Unit.After = lib.mkForce "graphical-session.target";
 
-
   programs.wezterm = {
     enable = true;
     enableZshIntegration = true;
     extraConfig = ''
-            	local wezterm = require 'wezterm'
-            	local act = wezterm.action
-            	local config = {}
+           	local wezterm = require 'wezterm'
+           	local act = wezterm.action
+           	local config = {}
 
-            	if wezterm.config_builder
-            	then
-            	  config = wezterm.config_builder()
-            	  config:set_strict_mode(true)
-            	end
+           	if wezterm.config_builder
+           	then
+           	  config = wezterm.config_builder()
+           	  config:set_strict_mode(true)
+           	end
 
-            	-- General settings
+           	-- General settings
 
-            	config.max_fps = 144
-            	config.animation_fps = 144
-            	config.front_end = "WebGpu"
-            	config.webgpu_power_preference = "HighPerformance"
-            	config.audible_bell = "Disabled"
+           	config.max_fps = 144
+           	config.animation_fps = 144
+           	config.front_end = "WebGpu"
+           	config.webgpu_power_preference = "HighPerformance"
+           	config.audible_bell = "Disabled"
 
-            	-- Appearance
-            	config.color_scheme = 'Tokyo Night Moon'
-            	config.window_decorations = "NONE"
-            	config.use_fancy_tab_bar = false
-            	config.window_frame = {
-            	  font_size = 16.5
-            	}
-            	config.font = wezterm.font 'Dejavu Sans Mono'
-            	config.font_size = 16
+           	-- Appearance
+           	config.color_scheme = 'Tokyo Night Moon'
+           	config.window_decorations = "NONE"
+           	config.use_fancy_tab_bar = false
+           	config.window_frame = {
+           	  font_size = 16.5
+           	}
+           	config.font = wezterm.font 'Dejavu Sans Mono'
+           	config.font_size = 16
 
-      	-- Lazy loading
+      -- Lazy loading
 
-      	config.tab_bar_at_bottom = false
-      	config.scrollback_lines = 5000 -- Limit scrollback to reduce memory
-      	config.enable_scroll_bar = false -- Disable scroll bar for performance
-      	config.harfbuzz_features = {} -- Minimal font features initially
+      config.tab_bar_at_bottom = false
+      config.scrollback_lines = 5000 -- Limit scrollback to reduce memory
+      config.enable_scroll_bar = false -- Disable scroll bar for performance
+      config.harfbuzz_features = {} -- Minimal font features initially
 
-            	-- Keymaps
-            	config.keys = {
+           	-- Keymaps
+           	config.keys = {
 
-            	  -- Pane splitting
-            	  {
-            	    key = 'mapped:+',
-            	    mods = 'SHIFT|ALT',
-            	    action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' },
-            	  },
-            	  {
-            	    key = 'mapped:_',
-            	    mods = 'SHIFT|ALT',
-            	    action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
-            	  },
-            	  -- Pane focus movement
-            	  { 
-            	    key = 'LeftArrow', 
-            	    mods = 'ALT', 
-            	    action = act.ActivatePaneDirection 'Left' 
-            	  },
-            	  { 
-            	    key = 'RightArrow', 
-            	    mods = 'ALT', 
-            	    action = act.ActivatePaneDirection 'Right' 
-            	  },
-            	  { 
-            	    key = 'UpArrow', 
-            	    mods = 'ALT', 
-            	    action = act.ActivatePaneDirection 'Up' 
-            	  },
-            	  { 
-            	    key = 'DownArrow', 
-            	    mods = 'ALT', 
-            	    action = act.ActivatePaneDirection 'Down'
-            	  },
+           	  -- Pane splitting
+           	  {
+           	    key = 'mapped:+',
+           	    mods = 'SHIFT|ALT',
+           	    action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' },
+           	  },
+           	  {
+           	    key = 'mapped:_',
+           	    mods = 'SHIFT|ALT',
+           	    action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
+           	  },
+           	  -- Pane focus movement
+           	  {
+           	    key = 'LeftArrow',
+           	    mods = 'ALT',
+           	    action = act.ActivatePaneDirection 'Left'
+           	  },
+           	  {
+           	    key = 'RightArrow',
+           	    mods = 'ALT',
+           	    action = act.ActivatePaneDirection 'Right'
+           	  },
+           	  {
+           	    key = 'UpArrow',
+           	    mods = 'ALT',
+           	    action = act.ActivatePaneDirection 'Up'
+           	  },
+           	  {
+           	    key = 'DownArrow',
+           	    mods = 'ALT',
+           	    action = act.ActivatePaneDirection 'Down'
+           	  },
 
-            	  -- Pane movement
-            	  {
-            	    key = 'LeftArrow',
-            	    mods = 'SHIFT|ALT',
-            	    action = act.RotatePanes 'CounterClockwise',
-            	  },
-            	  { key = 'RightArrow',
-            	    mods = 'SHIFT|ALT',
-            	    action = act.RotatePanes 'Clockwise'
-            	  },
+           	  -- Pane movement
+           	  {
+           	    key = 'LeftArrow',
+           	    mods = 'SHIFT|ALT',
+           	    action = act.RotatePanes 'CounterClockwise',
+           	  },
+           	  { key = 'RightArrow',
+           	    mods = 'SHIFT|ALT',
+           	    action = act.RotatePanes 'Clockwise'
+           	  },
 
-            	  -- Lanch launch_menu
-            	  {
-            	    key = 'l',
-            	    mods = 'ALT',
-            	    action = wezterm.action.ShowLauncher
-            	  },
-            	}
+           	  -- Lanch launch_menu
+           	  {
+           	    key = 'l',
+           	    mods = 'ALT',
+           	    action = wezterm.action.ShowLauncher
+           	  },
+           	}
 
-            	-- Right click Copy
+           	-- Right click Copy
 
-            	config.mouse_bindings = {
-            	  {
-            	   event = { Down = { streak = 1, button = "Right" } },
-            	   mods = "NONE",
-            	   action = wezterm.action_callback(function(window, pane)
-            	     local has_selection = window:get_selection_text_for_pane(pane) ~= ""
-            	     if has_selection then
-            	       window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
-            	       window:perform_action(act.ClearSelection, pane)
-            	     else
-            	       window:perform_action(act({ PasteFrom = "Clipboard" }), pane)
-            	     end
-            	   end),
-            	  },
-            	 }
+           	config.mouse_bindings = {
+           	  {
+           	   event = { Down = { streak = 1, button = "Right" } },
+           	   mods = "NONE",
+           	   action = wezterm.action_callback(function(window, pane)
+           	     local has_selection = window:get_selection_text_for_pane(pane) ~= ""
+           	     if has_selection then
+           	       window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
+           	       window:perform_action(act.ClearSelection, pane)
+           	     else
+           	       window:perform_action(act({ PasteFrom = "Clipboard" }), pane)
+           	     end
+           	   end),
+           	  },
+           	 }
 
-            	-- Adding lanch menu items 
-            	config.launch_menu = {
-            	  {
-            	    -- Optional label to show in the launcher. If omitted, a label
-            	    -- is derived from the `args`
-            	    -- label = 'PowerShell',
-            	    -- The argument array to spawn.  If omitted the default program
-            	    -- will be used as described in the documentation above
-            	    
-            	    -- args = { 'pwsh.exe' },
+           	-- Adding lanch menu items
+           	config.launch_menu = {
+           	  {
+           	    -- Optional label to show in the launcher. If omitted, a label
+           	    -- is derived from the `args`
+           	    -- label = 'PowerShell',
+           	    -- The argument array to spawn.  If omitted the default program
+           	    -- will be used as described in the documentation above
 
-            	    -- You can specify an alternative current working directory;
-            	    -- if you don't specify one then a default based on the OSC 7
-            	    -- escape sequence will be used (see the Shell Integration
-            	    -- docs), falling back to the home directory.
-            	    
-            	    -- cwd = { 'C:\\' },
+           	    -- args = { 'pwsh.exe' },
 
-            	    -- You can override environment variables just for this command
-            	    -- by setting this here.  It has the same semantics as the main
-            	    -- set_environment_variables configuration option described above
-            	    -- set_environment_variables = { FOO = "bar" },
-            	  }
-            	}
-            	return config
+           	    -- You can specify an alternative current working directory;
+           	    -- if you don't specify one then a default based on the OSC 7
+           	    -- escape sequence will be used (see the Shell Integration
+           	    -- docs), falling back to the home directory.
+
+           	    -- cwd = { 'C:\\' },
+
+           	    -- You can override environment variables just for this command
+           	    -- by setting this here.  It has the same semantics as the main
+           	    -- set_environment_variables configuration option described above
+           	    -- set_environment_variables = { FOO = "bar" },
+           	  }
+           	}
+           	return config
 
 
     '';
@@ -775,7 +760,7 @@ in
         src = "${pkgs.vimPlugins.tokyonight-nvim}/extras/sublime/tokyonight_storm.tmTheme";
       };
     };
-    extraPackages = with pkgs.bat-extras; [ batdiff batman batgrep batwatch ];
+    extraPackages = with pkgs.bat-extras; [batdiff batman batgrep batwatch];
   };
 
   programs.eza = {
@@ -809,7 +794,7 @@ in
   #    # Anonymize
   #    "general.settings.useragent.override" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0";
   #    intl.accept_languages = "en-US, en";
-  #    
+  #
 
   #    #Zoom 110%
   #    #"layout.css.devPixelsPerPx" = "1.1";
@@ -837,7 +822,7 @@ in
   #  };
 
   #};
-programs.librewolf = {
+  programs.librewolf = {
     enable = true;
     settings = {
       #Anti-fingerprinting loosened for camouflage
@@ -883,14 +868,12 @@ programs.librewolf = {
     ".librewolf/profile/extensions/jid1-MnnxcxisBPnSXQ@jetpack.xpi".source = privacybadger;
   };
 
-
   #TODO - Explore this
   #programs.lesspipe.enable = true;
 
   # Home packages
 
   home.packages = with pkgs; [
-
     #Niri
     swaybg
     xwayland-satellite
@@ -952,7 +935,4 @@ programs.librewolf = {
     # GPU
     mangohud
   ];
-
-
-
 }

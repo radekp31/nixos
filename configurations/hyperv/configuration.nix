@@ -1,24 +1,25 @@
 # Edit this configuration file to define what should be installed on
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-
-{ config, lib, pkgs, ... }:
-
 {
-  imports =
-    [
-      # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      <nixpkgs/nixos/modules/virtualisation/hyperv-guest.nix>
-    ];
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    <nixpkgs/nixos/modules/virtualisation/hyperv-guest.nix>
+  ];
 
   virtualisation.hypervGuest.enable = true;
 
   boot.kernelPackages = pkgs.linuxPackages_6_6;
 
-  boot.blacklistedKernelModules = [ "hyperv_fb" "modesetting" "uio" "uio_hv_generic" ];
-  boot.kernelModules = [ "hv_balloon" "hv_netvsc" "hv_storvsc" "hv_vmbus" "hv_utils" "hv_uio_fcopy" ];
-  #boot.kernelParams = ["hv_balloon" "hv_netvsc" "hv_storvsc" "hv_vmbus" "hv_utils" "hv_uio_fcopy"]; 
+  boot.blacklistedKernelModules = ["hyperv_fb" "modesetting" "uio" "uio_hv_generic"];
+  boot.kernelModules = ["hv_balloon" "hv_netvsc" "hv_storvsc" "hv_vmbus" "hv_utils" "hv_uio_fcopy"];
+  #boot.kernelParams = ["hv_balloon" "hv_netvsc" "hv_storvsc" "hv_vmbus" "hv_utils" "hv_uio_fcopy"];
 
   boot.plymouth.enable = true;
 
@@ -80,7 +81,6 @@
     enable = true;
   };
 
-
   programs.bash = {
     completion.enable = true;
     enableLsColors = true;
@@ -92,7 +92,7 @@
     interactiveShellInit = ''
       if [ "$TERM" = "xterm" ] || [ "$TERM" = "xterm-256color"]; then
         xrdb -merge /etc/X11/Xresources
-      fi 
+      fi
     '';
   };
 
@@ -143,10 +143,9 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.radekp = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+    extraGroups = ["wheel"]; # Enable ‘sudo’ for the user.
     packages = with pkgs; [
       tree
-
     ];
   };
 
@@ -225,5 +224,4 @@
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "24.11"; # Did you read the comment?
-
 }

@@ -1,7 +1,10 @@
-{ input, config, pkgs, lib, ... }:
-
 {
-
+  input,
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
   programs.hyprland.enable = true;
   programs.hyprland.withUWSM = true;
   # Set default session to Hyprland+uswm
@@ -55,6 +58,5 @@
     };
   };
 }
-
 # End of Hyprland attempt
 

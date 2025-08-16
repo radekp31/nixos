@@ -1,17 +1,15 @@
-{ config, pkgs, lib, ... }:
-
-
-let
-  vars = import ./variables.nix;
-in
-
-
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
+  vars = import ./variables.nix;
+in {
   # A list of all files in the directory
   # imports = [
   #	./variables.nix
   # ];
-
 
   programs.git = {
     enable = true;
@@ -29,6 +27,4 @@ in
     [safe]
       directory = "${vars.dotfilesDir}"
   '';
-
-
 }

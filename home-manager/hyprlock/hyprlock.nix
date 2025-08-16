@@ -1,6 +1,8 @@
-{ config, pkgs, ... }:
-
-let
+{
+  config,
+  pkgs,
+  ...
+}: let
   # Call the hyprlock package from the flake
   hyprlock = pkgs.callPackage (import
     (pkgs.fetchFromGitHub {
@@ -9,21 +11,18 @@ let
       rev = "main"; # or specify a commit/tag/branch
       sha256 = "sha256-139xsd161n5cfd70zg0l3did4lwcaj2wpz728wpsnird9xb9m1ab";
     })
-    { });
-in
-{
+    {});
+in {
   home.packages = with pkgs; [
     hyprlock # Install hyprlock for the user
   ];
 
   systemd.user.services.hyprlock = {
     description = "Hyprlock screen lock";
-    wantedBy = [ "default.target" ];
+    wantedBy = ["default.target"];
     execStart = "${hyprlock}/bin/hyprlock";
   };
-
 }
-
 #{ pkgs ? import <nixpkgs> { } }:
 #
 #pkgs.stdenv.mkDerivation {
@@ -52,3 +51,4 @@ in
 #  '';
 #}
 #
+

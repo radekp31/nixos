@@ -1,13 +1,10 @@
-
-{ pkgs
-, lib
-, ...
-}:
-
 {
+  pkgs,
+  lib,
+  ...
+}: {
   imports = [
- 
- ./hardware-configuration.nix
+    ./hardware-configuration.nix
     ./nvidia-drivers.nix
     ../../modules/default.nix
     ../../modules/apps/nixvim/nixvim.nix
@@ -17,17 +14,17 @@
   ];
 
   nixpkgs.config.segger-jlink.acceptLicense = true; #clean
- 
- # Configure Nixpkgs to use the unstable channel for system-wide packages
+
+  # Configure Nixpkgs to use the unstable channel for system-wide packages
   nixpkgs.config = {
     allowUnfree = true;
     channels = {
       enable = true;
 
-      urls = [ "https://nixos.org/channels/nixpkgs-unstable" ];
+      urls = ["https://nixos.org/channels/nixpkgs-unstable"];
     };
     packageOverrides = pkgs: {
-      unstable = import <nixos-unstable> { config = pkgs.config; };
+      unstable = import <nixos-unstable> {config = pkgs.config;};
     };
     overlays = [
       (import (
@@ -57,7 +54,7 @@
     };
     settings = {
       auto-optimise-store = true;
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = ["nix-command" "flakes"];
     };
   };
 
@@ -72,32 +69,29 @@
         commands = [
           {
             command = "${pkgs.linuxPackages.nvidia_x11.settings}"; #remove?
-            options = [ "NOPASSWD" ];
+            options = ["NOPASSWD"];
           }
           {
             command = "${pkgs.linuxPackages.nvidia_x11.bin}"; #remove?
-            options = [ "NOPASSWD" ];
+            options = ["NOPASSWD"];
           }
           {
             command = "${pkgs.systemd}/bin/journalctl";
-            options = [ "NOPASSWD" ];
+            options = ["NOPASSWD"];
           }
           {
             command = "${pkgs.util-linux}/bin/dmesg";
-            options = [ "NOPASSWD" ];
+            options = ["NOPASSWD"];
           }
         ];
-        groups = [ "wheel" ];
+        groups = ["wheel"];
       }
     ];
   };
 
+  security.pam.services.hyprlock = {}; #remove?
 
-
-  security.pam.services.hyprlock = { }; #remove?
-
-  #setup SSH
-
+  # Setup SSH
   services.openssh = {
     enable = true;
     settings = {
@@ -105,14 +99,7 @@
     };
   };
 
-
-  # Bootloader.
-  #boot.loader.systemd-boot.enable = true;
-  boot.loader.efi = {
-    canTouchEfiVariables = true;
-    efiSysMountPoint = "/boot";
-  };
-  boot.blacklistedKernelModules = [ "nouveau" ];
+  boot.blacklistedKernelModules = ["nouveau"];
   boot.initrd.availableKernelModules = [
     "nvidia"
     "nvidia_modeset"
@@ -132,20 +119,28 @@
     };
   };
 
-  boot.supportedFilesystems = [ "ntfs" "vfat" "ext4" ];
-  boot.initrd.supportedFilesystems = [ "ntfs" "vfat" "ext4" ];
+  boot.supportedFilesystems = ["ntfs" "vfat" "ext4"];
+  boot.initrd.supportedFilesystems = ["ntfs" "vfat" "ext4"];
 
-  boot.loader.grub.enable = true; #clean
-  boot.loader.grub.device = "nodev";
-  boot.loader.grub.efiSupport = true;
-  boot.loader.grub.gfxmodeEfi = "1366x768";
-  boot.loader.grub.gfxmodeBios = "1366x768";
-  boot.loader.grub.theme = null;
+  # Bootloader.
+  boot.loader.efi = {
+    canTouchEfiVariables = true;
+    efiSysMountPoint = "/boot";
+  };
 
+  # Grub
+  boot.loader.grub = {
+    enable = true;
+    device = "nodev";
+    efiSupport = true;
+    gfxmodeEfi = "1366x768";
+    gfxmodeBios = "1366x768";
+    #theme = "${pkgs.libsForQt5.breeze-grub}/grub/themes/breeze";
+    theme = null;
+  };
+
+  # Kernel
   boot.kernelPackages = pkgs.linuxPackages_6_16;
-
-  powerManagement.cpuFreqGovernor = "performance";
-
   boot.kernelParams = [
     "boot.shell_on_fail"
     "tsc=unstable"
@@ -161,13 +156,23 @@
     "video=DP-3:off"
   ];
 
+  # Enable virtualization # move virtualisations items to qemu.nix
+  #virtualisation.libvirtd.enable = true;
+  boot.kernelModules = [
+    "kvm-amd"
+    "kvm-intel"
+  ];
+
   networking.hostName = "nixos-desktop";
- 
- # Enable networking
+
+  powerManagement.cpuFreqGovernor = "performance";
+
+  # Enable networking
   networking.networkmanager.enable = true;
 
   # Session variables
   environment.sessionVariables = {
+    NIXOS_CONFIG_LOCATION = "/etc/nixos"; # used for alejandra
     LIBVA_DRIVER_NAME = "nvidia";
     GBM_BACKEND = "nvidia-drm";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
@@ -176,7 +181,6 @@
     GDK_DPI_SCALE = "1";
     XCURSOR_SCALE = "24";
     QT_QPA_PLATFORMTHEME = "qt6ct"; # dark mode for Qt apps
-
   };
 
   # Environment variables
@@ -189,13 +193,6 @@
     XDG_DATA_HOME = "$HOME/.local/share";
     XDG_STATE_HOME = "$HOME/.local/state";
   };
- 
- # Enable virtualization # move virtualisations items to qemu.nix
-  #virtualisation.libvirtd.enable = true;
-  boot.kernelModules = [
-    "kvm-amd"
-    "kvm-intel"
-  ];
 
   # Set your time zone.
   time.timeZone = "Europe/Prague";
@@ -233,8 +230,8 @@
   programs.adb.enable = true;
 
   # Wayland + Hyprland attempt
-  programs.hyprland.enable = true; #remove
-  programs.hyprland.withUWSM = true; #remove
+  programs.hyprland.enable = false; #remove
+  programs.hyprland.withUWSM = false; #remove
   # Attempt to fix Hyprland high VRAM usage
   environment.etc = {
     "nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.txt" = {
@@ -335,7 +332,10 @@
     ];
   };
 
-  users.users.sddm.extraGroups = [ "video" ];
+  users.users.sddm.extraGroups = ["video"];
+
+  # Enable dconf
+  programs.dconf.enable = true;
 
   #Set up Steam
   programs.steam = {
@@ -345,11 +345,12 @@
     localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
 
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "steam"
-    "steam-original"
-    "steam-run"
-  ];
+  nixpkgs.config.allowUnfreePredicate = pkg:
+    builtins.elem (lib.getName pkg) [
+      "steam"
+      "steam-original"
+      "steam-run"
+    ];
 
   programs.direnv = {
     enable = true;
@@ -391,7 +392,7 @@
       cat = "bat -pp";
       icat = "wezterm imgcat";
 
-      nix-push-config = "nix fmt && git fetch --all && git add . && git commit -m \"update on $(date '+%Y-%m-%d %H:%M:%S')\" && git push";
+      nix-push-config = "alejandra $NIXOS_CONFIG_LOCATION && git fetch --all && git add . && git commit -m \"update on $(date '+%Y-%m-%d %H:%M:%S')\" && git push";
 
       lg1 = "git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all";
       lg2 = "git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'";
@@ -404,27 +405,17 @@
         "git"
         "sudo"
         "fzf"
-      #  "eza"
+        #  "eza"
       ];
       theme = "gnzh";
     };
-
   };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-
-    hyprland #remove?
-    dunst #remove?
-    qt5.full #remove?
-    qt6.full #remove?
-    slurp #keep
-    xdg-desktop-portal-hyprland #remove?
-    xdg-utils #keep
-
     #Git and fetchers and other QOL
-    git
+    git # Good luck without git
     nix-prefetch-git
     nix-prefetch
     nix-prefetch-docker
@@ -437,21 +428,19 @@
 
     # TEST
     #move keyboard app to qmk.nix
+    udiskie #remove
+    unzip #remove
+    p7zip #remove
+    pciutils #what is this?
+    unetbootin #clean?
+    wlr-randr #clean?
+
+    #Keyboard utilities
     nrfutil #clean?
     qmk #clean?
     qmk_hid #clean
     qmk-udev-rules #clean
-    udiskie #remove
-    unzip #remove
-    p7zip #remove
-    pciutils#what is this? 
-    smartmontools #keep
-    lm_sensors #keep
-    unetbootin #clean?
-    nixos-icons #keep
-    dejavu_fonts #keep
-    wlr-randr #clean?
- 
+
     (catppuccin-sddm.override {
       flavor = "mocha";
       font = "Noto Sans";
@@ -465,8 +454,20 @@
     wayland-utils
     wayland-protocols
     pam
+    hyprland #remove?
+    dunst #remove?
+    slurp #keep
+    xdg-desktop-portal-hyprland #remove?
 
     # Packages
+    dejavu_fonts #keep
+    nixos-icons #keep
+    smartmontools #keep
+    lm_sensors #keep
+    #libsForQt5 # grub themes
+    xdg-utils #keep
+    qt5.full
+    qt6.full
     ripgrep-all
     termshark
     discord
@@ -474,8 +475,7 @@
     neofetch # distro stats, deprecated :( - find new one
     manix # nix options manual
     curl
-    git # NixOS sucks without git
-    openssh  # keep
+    openssh # keep
     htop # system monitor
     fzf # fuzzy finder
     plymouth # boot customization
@@ -509,7 +509,6 @@
     # NVIM
     xclip
     wl-clipboard
-    #nil
 
     # Home manager
     home-manager
@@ -537,28 +536,6 @@
     nerd-fonts.symbols-only
   ];
 
-  # Enable dconf
-  programs.dconf.enable = true;
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
@@ -566,5 +543,4 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.11"; # Did you read the comment?
-
 }

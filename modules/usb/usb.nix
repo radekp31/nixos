@@ -1,7 +1,10 @@
 #/etc/nixos/modules/usb/usb.nix
-{ config, pkgs, lib, ... }:
-
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
   #Automount USB devices
   services.devmon.enable = true;
   services.gvfs.enable = true;
@@ -9,4 +12,3 @@
     enable = true;
   };
 }
-
