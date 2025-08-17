@@ -89,8 +89,6 @@
     ];
   };
 
-  security.pam.services.hyprlock = {}; #remove?
-
   # Setup SSH
   services.openssh = {
     enable = true;
@@ -163,12 +161,11 @@
     "kvm-intel"
   ];
 
-  networking.hostName = "nixos-desktop";
-
   powerManagement.cpuFreqGovernor = "performance";
 
   # Enable networking
   networking.networkmanager.enable = true;
+  networking.hostName = "nixos-desktop";
 
   # Session variables
   environment.sessionVariables = {
@@ -212,11 +209,6 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  #Niri attempt # clean
-  programs.niri = {
-    enable = true;
-  };
-
   services.flatpak = {
     enable = true;
     package = pkgs.flatpak;
@@ -229,75 +221,26 @@
   #Enable Android Debug Bridge
   programs.adb.enable = true;
 
-  # Wayland + Hyprland attempt
-  programs.hyprland.enable = false; #remove
-  programs.hyprland.withUWSM = false; #remove
-  # Attempt to fix Hyprland high VRAM usage
-  environment.etc = {
-    "nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.txt" = {
-      text = ''
-        {
-            "rules": [
-        	{
-        	    "pattern": {
-        		"feature": "procname",
-        		"matches": "Hyprland"
-        	    },
-        	    "profile": "Limit Free Buffer Pool On Wayland Compositors"
-        	}
-            ],
-            "profiles": [
-        	{
-        	    "name": "Limit Free Buffer Pool On Wayland Compositors",
-        	    "settings": [
-        		{
-        		    "key": "GLVidHeapReuseRatio",
-        		    "value": 1
-        		}
-        	    ]
-        	}
-            ]
-        }
-      '';
-      # The UNIX file mode bits
-      mode = "0644";
-    };
+  #Desktop settings
+  programs.niri = {
+    enable = true;
   };
 
-  services.displayManager.gdm.wayland = true;
-  programs.xwayland.enable = true; #remove? Niri should be using xwayland-satellite
-
-  services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
-
-  services.displayManager.sddm.autoNumlock = true;
-  services.displayManager.sddm.theme = "catppuccin-mocha";
-  services.displayManager.sddm.package = lib.mkForce pkgs.kdePackages.sddm;
-  services.displayManager.defaultSession = "niri";
   services.desktopManager.plasma6.enable = true;
-
-  #Backup access
-  services.xserver.desktopManager.xterm.enable = true;
-
-  #Avoid xterm flashbang
-  #xterm*faceName: VeraMono
-  environment.etc."X11/Xresources".text = ''
-    xterm*background: black
-    xterm*foreground: white
-    xterm*faceName: DejaVu Sans Mono
-    xterm*faceSize: 13
-    xterm*saveLines: 4096
-    xterm*scrollBar: true
-    xterm*rightScrollBar: true
-    xterm*renderFont: true
-    XTerm*fullscreen: true
-  '';
+  services.displayManager = {
+    defaultSession = "niri";
+    gdm.wayland.enable = true;
+    sddm = {
+      autoNumlock = true;
+      enable = true;
+      package = lib.mkForce pkgs.kdePackages.sddm; # leave default?
+      theme = "catppuccin-mocha";
+    };
+  };
 
   xdg.portal = {
     enable = true;
   };
-
-  # End of Hyprland attempt
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -385,15 +328,11 @@
       manix = ''
         manix "" | grep '^# ' | sed 's/^# \\(.*\\) (.*/\\1/;s/ (.*//;s/^# //' | fzf --preview="manix '{}'" | xargs manix
       '';
-
       ll = "ls -lahg";
       lld = "ls -lahgd";
       man = "tldr";
       cat = "bat -pp";
-      icat = "wezterm imgcat";
-
       nix-push-config = "alejandra $NIXOS_CONFIG_LOCATION && git fetch --all && git add . && git commit -m \"update on $(date '+%Y-%m-%d %H:%M:%S')\" && git push";
-
       lg1 = "git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all";
       lg2 = "git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'";
       lg = "lg1";
@@ -405,7 +344,6 @@
         "git"
         "sudo"
         "fzf"
-        #  "eza"
       ];
       theme = "gnzh";
     };
