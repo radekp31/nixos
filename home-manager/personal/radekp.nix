@@ -59,7 +59,6 @@ in {
   #Niri attempt
   xdg.configFile."niri/config.kdl".source = ../niri/config.kdl;
   xdg.configFile."niri/pickwindow.sh".source = ../niri/pickwindow.sh;
-  #home.file."config/niri/pickwindow.sh".mode = "0755";
 
   programs.fuzzel.enable = true; # Super+D in the default setting (app launcher)
   programs.swaylock.enable = true; # Super+Alt+L in the default setting (screen locker)
@@ -83,11 +82,9 @@ in {
     enable = true; # Super+T in Niri with the default setting (terminal)
     settings = {
       font.normal = {
-        ##family = "JetbrainsMono Nerd Font";
         family = "Hack Nerd Font";
       };
       font.size = 14;
-      #env.DISPLAY=":0";
     };
     theme = "catppuccin_macchiato";
   };
@@ -118,179 +115,6 @@ in {
   xdg = {
     enable = true;
   };
-
-  # Hyprland attempt
-
-  wayland.windowManager.hyprland = {
-    enable = true;
-    settings = {
-      #decoration = {
-      #  shadow_offset = "0 5";
-      #  "col.shadow" = "rgba(00000099)";
-      #};
-
-      "$mod" = "SUPER";
-
-      env = [
-      ];
-
-      exec-once = [
-        "clipse --listen"
-        "wl-paste --type text --watch cliphist store" #Stores only text data
-        "wl-paste --type image --watch cliphist store" #Stores only image data
-        "wl-paste -p -t text --watch clipman store -P --histpath=\"~/.local/share/clipman-primary.json\""
-        "gsettings set org.gnome.desktop.interface gtk-theme \"Yaru\"" # for GTK3 apps
-        "gsettings set org.gnome.desktop.interface color-scheme \"prefer-dark\"" # for GTK4 apps
-        "steam -silent" # launch steam, it takes some time
-
-        #"[workspace Term silent] wezterm" # its not getting assigned to workspace
-        #"[workspace Browser silent] lhttps://addons.mozilla.org/firefox/downloads/file/4449854/uaswitcher-1.4.89.xpaibrewolf"
-        #"[workspace Steam silent] steam"
-      ];
-
-      windowrulev2 = [
-        "float,class:(clipse)" # ensure you have a floating window class set if you want this behavior
-        "size 622 652,class:(clipse)" # set the size of the window as necessary
-      ];
-
-      bind = [
-        # Keybindings
-        "$mod, F, fullscreen"
-        "$mod, Return, exec, wezterm"
-        "$mod_SHIFT, grave, exec, grim -g \"$(slurp)\" - | swappy -f -"
-        "$mod, grave, exec, grim -g \"$(slurp -d)\" - | wl-copy"
-        #"$mod, space, exec, rofi -show window"
-        "$mod, space, exec, rofi -show"
-        "$mod, V, exec, kitty --class clipse -e 'clipse'"
-        "$mod, G, exec, /etc/nixos/modules/scripts/game-mode.sh"
-        #"Alt, F4, exec, rofi -show p -modi p:'rofi-power-menu --symbols-font \"Symbols Nerd Font Mono\"' -font \"JetBrains Mono NF 16\""
-        "Alt, F4, exec, rofi -show p -modi p:'rofi-power-menu --symbols-font \"Symbols Nerd Font Mono\"' -font \"DejaVu Sans Mono\""
-
-        # Hyprsome
-        #  move - move window, stay in current workspace
-        #  movefocus - move window, switch to the new workspace
-        #  workspace - create new workspace
-        #  focus - no idea, errors out
-
-        # Workspace - switching between windows
-        #"$mod, 1, exec, hyprsome workspace 1"
-        #"$mod, 2, exec, hyprsome workspace 2"
-        #"$mod, 3, exec, hyprsome workspace 3"
-        #"$mod, 4, exec, hyprsome workspace 4"
-        #"$mod, 5, exec, hyprsome workspace 5"
-
-        # Workspace - moving windows
-        #"$mod SHIFT, 1, exec, hyprsome move 1"
-        #"$mod SHIFT, 2, exec, hyprsome move 2"
-        #"$mod SHIFT, 3, exec, hyprsome move 3"
-        #"$mod SHIFT, 4, exec, hyprsome move 4"
-        #"$mod SHIFT, 5, exec, hyprsome move 5"
-
-        # Scroll through existing workspaces with mainMod + scroll
-        "SUPER, mouse_down, workspace, +1"
-        "SUPER, mouse_up, workspace, -1"
-      ];
-
-      monitor = [
-        #Monitor setup
-        "DP-2,2560x1440@144,0x0,1"
-        "DP-3,1920x1080@60,auto-left,1"
-      ];
-
-      workspace = [
-        #DP-2 Workspaces
-        "1, name:BROWSER, monitor:DP-2"
-        "2, name:CODE, monitor:DP-2"
-        "3, name:TERM1, monitor:DP-2"
-        "4, name:TERM2, monitor:DP-2"
-        "5, name:SOCIAL, monitor:DP-2"
-        "6, name:STEAM, monitor:DP-2"
-
-        #DP-3 Workspaces
-        "7, name:SYSTEM, monitor:DP-3"
-        "8, name:LOGS, monitor:DP-c"
-        "9, name:STUFF, monitor:DP-3"
-      ];
-
-      general = {
-        gaps_in = 5;
-        gaps_out = 10;
-        border_size = 2;
-        "col.active_border" = "rgba(c0caf5ee)";
-        "col.inactive_border" = "rgba(1a1b26aa)";
-        layout = "dwindle";
-      };
-
-      animations = {
-        enabled = false;
-      };
-
-      decoration = {
-        rounding = 15;
-
-        blur = {
-          enabled = true;
-          size = 5;
-          passes = 2;
-          new_optimizations = true;
-          ignore_opacity = true;
-        };
-
-        active_opacity = 0.95;
-        inactive_opacity = 0.85;
-        fullscreen_opacity = 1.0;
-
-        # Updated shadow configuration with newest syntax
-        shadow = {
-          enabled = true;
-          range = 15; # Shadow range in layout pixels
-          render_power = 3; # Power 3 for balanced falloff
-          ignore_window = true;
-          scale = 1.0;
-          offset = "3 3";
-          color = "0xee1a1b26"; # Matching your theme with high alpha
-          color_inactive = "0x661a1b26"; # Same color but more transparent for inactive
-        };
-      };
-    };
-
-    extraConfig = ''
-    '';
-    #settings = {
-    #  decoration = {
-    #    shadow_offset = 0.5;
-    #	"col.shadow" = "rgba(00000099)";
-    #  };
-    #
-    #  "$mod" = "SUPER";
-    #
-    #  bindm = [
-    #    "$mod, mouse:272, moveWindow"
-    #	"$mod, mouse:273, resizeWindow"
-    #	"$mod ALT, mouse:272, resizeWindow"
-    #  ];
-
-    systemd = {
-      enable = true;
-      extraCommands = [
-      ];
-      variables = [
-        "--all" # hope this works
-        #"DISPLAY"
-        #"HYPRLAND_INSTANCE_SIGNATURE"
-        #"WAYLAND_DISPLAY"
-        #"XDG_CURRENT_DESKTOP"
-      ];
-    };
-    plugins = [pkgs.hyprlandPlugins.hyprfocus pkgs.hyprlandPlugins.hyprtrails];
-  };
-
-  home.file.".local/share/wayland-sessions/hyprland.desktop".text = ''
-    [Desktop Entry]
-    Name=Hyprland
-    Exec=Hyprland
-    Type=Application
-  '';
 
   programs.waybar = {
     enable = true;
@@ -529,46 +353,42 @@ in {
     fill_shape=false
   '';
 
-  # services.hypridle = {
-  #   enable = true;
-  # };
-
-  # Enable hyprlock
-  programs.hyprlock = {
-    enable = true;
-    package = pkgs.hyprlock; # Ensure you have the correct package
-    settings = {
-      general = {
-        disable_loading_bar = true;
-        grace = 300;
-        hide_cursor = true;
-        no_fade_in = false;
-      };
-      auth = {
-        pam = {
-          enabled = true; # Ensure PAM is enabled
-        };
-      };
-      background = [
-        {
-          blur_passes = 3;
-          blur_size = 8;
-        }
-      ];
-      input-field = [
-        {
-          size = "200, 50";
-          position = "0, -80";
-          monitor = "";
-          dots_center = true;
-          fade_on_empty = false;
-          outline_thickness = 5;
-          placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
-          shadow_passes = 2;
-        }
-      ];
-    };
-  };
+  ## Enable hyprlock
+  #programs.hyprlock = {
+  #  enable = true;
+  #  package = pkgs.hyprlock; # Ensure you have the correct package
+  #  settings = {
+  #    general = {
+  #      disable_loading_bar = true;
+  #      grace = 300;
+  #      hide_cursor = true;
+  #      no_fade_in = false;
+  #    };
+  #    auth = {
+  #      pam = {
+  #        enabled = true; # Ensure PAM is enabled
+  #      };
+  #    };
+  #    background = [
+  #      {
+  #        blur_passes = 3;
+  #        blur_size = 8;
+  #      }
+  #    ];
+  #    input-field = [
+  #      {
+  #        size = "200, 50";
+  #        position = "0, -80";
+  #        monitor = "";
+  #        dots_center = true;
+  #        fade_on_empty = false;
+  #        outline_thickness = 5;
+  #        placeholder_text = "\"<span foreground=\"##cad3f5\">Password...</span>'\\";
+  #        shadow_passes = 2;
+  #      }
+  #    ];
+  #  };
+  #};
 
   services.hyprpaper = {
     enable = true;
@@ -588,6 +408,7 @@ in {
 
   systemd.user.services.hyprpaper.Unit.After = lib.mkForce "graphical-session.target";
 
+  #move to separate module
   programs.wezterm = {
     enable = true;
     enableZshIntegration = true;

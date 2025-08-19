@@ -363,6 +363,10 @@
     #Secrets Management
     age
     sops
+    openvas-scanner
+    gvm-libs
+    gvm-tools
+    ospd-openvas
 
     #Security scanning
     vulnix
