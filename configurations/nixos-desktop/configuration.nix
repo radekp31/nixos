@@ -50,7 +50,7 @@
     gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-older-than 10d";
+      options = "--delete-older-than 5d";
     };
     settings = {
       auto-optimise-store = true;
@@ -226,7 +226,7 @@
     enable = true;
   };
 
-  services.desktopManager.plasma6.enable = true;
+  services.desktopManager.plasma6.enable = false;
   services.displayManager = {
     defaultSession = "niri";
     gdm.wayland.enable = true;
@@ -235,6 +235,7 @@
       enable = true;
       package = lib.mkForce pkgs.kdePackages.sddm; # leave default?
       theme = "catppuccin-mocha";
+      wayland.enable = true;
     };
   };
 
@@ -407,6 +408,7 @@
 
     # Packages
     dejavu_fonts #keep
+    dejavu_fontsEnv
     nixos-icons #keep
     smartmontools #keep
     lm_sensors #keep

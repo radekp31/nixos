@@ -82,7 +82,8 @@ in {
     enable = true; # Super+T in Niri with the default setting (terminal)
     settings = {
       font.normal = {
-        family = "Hack Nerd Font";
+        #family = "Hack Nerd Font";
+        family = "DejaVu Sans Mono";
       };
       font.size = 14;
     };
