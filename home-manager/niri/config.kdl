@@ -310,7 +310,9 @@ binds {
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+T { spawn "alacritty"; }
-    Mod+D { spawn "fuzzel"; }
+    //Mod+D { spawn "fuzzel"; }
+    Mod+Space { spawn "rofi" "-show" "drun"; }
+    Super+Alt+0 { spawn "rofi" "-show" "menu" "-modi" "menu:rofi-power-menu --choices=shutdown/reboot/suspend/hibernate/logout"; }
     Super+Alt+L { spawn "swaylock"; }
     Mod+W { spawn "sh" "-c" "~/.config/niri/pickwindow.sh"; }
 

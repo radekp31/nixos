@@ -102,7 +102,7 @@
   ];
 
   # GPU runs hot due to lots of power fed to it
-  powerManagement.powertop.enable = true;
+  powerManagement.powertop.enable = false;
 
   # Fan control on Wayland
   # maybe use system.activationScripts ?

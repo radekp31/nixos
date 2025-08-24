@@ -375,6 +375,7 @@
 
     # TEST
     #move keyboard app to qmk.nix
+    #freecad-wayland
     udiskie #remove
     unzip #remove
     p7zip #remove
