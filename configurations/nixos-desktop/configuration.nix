@@ -11,6 +11,7 @@
     ../../modules/apps/qmk/qmk.nix
     ../../modules/apps/qemu/qemu.nix
     ../../drivers/brother/DCPL2622DW.nix
+    ../../modules/scripts/fan-control.sh
   ];
 
   nixpkgs.config.segger-jlink.acceptLicense = true; #clean
