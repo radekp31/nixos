@@ -701,6 +701,7 @@ in {
     xwayland-satellite
 
     # Packages
+    bitwarden-desktop
     delta # fancy git diff
     vlc
     git

@@ -50,8 +50,8 @@
   nix = {
     gc = {
       automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 5d";
+      dates = "daily";
+      options = "--delete-older-than 3d";
     };
     settings = {
       auto-optimise-store = true;
@@ -63,6 +63,9 @@
     enable = true;
     wheelNeedsPassword = true; # Require password for sudo
     extraConfig = ''
+      Defaults	pwfeedback
+      Defaults	insults
+
       user ALL=(ALL) NOPASSWD: ${pkgs.linuxPackages.nvidia_x11.settings}
     '';
     extraRules = [
@@ -136,6 +139,7 @@
     gfxmodeBios = "1366x768";
     #theme = "${pkgs.libsForQt5.breeze-grub}/grub/themes/breeze";
     theme = null;
+    configurationLimit = 3;
   };
 
   # Kernel
@@ -330,7 +334,7 @@
       manix = ''
         manix "" | grep '^# ' | sed 's/^# \\(.*\\) (.*/\\1/;s/ (.*//;s/^# //' | fzf --preview="manix '{}'" | xargs manix
       '';
-      ll = "ls -lahg";
+      ll = "ls -lah";
       lld = "ls -lahgd";
       man = "tldr";
       cat = "bat -pp";
