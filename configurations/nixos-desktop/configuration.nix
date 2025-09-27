@@ -11,7 +11,7 @@
     ../../modules/apps/qmk/qmk.nix
     ../../modules/apps/qemu/qemu.nix
     ../../drivers/brother/DCPL2622DW.nix
-    ../../modules/scripts/fan-control.sh
+    #../../modules/scripts/fan-control.sh
   ];
 
   nixpkgs.config.segger-jlink.acceptLicense = true; #clean
@@ -355,6 +355,9 @@
     };
   };
 
+  #Asus motherboard control
+  services.asusd.enable = true;
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -418,6 +421,8 @@
     nixos-icons #keep
     smartmontools #keep
     lm_sensors #keep
+    linuxKernel.packages.linux_6_16.asus-ec-sensors
+    nvfancontrol
     #libsForQt5 # grub themes
     xdg-utils #keep
     qt5.full

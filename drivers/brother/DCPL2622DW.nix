@@ -145,10 +145,12 @@
 # If colors look wrong, try different --mode settings
 {
   # Enable printing with Brother DCP-L2622DW support
+  # Go to http://localhost:631/admin and add the printer
   services.printing = {
     enable = true;
     browsing = true;
     defaultShared = true;
+    openFirewall = true;
     drivers = with pkgs; [
       brlaser
     ];
@@ -160,7 +162,7 @@
     extraBackends = with pkgs; [
       brscan5 # Brother scanner backend for DCP-L2622DW
     ];
-    netConf = "192.168.50.239";
+    netConf = "10.0.150.7";
   };
 
   hardware.sane.brscan5 = {
@@ -168,7 +170,7 @@
     netDevices = {
       "DCP-L2622DW" = {
         model = "DCP-L2622DW";
-        ip = "192.168.50.239";
+        ip = "10.0.150.7";
       };
     };
   };
