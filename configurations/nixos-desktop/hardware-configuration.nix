@@ -34,6 +34,12 @@
     options = ["rw" "uid=1000"];
   };
 
+  fileSystems."/media/A400" = {
+    device = "/dev/disk/by-uuid/68f32661-c47e-4aac-a9f8-d88d5baea437";
+    fsType = "ext4";
+    #options = ["rw" "uid=1000"];
+  };
+
   swapDevices = [];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking

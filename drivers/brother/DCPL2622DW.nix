@@ -148,12 +148,31 @@
   # Go to http://localhost:631/admin and add the printer
   services.printing = {
     enable = true;
-    browsing = true;
+    browsing = false;
     defaultShared = true;
     openFirewall = true;
     drivers = with pkgs; [
       brlaser
     ];
+  };
+
+  # Declaratively configure the printer
+  hardware.printers = {
+    ensurePrinters = [
+      {
+        name = "Brother_DCP_L2622DW";
+        location = "Office";
+        description = "Brother DCP-L2622DW";
+        deviceUri = "lpd://10.0.150.7/binary_p1";
+        #model = "drv:///brlaser.drv/br7030.ppd";  # Generic Brother laser driver
+        model = "drv:///brlaser.drv/brl2500d.ppd";
+        ppdOptions = {
+          PageSize = "A4";
+          Duplex = "DuplexNoTumble";
+        };
+      }
+    ];
+    ensureDefaultPrinter = "Brother_DCP_L2622DW";
   };
 
   # Enable scanning support for your multifunction device
@@ -199,7 +218,7 @@
   };
 
   networking.firewall = {
-    allowedTCPPorts = [54921 54925 161];
+    allowedTCPPorts = [54921 54925 161 515 631 9100];
     allowedUDPPorts = [161];
   };
 

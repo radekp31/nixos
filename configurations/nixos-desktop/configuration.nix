@@ -67,8 +67,18 @@
       Defaults	insults
 
       user ALL=(ALL) NOPASSWD: ${pkgs.linuxPackages.nvidia_x11.settings}
+      radekp ALL=(ALL) NOPASSWD: ${pkgs.rsync}/bin/rsync
     '';
     extraRules = [
+      #{
+      #  users = ["radekp"];
+      #  commands = [
+      #    {
+      #      command = "${pkgs.rsync}/bin/rsync";
+      #      options = ["NOPASSWD"];
+      #    }
+      #  ];
+      #}
       {
         commands = [
           {
@@ -98,6 +108,7 @@
     enable = true;
     settings = {
       PasswordAuthentication = true;
+      #PermitRootLogin = "yes";
     };
   };
 

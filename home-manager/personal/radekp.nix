@@ -725,6 +725,7 @@ in {
     dmenu
     ueberzug
     glance
+    qbittorrent-enhanced-nox
     #librewolf-wayland
 
     # Hyprland
