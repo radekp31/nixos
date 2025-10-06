@@ -164,8 +164,8 @@
         location = "Office";
         description = "Brother DCP-L2622DW";
         deviceUri = "lpd://10.0.150.7/binary_p1";
-        #model = "drv:///brlaser.drv/br7030.ppd";  # Generic Brother laser driver
-        model = "drv:///brlaser.drv/brl2500d.ppd";
+        model = "drv:///brlaser.drv/br7030.ppd"; # Generic Brother laser driver
+        #model = "drv:///brlaser.drv/brl2500d.ppd";
         ppdOptions = {
           PageSize = "A4";
           Duplex = "DuplexNoTumble";
