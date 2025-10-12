@@ -11,7 +11,7 @@
     ../../modules/apps/qmk/qmk.nix
     ../../modules/apps/qemu/qemu.nix
     ../../drivers/brother/DCPL2622DW.nix
-    #../../modules/scripts/fan-control.sh
+    ../../modules/scripts/fan-control.sh
   ];
 
   nixpkgs.config.segger-jlink.acceptLicense = true; #clean
@@ -19,14 +19,14 @@
   # Configure Nixpkgs to use the unstable channel for system-wide packages
   nixpkgs.config = {
     allowUnfree = true;
-    channels = {
-      enable = true;
+    #channels = {
+    #  enable = true;
 
-      urls = ["https://nixos.org/channels/nixpkgs-unstable"];
-    };
-    packageOverrides = pkgs: {
-      unstable = import <nixos-unstable> {config = pkgs.config;};
-    };
+    #  urls = ["https://nixos.org/channels/nixpkgs-unstable"];
+    #};
+    #packageOverrides = pkgs: {
+    #  unstable = import <nixos-unstable> {config = pkgs.config;};
+    #};
     overlays = [
       (import (
         builtins.fetchTarball {
@@ -168,6 +168,13 @@
     "fbcon=map:0"
     "video=DP-2:1920x1080"
     "video=DP-3:off"
+
+    #Fix for misbehaving nvme drive
+    "nvme_core.default_ps_max_latency_us=0"
+    "pcie_aspm=off"
+    "pcie_port_pm=off"
+    "nvme_core.io_timeout=4294967295"
+    "nvme_core.max_retries=5"
   ];
 
   # Enable virtualization # move virtualisations items to qemu.nix
@@ -245,7 +252,7 @@
   services.desktopManager.plasma6.enable = false;
   services.displayManager = {
     defaultSession = "niri";
-    gdm.wayland.enable = true;
+    #gdm.wayland.enable = true;
     sddm = {
       autoNumlock = true;
       enable = true;
@@ -369,6 +376,8 @@
   #Asus motherboard control
   services.asusd.enable = true;
 
+  services.fwupd.enable = true;
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -383,10 +392,10 @@
     #Secrets Management
     age
     sops
-    openvas-scanner
-    gvm-libs
-    gvm-tools
-    ospd-openvas
+    #openvas-scanner - no cmake support < 3.5
+    #gvm-libs - no cmake support < 3.5
+    #gvm-tools - no cmake support < 3.5
+    #ospd-openvas - no cmake support < 3.5
 
     #Security scanning
     vulnix
@@ -401,12 +410,15 @@
     pciutils #what is this?
     unetbootin #clean?
     wlr-randr #clean?
+    cmake
+    nvme-cli
+    fwupd
 
     #Keyboard utilities
     nrfutil #clean?
-    qmk #clean?
-    qmk_hid #clean
-    qmk-udev-rules #clean
+    qmk
+    qmk_hid
+    qmk-udev-rules
 
     (catppuccin-sddm.override {
       flavor = "mocha";
@@ -436,7 +448,7 @@
     nvfancontrol
     #libsForQt5 # grub themes
     xdg-utils #keep
-    qt5.full
+    #qt5.full - marked as unsafe, refuses to build
     qt6.full
     ripgrep-all
     termshark
