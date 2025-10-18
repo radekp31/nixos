@@ -151,10 +151,11 @@
     #theme = "${pkgs.libsForQt5.breeze-grub}/grub/themes/breeze";
     theme = null;
     configurationLimit = 3;
+    memtest86.enable = true;
   };
 
   # Kernel
-  boot.kernelPackages = pkgs.linuxPackages_6_16;
+  boot.kernelPackages = pkgs.linuxPackages_6_17;
   boot.kernelParams = [
     "boot.shell_on_fail"
     "tsc=unstable"
@@ -378,6 +379,14 @@
 
   services.fwupd.enable = true;
 
+  #Enable Bluetooth
+  hardware.bluetooth = {
+    enable = true;
+    #powerOnBoot = true;
+  };
+
+  services.blueman.enable = true;
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -413,6 +422,8 @@
     cmake
     nvme-cli
     fwupd
+    sqlite
+    mangohud
 
     #Keyboard utilities
     nrfutil #clean?
@@ -434,7 +445,6 @@
     wayland-protocols
     pam
     hyprland #remove?
-    dunst #remove?
     slurp #keep
     xdg-desktop-portal-hyprland #remove?
 
@@ -469,7 +479,7 @@
     rofi-power-menu # awesome power menu
     ntfs3g #Too many windows people around me
     shutter # snipping tool
-    dunst # notification tool
+    #dunst # notification tool
     lld_18
     jq
     yt-dlp
@@ -477,6 +487,7 @@
     tldr
     btop
     nurl # get tarball hashes
+    dig
 
     # Zsh
 
