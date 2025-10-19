@@ -6,7 +6,10 @@
 #let
 #
 #in
+
+
 {
+  
   #Accept NVIDIA licence
   nixpkgs.config.nvidia.acceptLicense = true;
 
@@ -49,6 +52,10 @@
     # Fine-grained power management. Turns off GPU when not in use.
     # Experimental and only works on modern Nvidia GPUs (Turing or newer).
     powerManagement.finegrained = false;
+
+    # Persistence mode
+    # Required for power limit to stay
+    nvidiaPersistenced = true;
 
     # Ampere and newer (RTX 30xx) :(
     dynamicBoost.enable = false;
@@ -96,4 +103,22 @@
 
   # GPU runs hot due to lots of power fed to it
   powerManagement.powertop.enable = false;
+  
+  #Create power limit service
+  systemd.services.nv-power-limit = {
+    enable = true;
+    path = with pkgs; [
+      linuxPackages.nvidia_x11
+      bash
+    ];
+    wantedBy = [ "multi-user.target" ];
+    description = "Nvidia-smi power limit setting";
+    serviceConfig = {
+        Type = "oneshot";
+    };
+    script=''
+      nvidia-smi -i 0 -pl 130
+    '';
+  };
+
 }

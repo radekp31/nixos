@@ -19,14 +19,6 @@
   # Configure Nixpkgs to use the unstable channel for system-wide packages
   nixpkgs.config = {
     allowUnfree = true;
-    #channels = {
-    #  enable = true;
-
-    #  urls = ["https://nixos.org/channels/nixpkgs-unstable"];
-    #};
-    #packageOverrides = pkgs: {
-    #  unstable = import <nixos-unstable> {config = pkgs.config;};
-    #};
     overlays = [
       (import (
         builtins.fetchTarball {
