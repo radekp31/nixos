@@ -18,9 +18,6 @@
 
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
-
-    #lsfg-vk-flake.url = "github:pabloaul/lsfg-vk-flake/main";
-    #lsfg-vk-flake.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
@@ -30,7 +27,6 @@
     home-manager,
     disko,
     sops-nix,
-    #lsfg-vk-flake,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -44,7 +40,6 @@
         ./configurations/nixos-desktop/configuration.nix
         ./modules/secrets/sops.nix
         #sops-nix.nixosModules.sops
-        #lsfg-vk-flake.nixosModules.default
         {
           environment.systemPackages = [alejandra.defaultPackage.${system}];
         }

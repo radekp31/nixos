@@ -96,10 +96,4 @@
 
   # GPU runs hot due to lots of power fed to it
   powerManagement.powertop.enable = false;
-
-  #Lossless Frame Gen - Vulkan (LSFG-VK)
-  #services.lsfg-vk = {
-  #  enable = true;
-  #  ui.enable = true; # installs gui for configuring lsfg-vk
-  #};
 }
