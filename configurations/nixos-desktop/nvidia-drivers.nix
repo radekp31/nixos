@@ -6,10 +6,7 @@
 #let
 #
 #in
-
-
 {
-  
   #Accept NVIDIA licence
   nixpkgs.config.nvidia.acceptLicense = true;
 
@@ -77,7 +74,8 @@
     nvidiaSettings = true;
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
-    package = config.boot.kernelPackages.nvidiaPackages.latest;
+    #package = config.boot.kernelPackages.nvidiaPackages.latest;
+    package = config.boot.kernelPackages.nvidiaPackages.production;
 
     # Pin specific driver version
     #package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
@@ -102,8 +100,9 @@
   ];
 
   # GPU runs hot due to lots of power fed to it
-  powerManagement.powertop.enable = false;
-  
+  # Run either power top, or custom fan and power management
+  # powerManagement.powertop.enable = true;
+
   #Create power limit service
   systemd.services.nv-power-limit = {
     enable = true;
@@ -111,14 +110,13 @@
       linuxPackages.nvidia_x11
       bash
     ];
-    wantedBy = [ "multi-user.target" ];
+    wantedBy = ["multi-user.target"];
     description = "Nvidia-smi power limit setting";
     serviceConfig = {
-        Type = "oneshot";
+      Type = "oneshot";
     };
-    script=''
+    script = ''
       nvidia-smi -i 0 -pl 130
     '';
   };
-
 }

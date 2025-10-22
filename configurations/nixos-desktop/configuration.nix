@@ -150,8 +150,14 @@
   boot.kernelPackages = pkgs.linuxPackages_6_17;
   boot.kernelParams = [
     "boot.shell_on_fail"
-    "tsc=unstable"
+    #"tsc=unstable"
+
     "trace_clock=local"
+
+    #Set non-EPP CPU driver
+    #"amd_pstate=active"
+    #"tsc=reliable"
+    #"clocksource=tsc"
 
     #Disable USB power management
     "usbcore.autosuspend=-1"
@@ -404,7 +410,7 @@
 
     # TEST
     #move keyboard app to qmk.nix
-    #freecad-wayland
+    freecad-wayland
     udiskie #remove
     unzip #remove
     p7zip #remove
