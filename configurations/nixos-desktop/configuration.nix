@@ -181,6 +181,8 @@
   boot.kernelModules = [
     "kvm-amd"
     "kvm-intel"
+    #Enable XFS
+    "xfs"
   ];
 
   powerManagement.cpuFreqGovernor = "performance";
@@ -385,6 +387,26 @@
 
   services.blueman.enable = true;
 
+  # Additional extensions: https://cockpit-project.org/applications.html
+  # Make derivations for:
+  # Storage
+  # Network
+  # Podman
+  # Kernel Dump
+  # Diagnostics
+  # Cockpit files | Navigator
+  # ZFS Manager
+  # File Sharing
+  # Benchmark
+  # Sensors
+  # Tailscale
+  # Cloudflare tunnels
+  # Backblaze
+
+  services.cockpit = {
+    enable = true;
+  };
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -486,6 +508,8 @@
     btop
     nurl # get tarball hashes
     dig
+    libxfs
+    cockpit
 
     # Zsh
 

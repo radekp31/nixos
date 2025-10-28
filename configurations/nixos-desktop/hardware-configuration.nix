@@ -31,13 +31,13 @@
   fileSystems."/media/WDRED" = {
     device = "/dev/disk/by-uuid/C6541CA0541C9571";
     fsType = "ntfs";
-    options = ["rw" "uid=1000"];
+    options = ["rw" "uid=1000" "nofail"];
   };
 
   fileSystems."/media/A400" = {
     device = "/dev/disk/by-uuid/68f32661-c47e-4aac-a9f8-d88d5baea437";
-    fsType = "ext4";
-    #options = ["rw" "uid=1000"];
+    fsType = "xfs";
+    options = ["rw" "uid=1000" "nofail"];
   };
 
   swapDevices = [];
