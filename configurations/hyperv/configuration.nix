@@ -19,7 +19,6 @@
 
   boot.blacklistedKernelModules = ["hyperv_fb" "modesetting" "uio" "uio_hv_generic"];
   boot.kernelModules = ["hv_balloon" "hv_netvsc" "hv_storvsc" "hv_vmbus" "hv_utils" "hv_uio_fcopy"];
-  #boot.kernelParams = ["hv_balloon" "hv_netvsc" "hv_storvsc" "hv_vmbus" "hv_utils" "hv_uio_fcopy"];
 
   boot.plymouth.enable = true;
 
@@ -47,19 +46,17 @@
     ];
   };
 
-  #services.displayManager.autoLogin.enable = true; #The cant be local and remote sessions active at once for single user. False is inconvenient.
-  services.displayManager.sddm.enable = true;
-  #services.xserver = {
-  #  enable = false;
-  #  xkb = {
-  #    layout = "us";
-  #    variant = "";
-  #    options = "eurosign:e,caps:escape";
-  #  };
-  #  desktopManager.plasma5.enable = true;
-  #  videoDrivers = [ "fbdev" "vesa" ];
-  #};
-
+  services.xserver.enable = true;
+  services.xserver.layout = "us";
+  services.xserver.desktopManager = {
+    xterm.enable = true;
+    xfce.enable = true;
+  };
+  services.displayManager.defaultSession = "xfce";
+  services.xserver.displayManager.lightdm.enable = true;
+  services.xserver.videoDrivers = [ "fbdev" ];
+  services.xserver.libinput.enable = true;
+  
   nixpkgs.config.allowUnfree = true;
 
   console.keyMap = "us";
@@ -98,7 +95,7 @@
 
   services.xrdp = {
     enable = true;
-    defaultWindowManager = "startplasma-x11";
+    defaultWindowManager = "xfce4-session";
     openFirewall = true;
   };
 
@@ -166,17 +163,13 @@
     wget
     curl
     git
-    xclip
     xsel
-    freerdp
     xrdp
-    autocutsel
     dbus
-    linuxKernel.packages.linux_6_13.hyperv-daemons
+    linuxKernel.packages.linux_6_6.hyperv-daemons
     fzf
-    shellharden
-    cifs-utils
     jq
+    htop
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -193,7 +186,7 @@
   services.openssh.enable = true;
   programs.ssh.askPassword = lib.mkForce "${pkgs.x11_ssh_askpass}/libexec/x11_ssh_askpass";
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ 10257 10259 6443 443 8888 ];
+   networking.firewall.allowedTCPPorts = [ 3389 ];
   # networking.firewall.allowedUDPPorts = [ 10257 10259 6443 443 8888 ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
