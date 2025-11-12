@@ -1,6 +1,10 @@
 { config, pkgs, lib,... }:
 
 {
+
+  imports = with pkgs; [
+    ./packages.nix
+  ];
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home.username = "radekp";
@@ -20,6 +24,21 @@
         "git"
         "sudo"
       ];
+    };
+  };
+
+  programs.fzf = {
+    enable = true;
+  };
+
+  programs.ssh = {
+    enable = true;
+    matchBlocks = {
+      "github.com" = {
+        hostname = "github.com";
+        user = "git";
+        identityFile = "~/.ssh/id_ed25519";
+      };
     };
   };
 
