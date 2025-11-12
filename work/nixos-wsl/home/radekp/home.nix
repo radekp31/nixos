@@ -10,12 +10,29 @@
   home.username = "radekp";
   home.homeDirectory = "/home/radekp";
 
+  programs.git = {
+    enable = true;
+    userName = "Radek Polasek";
+    userEmail = "polasek.31@seznam.cz";
+    extraConfig = {
+      init.defaultBranch = "main";
+      pull.rebase = true;
+    };
+  };
+
   programs.zsh = {
     enable = true;
     enableCompletion = true;
+    initContent = ''
+      export NIXPKGS_ALLOW_UNFREE=1
+      export EDITOR='nvim'
+      export VISUAL='nvim'
+    '';
     shellAliases = {
       ll = "ls -lah --color=auto";
       grep = "grep --color=auto";
+      vi = "nvim";
+      vim = "nvim";
     };
     oh-my-zsh = {
       enable = true;
@@ -41,6 +58,12 @@
       };
     };
   };
+
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
+
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
