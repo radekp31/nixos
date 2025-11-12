@@ -29,6 +29,8 @@
   ripgrep
   fd
   bat
+
+  fastfetch # to identify session
   
   ];
 }

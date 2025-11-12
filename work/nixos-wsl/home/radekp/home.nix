@@ -27,6 +27,9 @@
       export NIXPKGS_ALLOW_UNFREE=1
       export EDITOR='nvim'
       export VISUAL='nvim'
+      export C='/mnt/c'
+
+      fastfetch --config ${pkgs.fastfetch}/share/fastfetch/presets/examples/3.jsonc
     '';
     shellAliases = {
       ll = "ls -lah --color=auto";
