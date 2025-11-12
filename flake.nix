@@ -18,6 +18,11 @@
 
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -27,6 +32,7 @@
     home-manager,
     disko,
     sops-nix,
+    nixos-wsl,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -82,6 +88,22 @@
       ];
     };
 
+    nixosConfigurations."dt-wsl-nix" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+           nixos-wsl.nixosModules.wsl
+          ./work/nixos-wsl/system/configuration.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.radekp = import ./work/nixos-wsl/home/radekp/home.nix;
+            # Optionally, pass extra arguments to home-manager modules
+            # home-manager.extraSpecialArgs = { };
+          }
+        ];
+    };
+
     homeConfigurations = {
       "radekp" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
@@ -104,3 +126,5 @@
     # };
   };
 }
+
+
