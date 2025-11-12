@@ -21,9 +21,10 @@
   nix = {
     settings = {
       experimental-features = ["nix-command" "flakes"];
+      auto-optimise-store = true;
     };
     gc = {
-      dates = "12:00";
+      dates = "daily";
       automatic = true;
     };
   };

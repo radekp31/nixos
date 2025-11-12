@@ -23,6 +23,11 @@
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    kickstart-nix-nvim = {
+      url="github:radekp31/kickstart-nix.nvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -33,6 +38,7 @@
     disko,
     sops-nix,
     nixos-wsl,
+    kickstart-nix-nvim,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -100,6 +106,11 @@
             home-manager.users.radekp = import ./work/nixos-wsl/home/radekp/home.nix;
             # Optionally, pass extra arguments to home-manager modules
             # home-manager.extraSpecialArgs = { };
+          }
+	  {
+            nixpkgs.overlays = [
+              kickstart-nix-nvim.overlays.default
+            ];
           }
         ];
     };

@@ -10,6 +10,7 @@
   )
   fzf
   jq
+  nvim-pkg
   
   ];
 }
