@@ -1,7 +1,7 @@
-{ config, lib, pkgs, ... }:
-
 {
-
+  pkgs,
+  ...
+}: {
   users.users = {
     radekp = {
       isNormalUser = true;
@@ -9,10 +9,9 @@
       extraGroups = [
         "wheel"
       ];
-      group="users";
-      home="/home/radekp";
+      group = "users";
+      home = "/home/radekp";
       shell = pkgs.zsh;
     };
   };
-
 }

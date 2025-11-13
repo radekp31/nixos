@@ -1,13 +1,9 @@
-{ config, lib, pkgs, ... }:
-
 {
-
+  pkgs,
+  ...
+}: {
   environment.systemPackages = with pkgs; [
-
     git
     neovim
-
   ];
-
-
 }

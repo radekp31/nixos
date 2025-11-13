@@ -9,7 +9,6 @@
 #
 # port 22 needs to be opened
 {
-  config,
   lib,
   pkgs,
   ...

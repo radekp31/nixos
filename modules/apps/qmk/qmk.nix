@@ -1,8 +1,6 @@
 #/etc/nixos/modules/usb/usb.nix
 {
-  config,
   pkgs,
-  lib,
   ...
 }: {
   hardware.keyboard.qmk.enable = true;

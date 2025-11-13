@@ -1,11 +1,9 @@
 {
   inputs,
   config,
-  lib,
   pkgs,
   ...
-}: let
-in {
+}: {
   imports = [
     inputs.sops-nix.nixosModules.sops #try <sops-nix/modules/sops>
   ];

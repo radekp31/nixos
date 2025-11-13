@@ -1,8 +1,5 @@
 #/etc/nixos/modules/apps/bswpm/bspwm.nix
 {
-  config,
-  pkgs,
-  lib,
   ...
 }: {
   services.xserver.windowsManager.bspwm = {

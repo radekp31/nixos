@@ -1,7 +1,7 @@
-{ config, pkgs, lib,... }:
-
 {
-
+  pkgs,
+  ...
+}: {
   imports = [
     ./packages.nix
   ];
@@ -44,7 +44,7 @@
     oh-my-zsh = {
       enable = true;
       theme = "gnzh";
-      plugins = [ 
+      plugins = [
         "copyfile"
         "git"
         "command-not-found"
@@ -74,11 +74,10 @@
     };
   };
 
-programs.direnv = {
+  programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
   };
-
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
@@ -89,5 +88,4 @@ programs.direnv = {
   # the Home Manager release notes for a list of state version
   # changes in each release.
   home.stateVersion = "25.05";
-
 }

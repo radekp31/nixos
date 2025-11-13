@@ -54,9 +54,9 @@
   };
   services.displayManager.defaultSession = "xfce";
   services.xserver.displayManager.lightdm.enable = true;
-  services.xserver.videoDrivers = [ "fbdev" ];
+  services.xserver.videoDrivers = ["fbdev"];
   services.xserver.libinput.enable = true;
-  
+
   nixpkgs.config.allowUnfree = true;
 
   console.keyMap = "us";
@@ -186,7 +186,7 @@
   services.openssh.enable = true;
   programs.ssh.askPassword = lib.mkForce "${pkgs.x11_ssh_askpass}/libexec/x11_ssh_askpass";
   # Open ports in the firewall.
-   networking.firewall.allowedTCPPorts = [ 3389 ];
+  networking.firewall.allowedTCPPorts = [3389];
   # networking.firewall.allowedUDPPorts = [ 10257 10259 6443 443 8888 ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;

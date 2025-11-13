@@ -19,16 +19,19 @@
 
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
-    
+
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     kickstart-nix-nvim = {
-      url="github:radekp31/kickstart-nix.nvim";
+      url = "github:radekp31/kickstart-nix.nvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    treefmt-nix.url = "github:numtide/treefmt-nix";
+    systems.url = "github:nix-systems/default";
   };
 
   outputs = {
@@ -40,10 +43,19 @@
     sops-nix,
     nixos-wsl,
     kickstart-nix-nvim,
+    treefmt-nix,
+    systems,
     ...
   } @ inputs: let
     inherit (self) outputs;
     system = "x86_64-linux";
+
+    # Treefmt-nix
+    # Small tool to iterate over each systems
+    eachSystem = f: nixpkgs.lib.genAttrs (import systems) (system: f nixpkgs.legacyPackages.${system});
+
+    # Eval the treefmt modules from ./treefmt.nix
+    treefmtEval = eachSystem (pkgs: treefmt-nix.lib.evalModule pkgs ./modules/apps/treefmt/treefmt.nix);
   in {
     nixosConfigurations.nixos-desktop = nixpkgs.lib.nixosSystem {
       #system = "x86_64-linux";
@@ -96,24 +108,24 @@
     };
 
     nixosConfigurations."dt-wsl-nix" = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-           nixos-wsl.nixosModules.wsl
-          ./work/nixos-wsl/system/configuration.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.radekp = import ./work/nixos-wsl/home/radekp/home.nix;
-            # Optionally, pass extra arguments to home-manager modules
-            # home-manager.extraSpecialArgs = { };
-          }
-	  {
-            nixpkgs.overlays = [
-              kickstart-nix-nvim.overlays.default
-            ];
-          }
-        ];
+      system = "x86_64-linux";
+      modules = [
+        nixos-wsl.nixosModules.wsl
+        ./work/nixos-wsl/system/configuration.nix
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.users.radekp = import ./work/nixos-wsl/home/radekp/home.nix;
+          # Optionally, pass extra arguments to home-manager modules
+          # home-manager.extraSpecialArgs = { };
+        }
+        {
+          nixpkgs.overlays = [
+            kickstart-nix-nvim.overlays.default
+          ];
+        }
+      ];
     };
 
     homeConfigurations = {
@@ -131,12 +143,17 @@
 
     #packages.${system}.alejandra = alejandra.packages.${system}.default;
     #
-    formatter.${system} = nixpkgs.legacyPackages.x86_64-linux.nixpkgs-fmt;
+    #formatter.${system} = nixpkgs.legacyPackages.x86_64-linux.nixpkgs-fmt;
 
     # devShell = nixpkgs.mkShell {
     #   buildInputs = [ ... ];
     # };
+
+    # for `nix fmt`
+    formatter = eachSystem (pkgs: treefmtEval.${pkgs.system}.config.build.wrapper);
+    # for `nix flake check`
+    checks = eachSystem (pkgs: {
+      formatting = treefmtEval.${pkgs.system}.config.build.check self;
+    });
   };
 }
-
-

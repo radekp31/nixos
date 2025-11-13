@@ -1,8 +1,5 @@
 #/etc/nixos/modules/usb/usb.nix
 {
-  config,
-  pkgs,
-  lib,
   ...
 }: {
   #Automount USB devices

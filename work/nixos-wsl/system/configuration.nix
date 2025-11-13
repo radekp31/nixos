@@ -1,13 +1,12 @@
 # Edit this configuration file to define what should be installed on
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-
 # NixOS-WSL specific options are documented on the NixOS-WSL repository:
 # https://github.com/nix-community/NixOS-WSL
-
-{ config, lib, pkgs, ... }:
-
 {
+  config,
+  ...
+}: {
   imports = [
     # include NixOS-WSL modules
     #<nixos-wsl/modules>
@@ -29,14 +28,13 @@
     };
   };
 
-  nixpkgs.config = { 
-    allowUnfree = true;  
+  nixpkgs.config = {
+    allowUnfree = true;
   };
 
   programs.zsh.enable = true;
 
   #users.users managed by Home Manager modules, maybe define root here
-
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
