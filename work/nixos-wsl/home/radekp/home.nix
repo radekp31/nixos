@@ -1,6 +1,7 @@
-{pkgs, ...}: {
+{ ...}: {
   imports = [
     ./packages.nix
+    ../../../../modules/apps/shells/zsh/zsh.nix
   ];
   home.username = "radekp";
   home.homeDirectory = "/home/radekp";
@@ -12,50 +13,6 @@
     extraConfig = {
       init.defaultBranch = "main";
       pull.rebase = true;
-    };
-  };
-
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-    syntaxHighlighting = {
-      enable = true;
-    };
-    autosuggestion = {
-      enable = true;
-    };
-    initContent = ''
-      export NIXPKGS_ALLOW_UNFREE=1
-      export EDITOR='nvim'
-      export VISUAL='nvim'
-      export C='/mnt/c'
-
-      fastfetch --config ${pkgs.fastfetch}/share/fastfetch/presets/examples/3.jsonc
-
-      nixpush() {
-        nix fmt && nix flake check && git add . && git commit -m "$1" && git push
-      }
-    '';
-    shellAliases = {
-      ll = "ls -lah --color=auto";
-      grep = "grep --color=auto";
-      vi = "nvim";
-      vim = "nvim";
-    };
-    oh-my-zsh = {
-      enable = true;
-      theme = "gnzh";
-      plugins = [
-        "copyfile"
-        "git"
-        "command-not-found"
-        "fzf"
-        "sudo"
-        "azure"
-        "aws"
-        "gcloud"
-        "kubectl"
-      ];
     };
   };
 
