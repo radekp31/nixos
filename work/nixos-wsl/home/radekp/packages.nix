@@ -26,11 +26,11 @@
   curl
   wget
   netcat
-  ripgrep
+  ripgrep-all
   fd
   bat
   kubectl
-
+  tree
   fastfetch # to identify session
   
   ];

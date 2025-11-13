@@ -2,7 +2,7 @@
 
 {
 
-  imports = with pkgs; [
+  imports = [
     ./packages.nix
   ];
   home.username = "radekp";
@@ -23,7 +23,6 @@
     enableCompletion = true;
     syntaxHighlighting = {
       enable = true;
-      #highlighters = [ "main" "bracket" ];
     };
     autosuggestion = {
       enable = true;
@@ -75,7 +74,7 @@
     };
   };
 
-  programs.direnv = {
+programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
   };

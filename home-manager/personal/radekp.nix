@@ -114,6 +114,12 @@ in {
     enable = true;
     userName = "Radek Polasek";
     userEmail = "polasek.31@seznam.cz";
+    #settings = {
+    #  user = {
+    #    name = "Radek Polasek";
+    #    email = "polasek.31@seznam.cz";
+    #  };
+    #};
     extraConfig = {
       init.defaultBranch = "main";
       safe.directory = "/etc/nixos";
