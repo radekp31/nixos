@@ -144,7 +144,7 @@
     #packages.${system}.alejandra = alejandra.packages.${system}.default;
     #
     #formatter.${system} = nixpkgs.legacyPackages.x86_64-linux.nixpkgs-fmt;
-
+    #
     # devShell = nixpkgs.mkShell {
     #   buildInputs = [ ... ];
     # };

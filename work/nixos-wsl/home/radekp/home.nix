@@ -1,4 +1,4 @@
-{ ...}: {
+{...}: {
   imports = [
     ./packages.nix
     ../../../../modules/apps/shells/zsh/zsh.nix
