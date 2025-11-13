@@ -5,8 +5,6 @@
   imports = with pkgs; [
     ./packages.nix
   ];
-  # Home Manager needs a bit of information about you and the
-  # paths it should manage.
   home.username = "radekp";
   home.homeDirectory = "/home/radekp";
 
@@ -23,6 +21,13 @@
   programs.zsh = {
     enable = true;
     enableCompletion = true;
+    syntaxHighlighting = {
+      enable = true;
+      #highlighters = [ "main" "bracket" ];
+    };
+    autosuggestion = {
+      enable = true;
+    };
     initContent = ''
       export NIXPKGS_ALLOW_UNFREE=1
       export EDITOR='nvim'
@@ -41,14 +46,22 @@
       enable = true;
       theme = "gnzh";
       plugins = [ 
+        "copyfile"
         "git"
+        "command-not-found"
+        "fzf"
         "sudo"
+        "azure"
+        "aws"
+        "gcloud"
+        "kubectl"
       ];
     };
   };
 
   programs.fzf = {
     enable = true;
+    enableZshIntegration = true;
   };
 
   programs.ssh = {
@@ -78,6 +91,4 @@
   # changes in each release.
   home.stateVersion = "25.05";
 
-  # Let Home Manager install and manage itself.
-  #programs.enable = true;
 }

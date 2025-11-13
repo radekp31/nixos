@@ -29,6 +29,7 @@
   ripgrep
   fd
   bat
+  kubectl
 
   fastfetch # to identify session
   

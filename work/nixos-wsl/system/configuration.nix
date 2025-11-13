@@ -35,17 +35,8 @@
 
   programs.zsh.enable = true;
 
-  #users.users = {
-  #  radekp = {
-  #    isNormalUser = true;
-  #    createHome = true;
-  #    extraGroups = [
-  #      "wheel"
-  #    ];
-  #    group="users";
-  #    home="/home/radekp";
-  #  };
-  #};
+  #users.users managed by Home Manager modules, maybe define root here
+
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
