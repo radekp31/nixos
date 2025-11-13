@@ -474,7 +474,7 @@
     nixos-icons #keep
     smartmontools #keep
     lm_sensors #keep
-    linuxKernel.packages.linux_6_16.asus-ec-sensors
+    linuxKernel.packages.linux_6_17.asus-ec-sensors
     nvfancontrol
     #libsForQt5 # grub themes
     xdg-utils #keep

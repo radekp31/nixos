@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   systemd.services.setup-local-ip = {
     description = "Add current IP into /etc/hosts file";
     wantedBy = ["multi-user.target"];

@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   programs.virt-manager.enable = true;
 
   users.groups.libvirtd.members = ["your_username"];

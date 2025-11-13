@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: let
+{pkgs, ...}: let
   # Call the hyprlock package from the flake
   hyprlock = pkgs.callPackage (import
     (pkgs.fetchFromGitHub {

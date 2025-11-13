@@ -1,6 +1,4 @@
-{
-  ...
-}: {
+{...}: {
   nixpkgs.overlays = [
     (final: prev: {
       # Override openrgb to use MbedTLS 3 instead of MbedTLS 2

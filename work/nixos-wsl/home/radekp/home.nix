@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     ./packages.nix
   ];
@@ -34,6 +31,10 @@
       export C='/mnt/c'
 
       fastfetch --config ${pkgs.fastfetch}/share/fastfetch/presets/examples/3.jsonc
+
+      nixpush() {
+        nix fmt && nix flake check && git add . && git commit -m "$1" && git push
+      }
     '';
     shellAliases = {
       ll = "ls -lah --color=auto";

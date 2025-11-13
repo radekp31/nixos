@@ -1,8 +1,5 @@
 #/etc/nixos/modules/usb/usb.nix
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   hardware.keyboard.qmk.enable = true;
 
   environment.systemPackages = with pkgs; [

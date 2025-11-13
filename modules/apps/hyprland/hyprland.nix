@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   programs.hyprland.enable = true;
   programs.hyprland.withUWSM = true;
   # Set default session to Hyprland+uswm

@@ -1,6 +1,4 @@
-{
-  ...
-}: let
+{...}: let
   vars = import ./variables.nix;
 in {
   # A list of all files in the directory
