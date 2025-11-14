@@ -15,15 +15,6 @@
       export C='/mnt/c'
 
       #fastfetch --config ${pkgs.fastfetch}/share/fastfetch/presets/examples/3.jsonc
-
-      #nixpush() {
-      #  nix fmt && \
-      #  git add -A && \
-      #  (git commit -m "$1" || true) && \
-      #  nix flake check && \
-      #  git push
-      #}
-
       nixpush() {
         nix fmt && \
         git add -A && \
