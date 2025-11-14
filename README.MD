@@ -1,27 +1,26 @@
-# Target Repository Structure
+## Target Repository Structure
 
-├── flake.nix
-├── modules/
-│   ├── base.nix
-│   ├── boot.nix
-│   └── ...
-├── hosts/
-│   ├── desktop/
-│   │   ├── configuration.nix
-│   │   └── hardware-configuration.nix
-│   ├── server/
-│   │   ├── configuration.nix
-│   │   └── hardware-configuration.nix
-│   └── nixos-wsl/
-│       └── configuration.nix
-└── home/
-├── radekp/
-│   ├── home.nix
-│   ├── packages.nix
-│   └── programs/
-│       ├── git.nix
-│       ├── zsh.nix
-│       └── ...
-└── common.nix
-
+├── flake.nix<br>
+├── modules/<br>
+│   ├── base.nix<br>
+│   ├── boot.nix<br>
+│   └── ...<br>
+├── hosts/<br>
+│   ├── desktop/<br>
+│   │   ├── configuration.nix<br>
+│   │   └── hardware-configuration.nix<br>
+│   ├── server/<br>
+│   │   ├── configuration.nix<br>
+│   │   └── hardware-configuration.nix<br>
+│   └── nixos-wsl/<br>
+│       └── configuration.nix<br>
+└── home/<br>
+    ├── radekp/<br>
+    │   ├── home.nix<br>
+    │   ├── packages.nix<br>
+    │   └── programs/<br>
+    │       ├── git.nix<br>
+    │       ├── zsh.nix<br>
+    │       └── ...<br>
+    └── common.nix
 
