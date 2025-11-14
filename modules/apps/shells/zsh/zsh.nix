@@ -16,13 +16,24 @@
 
       #fastfetch --config ${pkgs.fastfetch}/share/fastfetch/presets/examples/3.jsonc
 
+      #nixpush() {
+      #  nix fmt && \
+      #  git add -A && \
+      #  (git commit -m "$1" || true) && \
+      #  nix flake check && \
+      #  git push
+      #}
+
       nixpush() {
         nix fmt && \
         git add -A && \
-        (git commit -m "$1" || true) && \
+        if ! git diff --cached --quiet; then
+          git commit -m "$1"
+        fi && \
         nix flake check && \
         git push
       }
+
     '';
     shellAliases = {
       ll = "ls -lah --color=auto";
