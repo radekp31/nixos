@@ -22,10 +22,11 @@
       #  nix flake check && \
       #  git push
       #}
+
       nixpush() {
         nix fmt && \
         git add -A && \
-        (git diff --cached --quiet || git commit -m "$1") && \
+        (git commit -m "$1" || true) && \
         nix flake check && \
         git push
       }
