@@ -1,7 +1,7 @@
 {...}: {
   imports = [
     ./packages.nix
-    ../../../../modules/apps/shells/zsh/zsh.nix
+    ../../modules/apps/shells/zsh/zsh.nix
   ];
   home.username = "radekp";
   home.homeDirectory = "/home/radekp";

@@ -9,12 +9,12 @@
       enable = true;
     };
     initContent = ''
-            export NIXPKGS_ALLOW_UNFREE=1
-            export EDITOR='nvim'
-            export VISUAL='nvim'
-            export C='/mnt/c'
+      export NIXPKGS_ALLOW_UNFREE=1
+      export EDITOR='nvim'
+      export VISUAL='nvim'
+      export C='/mnt/c'
 
-            fastfetch --config ${pkgs.fastfetch}/share/fastfetch/presets/examples/3.jsonc
+      fastfetch --config ${pkgs.fastfetch}/share/fastfetch/presets/examples/3.jsonc
       nixpush() {
         nix fmt && \
         git add -A && \
