@@ -114,7 +114,7 @@
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.radekp = import ./home/radekp/home.nix; #this location needs fixing
+          home-manager.users.radekp = import ./modules/home/users/radekp/wsl/home.nix;
           # Optionally, pass extra arguments to home-manager modules
           # home-manager.extraSpecialArgs = { };
         }
