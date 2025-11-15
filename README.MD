@@ -1,81 +1,37 @@
-## Target structure
-nixos/<br>
-├── flake.nix<br>
-├── hosts/<br>
-│   ├── nixos-desktop/<br>
-│   │   ├── default.nix<br>
-│   │   ├── hardware-configuration.nix<br>
-│   │   └── home.nix<br>
-│   ├── generic-server/<br>
-│   │   ├── default.nix<br>
-│   │   └── hardware-configuration.nix<br>
-│   ├── dt-wsl-nix/<br>
-│   │   ├── default.nix<br>
-│   │   └── home.nix<br>
-│   └── hyperv/<br>
-│       ├── default.nix<br>
-│       └── hardware-configuration.nix<br>
-│<br>
-├── modules/<br>
-│   ├── system/<br>
-│   │   ├── boot/<br>
-│   │   │   └── default.nix<br>
-│   │   ├── hardware/<br>
-│   │   │   ├── openrgb.nix<br>
-│   │   │   ├── qemu.nix<br>
-│   │   │   └── vbox.nix<br>
-│   │   ├── drivers/<br>
-│   │   │   └── brother.nix<br>
-│   │   ├── networking/<br>
-│   │   │   └── default.nix<br>
-│   │   ├── security/<br>
-│   │   │   ├── sops.nix<br>
-│   │   │   └── default.nix<br>
-│   │   ├── server/<br>
-│   │   │   ├── webserver.nix<br>
-│   │   │   └── default.nix<br>
-│   │   ├── usb/<br>
-│   │   │   └── default.nix<br>
-│   │   └── desktop/<br>
-│   │       ├── hyprland.nix<br>
-│   │       └── default.nix<br>
-│   │<br>
-│   └── home/<br>
-│       ├── programs/<br>
-│       │   ├── git.nix<br>
-│       │   ├── nixvim/<br>
-│       │   │   └── default.nix<br>
-│       │   ├── shells/<br>
-│       │   │   └── zsh.nix<br>
-│       │   └── treefmt.nix<br>
-│       ├── desktop/<br>
-│       │   ├── window-managers/<br>
-│       │   │   ├── hyprland.nix<br>
-│       │   │   ├── bspwm.nix<br>
-│       │   │   └── niri.nix<br>
-│       │   ├── lock-screens/<br>
-│       │   │   └── hyprlock.nix<br>
-│       │   ├── bars/<br>
-│       │   │   └── waybar.nix<br>
-│       │   ├── launchers/<br>
-│       │   │   └── rofi.nix<br>
-│       │   └── widgets/<br>
-│       │       ├── eww.nix<br>
-│       │       └── glance.nix<br>
-│       └── scripts/<br>
-│           └── default.nix<br>
-│<br>
-├── home/<br>
-│   └── radekp/<br>
-│       ├── default.nix<br>
-│       ├── packages.nix<br>
-│       ├── desktop.nix<br>
-│       └── work.nix<br>
-│<br>
-├── deployments/<br>
-│   └── server/<br>
-│       └── generic/<br>
-│<br>
-├── colors/<br>
-├── wallpapers/<br>
-└── secrets/<br>
+## TODO List
+
+### 1. Deal with `hosts/` vs `deployments/` duplication
+- [ ] Decide if `hosts/server/generic/` and `deployments/server/generic/` should stay separate
+- [ ] If they're similar, extract common config into modules
+- [ ] Document the difference between them (deployment targets vs local test?)
+
+### 2. Implement DRY Principle
+- [ ] Create base modules with sane defaults using `lib.mkDefault`
+- [ ] Add `options` and `mkEnableOption` to modules
+- [ ] Extract common packages/settings into shared lists
+- [ ] Create host profiles (desktop, server, wsl) if patterns emerge
+- [ ] Consider creating `modules/system/profiles/` and `modules/home/profiles/`
+
+### 3. Fix `default.nix` naming convention
+- [ ] Rename `git.nix` → `default.nix` (and similar files)
+- [ ] Rename `radekp.nix` → `default.nix` in user modules
+- [ ] Rename `home.nix` → `default.nix` in wsl
+- [ ] Update all imports to use directory paths instead of file paths
+- [ ] Benefits: cleaner imports like `../../modules/system/apps/git` instead of `../../modules/system/apps/git/git.nix`
+
+### 4. Additional Improvements
+- [ ] Create `modules/system/default.nix` and `modules/home/default.nix` to aggregate imports
+- [ ] Add module documentation (comments explaining what each module does)
+- [ ] Consider using `lib.mkIf` for conditional module loading
+- [ ] Standardize module structure (all should have similar patterns)
+- [ ] Add README files in key directories explaining their purpose
+
+### 5. Optional but Recommended
+- [ ] Set up flake checks/formatting with `treefmt`
+- [ ] Test each module independently for errors
+- [ ] Create a `default.nix` at repo root for `nix-build` compatibility
+- [ ] Setup proper .gitignore
+
+**Priority order:** 3 → 2 → 1 → 4 → 5
+
+*Start with #3 (default.nix) as it makes #2 (DRY) much cleaner to implement!*

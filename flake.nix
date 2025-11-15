@@ -2,10 +2,8 @@
   description = "NixOS config flake.";
 
   inputs = {
-    #nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
 
-    #home-manager.url = "github:nix-community/home-manager";
     home-manager.url = "github:nix-community/home-manager/release-25.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -55,15 +53,15 @@
     eachSystem = f: nixpkgs.lib.genAttrs (import systems) (system: f nixpkgs.legacyPackages.${system});
 
     # Eval the treefmt modules from ./treefmt.nix
-    treefmtEval = eachSystem (pkgs: treefmt-nix.lib.evalModule pkgs ./modules/apps/treefmt/treefmt.nix);
+    treefmtEval = eachSystem (pkgs: treefmt-nix.lib.evalModule pkgs ./modules/system/apps/treefmt/treefmt.nix);
   in {
     nixosConfigurations.nixos-desktop = nixpkgs.lib.nixosSystem {
       #system = "x86_64-linux";
       system = system;
       specialArgs = {inherit inputs;};
       modules = [
-        ./configurations/nixos-desktop/configuration.nix
-        ./modules/secrets/sops.nix
+        ./hosts/nixos-desktop/configuration.nix
+        ./modules/system/secrets/sops.nix
         #sops-nix.nixosModules.sops
         {
           environment.systemPackages = [alejandra.defaultPackage.${system}];
@@ -75,8 +73,8 @@
       system = "x86_64-linux";
       specialArgs = {inherit inputs;};
       modules = [
-        ./configurations/server/generic/configuration.nix
-        ./modules/secrets/sops.nix
+        ./hosts/server/generic/configuration.nix
+        ./modules/system/secrets/sops.nix
         #sops-nix.nixosModules.sops
       ];
     };
@@ -85,9 +83,9 @@
       system = "x86_64-linux";
       specialArgs = {inherit inputs;};
       modules = [
-        ./configurations/server/generic/configuration.nix
-        ./modules/secrets/sops.nix
-        ./modules/server/webserver/configuration.nix
+        ./hosts/server/generic/configuration.nix
+        ./modules/system/secrets/sops.nix
+        ./modules/system/server/webserver/configuration.nix
         sops-nix.nixosModules.sops
       ];
     };
@@ -103,7 +101,7 @@
         disko.nixosModules.disko
         ./deployments/server/generic/configuration.nix
         ./deployments/server/generic/hardware-configuration.nix
-        ./modules/secrets/sops.nix
+        ./modules/system/secrets/sops.nix
       ];
     };
 
@@ -111,12 +109,12 @@
       system = "x86_64-linux";
       modules = [
         nixos-wsl.nixosModules.wsl
-        ./hosts/work/nixos-wsl/configuration.nix
+        ./hosts/nixos-wsl/configuration.nix
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.radekp = import ./home/radekp/home.nix;
+          home-manager.users.radekp = import ./home/radekp/home.nix; #this location needs fixing
           # Optionally, pass extra arguments to home-manager modules
           # home-manager.extraSpecialArgs = { };
         }
@@ -133,7 +131,7 @@
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
         extraSpecialArgs = {inherit inputs outputs;};
         modules = [
-          ./home-manager/personal/radekp.nix
+          ./modules/home/users/radekp.nix # This needs to be change to HM as module
           #sops-nix.homeManagerModules.sops
         ];
       };
@@ -141,19 +139,16 @@
 
     # Formatter
 
-    #packages.${system}.alejandra = alejandra.packages.${system}.default;
-    #
-    #formatter.${system} = nixpkgs.legacyPackages.x86_64-linux.nixpkgs-fmt;
-    #
-    # devShell = nixpkgs.mkShell {
-    #   buildInputs = [ ... ];
-    # };
-
     # for `nix fmt`
     formatter = eachSystem (pkgs: treefmtEval.${pkgs.system}.config.build.wrapper);
     # for `nix flake check`
     checks = eachSystem (pkgs: {
       formatting = treefmtEval.${pkgs.system}.config.build.check self;
     });
+
+    # Create a dev shell
+    # devShell = nixpkgs.mkShell {
+    #   buildInputs = [ ... ];
+    # };
   };
 }
