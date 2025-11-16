@@ -5,8 +5,8 @@
 }: {
   imports = [
     ./hardware-configuration.nix
-    ./nvidia-drivers.nix
     ./users.nix
+    ../../modules/system/hardware/gpu/nvidia/default.nix
     ../../modules/system/apps/desktop/kde-plasma6/default.nix
     ../../modules/system/apps/nixvim/nixvim.nix
     ../../modules/system/apps/qmk/qmk.nix

@@ -12,11 +12,9 @@
 
   # Enable OpenGL
   hardware.graphics = {
-    # formerly hardware.opengl, now hardware.graphics
     enable = true;
     enable32Bit = true;
     extraPackages = with pkgs; [
-      #amdvlk -- breaks config?
       intel-media-driver # LIBVA_DRIVER_NAME=iHD
       libvdpau-va-gl
       nvidia-vaapi-driver
@@ -91,17 +89,12 @@
   #Packages related to NVIDIA
   environment.systemPackages = with pkgs; [
     clinfo
-    gwe
     nvtopPackages.nvidia
     virtualglLib
     vulkan-tools
     vulkan-loader
     lm_sensors
   ];
-
-  # GPU runs hot due to lots of power fed to it
-  # Run either power top, or custom fan and power management
-  # powerManagement.powertop.enable = true;
 
   #Create power limit service
   systemd.services.nv-power-limit = {
