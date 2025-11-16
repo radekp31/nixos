@@ -66,6 +66,14 @@
         {
           environment.systemPackages = [alejandra.defaultPackage.${system}];
         }
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.users.radekp = import ./modules/home/users/radekp/desktop/radekp.nix;
+          # Optionally, pass extra arguments to home-manager modules
+          # home-manager.extraSpecialArgs = { };
+        }
       ];
     };
 
@@ -131,7 +139,7 @@
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
         extraSpecialArgs = {inherit inputs outputs;};
         modules = [
-          ./modules/home/users/radekp.nix # This needs to be change to HM as module
+          ./modules/home/users/radekp/desktop/radekp.nix # This needs to be change to HM as module
           #sops-nix.homeManagerModules.sops
         ];
       };

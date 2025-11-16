@@ -1,4 +1,8 @@
 {pkgs, ...}: {
+  programs.fzf.enable = true;
+
+  programs.bat.enable = true;
+
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -14,7 +18,10 @@
       export VISUAL='nvim'
       export C='/mnt/c'
 
-      #fastfetch --config ${pkgs.fastfetch}/share/fastfetch/presets/examples/3.jsonc
+      fastfetch --config ${pkgs.fastfetch}/share/fastfetch/presets/examples/3.jsonc
+
+      source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
+
       nixpush() {
         nix fmt && \
         git add -A && \
@@ -31,6 +38,7 @@
       grep = "grep --color=auto";
       vi = "nvim";
       vim = "nvim";
+      cat = "bat -pp";
     };
     oh-my-zsh = {
       enable = true;

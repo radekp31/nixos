@@ -6,6 +6,8 @@
   imports = [
     ./hardware-configuration.nix
     ./nvidia-drivers.nix
+    ./users.nix
+    ../../modules/system/apps/desktop/kde-plasma6/default.nix
     ../../modules/system/apps/nixvim/nixvim.nix
     ../../modules/system/apps/qmk/qmk.nix
     ../../modules/system/apps/qemu/qemu.nix
@@ -157,19 +159,6 @@
   networking.networkmanager.enable = true;
   networking.hostName = "nixos-desktop";
 
-  # Session variables
-  environment.sessionVariables = {
-    NIXOS_CONFIG_LOCATION = "/etc/nixos"; # used for alejandra
-    LIBVA_DRIVER_NAME = "nvidia";
-    GBM_BACKEND = "nvidia-drm";
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-    WLR_NO_HARDWARE_CURSORS = "1";
-    GDK_SCALE = "1";
-    GDK_DPI_SCALE = "1";
-    XCURSOR_SCALE = "24";
-    QT_QPA_PLATFORMTHEME = "qt6ct"; # dark mode for Qt apps
-  };
-
   # Environment variables
   environment.variables = {
     EDITOR = "nvim";
@@ -179,6 +168,15 @@
     XDG_CONFIG_HOME = "$HOME/.config";
     XDG_DATA_HOME = "$HOME/.local/share";
     XDG_STATE_HOME = "$HOME/.local/state";
+    NIXOS_CONFIG_LOCATION = "/etc/nixos"; # used for alejandra
+    LIBVA_DRIVER_NAME = "nvidia";
+    GBM_BACKEND = "nvidia-drm";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    WLR_NO_HARDWARE_CURSORS = "1";
+    GDK_SCALE = "1";
+    GDK_DPI_SCALE = "1";
+    XCURSOR_SCALE = "24";
+    QT_QPA_PLATFORMTHEME = "qt6ct"; # dark mode for Qt apps
   };
 
   # Set your time zone.
@@ -199,26 +197,7 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  services.flatpak = {
-    enable = true;
-    package = pkgs.flatpak;
-  };
-
   security.polkit.enable = true;
-
-  services.desktopManager.plasma6.enable = true;
-  services.displayManager = {
-    sddm = {
-      autoNumlock = true;
-      enable = true;
-      package = lib.mkForce pkgs.kdePackages.sddm;
-      wayland.enable = true;
-    };
-  };
-
-  xdg.portal = {
-    enable = true;
-  };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -238,23 +217,6 @@
     pulse.enable = true;
   };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.radekp = {
-    isNormalUser = true;
-    description = "Radek Polasek";
-    extraGroups = [
-      "wheel"
-      "networkmanager"
-      "video"
-      "input"
-    ];
-    packages = with pkgs; [
-      #  thunderbird
-    ];
-  };
-
-  users.users.sddm.extraGroups = ["video"];
-
   # Enable dconf
   programs.dconf.enable = true;
 
@@ -266,81 +228,16 @@
     localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
   };
 
-  #Set up ZSH - clean
-  users.defaultUserShell = pkgs.zsh;
-  programs.zsh = {
-    enable = true;
-    promptInit = ''
-      # Enable direnv
-      eval "$(direnv hook zsh)"
-
-      # Add new line on each prompt
-      precmd() { echo }
-    '';
-    enableCompletion = true;
-    autosuggestions.enable = true;
-    syntaxHighlighting.enable = true;
-    shellInit = ''
-      # Enable fzf plugin
-      source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
-    '';
-
-    shellAliases = {
-      update = "sudo nixos-rebuild switch";
-      edit = "sudoedit /etc/nixos/configuration.nix";
-      update-vm = "sudo nixos-rebuild switch build-vm && dunstify \"NixOS Rebuild\" \"VM is ready.\"";
-      rebuild = "sudo nixos-rebuild test && dunstify \"NixOS Rebuild\" \"Test rebuild is done.\"";
-      rebuild-switch = "sudo nixos-rebuild switch && dunstify \"NixOS Rebuild\"\"Switch rebuild is done.\"";
-      manix = ''
-        manix "" | grep '^# ' | sed 's/^# \\(.*\\) (.*/\\1/;s/ (.*//;s/^# //' | fzf --preview="manix '{}'" | xargs manix
-      '';
-      ll = "ls -lah";
-      lld = "ls -lahgd";
-      man = "tldr";
-      cat = "bat -pp";
-      nix-push-config = "alejandra $NIXOS_CONFIG_LOCATION && git fetch --all && git add . && git commit -m \"update on $(date '+%Y-%m-%d %H:%M:%S')\" && git push";
-      lg1 = "git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all";
-      lg2 = "git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'";
-      lg = "lg1";
-    };
-
-    ohMyZsh = {
-      enable = true;
-      plugins = [
-        "git"
-        "sudo"
-        "fzf"
-      ];
-      theme = "gnzh";
-    };
-  };
-
   #Asus motherboard control
   services.asusd.enable = true;
 
   #Enable Bluetooth
   hardware.bluetooth = {
     enable = true;
-    #powerOnBoot = true;
+    powerOnBoot = true;
   };
 
   services.blueman.enable = true;
-
-  # Additional extensions: https://cockpit-project.org/applications.html
-  # Make derivations for:
-  # Storage
-  # Network
-  # Podman
-  # Kernel Dump
-  # Diagnostics
-  # Cockpit files | Navigator
-  # ZFS Manager
-  # File Sharing
-  # Benchmark
-  # Sensors
-  # Tailscale
-  # Cloudflare tunnels
-  # Backblaze
 
   services.cockpit = {
     enable = true;
@@ -365,32 +262,18 @@
     vulnix
     trivy
 
-    # TEST
-    #move keyboard app to qmk.nix
     freecad-wayland
-    #udiskie #remove
     unzip
-    #p7zip #remove
     pciutils
-    wlr-randr #clean?
+    wlr-randr
     cmake
     nvme-cli
 
     #Keyboard utilities
-    nrfutil #clean?
+    nrfutil
     qmk
     qmk_hid
     qmk-udev-rules
-
-    #(catppuccin-sddm.override {
-    #  flavor = "mocha";
-    #  font = "Noto Sans";
-    #  fontSize = "9";
-    #  background = "${pkgs.catppuccin-sddm}/wallpaper.png";
-    #  loginBackground = true;
-    #})
-
-    pam
 
     # Packages
     dejavu_fonts #keep
@@ -408,6 +291,7 @@
     termshark
     discord
     arp-scan-rs
+    pam
     neofetch # distro stats, deprecated :( - find new one
     curl
     openssh # keep
@@ -444,7 +328,7 @@
     wl-clipboard
 
     # Home manager
-    home-manager
+    #home-manager
 
     # Libre Office
 
@@ -467,24 +351,6 @@
     nerd-fonts.agave
     nerd-fonts.hack
     nerd-fonts.symbols-only
-
-    # KDE
-    kdePackages.discover # Optional: Install if you use Flatpak or fwupd firmware update sevice
-    kdePackages.kcalc # Calculator
-    kdePackages.kcharselect # Tool to select and copy special characters from all installed fonts
-    kdePackages.kclock # Clock app
-    kdePackages.kcolorchooser # A small utility to select a color
-    kdePackages.kolourpaint # Easy-to-use paint program
-    kdePackages.ksystemlog # KDE SystemLog Application
-    kdePackages.sddm-kcm # Configuration module for SDDM
-    kdiff3 # Compares and merges 2 or 3 files or directories
-    kdePackages.isoimagewriter # Optional: Program to write hybrid ISO files onto USB disks
-    kdePackages.partitionmanager # Optional: Manage the disk devices, partitions and file systems on your computer
-    # Non-KDE graphical packages
-    hardinfo2 # System information and benchmarks for Linux systems
-    vlc # Cross-platform media player and streaming server
-    wayland-utils # Wayland utilities
-    wl-clipboard # Command-line copy/paste utilities for Wayland
   ];
 
   # This value determines the NixOS release from which the default
