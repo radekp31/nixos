@@ -107,7 +107,6 @@
       modules = [
         disko.nixosModules.disko
         ./hosts/deployments/server/generic/configuration.nix
-        ./hosts/deployments/server/generic/hardware-configuration.nix
         ./hosts/deployments/server/generic/disk-config.nix
         ./modules/system/secrets/sops
       ];
@@ -120,16 +119,16 @@
         ./hosts/nixos-wsl/configuration.nix
         home-manager.nixosModules.home-manager
         {
+          nixpkgs.overlays = [
+            kickstart-nix-nvim.overlays.default
+          ];
+        }
+        {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.users.radekp = import ./modules/home/users/radekp/wsl;
           # Optionally, pass extra arguments to home-manager modules
           # home-manager.extraSpecialArgs = { };
-        }
-        {
-          nixpkgs.overlays = [
-            kickstart-nix-nvim.overlays.default
-          ];
         }
       ];
     };

@@ -14,23 +14,9 @@
   home.username = "radekp";
   home.homeDirectory = "/home/radekp";
   home.stateVersion = "25.05";
-  #home.enableNixpkgsReleaseCheck = false;
-  #home.pointerCursor = {
-  #  gtk.enable = true;
-  #  package = pkgs.bibata-cursors;
-  #  name = "Bibata-Modern-Ice";
-  #  size = 22;
-  #};
   home.sessionPath = [
     "/home/radekp/.nix-profile/bin/" # Required by Neovim and plugins (?)
   ];
-
-  nixpkgs = {
-    config = {
-      allowUnfree = true;
-      allowUnfreePredicate = _: true;
-    };
-  };
 
   programs.direnv = {
     enable = true;
@@ -42,12 +28,6 @@
     enable = true;
     userName = "Radek Polasek";
     userEmail = "polasek.31@seznam.cz";
-    #settings = {
-    #  user = {
-    #    name = "Radek Polasek";
-    #    email = "polasek.31@seznam.cz";
-    #  };
-    #};
     extraConfig = {
       init.defaultBranch = "main";
       safe.directory = "/etc/nixos";
@@ -331,9 +311,6 @@
     # Neovim
     nixd # LSP server
     vimPlugins.nvim-lspconfig
-    nixpkgs-fmt # Nix file formatter
-    nixfmt-rfc-style # Nix file formatter
-    alejandra # Nix file formatter
 
     # GPU
     mangohud

@@ -7,9 +7,8 @@
 - [x] Update all imports to use directory paths instead of file paths
 - [x] Set up flake checks/formatting with `treefmt` (via nixpush(), local only)
 - [x] Add proper .gitignore
-- [ ] Fix nixpkgs.config warning with home-manager
-- [ ] Fix disko module import in deployment configuration
-- [ ] Ensure all configurations build successfully with `nix flake check`
+- [x] Fix nixpkgs.config warning with home-manager
+- [x] Fix disko module import in deployment configuration
 
 ### Priority 2: Base Configuration
 - [ ] Create `hosts/common/default.nix` with minimal sane secure defaults
