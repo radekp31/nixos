@@ -5,11 +5,8 @@
 # https://github.com/nix-community/NixOS-WSL
 {
   config,
-  lib,
   ...
-}: let
-  isWSL = builtins.pathExists /proc/sys/fs/binfmt_misc/WSLInterop;
-in {
+}: {
   imports = [
     ./system-packages.nix
     ./users.nix
@@ -19,7 +16,7 @@ in {
   wsl.defaultUser = "nixos"; #radekp?
 
   # Networking
-  networking.networkmanager.enable = lib.mkIf (!isWSL) true;
+  networking.networkmanager.enable = true;
   networking.useDHCP = false;
 
   # Timezone and locale
@@ -38,7 +35,7 @@ in {
 
   # Security
   security.sudo.wheelNeedsPassword = true;
-  security.polkit.enable = lib.mkIf (!isWSL) true;
+  security.polkit.enable = true;
 
   # Firewall
   networking.firewall.enable = true;

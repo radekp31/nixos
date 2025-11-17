@@ -4,7 +4,7 @@
   ...
 }: {
   imports = [
-    ../../../shells/zsh/zsh.nix
+    ../../../shells/zsh
   ];
 
   #Let Home Manager install and manage itself

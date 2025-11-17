@@ -45,7 +45,6 @@
     systems,
     ...
   } @ inputs: let
-    inherit (self) outputs;
     system = "x86_64-linux";
 
     # Treefmt-nix
@@ -53,7 +52,7 @@
     eachSystem = f: nixpkgs.lib.genAttrs (import systems) (system: f nixpkgs.legacyPackages.${system});
 
     # Eval the treefmt modules from ./treefmt.nix
-    treefmtEval = eachSystem (pkgs: treefmt-nix.lib.evalModule pkgs ./modules/system/apps/treefmt/treefmt.nix);
+    treefmtEval = eachSystem (pkgs: treefmt-nix.lib.evalModule pkgs ./modules/system/apps/treefmt);
   in {
     nixosConfigurations.nixos-desktop = nixpkgs.lib.nixosSystem {
       #system = "x86_64-linux";
@@ -61,7 +60,7 @@
       specialArgs = {inherit inputs;};
       modules = [
         ./hosts/nixos-desktop/configuration.nix
-        ./modules/system/secrets/sops.nix
+        ./modules/system/secrets/sops
         #sops-nix.nixosModules.sops
         {
           environment.systemPackages = [alejandra.defaultPackage.${system}];
@@ -70,7 +69,7 @@
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.radekp = import ./modules/home/users/radekp/desktop/radekp.nix;
+          home-manager.users.radekp = import ./modules/home/users/radekp/desktop;
           # Optionally, pass extra arguments to home-manager modules
           # home-manager.extraSpecialArgs = { };
         }
@@ -82,7 +81,7 @@
       specialArgs = {inherit inputs;};
       modules = [
         ./hosts/server/generic/configuration.nix
-        ./modules/system/secrets/sops.nix
+        ./modules/system/secrets/sops
         #sops-nix.nixosModules.sops
       ];
     };
@@ -92,8 +91,8 @@
       specialArgs = {inherit inputs;};
       modules = [
         ./hosts/server/generic/configuration.nix
-        ./modules/system/secrets/sops.nix
-        ./modules/system/server/webserver/configuration.nix
+        ./modules/system/secrets/sops
+        ./modules/system/server/webserver
         sops-nix.nixosModules.sops
       ];
     };
@@ -107,9 +106,10 @@
       specialArgs = {inherit inputs;};
       modules = [
         disko.nixosModules.disko
-        ./deployments/server/generic/configuration.nix
-        ./deployments/server/generic/hardware-configuration.nix
-        ./modules/system/secrets/sops.nix
+        ./hosts/deployments/server/generic/configuration.nix
+        ./hosts/deployments/server/generic/hardware-configuration.nix
+        ./hosts/deployments/server/generic/disk-config.nix
+        ./modules/system/secrets/sops
       ];
     };
 
@@ -122,7 +122,7 @@
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.radekp = import ./modules/home/users/radekp/wsl/home.nix;
+          home-manager.users.radekp = import ./modules/home/users/radekp/wsl;
           # Optionally, pass extra arguments to home-manager modules
           # home-manager.extraSpecialArgs = { };
         }
@@ -132,17 +132,6 @@
           ];
         }
       ];
-    };
-
-    homeConfigurations = {
-      "radekp" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
-        extraSpecialArgs = {inherit inputs outputs;};
-        modules = [
-          ./modules/home/users/radekp/desktop/radekp.nix # This needs to be change to HM as module
-          #sops-nix.homeManagerModules.sops
-        ];
-      };
     };
 
     # Formatter

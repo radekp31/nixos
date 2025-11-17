@@ -1,11 +1,37 @@
-# Ignore everything in .config
-#.config/*
-#/etc/nixos
-#.ssh
+# Secrets
+secrets/*.key
+secrets/*.age
+!secrets/secrets.yaml
 
-# But do not ignore .nix files
-#!.config/**/*.nix
-#!/etc/nixos/**/*.nix
+# SOPS config backup
+.sops.yaml.bak
 
-#Ignore hardware-configuration.nix - it gets generated at install
-hardware-configuration.nix
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Nix
+.direnv/
+.envrc
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
+.*.swp
+
+# Logs
+*.log
+
+# Cache
+.cache/
+
+# Personal notes (optional)
+notes/
+TODO.md
+NOTES.md
+

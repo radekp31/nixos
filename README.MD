@@ -1,42 +1,79 @@
 ## TODO List
 
-### Priority 1: Code Quality & Structure
-- [ ] Rename `git.nix` → `default.nix` (and similar files in modules)
-- [ ] Rename `radekp.nix` → `default.nix` in user modules
-- [ ] Rename `home.nix` → `default.nix` in wsl
-- [ ] Update all imports to use directory paths instead of file paths
-  - Benefits: cleaner imports like `../../modules/system/apps/git` instead of `../../modules/system/apps/git/git.nix`
-- [ ] Set up flake checks/formatting with `treefmt`
-- [ ] Add proper .gitignore
+### Priority 1: Core Fixes & Structure
+- [x] Rename `git.nix` → `default.nix` (and similar files in modules)
+- [x] Rename `radekp.nix` → `default.nix` in user modules
+- [x] Rename `home.nix` → `default.nix` in wsl
+- [x] Update all imports to use directory paths instead of file paths
+- [x] Set up flake checks/formatting with `treefmt` (via nixpush(), local only)
+- [x] Add proper .gitignore
+- [ ] Fix nixpkgs.config warning with home-manager
+- [ ] Fix disko module import in deployment configuration
+- [ ] Ensure all configurations build successfully with `nix flake check`
 
-### Priority 2: DRY (Don't Repeat Yourself)
-- [ ] Extract common packages/settings into shared lists
-- [ ] Move GUI applications (discord, vlc, etc.) to home-manager
+### Priority 2: Base Configuration
+- [ ] Create `hosts/common/default.nix` with minimal sane secure defaults
+  - Boot configuration
+  - Networking basics
+  - Security settings (firewall, sudo, SSH)
+  - Nix settings (flakes, gc, auto-optimise)
+  - Basic system packages
+- [ ] Import common base in all host configurations
+- [ ] Document override patterns with `lib.mkForce` for host-specific changes
+
+### Priority 3: DRY & Package Management
+- [ ] Move GUI applications to home-manager
+  - discord, vlc, spotify, vscode, etc.
 - [ ] Keep only system-critical packages in `environment.systemPackages`
-- [ ] Create `modules/system/packages/common.nix` for shared package lists
-
-### Priority 3: Module System Improvements
-- [ ] Add `options` and `mkEnableOption` to modules
-- [ ] Create base modules with sane defaults using `lib.mkDefault`
-- [ ] Standardize module structure (all should have similar patterns)
-- [ ] Consider using `lib.mkIf` for conditional module loading
-- [ ] Create `modules/system/default.nix` and `modules/home/default.nix` to aggregate imports
+  - Kernel modules, drivers, system services
+- [ ] Create shared package lists
+  - `modules/home/packages/common.nix` - CLI tools
+  - `modules/home/packages/desktop.nix` - GUI apps
+  - `modules/home/packages/development.nix` - Dev tools
+- [ ] Extract common settings into reusable modules
 
 ### Priority 4: Documentation
-- [ ] Add module documentation (comments explaining what each module does)
-- [ ] Add README files in key directories explaining their purpose
+- [ ] Document module structure in main README.md
+  - What goes in `modules/system/` vs `modules/home/`
+  - How to add new modules
+  - How to enable/disable features
+- [ ] Add comments to complex modules explaining their purpose
 - [ ] Document the difference between `hosts/` and `deployments/`
-  - `hosts/` = Local machine configurations
-  - `deployments/` = Remote server configurations
+  - `hosts/` = Configurations for existing machines
+  - `deployments/` = Fresh installations with nixos-anywhere
+- [ ] Create `hosts/common/README.md` explaining base configuration
+- [ ] Add usage examples to each major module
 
-### Priority 5: Advanced Features
-- [ ] Decide if `hosts/server/generic/` and `deployments/server/generic/` should stay separate
-  - If they're similar, extract common config into modules
-- [ ] Create host profiles (desktop, server, wsl) if patterns emerge
-- [ ] Consider creating `modules/system/profiles/` and `modules/home/profiles/`
-- [ ] Create a `default.nix` at repo root for `nix-build` compatibility
+### Priority 5: Module Consistency (Optional)
+- [ ] Standardize module structure across all modules
+  - Consistent file naming
+  - Similar configuration patterns
+  - Predictable import paths
+- [ ] Add module options with `mkEnableOption` (only if needed for flexibility)
+- [ ] Use `lib.mkDefault` for overrideable defaults
+- [ ] Use `lib.mkIf` for conditional features
+
+### Priority 6: Advanced Features (Future)
+- [ ] Decide on `hosts/server/generic/` vs `deployments/server/generic/` strategy
+  - Keep separate if they serve different purposes
+  - Extract common config into shared modules
+- [ ] Create host profiles if patterns emerge
+  - `modules/system/profiles/desktop.nix`
+  - `modules/system/profiles/server.nix`
+  - `modules/system/profiles/wsl.nix`
 - [ ] Setup CI/CD with GitHub Actions
-  - Flake checks
-  - Build validation
-  - Format checking
-- [ ] Test each module independently for errors
+  - Run `nix flake check` on push
+  - Validate all configurations build
+  - Check formatting with treefmt
+- [ ] Create `default.nix` at repo root for `nix-build` compatibility
+- [ ] Add pre-commit hooks for automatic formatting
+- [ ] Test module isolation and independence
+
+### Priority 7: Optimization (Low Priority)
+- [ ] Profile build times and optimize slow modules
+- [ ] Review and minimize closure sizes
+- [ ] Audit security settings across all configurations
+- [ ] Set up automatic security updates strategy
+- [ ] Consider binary cache setup for faster rebuilds
+
+---

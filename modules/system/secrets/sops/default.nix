@@ -16,7 +16,7 @@
   };
 
   sops = {
-    defaultSopsFile = ../../../secrets/secrets.yaml;
+    defaultSopsFile = ./secrets/secrets.yaml;
 
     age = {
       #automatically import host SSH keys as age keys
@@ -32,7 +32,7 @@
     #This should represent the structure of the secrets/secrets.yaml
     secrets = {
       "radekp-password" = {
-        sopsFile = ../../../secrets/secrets.yaml;
+        sopsFile = ./secrets/secrets.yaml;
         #owner = "radekp";
         owner =
           if config.networking.hostName == "nixos-desktop"
@@ -43,34 +43,34 @@
       };
 
       "ssh-keys/contabovps1" = {
-        sopsFile = ../../../secrets/secrets.yaml;
+        sopsFile = ./secrets/secrets.yaml;
         owner = "root";
         mode = "0400";
         format = "yaml";
       };
 
       "ssh-keys/nixos-desktop" = {
-        sopsFile = ../../../secrets/secrets.yaml;
+        sopsFile = ./secrets/secrets.yaml;
         owner = "root";
         mode = "0400";
         format = "yaml";
       };
 
       "IPs/homenetwork" = {
-        sopsFile = ../../../secrets/secrets.yaml;
+        sopsFile = ./secrets/secrets.yaml;
         owner = "root";
         mode = "0400";
         format = "yaml";
       };
 
       "IPs/contabovps1" = {
-        sopsFile = ../../../secrets/secrets.yaml;
+        sopsFile = ./secrets/secrets.yaml;
         owner = "root";
         mode = "0400";
         format = "yaml";
       };
       "IPs/pi" = {
-        sopsFile = ../../../secrets/secrets.yaml;
+        sopsFile = ./secrets/secrets.yaml;
         owner = "root";
         mode = "0400";
         format = "yaml";

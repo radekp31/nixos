@@ -6,16 +6,16 @@
   imports = [
     ./hardware-configuration.nix
     ./users.nix
-    ../../modules/system/hardware/gpu/nvidia/default.nix
-    ../../modules/system/apps/desktop/kde-plasma6/default.nix
-    ../../modules/system/apps/nixvim/nixvim.nix
-    ../../modules/system/apps/qmk/qmk.nix
-    ../../modules/system/apps/qemu/qemu.nix
-    ../../modules/system/hardware/printers/brother/DCPL2622DW.nix
+    ../../modules/system/hardware/gpu/nvidia
+    ../../modules/system/apps/desktop/kde-plasma6
+    ../../modules/system/apps/nixvim
+    ../../modules/system/apps/qmk
+    ../../modules/system/apps/qemu
+    ../../modules/system/hardware/printers/brother/DCPL2622DW
     ../../modules/system/scripts/fan-control.sh
-    ../../modules/system/apps/git/git.nix
-    ../../modules/system/apps/openrgb/openrgb.nix
-    ../../modules/system/hardware/usb/usb.nix
+    ../../modules/system/apps/git
+    ../../modules/system/apps/openrgb
+    ../../modules/system/hardware/usb
   ];
 
   #System auto upgrades
