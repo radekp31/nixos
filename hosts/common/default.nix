@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   # User grub instead
   # Boot
   boot.loader.systemd-boot.enable = true;
