@@ -6,6 +6,10 @@
 
   environment.systemPackages = with pkgs; [
     via
+    nrfutil
+    qmk
+    qmk_hid
+    qmk-udev-rules
   ];
   services.udev.packages = [pkgs.via];
 

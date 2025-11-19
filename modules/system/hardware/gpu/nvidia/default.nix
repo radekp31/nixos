@@ -28,9 +28,29 @@
     ];
   };
 
-  # Force modeset=1
-  boot.kernelParams = ["nvidia_drm.fbdev=1"];
-  boot.initrd.kernelModules = ["nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm"];
+  boot = {
+    kernelParams = ["nvidia_drm.fbdev=1"];
+    supportedFilesystems = [
+      "ntfs"
+      "vfat"
+      "ext4"
+    ];
+    initrd = {
+      enable = true;
+      supportedFilesystems = [
+        "ntfs"
+        "vfat"
+        "ext4"
+      ];
+      availableKernelModules = [
+        "nvidia"
+        "nvidia_modeset"
+        "nvidia_uvm"
+        "nvidia_drm"
+      ];
+    };
+  };
+
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = ["nvidia"];
 

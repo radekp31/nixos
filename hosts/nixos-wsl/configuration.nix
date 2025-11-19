@@ -1,65 +1,31 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-# NixOS-WSL specific options are documented on the NixOS-WSL repository:
-# https://github.com/nix-community/NixOS-WSL
-{config, ...}: {
+{
+  config,
+  lib,
+  ...
+}: {
   imports = [
-    ./system-packages.nix
     ./users.nix
+    ../common/default.nix
+    ../common/profiles/wsl.nix
   ];
 
-  wsl.enable = true;
-  wsl.defaultUser = "nixos"; #radekp?
+  # WSL user
+  wsl.defaultUser = "radekp";
 
-  # Networking
-  networking.networkmanager.enable = true;
-  networking.useDHCP = false;
-
-  # Timezone and locale
+  # Timezone (already UTC in common, but explicit here)
   time.timeZone = "UTC";
-  i18n.defaultLocale = "en_US.UTF-8";
 
-  # Nix settings (universal)
-  nix.settings.experimental-features = ["nix-command" "flakes"];
-  nix.settings.auto-optimise-store = true;
+  # More conservative GC for WSL
+  nix.gc.options = lib.mkForce "--delete-older-than 30d";
+
+  # Unfree packages
   nixpkgs.config.allowUnfree = true;
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 30d";
-  };
 
-  # Security
-  security.sudo.wheelNeedsPassword = true;
-  security.polkit.enable = true;
+  # Neovim as editor
+  environment.variables.EDITOR = "nvim";
 
-  # Firewall
-  networking.firewall.enable = true;
-
-  # SSH
-  services.openssh = {
-    enable = true;
-    settings = {
-      PermitRootLogin = "no";
-      PasswordAuthentication = false;
-    };
-  };
-
-  # Universal packages
-  #environment.systemPackages = with pkgs; [
-  #  vim
-  #  wget
-  #  curl
-  #  git
-  #  htop
-  #  tmux
-  #];
-
-  environment.variables = {
-    EDITOR = "nvim";
-    NIXPKGS_ALLOW_UNFREE = "1";
-  };
+  # Enable SSH
+  services.openssh.enable = true;
 
   system.stateVersion = "25.05";
 }

@@ -1,17 +1,16 @@
-{pkgs, ...}: {
-  # User grub instead
-  # Boot
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-
+{
+  pkgs,
+  lib,
+  ...
+}: {
   # Networking
-  networking.networkmanager.enable = true;
+  networking.networkmanager.enable = lib.mkDefault true;
   networking.firewall.enable = true;
 
-  # Locale
-  time.timeZone = "Europe/Prague";
-  i18n.defaultLocale = "en_US.UTF-8";
-  console.keyMap = "us";
+  # Locale - use defaults that hosts can override
+  time.timeZone = lib.mkDefault "Europe/Prague";
+  i18n.defaultLocale = lib.mkDefault "en_US.UTF-8";
+  console.keyMap = lib.mkDefault "us";
 
   # Security
   security.sudo.wheelNeedsPassword = true;
@@ -20,9 +19,9 @@
   # Nix settings
   nix = {
     gc = {
-      automatic = true;
-      dates = "daily";
-      options = "--delete-older-than 3d";
+      automatic = lib.mkDefault true; # Add mkDefault here too
+      dates = lib.mkDefault "weekly";
+      options = lib.mkDefault "--delete-older-than 7d";
     };
     settings = {
       auto-optimise-store = true;
@@ -30,31 +29,32 @@
     };
   };
 
-  # System auto upgrades
+  # System auto upgrades - disabled by default for safety
   system.autoUpgrade = {
-    enable = true;
-    dates = "weekly";
-    flake = "/etc/nixos";
+    enable = lib.mkDefault false;
+    dates = lib.mkDefault "weekly"; # Add mkDefault for consistency
+    flake = lib.mkDefault "/etc/nixos";
   };
 
-  # Basic packages
+  # Basic packages - truly minimal
   environment.systemPackages = with pkgs; [
+    # Core essentials
     vim
     wget
     curl
     git
     htop
     tree
+    tmux
+    neovim
   ];
 
-  # SSH
+  # SSH - disabled by default, let hosts opt-in
   services.openssh = {
-    enable = true;
+    enable = lib.mkDefault false;
     settings = {
       PermitRootLogin = "no";
-      PasswordAuthentication = false;
+      PasswordAuthentication = lib.mkDefault false;
     };
   };
-
-  system.stateVersion = "24.05";
 }

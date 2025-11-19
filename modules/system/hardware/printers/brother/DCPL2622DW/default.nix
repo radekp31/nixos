@@ -3,6 +3,7 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }:
 # Brother DCP-L2622DW Command Line Printing Guide
@@ -146,6 +147,13 @@
 {
   # Enable printing with Brother DCP-L2622DW support
   # Go to http://localhost:631/admin and add the printer
+
+  systemd.services.cups = {
+    environment = {
+      LD_LIBRARY_PATH = lib.mkForce "";
+    };
+  };
+
   services.printing = {
     enable = true;
     browsing = false;

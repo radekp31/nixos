@@ -278,41 +278,100 @@
   programs.firefox.enable = true;
 
   # Home packages
-
   home.packages = with pkgs; [
-    # Packages
+    # Security & Secrets
+    age
+    sops
     bitwarden-desktop
-    delta # fancy git diff
-    vlc
+    # Development Tools
+    cmake
+    lld_18
+    jq
+    nurl
+    ripgrep-all
+    delta # Fancy git diff
     git
-    qpdf
-    libre
-    rclone
-    ntfs3g
-    usbutils
+    nixd # Nix LSP server
+    vimPlugins.nvim-lspconfig
+    nix-prefetch-git
+    nix-prefetch-git
+    nix-prefetch
+    nix-prefetch-docker
+    nix-prefetch-scripts
+    nixos-anywhere
+    age
+    sops
+    nix-prefetch
+    nix-prefetch-docker
+    nix-prefetch-scripts
+    nixos-anywhere
+    age
+    sops
+    # System Utilities
+    unzip
+    wlr-randr
+    termshark
+    arp-scan-rs
     fastfetch
+    fzf
+    tldr
+    btop
+    dig
+    tree
+    usbutils
+    ntfs3g # NTFS filesystem support
+    # Media & Downloads
+    yt-dlp
+    ffmpeg
+    vlc
     mpv
-    coolercontrol.coolercontrold
-    coolercontrol.coolercontrol-gui
     qbittorrent-enhanced-nox
-    #librewolf-wayland
-
-    webcord # Discord is apparently a pain to run, so this is alternative
-    nerd-fonts.inconsolata
-    nerd-fonts.fira-code
+    # File Management & Cloud
+    rclone
+    qpdf
+    nautilus
+    # Virtualization
+    qemu_kvm
+    spice-vdagent
+    virt-viewer
+    # GUI Applications
+    webcord # Discord alternative (better than discord)
+    freecad-wayland
+    wezterm # Terminal emulator
+    # Hardware Control
+    mangohud # GPU overlay
+    # Clipboard
+    wl-clipboard
+    # Theming & Icons
     adwaita-icon-theme
     bibata-cursors
-    wezterm
-    font-awesome_6
     qadwaitadecorations-qt6
-    nautilus
-    xkbd
-
-    # Neovim
-    nixd # LSP server
-    vimPlugins.nvim-lspconfig
-
-    # GPU
-    mangohud
+    font-awesome_6
+    # Fonts
+    dejavu_fontsEnv
+    meslo-lgs-nf
+    nerd-fonts.fira-code
+    nerd-fonts.fira-mono
+    nerd-fonts.dejavu-sans-mono
+    nerd-fonts.inconsolata
+    nerd-fonts.meslo-lg
+    nerd-fonts.space-mono
+    nerd-fonts.ubuntu
+    nerd-fonts.ubuntu-sans
+    nerd-fonts.agave
+    nerd-fonts.hack
+    nerd-fonts.symbols-only
+    # Office suite
+    libreoffice-qt # libre office
+    hunspell # grammar checking for libre office
+    hunspellDicts.en_US-large # enUS dictionary for grammar checking
+    hunspellDicts.en_GB-large # enGB dictionary for grammar checking
+    hunspellDicts.cs_CZ # csCz dictionary for grammar checking
+    # Zsh Plugins
+    oh-my-zsh
+    zsh-fzf-tab
+    zsh-fzf-history-search
+    zsh-autosuggestions
+    zsh-syntax-highlighting
   ];
 }
