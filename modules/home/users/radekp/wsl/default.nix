@@ -1,8 +1,8 @@
 {...}: {
   imports = [
     ./packages.nix
-    #../../../shells/zsh/zsh.nix
-    ../../../shells/zsh
+    #../../../shells/zsh
+    ../../../shells/bash
   ];
   home.username = "radekp";
   home.homeDirectory = "/home/radekp";
@@ -20,6 +20,7 @@
   programs.fzf = {
     enable = true;
     enableZshIntegration = true;
+    enableBashIntegration = true;
   };
 
   programs.ssh = {

@@ -1,5 +1,5 @@
-{pkgs, ...}: {
-  programs.zsh.enable = true;
+{ ...}: {
+  #programs.zsh.enable = true;
 
   users.users = {
     radekp = {
@@ -8,7 +8,7 @@
       extraGroups = ["wheel"];
       group = "users";
       home = "/home/radekp";
-      shell = pkgs.zsh;
+      #shell = pkgs.zsh;
     };
   };
 }

@@ -30,5 +30,6 @@
     tree
     fastfetch # to identify session
     xsel
+    awscli2
   ];
 }
