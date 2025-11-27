@@ -46,7 +46,7 @@
     htop
     tree
     tmux
-    neovim
+    #neovim
   ];
 
   # SSH - disabled by default, let hosts opt-in

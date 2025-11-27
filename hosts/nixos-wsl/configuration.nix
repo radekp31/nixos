@@ -7,6 +7,7 @@
     ./users.nix
     ../common/default.nix
     ../common/profiles/wsl.nix
+    ../../modules/system/apps/nixvim
   ];
 
   # WSL user

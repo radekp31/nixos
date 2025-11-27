@@ -7,9 +7,19 @@
         # More extensions
       ]
     )
+    # Python with packages (for the CSV processing scripts)
+    (python313.withPackages (ps:
+      with ps; [
+        # No additional packages needed! All scripts use only standard library:
+        # - csv (built-in)
+        # - subprocess (built-in)
+        # - json (built-in)
+        # - sys (built-in)
+        # - pathlib (built-in)
+      ]))
     fzf
     jq
-    nvim-pkg
+    #nvim-pkg
     git
     gh # GitHub CLI
     docker-compose

@@ -30,6 +30,12 @@
 
     treefmt-nix.url = "github:numtide/treefmt-nix";
     systems.url = "github:nix-systems/default";
+
+    # Add nixvim here
+    nixvim = {
+      url = "github:nix-community/nixvim/nixos-25.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -40,7 +46,6 @@
     disko,
     sops-nix,
     nixos-wsl,
-    kickstart-nix-nvim,
     treefmt-nix,
     systems,
     ...
@@ -120,15 +125,16 @@
 
     nixosConfigurations."dt-wsl-nix" = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
+      specialArgs = {inherit inputs;};
       modules = [
         nixos-wsl.nixosModules.wsl
         ./hosts/nixos-wsl/configuration.nix
         home-manager.nixosModules.home-manager
-        {
-          nixpkgs.overlays = [
-            kickstart-nix-nvim.overlays.default
-          ];
-        }
+        #{
+        #  nixpkgs.overlays = [
+        #    kickstart-nix-nvim.overlays.default
+        #  ];
+        #}
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;

@@ -1,13 +1,17 @@
-{pkgs, ...}: let
-  nixvim = import (
-    builtins.fetchGit {
-      url = "https://github.com/nix-community/nixvim";
-      ref = "nixos-24.11";
-      rev = "85bef9e19191000db4a13337198266359cefb9b6";
-      allRefs = true;
-    }
-  );
-
+{
+  pkgs,
+  inputs,
+  ...
+}: let
+  #  nixvim = import (
+  #    builtins.fetchGit {
+  #      url = "https://github.com/nix-community/nixvim";
+  #      #ref = "nixos-24.11";
+  #      ref = "nixos-25.05";
+  #      #rev = "85bef9e19191000db4a13337198266359cefb9b6";
+  #      allRefs = true;
+  #    }
+  #  );
   get_bufnrs.__raw = ''
     function()
       local buf_size_limit = 1024 * 1024
@@ -22,7 +26,8 @@
   '';
 in {
   imports = [
-    nixvim.nixosModules.nixvim
+    #nixvim.nixosModules.nixvim
+    inputs.nixvim.nixosModules.nixvim
   ];
 
   programs.nixvim = {
@@ -234,6 +239,9 @@ in {
         enable = true;
       };
       cmp-path = {
+        enable = true;
+      };
+      diffview = {
         enable = true;
       };
     };
