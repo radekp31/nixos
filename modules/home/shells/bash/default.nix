@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   programs.dircolors = {
     enable = true;
     enableBashIntegration = true;
@@ -70,7 +67,9 @@
           fi
         }
 
-        PS1='\[\033[01;36m\]\u\[\033[00m\]@\[\033[01;32m\]\h\[\033[00m\] \[\033[01;34m\]\w\[\033[00m\] \[\033[01;33m\]$(parse_git_branch)\[\033[00m\]\n\[\033[01;31m\]\$\[\033[00m\] '
+        #PS1='\[\033[01;36m\]\u\[\033[00m\]@\[\033[01;32m\]\h\[\033[00m\] \[\033[01;34m\]\w\[\033[00m\] \[\033[01;33m\]$(parse_git_branch)\[\033[00m\]\n\[\033[01;31m\]>>\[\033[00m\] '
+        PS1='\[\033[01;32m\]\u@\h\[\033[00m\] \[\033[01;34m\]\w\[\033[00m\] \[\033[01;33m\]$(parse_git_branch)\[\033[00m\]\n\[\033[01;31m\]>>\[\033[00m\] '
+
       ## GENERAL OPTIONS ##
 
       # Prevent file overwrite on stdout redirection
