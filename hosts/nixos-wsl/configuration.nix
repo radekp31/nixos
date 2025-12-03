@@ -29,4 +29,8 @@
   services.openssh.enable = true;
 
   system.stateVersion = "25.05";
+
+  # Enable docker
+  # dont forget to add user to "docker" group to run docker without sudo
+  virtualisation.docker.enable = true;
 }

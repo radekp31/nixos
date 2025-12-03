@@ -1,8 +1,8 @@
 {...}: {
   imports = [
     ./packages.nix
-    #../../../shells/zsh
-    ../../../shells/bash
+    ../../../shells/zsh
+    #../../../shells/bash
   ];
   home.username = "radekp";
   home.homeDirectory = "/home/radekp";
@@ -37,6 +37,10 @@
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
+  };
+
+  programs.docker-cli = {
+    enable = true;
   };
 
   # This value determines the Home Manager release that your

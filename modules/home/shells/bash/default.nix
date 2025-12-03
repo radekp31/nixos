@@ -7,7 +7,8 @@
   programs.bash = {
     enable = true;
     shellAliases = {
-      ll = "ls -alFh";
+      ll = "ls -alFh --color=auto";
+      grep = "grep --color=auto";
     };
     sessionVariables = {
       C = "/mnt/c";
