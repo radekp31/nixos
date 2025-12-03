@@ -161,12 +161,14 @@ in {
 
       lspkind = {
         enable = true;
-        cmp = {
-          enable = true;
-          menu = {
-            buffer = "[buffer]";
-            nvim_lsp = "[LSP]";
-            path = "[path]";
+        settings = {
+          cmp = {
+            enable = true;
+            menu = {
+              buffer = "[buffer]";
+              nvim_lsp = "[LSP]";
+              path = "[path]";
+            };
           };
         };
       };

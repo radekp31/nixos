@@ -1,7 +1,6 @@
 # Add this to your configuration.nix
 # Print - Either via app (libre office or )
 {
-  config,
   pkgs,
   lib,
   ...

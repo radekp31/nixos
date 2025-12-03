@@ -9,12 +9,18 @@
 
   programs.git = {
     enable = true;
-    userName = "Radek Polasek";
-    userEmail = "polasek.31@seznam.cz";
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Radek Polasek";
+        email = "polasek.31@seznam.cz";
+      };
       init.defaultBranch = "main";
       pull.rebase = true;
     };
+    #extraConfig = {
+    #  init.defaultBranch = "main";
+    #  pull.rebase = true;
+    #};
   };
 
   programs.fzf = {
@@ -25,6 +31,7 @@
 
   programs.ssh = {
     enable = true;
+    enableDefaultConfig = false;
     matchBlocks = {
       "github.com" = {
         hostname = "github.com";

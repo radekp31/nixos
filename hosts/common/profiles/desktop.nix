@@ -1,8 +1,5 @@
 # General desktop settings
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   # Enable networking (already in common/default.nix, so remove or keep for clarity)
   # networking.networkmanager.enable = true;  # Remove - duplicate from common
 

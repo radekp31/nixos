@@ -2,9 +2,11 @@
   description = "NixOS config flake.";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    #nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
-    home-manager.url = "github:nix-community/home-manager/release-25.05";
+    #home-manager.url = "github:nix-community/home-manager/release-25.05";
+    home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     alejandra.url = "github:kamadorueda/alejandra/4.0.0";
@@ -19,7 +21,8 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL";
+      #url = "github:nix-community/NixOS-WSL";
+      url = "github:nix-community/NixOS-WSL/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -33,7 +36,8 @@
 
     # Add nixvim here
     nixvim = {
-      url = "github:nix-community/nixvim/nixos-25.05";
+      #url = "github:nix-community/nixvim/nixos-25.05";
+      url = "github:nix-community/nixvim/nixos-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -61,7 +65,7 @@
       pkgs:
         treefmt-nix.lib.evalModule pkgs {
           imports = [./treefmt.nix];
-          programs.alejandra.package = alejandra.defaultPackage.${system};
+          programs.alejandra.package = alejandra.defaultPackage.${pkgs.system};
         }
     );
   in {

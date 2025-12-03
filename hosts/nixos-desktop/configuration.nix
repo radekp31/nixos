@@ -167,7 +167,7 @@
     nvme-cli
     ntfs3g
     libxfs
-    qt6.full
+    #qt6.full
   ];
 
   system.stateVersion = "25.05";

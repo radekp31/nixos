@@ -1,6 +1,5 @@
 {
   pkgs,
-  config,
   ...
 }: {
   imports = [
@@ -26,9 +25,12 @@
   #Setup and configure git
   programs.git = {
     enable = true;
-    userName = "Radek Polasek";
-    userEmail = "polasek.31@seznam.cz";
-    extraConfig = {
+    settings = {
+      user = {
+        email = "polasek.31@seznam.cz";
+        name = "Radek Polasek";
+      };
+
       init.defaultBranch = "main";
       safe.directory = "/etc/nixos";
       push.autoSetupRemote = "true";

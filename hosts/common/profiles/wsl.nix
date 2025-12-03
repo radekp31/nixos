@@ -1,7 +1,4 @@
-{
-  lib,
-  ...
-}: {
+{lib, ...}: {
   wsl.enable = true;
   wsl.defaultUser = lib.mkDefault "nixos";
 

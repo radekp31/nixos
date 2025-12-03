@@ -40,5 +40,6 @@
     fastfetch # to identify session
     xsel
     docker_28
+    inetutils
   ];
 }
