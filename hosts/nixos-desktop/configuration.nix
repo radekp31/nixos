@@ -99,7 +99,8 @@
   };
 
   # Kernel
-  boot.kernelPackages = pkgs.linuxPackages_6_17;
+  #boot.kernelPackages = pkgs.linuxPackages_6_17;
+  boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
   boot.kernelParams = [
     "boot.shell_on_fail"
     "trace_clock=local"
