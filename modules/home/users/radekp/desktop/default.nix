@@ -1,6 +1,13 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  inputs,
+  ...
+}: {
   imports = [
     ../../../shells/zsh
+    inputs.niri.homeModules.niri
+    ../../../apps/desktop/niri
+    ../../../apps/desktop/noctalia
   ];
 
   #Let Home Manager install and manage itself
@@ -13,6 +20,34 @@
   home.sessionPath = [
     "/home/radekp/.nix-profile/bin/" # Required by Neovim and plugins (?)
   ];
+  home.sessionVariables = {
+    DISPLAY = ":0";
+    SDL_VIDEODRIVER = "wayland";
+    WAYLAND_DISPLAY = "wayland-1";
+  };
+
+  # Enable Niri
+  app.niri.enable = true;
+
+  programs.foot = {
+    enable = true;
+    settings = {
+      main = {
+        term = "xterm-256color";
+
+        font = "monospace:size=13";
+        dpi-aware = "yes";
+      };
+
+      mouse = {
+        hide-when-typing = "yes";
+      };
+    };
+  };
+
+  programs.rofi = {
+    enable = true;
+  };
 
   programs.direnv = {
     enable = true;
@@ -52,139 +87,139 @@
     enable = true;
     enableZshIntegration = true;
     extraConfig = ''
-           	local wezterm = require 'wezterm'
-           	local act = wezterm.action
-           	local config = {}
+             	local wezterm = require 'wezterm'
+             	local act = wezterm.action
+             	local config = {}
 
-           	if wezterm.config_builder
-           	then
-           	  config = wezterm.config_builder()
-           	  config:set_strict_mode(true)
-           	end
+             	if wezterm.config_builder
+             	then
+             	  config = wezterm.config_builder()
+             	  config:set_strict_mode(true)
+             	end
 
-           	-- General settings
+             	-- General settings
 
-           	config.max_fps = 144
-           	config.animation_fps = 144
-           	config.front_end = "WebGpu"
-           	config.webgpu_power_preference = "HighPerformance"
-           	config.audible_bell = "Disabled"
+             	config.max_fps = 144
+             	config.animation_fps = 144
+             	config.front_end = "WebGpu"
+             	config.webgpu_power_preference = "HighPerformance"
+             	config.audible_bell = "Disabled"
 
-           	-- Appearance
-           	config.color_scheme = 'Tokyo Night Moon'
-           	config.window_decorations = "NONE"
-           	config.use_fancy_tab_bar = false
-           	config.window_frame = {
-           	  font_size = 16.5
-           	}
-           	config.font = wezterm.font 'Dejavu Sans Mono'
-           	config.font_size = 16
+             	-- Appearance
+             	config.color_scheme = 'Tokyo Night Moon'
+             	config.window_decorations = "NONE"
+             	config.use_fancy_tab_bar = false
+             	config.window_frame = {
+             	  font_size = 16.5
+             	}
+             	config.font = wezterm.font 'Dejavu Sans Mono'
+      config.font_size = 16
 
-      -- Lazy loading
+        -- Lazy loading
 
-      config.tab_bar_at_bottom = false
-      config.scrollback_lines = 5000 -- Limit scrollback to reduce memory
-      config.enable_scroll_bar = false -- Disable scroll bar for performance
-      config.harfbuzz_features = {} -- Minimal font features initially
+        config.tab_bar_at_bottom = false
+        config.scrollback_lines = 5000 -- Limit scrollback to reduce memory
+        config.enable_scroll_bar = false -- Disable scroll bar for performance
+        config.harfbuzz_features = {} -- Minimal font features initially
 
-           	-- Keymaps
-           	config.keys = {
+             	-- Keymaps
+             	config.keys = {
 
-           	  -- Pane splitting
-           	  {
-           	    key = 'mapped:+',
-           	    mods = 'SHIFT|ALT',
-           	    action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' },
-           	  },
-           	  {
-           	    key = 'mapped:_',
-           	    mods = 'SHIFT|ALT',
-           	    action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
-           	  },
-           	  -- Pane focus movement
-           	  {
-           	    key = 'LeftArrow',
-           	    mods = 'ALT',
-           	    action = act.ActivatePaneDirection 'Left'
-           	  },
-           	  {
-           	    key = 'RightArrow',
-           	    mods = 'ALT',
-           	    action = act.ActivatePaneDirection 'Right'
-           	  },
-           	  {
-           	    key = 'UpArrow',
-           	    mods = 'ALT',
-           	    action = act.ActivatePaneDirection 'Up'
-           	  },
-           	  {
-           	    key = 'DownArrow',
-           	    mods = 'ALT',
-           	    action = act.ActivatePaneDirection 'Down'
-           	  },
+             	  -- Pane splitting
+             	  {
+             	    key = 'mapped:+',
+             	    mods = 'SHIFT|ALT',
+             	    action = wezterm.action.SplitHorizontal { domain = 'CurrentPaneDomain' },
+             	  },
+             	  {
+             	    key = 'mapped:_',
+             	    mods = 'SHIFT|ALT',
+             	    action = wezterm.action.SplitVertical { domain = 'CurrentPaneDomain' },
+             	  },
+             	  -- Pane focus movement
+             	  {
+             	    key = 'LeftArrow',
+             	    mods = 'ALT',
+             	    action = act.ActivatePaneDirection 'Left'
+             	  },
+             	  {
+             	    key = 'RightArrow',
+             	    mods = 'ALT',
+             	    action = act.ActivatePaneDirection 'Right'
+             	  },
+             	  {
+             	    key = 'UpArrow',
+             	    mods = 'ALT',
+             	    action = act.ActivatePaneDirection 'Up'
+             	  },
+             	  {
+             	    key = 'DownArrow',
+             	    mods = 'ALT',
+             	    action = act.ActivatePaneDirection 'Down'
+             	  },
 
-           	  -- Pane movement
-           	  {
-           	    key = 'LeftArrow',
-           	    mods = 'SHIFT|ALT',
-           	    action = act.RotatePanes 'CounterClockwise',
-           	  },
-           	  { key = 'RightArrow',
-           	    mods = 'SHIFT|ALT',
-           	    action = act.RotatePanes 'Clockwise'
-           	  },
+             	  -- Pane movement
+             	  {
+             	    key = 'LeftArrow',
+             	    mods = 'SHIFT|ALT',
+             	    action = act.RotatePanes 'CounterClockwise',
+             	  },
+             	  { key = 'RightArrow',
+             	    mods = 'SHIFT|ALT',
+             	    action = act.RotatePanes 'Clockwise'
+             	  },
 
-           	  -- Lanch launch_menu
-           	  {
-           	    key = 'l',
-           	    mods = 'ALT',
-           	    action = wezterm.action.ShowLauncher
-           	  },
-           	}
+             	  -- Lanch launch_menu
+             	  {
+             	    key = 'l',
+             	    mods = 'ALT',
+             	    action = wezterm.action.ShowLauncher
+             	  },
+             	}
 
-           	-- Right click Copy
+             	-- Right click Copy
 
-           	config.mouse_bindings = {
-           	  {
-           	   event = { Down = { streak = 1, button = "Right" } },
-           	   mods = "NONE",
-           	   action = wezterm.action_callback(function(window, pane)
-           	     local has_selection = window:get_selection_text_for_pane(pane) ~= ""
-           	     if has_selection then
-           	       window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
-           	       window:perform_action(act.ClearSelection, pane)
-           	     else
-           	       window:perform_action(act({ PasteFrom = "Clipboard" }), pane)
-           	     end
-           	   end),
-           	  },
-           	 }
+             	config.mouse_bindings = {
+             	  {
+             	   event = { Down = { streak = 1, button = "Right" } },
+             	   mods = "NONE",
+             	   action = wezterm.action_callback(function(window, pane)
+             	     local has_selection = window:get_selection_text_for_pane(pane) ~= ""
+             	     if has_selection then
+             	       window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
+             	       window:perform_action(act.ClearSelection, pane)
+             	     else
+             	       window:perform_action(act({ PasteFrom = "Clipboard" }), pane)
+             	     end
+             	   end),
+             	  },
+             	 }
 
-           	-- Adding lanch menu items
-           	config.launch_menu = {
-           	  {
-           	    -- Optional label to show in the launcher. If omitted, a label
-           	    -- is derived from the `args`
-           	    -- label = 'PowerShell',
-           	    -- The argument array to spawn.  If omitted the default program
-           	    -- will be used as described in the documentation above
+             	-- Adding lanch menu items
+             	config.launch_menu = {
+             	  {
+             	    -- Optional label to show in the launcher. If omitted, a label
+             	    -- is derived from the `args`
+             	    -- label = 'PowerShell',
+             	    -- The argument array to spawn.  If omitted the default program
+             	    -- will be used as described in the documentation above
 
-           	    -- args = { 'pwsh.exe' },
+             	    -- args = { 'pwsh.exe' },
 
-           	    -- You can specify an alternative current working directory;
-           	    -- if you don't specify one then a default based on the OSC 7
-           	    -- escape sequence will be used (see the Shell Integration
-           	    -- docs), falling back to the home directory.
+             	    -- You can specify an alternative current working directory;
+             	    -- if you don't specify one then a default based on the OSC 7
+             	    -- escape sequence will be used (see the Shell Integration
+             	    -- docs), falling back to the home directory.
 
-           	    -- cwd = { 'C:\\' },
+             	    -- cwd = { 'C:\\' },
 
-           	    -- You can override environment variables just for this command
-           	    -- by setting this here.  It has the same semantics as the main
-           	    -- set_environment_variables configuration option described above
-           	    -- set_environment_variables = { FOO = "bar" },
-           	  }
-           	}
-           	return config
+             	    -- You can override environment variables just for this command
+             	    -- by setting this here.  It has the same semantics as the main
+             	    -- set_environment_variables configuration option described above
+             	    -- set_environment_variables = { FOO = "bar" },
+             	  }
+             	}
+             	return config
 
 
     '';
@@ -278,6 +313,9 @@
 
   # Home packages
   home.packages = with pkgs; [
+    # Niri
+    xwayland-satellite
+
     # Security & Secrets
     age
     sops

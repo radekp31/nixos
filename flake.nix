@@ -2,10 +2,8 @@
   description = "NixOS config flake.";
 
   inputs = {
-    #nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
-    #home-manager.url = "github:nix-community/home-manager/release-25.05";
     home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -21,7 +19,6 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     nixos-wsl = {
-      #url = "github:nix-community/NixOS-WSL";
       url = "github:nix-community/NixOS-WSL/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -36,8 +33,23 @@
 
     # Add nixvim here
     nixvim = {
-      #url = "github:nix-community/nixvim/nixos-25.05";
       url = "github:nix-community/nixvim/nixos-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Add Niri flake
+    niri = {
+      url = "github:sodiboo/niri-flake";
+    };
+
+    # Add Stylix (required for Niri)
+    stylix = {
+      url = "github:danth/stylix";
+    };
+
+    # Add Noctalia
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -86,7 +98,7 @@
           home-manager.useUserPackages = true;
           home-manager.users.radekp = import ./modules/home/users/radekp/desktop;
           # Optionally, pass extra arguments to home-manager modules
-          # home-manager.extraSpecialArgs = { };
+          home-manager.extraSpecialArgs = {inherit inputs;};
         }
       ];
     };
