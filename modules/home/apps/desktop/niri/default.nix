@@ -62,7 +62,7 @@
 
         spawn-at-startup = [
           {command = ["noctalia-shell"];}
-          {command = ["xwayland-satellite & !"];}
+          #{command = ["xwayland-satellite"];}
         ];
 
         binds = with config.lib.niri.actions; let
@@ -98,6 +98,9 @@
 
           # Quit Niri
           "Super+Shift+Q".action = quit;
+
+          # Run Xwayland-satellite
+          "Super+X".action.spawn = "xwayland-satellite";
 
           # # Lock Session
           # "Super+L".action = spawn "${pkgs.systemd}/bin/loginctl" "lock-session";

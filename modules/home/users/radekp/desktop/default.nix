@@ -21,9 +21,7 @@
     "/home/radekp/.nix-profile/bin/" # Required by Neovim and plugins (?)
   ];
   home.sessionVariables = {
-    DISPLAY = ":0";
     SDL_VIDEODRIVER = "wayland";
-    WAYLAND_DISPLAY = "wayland-1";
   };
 
   # Enable Niri
