@@ -1,11 +1,18 @@
-{
-  inputs,
-  ...
-}: {
+{inputs, ...}: {
   # import the home manager module
   imports = [
     inputs.noctalia.homeModules.default
   ];
+
+  home.file.".cache/noctalia/wallpapers.json" = {
+    text = builtins.toJSON {
+      defaultWallpaper = "~/Pictures/wallpapers/sdnixos.png";
+      wallpapers = {
+        "DP-2" = "~/Pictures/wallpapers/sdnixos.png";
+        "DP-3" = "~/Pictures/wallpapers/sdnixos.png";
+      };
+    };
+  };
 
   # configure options
   programs.noctalia-shell = {
@@ -14,9 +21,9 @@
       # configure noctalia here; defaults will
       # be deep merged with these attributes.
       bar = {
-        density = "compact";
-        position = "right";
-        showCapsule = false;
+        density = "comfortable";
+        position = "top";
+        showCapsule = true;
         widgets = {
           left = [
             {
@@ -24,10 +31,7 @@
               useDistroLogo = true;
             }
             {
-              id = "WiFi";
-            }
-            {
-              id = "Bluetooth";
+              id = "SystemMonitor";
             }
           ];
           center = [
@@ -39,9 +43,7 @@
           ];
           right = [
             {
-              alwaysShowPercentage = false;
-              id = "Battery";
-              warningThreshold = 30;
+              id = "Volume";
             }
             {
               formatHorizontal = "HH:mm";
@@ -50,10 +52,27 @@
               useMonospacedFont = true;
               usePrimaryColor = true;
             }
+            {
+              id = "NotificationHistory";
+            }
           ];
         };
       };
-      colorSchemes.predefinedScheme = "Monochrome";
+      colorSchemes = {
+        #useWallpaperColors = true;
+        predefinedScheme = "Tokyo Night";
+        darkMode = true;
+        #schedulingMode = "automatic";  # Auto-switch based on time
+        matugenSchemeType = "scheme-tonal-spot"; # Better color harmony
+        generateTemplatesForPredefined = true;
+      };
+
+      templates = {
+        gtk = true;
+        qt = true;
+        niri = true;
+        foot = true; # If you use kitty terminal
+      };
       general = {
         #avatarImage = "/home/drfoobar/.face";
         radiusRatio = 0.2;
