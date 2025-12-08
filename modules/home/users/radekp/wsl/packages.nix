@@ -1,9 +1,15 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  inputs,
+  ...
+}: let
+  nixpkgs2505 = import inputs.nixpkgs25_05 {system = "x86_64-linux";};
+in {
   home.packages = with pkgs; [
     (
-      azure-cli.withExtensions
+      nixpkgs2505.azure-cli.withExtensions
       [
-        azure-cli-extensions.nsp
+        nixpkgs2505.azure-cli-extensions.nsp
         # More extensions
       ]
     )

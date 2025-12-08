@@ -2,8 +2,11 @@
   description = "NixOS config flake.";
 
   inputs = {
-    #nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+
+    # Azure CLI on 25.11 is fooked - revisit later to check if it works again
+    # Use az login --tenant <TENANT_ID> --use-device-code
+    nixpkgs25_05.url = "github:NixOS/nixpkgs/nixos-25.05";
 
     #home-manager.url = "github:nix-community/home-manager/release-25.05";
     home-manager.url = "github:nix-community/home-manager/release-25.11";
@@ -144,7 +147,7 @@
           home-manager.useUserPackages = true;
           home-manager.users.radekp = import ./modules/home/users/radekp/wsl;
           # Optionally, pass extra arguments to home-manager modules
-          # home-manager.extraSpecialArgs = { };
+          home-manager.extraSpecialArgs = {inherit inputs;};
         }
       ];
     };

@@ -21,11 +21,9 @@
       if [[ $- == *i* ]]; then
         # Check if running inside WSL
         if grep -qi microsoft /proc/version &> /dev/null; then
-          fastfetch
+          fastfetch --config ${pkgs.fastfetch}/share/fastfetch/presets/examples/3.jsonc
         fi
       fi
-
-      fastfetch --config ${pkgs.fastfetch}/share/fastfetch/presets/examples/3.jsonc
 
       source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
 
