@@ -22,7 +22,12 @@
   environment.variables.EDITOR = "nvim";
 
   # Enable SSH
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+  };
+
+  # Avoid conflicts with openssh
+  systemd.services.sshd.enable = false;
 
   system.stateVersion = "25.05";
 
