@@ -8,7 +8,6 @@
     # Use az login --tenant <TENANT_ID> --use-device-code
     nixpkgs25_05.url = "github:NixOS/nixpkgs/nixos-25.05";
 
-    #home-manager.url = "github:nix-community/home-manager/release-25.05";
     home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -24,7 +23,6 @@
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     nixos-wsl = {
-      #url = "github:nix-community/NixOS-WSL";
       url = "github:nix-community/NixOS-WSL/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -37,9 +35,7 @@
     treefmt-nix.url = "github:numtide/treefmt-nix";
     systems.url = "github:nix-systems/default";
 
-    # Add nixvim here
     nixvim = {
-      #url = "github:nix-community/nixvim/nixos-25.05";
       url = "github:nix-community/nixvim/nixos-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -48,6 +44,7 @@
   outputs = {
     self,
     nixpkgs,
+    nixpkgs25_05,
     alejandra,
     home-manager,
     disko,
@@ -58,6 +55,16 @@
     ...
   } @ inputs: let
     system = "x86_64-linux";
+
+    # devShell vars
+    pkgs = import nixpkgs {
+      inherit system;
+      config.allowUnfree = true;
+    };
+    pkgs25_05 = import nixpkgs25_05 {
+      inherit system;
+      config.allowUnfree = true;
+    };
 
     # Treefmt-nix
     # Small tool to iterate over each systems
@@ -162,8 +169,8 @@
     });
 
     # Create a dev shell
-    # devShell = nixpkgs.mkShell {
-    #   buildInputs = [ ... ];
-    # };
+    devShells.${system} = {
+      devops = import ./modules/devShells/devops.nix {inherit pkgs pkgs25_05;};
+    };
   };
 }
