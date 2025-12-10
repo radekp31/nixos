@@ -1,0 +1,44 @@
+{ pkgs, pkgs25_05, flake-utils, ... }:
+
+let
+  aztfexport = pkgs.buildGoModule rec {
+    pname = "aztfexport";
+    version = "0.18.0";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "Azure";
+      repo = "aztfexport";
+      rev = "v${version}";
+      hash = "sha256-j6WdQvbxmHOMEfCvnFDxr9ZNOZg0BIOC6u1nw+n3hA0=";
+    };
+
+    # Let Nix tell us the correct vendorHash in step 3
+    vendorHash = null;
+
+    subPackages = [ "." ];
+  };
+in
+pkgs.mkShell {
+  packages = [
+    pkgs.kubectl
+    pkgs.terraform
+    pkgs.awscli2
+    pkgs.google-cloud-sdk
+    pkgs25_05.azure-cli
+    pkgs.terraformer
+    aztfexport
+  ];
+
+  shellHook = ''
+    echo "CloudOps DevShell loaded"
+    echo "Available tools:"
+    echo "  - kubectl"
+    echo "  - terraform"
+    echo "  - awscli2"
+    echo "  - google-cloud-sdk"
+    echo "  - azure-cli"
+    echo "  - terraformer"
+    echo "  - aztfexport"
+  '';
+}
+

@@ -39,6 +39,10 @@
       url = "github:nix-community/nixvim/nixos-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+    };
   };
 
   outputs = {
@@ -52,6 +56,7 @@
     nixos-wsl,
     treefmt-nix,
     systems,
+    flake-utils,
     ...
   } @ inputs: let
     system = "x86_64-linux";
@@ -170,7 +175,7 @@
 
     # Create a dev shell
     devShells.${system} = {
-      devops = import ./modules/devShells/devops.nix {inherit pkgs pkgs25_05;};
+      devops = import ./modules/devShells/devops.nix {inherit pkgs pkgs25_05 flake-utils;};
     };
   };
 }

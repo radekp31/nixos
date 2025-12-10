@@ -43,7 +43,8 @@ in {
     bat
     kubectl
     tree
-    fastfetch # to identify session
+    #fastfetch # to identify session
+    microfetch
     xsel
     docker_28
     inetutils
