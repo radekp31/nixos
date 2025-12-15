@@ -33,13 +33,53 @@
   };
 in
   pkgs.mkShell {
-    packages = [
-      pkgs.kubectl
-      pkgs.terraform
-      pkgs.awscli2
-      pkgs.google-cloud-sdk
+    packages = with pkgs; [
+      (python313.withPackages (ps:
+        with ps; [
+          # More packages
+          openpyxl
+          collections-extended
+          pandas
+          numpy
+        ]))
+
+      kubectl
+      terraform
+      awscli2
+      google-cloud-sdk
       pkgs25_05.azure-cli
-      pkgs.terraformer
+      terraformer
       aztfexport
+      dig
+      curl
+      wget
+      google-cloud-sdk
+      fzf
+      jq
+      git
+      gh # GitHub CLI
+      docker-compose
+      helm
+      awscli2
+      google-cloud-sdk
+      terraform
+      ansible
+      htop
+      curl
+      wget
+      netcat
+      ripgrep-all
+      fd
+      bat
+      kubectl
+      tree
+      #fastfetch # to identify session
+      microfetch
+      xsel
+      docker_28
+      inetutils
     ];
+
+    shellHooks = ''
+    '';
   }
