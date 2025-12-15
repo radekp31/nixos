@@ -12,6 +12,8 @@
 
         font = "monospace:size=13";
         dpi-aware = "yes";
+        # Include the color theme file
+        include = "~/.config/foot/themes/noctalia";
       };
 
       mouse = {
@@ -357,12 +359,9 @@
       };
       colorSchemes = {
         useWallpaperColors = false;
-        #predefinedScheme = "Noctalia (default)";
-        predefinedScheme = "Tokyo Night";
+        predefinedScheme = "Tokyo Night Moon";
         darkMode = true;
         schedulingMode = "off";
-        #manualSunrise = "06:30";
-        #manualSunset = "18:30";
         matugenSchemeType = "scheme-fruit-salad";
         generateTemplatesForPredefined = true;
       };
@@ -373,7 +372,7 @@
         alacritty = false;
         kitty = false;
         ghostty = false;
-        foot = false;
+        foot = true;
         wezterm = false;
         fuzzel = false;
         discord = true;
@@ -404,5 +403,4 @@
       };
     };
   };
-  #};
 }

@@ -1,4 +1,4 @@
-#Docs: https://github.com/sodiboo/niri-flake/blob/main/docs.md
+#Docs: https://githeb.com/sodiboo/niri-flake/blob/main/docs.md
 {
   config,
   pkgs,
@@ -12,6 +12,45 @@
       enable = true;
       settings = {
         prefer-no-csd = true;
+
+        layout = {
+          gaps = 5;
+          border = {
+            width = 2;
+            active = "c099ff";
+          };
+          shadow.enable = false;
+          preset-column-widths = [
+            {proportion = 1. / 3.;}
+            {proportion = 1. / 2.;}
+            {proportion = 2. / 3.;}
+          ];
+
+          focus-ring = {
+            enable = true;
+            width = 1.5;
+            active = {
+              color = "#c099ff";
+            };
+            inactive = {
+              color = "#444a73";
+            };
+          };
+        };
+
+        window-rules = [
+          # Firefox starts fullscreen
+          {
+            matches = [
+              {app-id = ".*";}
+            ];
+            open-maximized = true;
+          }
+        ];
+
+        gestures = {
+          hot-corners.enable = false;
+        };
 
         environment = {
           DISPLAY = ":0";
@@ -102,8 +141,14 @@
           # Run Xwayland-satellite
           "Super+X".action.spawn = "xwayland-satellite";
 
+          # Focus movement with Alt+WSAD keys
+          "Alt+Left".action = focus-column-left;
+          "Alt+Right".action = focus-column-right;
+          "Alt+Up".action = focus-window-up; # Optional: move focus up within a column
+          "Alt+Down".action = focus-window-down; # Optional: move focus down within a column
+
           # # Lock Session
-          # "Super+L".action = spawn "${pkgs.systemd}/bin/loginctl" "lock-session";
+          "Super+L".action = spawn "${pkgs.systemd}/bin/loginctl" "lock-session";
 
           # Screenshotting
           #"Print".action = screenshot;
