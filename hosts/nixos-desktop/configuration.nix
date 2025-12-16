@@ -173,7 +173,6 @@
     #qt6.full
   ];
 
-  # Niri + Noctalia
   #networking.networkManager.enable = true;
   hardware.bluetooth.enable = true;
   services.power-profiles-daemon.enable = true;

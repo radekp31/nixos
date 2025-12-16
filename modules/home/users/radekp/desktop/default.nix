@@ -4,7 +4,10 @@
   ...
 }: {
   imports = [
+    # Setup zsh
     ../../../shells/zsh
+
+    # Desktop (Niri + Noctalia)
     inputs.niri.homeModules.niri
     ../../../apps/desktop/niri
     ../../../apps/desktop/noctalia
@@ -23,9 +26,6 @@
   home.sessionVariables = {
     SDL_VIDEODRIVER = "wayland";
   };
-
-  # Enable Niri
-  app.niri.enable = true;
 
   programs.rofi = {
     enable = true;
