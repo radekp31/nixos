@@ -80,6 +80,8 @@ in
       inetutils
     ];
 
-    shellHooks = ''
+    shellHook = ''
+      export DEVSHELL_NAME="devops"
+      export NIXPKGS_ALLOW_UNFREE="1"
     '';
   }

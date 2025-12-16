@@ -1,4 +1,7 @@
-{lib, ...}: {
+{
+  lib,
+  ...
+}: {
   imports = [
     ./users.nix
     ../common/default.nix
