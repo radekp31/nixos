@@ -23,7 +23,7 @@
       export C='/mnt/c'
 
       # Launch niri on TTY1
-      if [[ -z "$DISPLAY" ]] && [[ "$(TTY)" = /dev/tty1 ]]; then
+      if [[ -z "$DISPLAY" ]] && [[ "$(tty)" = /dev/tty1 ]]; then
        exec niri-session
 
       fi

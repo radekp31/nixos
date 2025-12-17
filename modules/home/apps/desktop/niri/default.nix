@@ -181,8 +181,9 @@
 
         # Open programs
         "Super+Return".action.spawn = "${pkgs.foot}/bin/foot";
-        #"Super+Space".action = spawn "${pkgs.rofi}/bin/rofi" "-show" "drun";
-        "Super+Space".action = spawn "fuzzel";
+        "Mod+Space".action.spawn = ["noctalia-shell" "ipc" "call" "launcher" "toggle"];
+
+        "Super+S".action.spawn = ["noctalia-shell" "ipc" "call" "settings" "toggle"];
         "Super+Alt+L".action = spawn "swaylock";
 
         # Toggle screen reader
