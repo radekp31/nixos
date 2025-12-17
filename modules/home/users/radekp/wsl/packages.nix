@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  inputs,
+  ...
+}: {
   home.packages = with pkgs; [
     # Python with packages (for the CSV processing scripts)
     (python313.withPackages (ps:

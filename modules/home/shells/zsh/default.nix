@@ -14,11 +14,19 @@
     };
     envExtra = ''
     '';
+    profileExtra = ''
+    '';
     initContent = ''
       export NIXPKGS_ALLOW_UNFREE=1
       export EDITOR='nvim'
       export VISUAL='nvim'
       export C='/mnt/c'
+
+      # Launch niri on TTY1
+      if [[ -z "$DISPLAY" ]] && [[ "$(TTY)" = /dev/tty1 ]]; then
+       exec niri-session
+
+      fi
 
       # Add devshell name to prompt if available
       if [ -n "$DEVSHELL_NAME" ]; then

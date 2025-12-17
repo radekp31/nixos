@@ -14,7 +14,7 @@
 
     # System modules
     ../../modules/system/hardware/gpu/nvidia
-    ../../modules/system/apps/desktop/kde-plasma6
+    #../../modules/system/apps/desktop/kde-plasma6
     ../../modules/system/apps/nixvim
     ../../modules/system/apps/qmk
     ../../modules/system/apps/qemu
@@ -40,6 +40,8 @@
   security.sudo.extraConfig = ''
     Defaults    pwfeedback
     Defaults    insults
+    Defaults:radekp timestamp_timeout=30
+
 
     user ALL=(ALL) NOPASSWD: ${pkgs.linuxPackages.nvidia_x11.settings}
     radekp ALL=(ALL) NOPASSWD: ${pkgs.rsync}/bin/rsync
@@ -170,6 +172,11 @@
     libxfs
     #qt6.full
   ];
+
+  #networking.networkManager.enable = true;
+  hardware.bluetooth.enable = true;
+  services.power-profiles-daemon.enable = true;
+  services.upower.enable = true;
 
   system.stateVersion = "25.05";
 }

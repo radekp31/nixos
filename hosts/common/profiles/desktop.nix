@@ -49,4 +49,22 @@
     smartmontools # Drive monitoring
     lm_sensors # Temperature/fan sensors
   ];
+
+  # Enable XDG portal
+  xdg.portal = {
+    enable = true;
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
+    ];
+    config = {
+      common = {
+        default = ["gtk"];
+      };
+    };
+  };
+
+  environment.pathsToLink = [
+    "/share/applications"
+    "/share/xdg-desktop-portal"
+  ];
 }

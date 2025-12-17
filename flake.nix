@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
-
     # Azure CLI on 25.11 is fooked - revisit later to check if it works again
     # Use az login --tenant <TENANT_ID> --use-device-code
     nixpkgs25_05.url = "github:NixOS/nixpkgs/nixos-25.05";
@@ -43,6 +42,20 @@
     flake-utils = {
       url = "github:numtide/flake-utils";
     };
+
+    niri = {
+      url = "github:sodiboo/niri-flake";
+    };
+
+    # Add Stylix (required for Niri)
+    stylix = {
+      url = "github:danth/stylix";
+    };
+
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -56,7 +69,6 @@
     nixos-wsl,
     treefmt-nix,
     systems,
-    flake-utils,
     ...
   } @ inputs: let
     system = "x86_64-linux";
@@ -100,8 +112,9 @@
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.users.radekp = import ./modules/home/users/radekp/desktop;
+          home-manager.backupFileExtension = "backup";
           # Optionally, pass extra arguments to home-manager modules
-          # home-manager.extraSpecialArgs = { };
+          home-manager.extraSpecialArgs = {inherit inputs;};
         }
       ];
     };
@@ -158,6 +171,7 @@
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.users.radekp = import ./modules/home/users/radekp/wsl;
+          home-manager.backupFileExtension = "backup";
           # Optionally, pass extra arguments to home-manager modules
           home-manager.extraSpecialArgs = {inherit inputs;};
         }
@@ -175,7 +189,7 @@
 
     # Create a dev shell
     devShells.${system} = {
-      devops = import ./modules/devShells/devops.nix {inherit pkgs pkgs25_05 flake-utils;};
+      devops = import ./modules/devShells/devops.nix {inherit pkgs pkgs25_05;};
     };
   };
 }
