@@ -1,12 +1,15 @@
 {
   config,
   pkgs,
+  lib,
   ...
-}:
-#let
-#
-#in
-{
+}: let
+  # Check if niri is enabled for any home-manager user
+  niriEnabled =
+    builtins.any
+    (user: user.programs.niri.enable or false)
+    (builtins.attrValues (config.home-manager.users or {}));
+in {
   #Accept NVIDIA licence
   nixpkgs.config.nvidia.acceptLicense = true;
 
@@ -133,5 +136,31 @@
     script = ''
       nvidia-smi -i 0 -pl 130
     '';
+  };
+
+  # Conditionally create niri profile
+  environment.etc = lib.mkIf niriEnabled {
+    "nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.json".text = builtins.toJSON {
+      rules = [
+        {
+          pattern = {
+            feature = "procname";
+            matches = "niri";
+          };
+          profile = "Limit Free Buffer Pool On Wayland Compositors";
+        }
+      ];
+      profiles = [
+        {
+          name = "Limit Free Buffer Pool On Wayland Compositors";
+          settings = [
+            {
+              key = "GLVidHeapReuseRatio";
+              value = 0;
+            }
+          ];
+        }
+      ];
+    };
   };
 }
