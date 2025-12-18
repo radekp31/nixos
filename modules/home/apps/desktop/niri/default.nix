@@ -4,6 +4,11 @@
   pkgs,
   ...
 }: {
+  programs.swaylock = {
+    enable = true;
+    package = pkgs.swaylock-effects;
+  };
+
   programs.niri = {
     enable = true;
     settings = {
@@ -103,79 +108,6 @@
       binds = with config.lib.niri.actions; let
         sh = spawn "sh" "-c";
       in {
-        #"Super+Return".action.spawn = "${pkgs.foot}/bin/foot";
-        #"Super+Space".action = spawn "${pkgs.rofi}/bin/rofi" "-show" "drun";
-        #"Mod+Space".action.spawn = [
-        #  "noctalia-shell"
-        #  "ipc"
-        #  "call"
-        #  "launcher"
-        #  "toggle"
-        #];
-
-        #"Mod+P".action.spawn = "noctalia-shell ipc call sessionMenu toggle";
-
-        #"Mod+C".action.spawn = "noctalia-shell ipc call controlCenter toggle";
-
-        #"Mod+S".action.spawn = "noctalia-shell ipc call settings toggle";
-
-        #"Super+E".action = spawn "${pkgs.firefox}/bin/firefox";
-        #"Super+W".action = close-window;
-
-        ## Workspace overview
-        #"Super+Tab".action = toggle-overview;
-
-        ## Resize window
-        #"Super+R".action = switch-preset-window-width;
-
-        ## Toggle fullscreen
-        #"Super+F".action = fullscreen-window;
-
-        ## Quit Niri
-        #"Super+Shift+Q".action = quit;
-
-        ## Run Xwayland-satellite
-        #"Super+X".action.spawn = "xwayland-satellite";
-
-        ## Focus movement with Alt+WSAD keys
-        #"Alt+Left".action = focus-column-left;
-        #"Alt+Right".action = focus-column-right;
-        #"Alt+Up".action = focus-window-up; # Optional: move focus up within a column
-        #"Alt+Down".action = focus-window-down; # Optional: move focus down within a column
-
-        ## # Lock Session
-        #"Super+L".action = spawn "${pkgs.systemd}/bin/loginctl" "lock-session";
-
-        ## Screenshotting
-        ##"Print".action = screenshot;
-
-        ## Workspaces
-        #"Super+0".action = focus-workspace 0;
-        #"Super+1".action = focus-workspace 1;
-        #"Super+2".action = focus-workspace 2;
-        #"Super+3".action = focus-workspace 3;
-        #"Super+4".action = focus-workspace 4;
-        #"Super+5".action = focus-workspace 5;
-        #"Super+6".action = focus-workspace 6;
-        #"Super+7".action = focus-workspace 7;
-        #"Super+8".action = focus-workspace 8;
-        #"Super+9".action = focus-workspace 9;
-        #"Super+Shift+0".action.move-window-to-workspace = [{focus = false;} "0"];
-        #"Super+Shift+1".action.move-window-to-workspace = [{focus = false;} "1"];
-        #"Super+Shift+2".action.move-window-to-workspace = [{focus = false;} "2"];
-        #"Super+Shift+3".action.move-window-to-workspace = [{focus = false;} "3"];
-        #"Super+Shift+4".action.move-window-to-workspace = [{focus = false;} "4"];
-        #"Super+Shift+5".action.move-window-to-workspace = [{focus = false;} "5"];
-        #"Super+Shift+6".action.move-window-to-workspace = [{focus = false;} "6"];
-        #"Super+Shift+7".action.move-window-to-workspace = [{focus = false;} "7"];
-        #"Super+Shift+8".action.move-window-to-workspace = [{focus = false;} "8"];
-        #"Super+Shift+9".action.move-window-to-workspace = [{focus = false;} "9"];
-
-        ## Special Keys
-        #"XF86AudioRaiseVolume".action = sh "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1+";
-        #"XF86AudioLowerVolume".action = sh "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1-";
-        #"XF86AudioMute".action = sh "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle";
-
         # Hotkey overlay
         "Mod+Shift+Slash".action = show-hotkey-overlay;
 
@@ -184,8 +116,58 @@
         "Mod+Space".action.spawn = ["noctalia-shell" "ipc" "call" "launcher" "toggle"];
 
         "Super+S".action.spawn = ["noctalia-shell" "ipc" "call" "settings" "toggle"];
-        "Super+Alt+L".action = spawn "swaylock";
-
+        #"Super+Alt+L".action = spawn "swaylock";
+        #"Super+Alt+L".action.spawn = ["swaylock" "--screenshots" "--ignore-empty-password" "--daemonize" "--indicator-caps-lock" "--indicator" "--clock" "--show-failed-attempts" "--indicator-idle-visible"];
+        "Super+Alt+L".action.spawn = [
+          "swaylock"
+          "--screenshots"
+          "--clock"
+          "--effect-blur"
+          "10x5"
+          "--indicator"
+          "--indicator-idle-visible"
+          "--indicator-radius"
+          "100"
+          "--fade-in"
+          "0.4"
+          "--indicator-thickness"
+          "3"
+          "--indicator-caps-lock"
+          "--ring-color"
+          "00000000"
+          "--key-hl-color"
+          "34bdebff"
+          "--bs-hl-color"
+          "ed8796ff"
+          "--inside-color"
+          "00000000"
+          "--inside-clear-color"
+          "00000000"
+          "--inside-ver-color"
+          "00000000"
+          "--inside-wrong-color"
+          "00000000"
+          "--ring-clear-color"
+          "00000000"
+          "--ring-wrong-color"
+          "00000000"
+          "--ring-ver-color"
+          "00000000"
+          "--line-color"
+          "00000000"
+          "--text-color"
+          "8a8a8aff"
+          "--text-clear-color"
+          "f2d5cfff"
+          "--text-ver-color"
+          "8a8a8aff"
+          "--text-wrong-color"
+          "ed8796ff"
+          "--effect-vignette"
+          "0.5:0.5"
+          "--effect-compose"
+          "color=000000aa"
+        ];
         # Toggle screen reader
         "Super+Alt+S" = {
           action = sh "pkill orca || exec orca";

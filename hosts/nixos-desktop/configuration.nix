@@ -2,6 +2,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }: {
   imports = [
@@ -177,6 +178,12 @@
   hardware.bluetooth.enable = true;
   services.power-profiles-daemon.enable = true;
   services.upower.enable = true;
+
+  # Conditionally enable swaylock PAM service if any user has it enabled
+  security.pam.services.swaylock = pkgs.lib.mkIf (
+    builtins.any (user: user.programs.swaylock.enable or false)
+    (builtins.attrValues config.home-manager.users)
+  ) {};
 
   system.stateVersion = "25.05";
 }
