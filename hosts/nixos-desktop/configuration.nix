@@ -15,7 +15,6 @@
 
     # System modules
     ../../modules/system/hardware/gpu/nvidia
-    #../../modules/system/apps/desktop/kde-plasma6
     ../../modules/system/apps/nixvim
     ../../modules/system/apps/qmk
     ../../modules/system/apps/qemu
@@ -25,6 +24,16 @@
     ../../modules/system/apps/openrgb
     ../../modules/system/hardware/usb
   ];
+
+  #virtualisation.waydroid = {
+  #  enable = true;
+  #  package = pkgs.waydroid-nftables;
+  #};
+
+  #programs.adb.enable = true;
+
+  #programs.appimage.enable = true;
+  #programs.appimage.binfmt = true;
 
   # Override common defaults
   system.autoUpgrade.enable = true;
@@ -52,11 +61,7 @@
     {
       commands = [
         {
-          command = "${pkgs.linuxPackages.nvidia_x11.settings}";
-          options = ["NOPASSWD"];
-        }
-        {
-          command = "${pkgs.linuxPackages.nvidia_x11.bin}";
+          command = "${config.hardware.nvidia.package.bin}/bin/nvidia-smi";
           options = ["NOPASSWD"];
         }
         {
@@ -65,6 +70,10 @@
         }
         {
           command = "${pkgs.util-linux}/bin/dmesg";
+          options = ["NOPASSWD"];
+        }
+        {
+          command = "${pkgs.gnome-multi-writer}/bin/gnome-multi-writer";
           options = ["NOPASSWD"];
         }
       ];
@@ -103,7 +112,8 @@
 
   # Kernel
   #boot.kernelPackages = pkgs.linuxPackages_6_17;
-  boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
+  #boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
+  boot.kernelPackages = pkgs.linuxPackages_6_18;
   boot.kernelParams = [
     "boot.shell_on_fail"
     "trace_clock=local"
@@ -172,6 +182,7 @@
     ntfs3g
     libxfs
     #qt6.full
+    gnome-multi-writer
   ];
 
   #networking.networkManager.enable = true;

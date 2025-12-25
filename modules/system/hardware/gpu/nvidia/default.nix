@@ -21,9 +21,7 @@ in {
       intel-media-driver # LIBVA_DRIVER_NAME=iHD
       libvdpau-va-gl
       nvidia-vaapi-driver
-      #vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
       intel-vaapi-driver # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
-      #vaapiVdpau
       libva-vdpau-driver
       vulkan-validation-layers
       libglvnd
@@ -98,17 +96,17 @@ in {
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     #package = config.boot.kernelPackages.nvidiaPackages.latest;
-    package = config.boot.kernelPackages.nvidiaPackages.production;
+    #package = config.boot.kernelPackages.nvidiaPackages.production;
 
     # Pin specific driver version
-    #package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-    #  version = "580.95.05";
-    #  sha256_64bit = "sha256-hJ7w746EK5gGss3p8RwTA9VPGpp2lGfk5dlhsv4Rgqc=";
-    #  sha256_aarch64 = "sha256-zLRCbpiik2fGDa+d80wqV3ZV1U1b4lRjzNQJsLLlICk=";
-    #  openSha256 = "sha256-RFwDGQOi9jVngVONCOB5m/IYKZIeGEle7h0+0yGnBEI=";
-    #  settingsSha256 = "sha256-F2wmUEaRrpR1Vz0TQSwVK4Fv13f3J9NJLtBe4UP2f14=";
-    #  persistencedSha256 = "sha256-QCwxXQfG/Pa7jSTBB0xD3lsIofcerAWWAHKvWjWGQtg=";
-    #};
+    package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
+      version = "590.48.01";
+      sha256_64bit = "sha256-ueL4BpN4FDHMh/TNKRCeEz3Oy1ClDWto1LO/LWlr1ok=";
+      sha256_aarch64 = "sha256-FOz7f6pW1NGM2f74kbP6LbNijxKj5ZtZ08bm0aC+/YA=";
+      openSha256 = "sha256-hECHfguzwduEfPo5pCDjWE/MjtRDhINVr4b1awFdP44=";
+      settingsSha256 = "sha256-NWsqUciPa4f1ZX6f0By3yScz3pqKJV1ei9GvOF8qIEE=";
+      persistencedSha256 = "sha256-wsNeuw7IaY6Qc/i/AzT/4N82lPjkwfrhxidKWUtcwW8=";
+    };
   };
 
   #Packages related to NVIDIA
@@ -125,7 +123,7 @@ in {
   systemd.services.nv-power-limit = {
     enable = true;
     path = with pkgs; [
-      linuxPackages.nvidia_x11
+      "${config.hardware.nvidia.package.bin}/bin/nvidia-smi"
       bash
     ];
     wantedBy = ["multi-user.target"];
@@ -134,7 +132,7 @@ in {
       Type = "oneshot";
     };
     script = ''
-      nvidia-smi -i 0 -pl 130
+      ${config.hardware.nvidia.package.bin}/bin/nvidia-smi -i 0 -pl 130
     '';
   };
 
