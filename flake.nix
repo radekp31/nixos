@@ -43,19 +43,19 @@
       url = "github:numtide/flake-utils";
     };
 
-    niri = {
-      url = "github:sodiboo/niri-flake";
-    };
+    #niri = {
+    #  url = "github:sodiboo/niri-flake";
+    #};
 
     # Add Stylix (required for Niri)
-    stylix = {
-      url = "github:danth/stylix";
-    };
+    #stylix = {
+    #  url = "github:danth/stylix";
+    #};
 
-    noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    #noctalia = {
+    #  url = "github:noctalia-dev/noctalia-shell";
+    #  inputs.nixpkgs.follows = "nixpkgs";
+    #};
   };
 
   outputs = {
@@ -102,8 +102,7 @@
       specialArgs = {inherit inputs;};
       modules = [
         ./hosts/nixos-desktop/configuration.nix
-        ./modules/system/secrets/sops
-        #sops-nix.nixosModules.sops
+        #./modules/system/secrets/sops
         {
           environment.systemPackages = [alejandra.defaultPackage.${system}];
         }

@@ -14,6 +14,7 @@
     ../common/profiles/desktop.nix
 
     # System modules
+    ../../modules/system/apps/desktop/kde-plasma6
     ../../modules/system/hardware/gpu/nvidia
     ../../modules/system/apps/nixvim
     ../../modules/system/apps/qmk
@@ -90,8 +91,8 @@
     "usbhid"
   ];
 
-  boot.supportedFilesystems = ["ntfs" "vfat" "ext4"];
-  boot.initrd.supportedFilesystems = ["ntfs" "vfat" "ext4"];
+  boot.supportedFilesystems = ["ntfs" "vfat" "ext4" "btrfs"];
+  boot.initrd.supportedFilesystems = ["ntfs" "vfat" "ext4" "btrfs"];
 
   # Bootloader
   boot.loader.efi = {
@@ -106,7 +107,7 @@
     gfxmodeEfi = "1366x768";
     gfxmodeBios = "1366x768";
     theme = null;
-    configurationLimit = 3;
+    configurationLimit = 15;
     memtest86.enable = true;
   };
 

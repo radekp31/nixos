@@ -1,6 +1,5 @@
 {
   pkgs,
-  inputs,
   ...
 }: {
   imports = [
@@ -8,9 +7,9 @@
     ../../../shells/zsh
 
     # Desktop (Niri + Noctalia)
-    inputs.niri.homeModules.niri
-    ../../../apps/desktop/niri
-    ../../../apps/desktop/noctalia
+    #inputs.niri.homeModules.niri
+    #../../../apps/desktop/niri
+    #../../../apps/desktop/noctalia
   ];
 
   #Let Home Manager install and manage itself
