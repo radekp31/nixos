@@ -54,7 +54,8 @@
   fileSystems."/media/A400" = {
     device = "/dev/disk/by-uuid/2b232c2c-3198-432d-bcbe-9d6056700d12";
     fsType = "xfs";
-    options = ["rw" "nofail"];
+    #options = ["rw" "nofail"];
+    options = ["rw" "nofail" "defaults" "noatime"];
   };
 
   swapDevices = [];

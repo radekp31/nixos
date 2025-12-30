@@ -21,20 +21,9 @@
     ../../modules/system/apps/qemu
     ../../modules/system/hardware/printers/brother/DCPL2622DW
     ../../modules/system/scripts/fan-control.sh
-    ../../modules/system/apps/git
     ../../modules/system/apps/openrgb
     ../../modules/system/hardware/usb
   ];
-
-  #virtualisation.waydroid = {
-  #  enable = true;
-  #  package = pkgs.waydroid-nftables;
-  #};
-
-  #programs.adb.enable = true;
-
-  #programs.appimage.enable = true;
-  #programs.appimage.binfmt = true;
 
   # Override common defaults
   system.autoUpgrade.enable = true;
@@ -171,6 +160,12 @@
     dedicatedServer.openFirewall = true;
     localNetworkGameTransfers.openFirewall = true;
   };
+
+  nixpkgs.config.allowUnfreePredicate = pkg:
+    builtins.elem (lib.getName pkg) [
+      "steam"
+      "steam-unwrapped"
+    ];
 
   # Cockpit
   services.cockpit.enable = true;

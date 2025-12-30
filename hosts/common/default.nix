@@ -36,7 +36,7 @@
     flake = lib.mkDefault "/etc/nixos";
   };
 
-  # Basic packages - truly minimal
+  # Basic packages
   environment.systemPackages = with pkgs; [
     # Core essentials
     vim
@@ -46,7 +46,6 @@
     htop
     tree
     tmux
-    #neovim
   ];
 
   # SSH - disabled by default, let hosts opt-in
@@ -56,5 +55,9 @@
       PermitRootLogin = "no";
       PasswordAuthentication = lib.mkDefault false;
     };
+  };
+
+  programs.git = {
+    enable = true;
   };
 }

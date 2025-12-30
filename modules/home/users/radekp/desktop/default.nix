@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     # Setup zsh
     ../../../shells/zsh
@@ -26,11 +23,20 @@
     SDL_VIDEODRIVER = "wayland";
   };
 
-  #xdg.portal = {
-  #  enable = true;
-  #};
+  programs.ssh = {
+    enable = true;
+    enableDefaultConfig = false;
 
-  programs.rofi = {
+    matchBlocks = {
+      "github.com" = {
+        user = "git";
+        hostname = "github.com";
+        identityFile = "~/.ssh/id_ed25519";
+      };
+    };
+  };
+
+  services.ssh-agent = {
     enable = true;
   };
 
@@ -58,9 +64,6 @@
   programs.bash = {
     enable = true;
   };
-  #xdg = {
-  #  enable = true;
-  #};
 
   programs.waybar = {
     enable = false;
@@ -305,6 +308,8 @@
     age
     sops
     bitwarden-desktop
+    bitwarden-cli
+
     # Development Tools
     cmake
     lld_18
