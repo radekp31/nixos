@@ -32,8 +32,8 @@
 
   # Host-specific nix settings
   nix.gc = {
-    dates = lib.mkForce "daily";
-    options = lib.mkForce "--delete-older-than 3d";
+    dates = lib.mkForce "weekly";
+    options = lib.mkForce "--delete-older-than 14d";
   };
 
   # Host-specific sudo rules
