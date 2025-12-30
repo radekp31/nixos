@@ -36,7 +36,8 @@ in {
     colorschemes.tokyonight = {
       enable = true;
       settings = {
-        style = "moon";
+        #style = "moon";
+        style = "night";
       };
     };
     clipboard = {

@@ -43,19 +43,19 @@
       url = "github:numtide/flake-utils";
     };
 
-    #niri = {
-    #  url = "github:sodiboo/niri-flake";
-    #};
+    niri = {
+      url = "github:sodiboo/niri-flake";
+    };
 
-    # Add Stylix (required for Niri)
-    #stylix = {
-    #  url = "github:danth/stylix";
-    #};
+    #Add Stylix (required for Niri)
+    stylix = {
+      url = "github:danth/stylix";
+    };
 
-    #noctalia = {
-    #  url = "github:noctalia-dev/noctalia-shell";
-    #  inputs.nixpkgs.follows = "nixpkgs";
-    #};
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {

@@ -23,9 +23,9 @@
       export C='/mnt/c'
 
       # Launch niri on TTY1
-      #if [[ -z "$DISPLAY" ]] && [[ "$(tty)" = /dev/tty1 ]]; then
-      # exec niri-session
-      #fi
+      if [[ -z "$DISPLAY" ]] && [[ "$(tty)" = /dev/tty1 ]]; then
+       exec niri-session
+      fi
 
       # Add devshell name to prompt if available
       if [ -n "$DEVSHELL_NAME" ]; then

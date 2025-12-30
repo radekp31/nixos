@@ -14,7 +14,7 @@
     ../common/profiles/desktop.nix
 
     # System modules
-    ../../modules/system/apps/desktop/kde-plasma6
+    #../../modules/system/apps/desktop/kde-plasma6
     ../../modules/system/hardware/gpu/nvidia
     ../../modules/system/apps/nixvim
     ../../modules/system/apps/qmk

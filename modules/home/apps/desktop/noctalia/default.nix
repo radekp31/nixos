@@ -52,7 +52,7 @@
           left = [
             {
               id = "ControlCenter";
-              useDistroLogo = true;
+              useDistroLogo = false;
             }
             {
               id = "Clock";
