@@ -37,7 +37,7 @@
         # Check if running inside WSL
         if grep -qi microsoft /proc/version &> /dev/null; then
           #fastfetch --config ${pkgs.fastfetch}/share/fastfetch/presets/examples/3.jsonc
-          microfetch
+          zsh -c microfetch
         fi
       fi
 

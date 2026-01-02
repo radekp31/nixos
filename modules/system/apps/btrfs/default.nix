@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   # See fileSystems in hardware-config.nix
 
   services.btrfs = {

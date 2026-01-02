@@ -51,8 +51,6 @@ in
       terraformer
       aztfexport
       dig
-      curl
-      wget
       google-cloud-sdk
       fzf
       jq
@@ -71,9 +69,7 @@ in
       ripgrep-all
       fd
       bat
-      kubectl
       tree
-      #fastfetch # to identify session
       microfetch
       xsel
       docker_28
