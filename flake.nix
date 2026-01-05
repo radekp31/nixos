@@ -27,10 +27,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    kickstart-nix-nvim = {
-      url = "github:radekp31/kickstart-nix.nvim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    #kickstart-nix-nvim = {
+    #  url = "github:radekp31/kickstart-nix.nvim";
+    #  inputs.nixpkgs.follows = "nixpkgs";
+    #};
 
     treefmt-nix.url = "github:numtide/treefmt-nix";
     systems.url = "github:nix-systems/default";

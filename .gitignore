@@ -1,6 +1,3 @@
-#flake lock - every host has its own
-flake.lock
-
 # Secrets
 secrets/*.key
 secrets/*.age
