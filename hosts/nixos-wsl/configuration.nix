@@ -29,6 +29,8 @@
   # Avoid conflicts with openssh
   systemd.services.sshd.enable = false;
 
+  networking.hostName = "dt-laptop";
+
   system.stateVersion = "25.05";
 
   # Enable docker

@@ -25,5 +25,7 @@
     xsel
     docker_28
     inetutils
+    sops
+    age
   ];
 }

@@ -1,6 +1,7 @@
 {
   pkgs,
   pkgs25_05,
+  pkgs_unstable,
   ...
 }: let
   aztfexport = pkgs.stdenv.mkDerivation {
@@ -60,7 +61,7 @@ in
       helm
       awscli2
       google-cloud-sdk
-      terraform
+      pkgs_unstable.terraform
       ansible
       htop
       curl

@@ -6,6 +6,7 @@
     # Azure CLI on 25.11 is fooked - revisit later to check if it works again
     # Use az login --tenant <TENANT_ID> --use-device-code
     nixpkgs25_05.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs_unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -62,6 +63,7 @@
     self,
     nixpkgs,
     nixpkgs25_05,
+    nixpkgs_unstable,
     alejandra,
     home-manager,
     disko,
@@ -79,6 +81,10 @@
       config.allowUnfree = true;
     };
     pkgs25_05 = import nixpkgs25_05 {
+      inherit system;
+      config.allowUnfree = true;
+    };
+    pkgs_unstable = import nixpkgs_unstable {
       inherit system;
       config.allowUnfree = true;
     };
@@ -161,6 +167,7 @@
         nixos-wsl.nixosModules.wsl
         ./hosts/nixos-wsl/configuration.nix
         home-manager.nixosModules.home-manager
+        #./modules/system/secrets/sops
         #{
         #  nixpkgs.overlays = [
         #    kickstart-nix-nvim.overlays.default
@@ -188,7 +195,7 @@
 
     # Create a dev shell
     devShells.${system} = {
-      devops = import ./modules/devShells/devops.nix {inherit pkgs pkgs25_05;};
+      devops = import ./modules/devShells/devops.nix {inherit pkgs pkgs25_05 pkgs_unstable;};
     };
   };
 }
