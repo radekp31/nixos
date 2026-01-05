@@ -1,0 +1,89 @@
+---
+name: Daily Flake Update
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-flake:
+    runs-on: ubuntu-latest
+    container:
+      image: nixos/nix:latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+        timeout-minutes: 5
+
+      - name: Configure Git
+        run: |
+          git config --global user.email \
+            "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Update flake.lock
+        run: |
+          nix flake update --recreate-lock-file
+
+      - name: Check if lock file changed
+        id: check-changes
+        run: |
+          if git diff --quiet flake.lock; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        if: steps.check-changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: update flake.lock dependencies"
+          title: "chore: daily flake.lock update"
+          body: |
+            ## Automated Daily Flake Update
+
+            This PR updates `flake.lock` with the latest versions of all inputs.
+
+            ### Changes
+            ```
+            ${{ github.event.head_commit.message }}
+            ```
+
+            **Note:** Please review the changes before merging.\
+            Run the following to test locally:
+
+            ```bash
+            git checkout ${{ github.head_ref }}
+            nix flake update
+            nix develop
+            ```
+          branch: chore/daily-flake-update
+          delete-branch: true
+          labels: |
+            automation
+            dependencies
+          reviewers: ${{ github.repository_owner }}
+          team-reviewers: |
+            maintainers
+
+      - name: Log flake.lock diff
+        if: steps.check-changes.outputs.changed == 'true'
+        run: |
+          echo "## Flake Lock Changes" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```diff' >> $GITHUB_STEP_SUMMARY
+          git diff flake.lock | head -100 >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Report no changes
+        if: steps.check-changes.outputs.changed == 'false'
+        run: |
+          echo "✅ All dependencies are up to date!" >> $GITHUB_STEP_SUMMARY
