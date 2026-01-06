@@ -359,7 +359,8 @@
       };
       colorSchemes = {
         useWallpaperColors = false;
-        predefinedScheme = "Tokyo Night Moon";
+        predefinedScheme = "Dracula";
+        #predefinedScheme = "Ayu"; # nice but needs tuning
         darkMode = true;
         schedulingMode = "off";
         matugenSchemeType = "scheme-fruit-salad";

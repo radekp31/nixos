@@ -11,12 +11,15 @@
   programs.nixvim = {
     #Includes functions get_bufnrs
     enable = true;
-    colorschemes.tokyonight = {
+    #colorschemes.tokyonight = {
+    #  enable = true;
+    #  settings = {
+    #    #style = "moon";
+    #    style = "night";
+    #  };
+    #};
+    colorschemes.dracula = {
       enable = true;
-      settings = {
-        #style = "moon";
-        style = "night";
-      };
     };
     clipboard = {
       register = "unnamedplus";

@@ -102,7 +102,6 @@
   };
 
   # Kernel
-  #boot.kernelPackages = pkgs.linuxPackages_6_17;
   #boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
   boot.kernelPackages = pkgs.linuxPackages_6_18;
   boot.kernelParams = [
@@ -173,7 +172,7 @@
 
   # Hardware-specific packages
   environment.systemPackages = with pkgs; [
-    linuxKernel.packages.linux_6_17.asus-ec-sensors
+    linuxKernel.packages.linux_6_18.asus-ec-sensors
     nvfancontrol
     nvme-cli
     ntfs3g
