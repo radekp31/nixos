@@ -45,7 +45,6 @@ in
         ]))
 
       kubectl
-      terraform
       awscli2
       google-cloud-sdk
       pkgs25_05.azure-cli
