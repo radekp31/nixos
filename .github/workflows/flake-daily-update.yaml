@@ -65,3 +65,8 @@ jobs:
           merge-method: squash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clean up branch if merge failed
+        if: steps.check-changes.outputs.changed == 'true'
+        run: |
+          git push origin --delete chore/daily-flake-update || true
