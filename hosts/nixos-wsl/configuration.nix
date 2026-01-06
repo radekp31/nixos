@@ -29,7 +29,7 @@
   # Avoid conflicts with openssh
   systemd.services.sshd.enable = false;
 
-  networking.hostName = "dt-laptop";
+  networking.hostName = "dt-wsl-nix";
 
   system.stateVersion = "25.05";
 

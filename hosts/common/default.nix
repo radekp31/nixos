@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }: {
   # Networking
@@ -17,6 +18,15 @@
   security.polkit.enable = true;
 
   # Nix settings
+  system.autoUpgrade = {
+    enable = true;
+    flake = "git+https://github.com/radekp31/nixos.git#${config.networking.hostName}";
+    dates = "02:30";
+    randomizedDelaySec = "30min";
+    persistent = true;
+    allowReboot = false;
+  };
+
   nix = {
     gc = {
       automatic = lib.mkDefault true; # Add mkDefault here too
@@ -27,13 +37,6 @@
       auto-optimise-store = true;
       experimental-features = ["nix-command" "flakes"];
     };
-  };
-
-  # System auto upgrades - disabled by default for safety
-  system.autoUpgrade = {
-    enable = lib.mkDefault false;
-    dates = lib.mkDefault "weekly"; # Add mkDefault for consistency
-    flake = lib.mkDefault "/etc/nixos";
   };
 
   # Basic packages
