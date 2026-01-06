@@ -1,6 +1,7 @@
 ## TODO List
 
 ### Priority 1: Core Fixes & Structure ✅ COMPLETE
+
 - [x] Rename `git.nix` → `default.nix` (and similar files in modules)
 - [x] Rename `radekp.nix` → `default.nix` in user modules
 - [x] Rename `home.nix` → `default.nix` in wsl
@@ -11,6 +12,7 @@
 - [x] Fix disko module import in deployment configuration
 
 ### Priority 2: Base Configuration ✅ COMPLETE
+
 - [x] Create `hosts/common/default.nix` with minimal sane secure defaults
   - [x] Networking basics
   - [x] Security settings (firewall, sudo, SSH)
@@ -25,6 +27,7 @@
   - [x] `hosts/common/profiles/hyperv.nix`
 
 ### Priority 3: DRY & Package Management ✅ MOSTLY COMPLETE
+
 - [x] Move GUI applications to home-manager
   - [x] discord, vlc, spotify, vscode, etc.
   - [x] Categorized and organized in `modules/home/users/radekp/desktop/default.nix`
@@ -38,6 +41,7 @@
   - ~~`modules/home/packages/development.nix` - Dev tools~~
 
 ### Priority 4: Documentation
+
 - [ ] Document module structure in main README.md
   - What goes in `modules/system/` vs `modules/home/`
   - How to add new modules
@@ -50,6 +54,7 @@
 - [ ] Add usage examples to each major module
 
 ### Priority 5: Module Consistency ✅ MOSTLY COMPLETE
+
 - [x] Standardize module structure across all modules
   - [x] Consistent file naming (all `default.nix`)
   - [x] Similar configuration patterns
@@ -59,6 +64,7 @@
 - [ ] Use `lib.mkIf` for conditional features
 
 ### Priority 6: Advanced Features (Future)
+
 - [x] ~~Decide on `hosts/server/generic/` vs `deployments/server/generic/` strategy~~
   - [x] Kept separate - they serve different purposes
   - [x] Extracted common config into `hosts/common/profiles/server.nix`
@@ -76,13 +82,25 @@
 - [ ] Test module isolation and independence
 
 ### Priority 7: Optimization (Low Priority)
+
 - [ ] Profile build times and optimize slow modules
 - [ ] Review and minimize closure sizes
 - [ ] Audit security settings across all configurations
 - [ ] Set up automatic security updates strategy
 - [ ] Consider binary cache setup for faster rebuilds
 
-### NEW: Priority 8: Remaining Cleanup
+### Priority 8: Remaining Cleanup & Fixes
+
+- [ ] FIX: sops-nix integration
+  - [ ] Review sops-nix configuration
+  - [ ] Ensure proper secret management across hosts
+  - [ ] Test secret decryption in deployments
+- [ ] FIX: flake inputs bloat
+  - [ ] Audit all flake inputs for necessity
+  - [ ] Remove unused dependencies
+  - [ ] Document why each input is needed
+- [x] Added flake.lock update GitHub Actions ✅ COMPLETE
+  - [x] Subtask: Monitor how it works, troubleshoot as needed
 - [ ] Clean up `nixos-desktop/configuration.nix` to match the new pattern
   - [ ] Remove duplicates from common/profiles
   - [ ] Keep only hardware-specific configuration
@@ -92,5 +110,5 @@
 
 ---
 
-**Next session focus:** Documentation (Priority 4) and final cleanup of `nixos-desktop` 🚀
+**Next session focus:** FIX: sops-nix integration
 
