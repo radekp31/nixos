@@ -2,29 +2,7 @@
   pkgs,
   inputs,
   ...
-}: let
-  #  nixvim = import (
-  #    builtins.fetchGit {
-  #      url = "https://github.com/nix-community/nixvim";
-  #      #ref = "nixos-24.11";
-  #      ref = "nixos-25.05";
-  #      #rev = "85bef9e19191000db4a13337198266359cefb9b6";
-  #      allRefs = true;
-  #    }
-  #  );
-  get_bufnrs.__raw = ''
-    function()
-      local buf_size_limit = 1024 * 1024
-      local bufs = vim.api.nvim_list_bufs()
-      local valid_bufs = {}
-      for _, buf in ipairs(bufs) do
-        if vim.api.nvim_buf_is_loaded(buf) and vmi.api.nvim_buf_get_offset(buf, vim.api.nvim_buf_line_count(buf)) < buf_size_limit then table.insert(valid_bufs, buf)
-        end
-      end
-      return valid_bufs
-    end
-  '';
-in {
+}: {
   imports = [
     #nixvim.nixosModules.nixvim
     inputs.nixvim.nixosModules.nixvim
@@ -157,6 +135,9 @@ in {
             enable = true;
             #settings = {};
           };
+          terraformls = {
+            enable = true;
+          };
         };
       };
 
@@ -179,73 +160,143 @@ in {
           {}
         ];
       };
+
       cmp = {
         enable = true;
-
         autoEnableSources = true;
         settings = {
+          snippet = {
+            expand = "function(args) require('luasnip').lsp_expand(args.body) end";
+          };
           sources = [
             {
               name = "nvim_lsp";
               priority = 1000;
-              option = {
-                inherit get_bufnrs;
-              };
             }
             {
               name = "nixd";
               priority = 1000;
-              option = {
-                inherit get_bufnrs;
-              };
-            }
-            {
-              name = "fuzzy-buffer";
-            }
-            {
-              name = "fuzzy-path";
             }
             {
               name = "luasnip";
+              priority = 750;
+            }
+            {
+              name = "path";
+              priority = 500;
+            }
+            {
+              name = "buffer";
+              priority = 250;
             }
           ];
           mapping = {
-            "<C-Left>" = "cmp.mapping.select_prev_item()";
-            "<C-Right>" = "cmp.mapping.select_next_item()";
-            "<C-Esc>" = "cmp.mapping.abort()";
-            "<C-CR>" = "cmp.mapping.confirm({select = true})";
-            "<C-Space>" = "cmp.mapping(cmp.mapping.complete(), { \"i\", \"c\" })";
-            "<C-Up>" = "cmp.mapping.scroll_docs(4)";
-            "<C-Down>" = "cmp.mapping.scroll_docs(-4)";
+            "<C-b>" = "cmp.mapping.scroll_docs(-4)";
+            "<C-f>" = "cmp.mapping.scroll_docs(4)";
+            "<C-Space>" = "cmp.mapping.complete()";
+            "<C-e>" = "cmp.mapping.abort()";
+            "<CR>" = "cmp.mapping.confirm({select = true})";
+            "<Tab>" = {
+              __raw = ''
+                function(fallback)
+                  local cmp = require('cmp')
+                  local luasnip = require('luasnip')
+                  if cmp.visible() then
+                    cmp.select_next_item()
+                  elseif luasnip.expand_or_jumpable() then
+                    luasnip.expand_or_jump()
+                  else
+                    fallback()
+                  end
+                end
+              '';
+              modes = ["i" "s"];
+            };
+            "<S-Tab>" = {
+              __raw = ''
+                function(fallback)
+                  local cmp = require('cmp')
+                  local luasnip = require('luasnip')
+                  if cmp.visible() then
+                    cmp.select_prev_item()
+                  elseif luasnip.jumpable(-1) then
+                    luasnip.jump(-1)
+                  else
+                    fallback()
+                  end
+                end
+              '';
+              modes = ["i" "s"];
+            };
           };
         };
       };
+
       cmp-buffer = {
         enable = true;
       };
-      cmp-fuzzy-buffer = {
-        enable = true;
-      };
-      cmp-fuzzy-path = {
-        enable = true;
-      };
+
+      #cmp-fuzzy-buffer = {
+      #  enable = true;
+      #};
+
+      #cmp-fuzzy-path = {
+      #  enable = true;
+      #};
+
       treesitter = {
         enable = true;
       };
+
       web-devicons = {
         enable = true;
       };
+
       cmp_luasnip = {
         enable = true;
       };
+
       cmp-nvim-lsp = {
         enable = true;
       };
+
       cmp-path = {
         enable = true;
       };
+
       diffview = {
         enable = true;
+      };
+
+      snacks = {
+        enable = true;
+        settings = {
+          indent = {
+            enabled = true;
+            char = "▏"; # or "│" or "┆"
+            scope = {
+              enabled = true;
+              only_current = true;
+            };
+          };
+          bigfile = {
+            enabled = true;
+          };
+          notifier = {
+            enabled = true;
+            timeout = 3000;
+          };
+          quickfile = {
+            enabled = false;
+          };
+          statuscolumn = {
+            enabled = false;
+          };
+          words = {
+            debounce = 100;
+            enabled = true;
+          };
+        };
       };
     };
     extraConfigLua = ''
