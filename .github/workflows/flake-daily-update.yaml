@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 1
 
       - name: Update flake.lock
-        run: nix flake update --recreate-lock-file
+        run: nix flake update
 
       - name: Check if lock file changed
         id: check-changes
@@ -35,13 +35,11 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      # Github won't approve PR's from the same person
       - name: Create Pull Request
         if: steps.check-changes.outputs.changed == 'true'
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
-          # BOT_PAT creates the PR
           token: ${{ secrets.BOT_PAT }}
           commit-message: "chore: update flake.lock dependencies"
           title: "chore: daily flake.lock update"
@@ -50,14 +48,13 @@ jobs:
           labels: |
             automation
             dependencies
-          reviewers: ${{ github.repository_owner }}
+          reviewers: ""
 
       - name: Auto-approve
         if: steps.check-changes.outputs.changed == 'true'
         uses: hmarr/auto-approve-action@v3
         with:
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
-          # I approve the PR
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Enable auto-merge (squash)
