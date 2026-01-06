@@ -48,6 +48,19 @@ jobs:
             dependencies
           reviewers: ${{ github.repository_owner }}
 
-      - name: Report no changes
-        if: steps.check-changes.outputs.changed == 'false'
-        run: echo "✅ All dependencies are up to date!" >> $GITHUB_STEP_SUMMARY
+      - name: Auto-approve
+        if: steps.check-changes.outputs.changed == 'true'
+        uses: hmarr/auto-approve-action@v3
+        with:
+          pull-request-number: ${{ steps.create-pull-request.outputs.pull-request-number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge (squash)
+        if: steps.check-changes.outputs.changed == 'true'
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          pull-request-number: ${{ steps.create-pull-request.outputs.pull-request-number }}
+          merge-method: squash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
