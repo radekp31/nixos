@@ -35,11 +35,14 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
+      # Github won't approve PR's from the same person
       - name: Create Pull Request
         if: steps.check-changes.outputs.changed == 'true'
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
+          # BOT_PAT creates the PR
+          token: ${{ secrets.BOT_PAT }}
           commit-message: "chore: update flake.lock dependencies"
           title: "chore: daily flake.lock update"
           branch: chore/daily-flake-update
@@ -54,8 +57,8 @@ jobs:
         uses: hmarr/auto-approve-action@v3
         with:
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # I approve the PR
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Enable auto-merge (squash)
         if: steps.check-changes.outputs.changed == 'true'
