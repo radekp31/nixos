@@ -9,6 +9,7 @@
         pandas
         numpy
       ]))
+    (callPackage ../../../apps/pinxi {})
     fzf
     jq
     git
