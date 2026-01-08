@@ -25,7 +25,6 @@
     ../../modules/system/apps/openrgb
     ../../modules/system/hardware/usb
   ];
-
   # Override common defaults
   system.autoUpgrade.enable = true;
   services.openssh.enable = true;

@@ -9,7 +9,6 @@
         pandas
         numpy
       ]))
-    (callPackage ../../../apps/pinxi {})
     fzf
     jq
     git
@@ -28,5 +27,6 @@
     inetutils
     sops
     age
+    inxi
   ];
 }
