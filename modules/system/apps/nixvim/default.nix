@@ -18,7 +18,7 @@
     #    style = "night";
     #  };
     #};
-    colorschemes.dracula = {
+    colorschemes.dracula-nvim = {
       enable = true;
     };
     clipboard = {
