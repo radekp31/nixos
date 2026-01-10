@@ -1,4 +1,8 @@
-{inputs, ...}: {
+{
+  inputs,
+  pkgs,
+  ...
+}: {
   # import the home manager module
   imports = [
     inputs.noctalia.homeModules.default
@@ -32,6 +36,37 @@
     };
   };
 
+  # 1. Force the 'prefer-dark' preference globally
+  dconf.settings = {
+    "org/gnome/desktop/interface" = {
+      color-scheme = "prefer-dark";
+    };
+  };
+
+  # 2. GTK setup (Crucial fallback for many apps)
+  gtk = {
+    enable = true;
+    theme = {
+      name = "Adwaita-dark";
+      package = pkgs.gnome-themes-extra;
+    };
+    gtk3.extraConfig.gtk-application-prefer-dark-theme = 1;
+    gtk4.extraConfig.gtk-application-prefer-dark-theme = 1;
+  };
+
+  # 3. QT setup
+  qt = {
+    enable = true;
+    platformTheme.name = "adwaita"; # Uses the native adwaita-qt bridge
+    style.name = "adwaita-dark";
+  };
+
+  home.packages = with pkgs; [
+    adwaita-qt # The actual theme engine for Qt5
+    adwaita-qt6 # The actual theme engine for Qt6
+    nixos-icons
+    kdePackages.qtsvg # Keeps icons working
+  ];
   programs.noctalia-shell = {
     enable = true;
     settings = {
