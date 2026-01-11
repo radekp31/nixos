@@ -27,11 +27,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    #kickstart-nix-nvim = {
-    #  url = "github:radekp31/kickstart-nix.nvim";
-    #  inputs.nixpkgs.follows = "nixpkgs";
-    #};
-
     treefmt-nix.url = "github:numtide/treefmt-nix";
     systems.url = "github:nix-systems/default";
 
@@ -48,7 +43,7 @@
       url = "github:sodiboo/niri-flake";
     };
 
-    #Add Stylix (required for Niri)
+    # Add Stylix (required for Niri)
     stylix = {
       url = "github:danth/stylix";
     };
@@ -56,6 +51,17 @@
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Zen browser
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+      inputs = {
+        # IMPORTANT: we're using "libgbm" and is only available in unstable so ensure
+        # to have it up-to-date or simply don't specify the nixpkgs input
+        nixpkgs.follows = "nixpkgs";
+        home-manager.follows = "home-manager";
+      };
     };
   };
 

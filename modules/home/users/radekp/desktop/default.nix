@@ -12,8 +12,11 @@
     ../../../apps/desktop/niri
     ../../../apps/desktop/noctalia
 
-    #Terminal emulator
+    # Terminal emulator
     ../../../apps/foot
+
+    # Zen browser
+    ../../../apps/zen_browser
   ];
 
   #Let Home Manager install and manage itself

@@ -31,47 +31,22 @@
 
     #This should represent the structure of the secrets/secrets.yaml
     secrets = {
-      "radekp-password" = {
+      #"radekp-password" = {
+      #  sopsFile = ./secrets/secrets.yaml;
+      #  #owner = "radekp";
+      #  owner =
+      #    if config.networking.hostName == "nixos-desktop"
+      #    then "radekp"
+      #    else "root";
+      #  mode = "0400";
+      #  format = "yaml";
+      #};
+      "IPs/pinas" = {
         sopsFile = ./secrets/secrets.yaml;
-        #owner = "radekp";
         owner =
-          if config.networking.hostName == "nixos-desktop"
+          if (config.users.users ? radekp) && (config.users.users.radekp.enable == true)
           then "radekp"
           else "root";
-        mode = "0400";
-        format = "yaml";
-      };
-
-      "ssh-keys/contabovps1" = {
-        sopsFile = ./secrets/secrets.yaml;
-        owner = "root";
-        mode = "0400";
-        format = "yaml";
-      };
-
-      "ssh-keys/nixos-desktop" = {
-        sopsFile = ./secrets/secrets.yaml;
-        owner = "root";
-        mode = "0400";
-        format = "yaml";
-      };
-
-      "IPs/homenetwork" = {
-        sopsFile = ./secrets/secrets.yaml;
-        owner = "root";
-        mode = "0400";
-        format = "yaml";
-      };
-
-      "IPs/contabovps1" = {
-        sopsFile = ./secrets/secrets.yaml;
-        owner = "root";
-        mode = "0400";
-        format = "yaml";
-      };
-      "IPs/pi" = {
-        sopsFile = ./secrets/secrets.yaml;
-        owner = "root";
         mode = "0400";
         format = "yaml";
       };

@@ -116,8 +116,6 @@
         "Mod+Space".action.spawn = ["noctalia-shell" "ipc" "call" "launcher" "toggle"];
 
         "Super+S".action.spawn = ["noctalia-shell" "ipc" "call" "settings" "toggle"];
-        #"Super+Alt+L".action = spawn "swaylock";
-        #"Super+Alt+L".action.spawn = ["swaylock" "--screenshots" "--ignore-empty-password" "--daemonize" "--indicator-caps-lock" "--indicator" "--clock" "--show-failed-attempts" "--indicator-idle-visible"];
         "Super+Alt+L".action.spawn = [
           "swaylock"
           "--screenshots"
