@@ -112,7 +112,7 @@
         "Mod+Shift+Slash".action = show-hotkey-overlay;
 
         # Open programs
-        "Super+Return".action.spawn = "${pkgs.foot}/bin/foot";
+        "Super+Return".action.spawn = "${pkgs.alacritty}/bin/alacritty";
         "Mod+Space".action.spawn = ["noctalia-shell" "ipc" "call" "launcher" "toggle"];
 
         "Super+S".action.spawn = ["noctalia-shell" "ipc" "call" "settings" "toggle"];

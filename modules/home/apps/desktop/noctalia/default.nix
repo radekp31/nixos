@@ -6,25 +6,8 @@
   # import the home manager module
   imports = [
     inputs.noctalia.homeModules.default
+    ../../alacritty
   ];
-
-  programs.foot = {
-    enable = true;
-    settings = {
-      main = {
-        term = "xterm-256color";
-
-        font = "monospace:size=13";
-        dpi-aware = "yes";
-        # Include the color theme file
-        include = "~/.config/foot/themes/noctalia";
-      };
-
-      mouse = {
-        hide-when-typing = "yes";
-      };
-    };
-  };
 
   home.file.".cache/noctalia/wallpapers.json" = {
     text = builtins.toJSON {
@@ -87,7 +70,7 @@
           left = [
             {
               id = "ControlCenter";
-              useDistroLogo = false;
+              useDistroLogo = true;
             }
             {
               id = "Clock";
@@ -405,10 +388,10 @@
         gtk = true;
         qt = true;
         kcolorscheme = true;
-        alacritty = false;
+        alacritty = true;
         kitty = false;
         ghostty = false;
-        foot = true;
+        foot = false;
         wezterm = false;
         fuzzel = true;
         discord = true;
