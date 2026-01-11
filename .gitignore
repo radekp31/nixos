@@ -3,6 +3,9 @@ secrets/*.key
 secrets/*.age
 !secrets/secrets.yaml
 
+# Ignore nixos-rebuild build results
+result*
+
 # SOPS config backup
 .sops.yaml.bak
 
