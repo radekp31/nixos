@@ -24,6 +24,7 @@
     ../../modules/system/scripts/fan-control.sh
     ../../modules/system/apps/openrgb
     ../../modules/system/hardware/usb
+    ../../modules/system/apps/desktop/kde-plasma6
   ];
   # Override common defaults
   system.autoUpgrade.enable = true;

@@ -9,8 +9,8 @@
 
     # Desktop (Niri + Noctalia)
     inputs.niri.homeModules.niri
-    ../../../apps/desktop/niri
-    ../../../apps/desktop/noctalia
+    #../../../apps/desktop/niri
+    #../../../apps/desktop/noctalia
 
     # Terminal emulator
     ../../../apps/foot

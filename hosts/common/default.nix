@@ -76,6 +76,10 @@
     settings = {
       auto-optimise-store = true;
       experimental-features = ["nix-command" "flakes"];
+      keep-outputs = true;
+      keep-derivations = true;
+      min-free = 20 * 1024 * 1024 * 1024; # 20GB
+      max-free = 50 * 1024 * 1024 * 1024; # 50GB
     };
   };
 
@@ -89,6 +93,7 @@
     htop
     tree
     tmux
+    nh
   ];
 
   # SSH - disabled by default, let hosts opt-in
