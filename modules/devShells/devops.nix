@@ -34,6 +34,7 @@
   };
 in
   pkgs.mkShell {
+    shell = "zsh";
     packages = with pkgs; [
       (python313.withPackages (ps:
         with ps; [
@@ -43,11 +44,31 @@ in
           pandas
           numpy
         ]))
+      (pkgs25_05.azure-cli.withExtensions [
+        pkgs25_05.azure-cli-extensions.storage-preview
 
+        pkgs25_05.azure-cli-extensions.azure-devops
+
+        pkgs25_05.azure-cli-extensions.resource-graph
+
+        pkgs25_05.azure-cli-extensions.ssh
+
+        pkgs25_05.azure-cli-extensions.quota
+
+        pkgs25_05.azure-cli-extensions.nsp
+
+        pkgs25_05.azure-cli-extensions.kusto
+
+        pkgs25_05.azure-cli-extensions.graphservices
+
+        pkgs25_05.azure-cli-extensions.fzf
+
+        pkgs25_05.azure-cli-extensions.dynatrace
+      ])
       kubectl
       awscli2
       google-cloud-sdk
-      pkgs25_05.azure-cli
+      #pkgs25_05.azure-cli
       terraformer
       aztfexport
       dig
@@ -79,5 +100,8 @@ in
     shellHook = ''
       export DEVSHELL_NAME="devops"
       export NIXPKGS_ALLOW_UNFREE="1"
+      export SHELL=${pkgs.zsh}/bin/zsh
+
+      exec ${pkgs.zsh}/bin/zsh
     '';
   }

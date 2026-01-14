@@ -30,7 +30,7 @@
 
       # Add devshell name to prompt if available
       if [ -n "$DEVSHELL_NAME" ]; then
-        PROMPT=$(echo $PROMPT | sed "s/╭─/╭─%F{cyan} ❄[$DEVSHELL_NAME]%f /")
+        PROMPT=$(echo $PROMPT | sed "s/╭─/╭─%F{cyan} ❄  [$DEVSHELL_NAME]%f /")
       fi
 
 

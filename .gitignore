@@ -20,6 +20,7 @@ result*
 # Nix
 .direnv/
 .envrc
+result
 
 # Temporary files
 *.tmp

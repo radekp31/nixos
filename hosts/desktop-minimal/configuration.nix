@@ -1,14 +1,16 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ config, pkgs, lib,... }:
-
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -30,7 +32,7 @@
     "amdgpu"
     "dm_mod"
   ];
-  
+
   boot.kernel.sysctl = {
     "kernel.sysctl" = 1;
   };
@@ -54,17 +56,16 @@
     KillSignal = "SIGKILL";
     SendSIGKILL = "yes";
     FinalKillSignal = "SIGKILL";
-   };
+  };
 
   systemd.services.systemd-udevd.unitConfig = {
     DefaultDependencies = "no";
   };
-  
+
   systemd.services.systemd-udev-trigger.serviceConfig.TimeoutStopSec = 1;
   systemd.services.systemd-udev-settle.serviceConfig.TimeoutStopSec = 1;
   systemd.services.NetworkManager-wait-online.enable = false;
   systemd.services.systemd-udev-settle.enable = false;
-  
 
   services.udev.extraRules = ''
     ACTION=="remove", SUBSYSTEM=="block", ENV{DEVTYPE}=="disk", RUN+="${pkgs.coreutils}/bin/true"
@@ -73,7 +74,7 @@
   services.lvm = {
     enable = false;
     boot.thin.enable = false;
-  }; 
+  };
 
   environment.etc."lvm/lvm.conf".text = ''
     devices {
@@ -107,7 +108,7 @@
   virtualisation.spiceUSBRedirection.enable = true;
 
   services.xserver.desktopManager.kodi.enable = true;
-  
+
   networking.hostName = "elitedesk-media"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -165,7 +166,6 @@
     ];
   };
 
- 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -189,9 +189,9 @@
   users.users.radekp = {
     isNormalUser = true;
     description = "radekp";
-    extraGroups = [ "networkmanager" "wheel" "libvirtd" "kvm" "video" "audio" "cdrom" "optical"];
+    extraGroups = ["networkmanager" "wheel" "libvirtd" "kvm" "video" "audio" "cdrom" "optical"];
     packages = with pkgs; [
-    #  thunderbird
+      #  thunderbird
     ];
   };
 
@@ -219,32 +219,32 @@
     bindsym $mod+Shift+e exec swaymsg exit
 
   '';
-  
+
   programs.foot = {
-   enable = true;
-   settings = {
-     main = {
-       font = "DejaVu Sans Mono:size=14";
-       dpi-aware = "yes";
-     };
-   };
+    enable = true;
+    settings = {
+      main = {
+        font = "DejaVu Sans Mono:size=14";
+        dpi-aware = "yes";
+      };
+    };
   };
   # Autologin
   services.getty.autologinUser = "radekp";
 
   environment.loginShellInit = ''
-    if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
-      exec sway
+     if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
+       exec sway
+     fi
+
+     alias ll = "ls -lah"
+
+     export EDITOR="vim"
+
+    if command -v fzf-share >/dev/null; then
+      source "$(fzf-share)/key-bindings.bash"
+      source "$(fzf-share)/completion.bash"
     fi
-
-    alias ll = "ls -lah"
-
-    export EDITOR="vim"
-
-   if command -v fzf-share >/dev/null; then
-     source "$(fzf-share)/key-bindings.bash"
-     source "$(fzf-share)/completion.bash"
-   fi
 
   '';
 
@@ -252,9 +252,7 @@
     shellAliases = {
       ll = "ls -lah";
     };
-
-  }; 
-
+  };
 
   # Install firefox.
   programs.firefox.enable = true;
@@ -264,31 +262,32 @@
 
   services.openssh = {
     enable = true;
-    settings.PasswordAuthentication = true; 
+    settings.PasswordAuthentication = true;
   };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    wget 
-    
+    wget
+
     foot
     wofi
     fzf
- 
-    (python3.withPackages (ps: with ps; [
-      inquirer
-      requests
-      tqdm
-    ]))
+
+    (python3.withPackages (ps:
+      with ps; [
+        inquirer
+        requests
+        tqdm
+      ]))
     lzip
-  
+
     htop
     curl
     wget
     git
- 
+
     mpv
     firefox
 
@@ -312,8 +311,6 @@
     gst_all_1.gst-plugins-bad
     gst_all_1.gst-plugins-ugly
     gst_all_1.gst-libav # For almost everything else
-
-
   ];
 
   environment.sessionVariables.GST_PLUGIN_SYSTEM_PATH_1_0 = "/run/current-system/sw/lib/gstreamer-1.0";
@@ -332,10 +329,10 @@
   # services.openssh.enable = true;
 
   # Open ports in the firewall.
-   networking.firewall.allowedTCPPorts = [ 22 ];
-   networking.firewall.allowedUDPPorts = [ 22 ];
-   #Or disable the firewall altogether.
-   networking.firewall.enable = true;
+  networking.firewall.allowedTCPPorts = [22];
+  networking.firewall.allowedUDPPorts = [22];
+  #Or disable the firewall altogether.
+  networking.firewall.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -344,5 +341,4 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.05"; # Did you read the comment?
-
 }

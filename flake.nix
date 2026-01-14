@@ -109,12 +109,10 @@
     );
   in {
     nixosConfigurations.nixos-desktop = nixpkgs.lib.nixosSystem {
-      #system = "x86_64-linux";
       system = system;
       specialArgs = {inherit inputs;};
       modules = [
         ./hosts/nixos-desktop/configuration.nix
-        #./modules/system/secrets/sops
         {
           environment.systemPackages = [alejandra.defaultPackage.${system}];
         }
@@ -124,7 +122,6 @@
           home-manager.useUserPackages = true;
           home-manager.users.radekp = import ./modules/home/users/radekp/desktop;
           home-manager.backupFileExtension = "backup";
-          # Optionally, pass extra arguments to home-manager modules
           home-manager.extraSpecialArgs = {inherit inputs;};
         }
       ];
@@ -136,7 +133,6 @@
       modules = [
         ./hosts/server/generic/configuration.nix
         ./modules/system/secrets/sops
-        #sops-nix.nixosModules.sops
       ];
     };
 
@@ -150,10 +146,6 @@
         sops-nix.nixosModules.sops
       ];
     };
-
-    #Remote deployments with nixos-anywhere
-    #Run with:
-    #nixos-anywhere --flake .#generic --generate-hardware-config nixos-generate-config ./hardware-configuration.nix root@IP -i <ssh-key-path>
 
     nixosConfigurations.deployment-generic-server = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
@@ -173,35 +165,24 @@
         nixos-wsl.nixosModules.wsl
         ./hosts/nixos-wsl/configuration.nix
         home-manager.nixosModules.home-manager
-        #./modules/system/secrets/sops
-        #{
-        #  nixpkgs.overlays = [
-        #    kickstart-nix-nvim.overlays.default
-        #  ];
-        #}
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.users.radekp = import ./modules/home/users/radekp/wsl;
           home-manager.backupFileExtension = "backup";
-          # Optionally, pass extra arguments to home-manager modules
-          home-manager.extraSpecialArgs = {inherit inputs;};
+          home-manager.extraSpecialArgs = {inherit inputs pkgs pkgs25_05 pkgs_unstable;};
         }
       ];
     };
 
-    # Formatter
-
-    # for `nix fmt`
     formatter = eachSystem (pkgs: treefmtEval.${pkgs.system}.config.build.wrapper);
-    # for `nix flake check`
+
     checks = eachSystem (pkgs: {
       formatting = treefmtEval.${pkgs.system}.config.build.check self;
     });
 
-    # Create a dev shell
-    devShells.${system} = {
-      devops = import ./modules/devShells/devops.nix {inherit pkgs pkgs25_05 pkgs_unstable;};
-    };
+    #devShells.${system} = {
+    #  devops = import ./modules/devShells/devops.nix {inherit pkgs pkgs25_05 pkgs_unstable;};
+    #};
   };
 }

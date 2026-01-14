@@ -8,6 +8,7 @@
 
   # WSL user
   wsl.defaultUser = "radekp";
+  wsl.interop.includePath = false;
 
   # Timezone (already UTC in common, but explicit here)
   time.timeZone = "UTC";
