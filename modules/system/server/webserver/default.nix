@@ -1,11 +1,10 @@
 {
-  inputs,
   config,
   pkgs,
   ...
 }: {
   imports = [
-    inputs.sops-nix.nixosModules.sops #try <sops-nix/modules/sops>
+    #inputs.sops-nix.nixosModules.sops #try <sops-nix/modules/sops>
   ];
 
   services.nginx = {

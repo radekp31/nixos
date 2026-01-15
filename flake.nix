@@ -19,8 +19,8 @@
 
     nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
 
-    sops-nix.url = "github:Mic92/sops-nix";
-    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    #sops-nix.url = "github:Mic92/sops-nix";
+    #sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL/release-25.11";
@@ -72,8 +72,7 @@
     nixpkgs_unstable,
     alejandra,
     home-manager,
-    disko,
-    sops-nix,
+    #sops-nix,
     nixos-wsl,
     treefmt-nix,
     systems,
@@ -127,36 +126,37 @@
       ];
     };
 
-    nixosConfigurations.generic-server = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = {inherit inputs;};
-      modules = [
-        ./hosts/server/generic/configuration.nix
-        ./modules/system/secrets/sops
-      ];
-    };
+    # Uncomment when sops is fixed
+    #nixosConfigurations.generic-server = nixpkgs.lib.nixosSystem {
+    #  system = "x86_64-linux";
+    #  specialArgs = {inherit inputs;};
+    #  modules = [
+    #    ./hosts/server/generic/configuration.nix
+    #    #./modules/system/secrets/sops
+    #  ];
+    #};
 
-    nixosConfigurations.web-server = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = {inherit inputs;};
-      modules = [
-        ./hosts/server/generic/configuration.nix
-        ./modules/system/secrets/sops
-        ./modules/system/server/webserver
-        sops-nix.nixosModules.sops
-      ];
-    };
+    #nixosConfigurations.web-server = nixpkgs.lib.nixosSystem {
+    #  system = "x86_64-linux";
+    #  specialArgs = {inherit inputs;};
+    #  modules = [
+    #    ./hosts/server/generic/configuration.nix
+    #    ./modules/system/secrets/sops
+    #    ./modules/system/server/webserver
+    #    #sops-nix.nixosModules.sops
+    #  ];
+    #};
 
-    nixosConfigurations.deployment-generic-server = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = {inherit inputs;};
-      modules = [
-        disko.nixosModules.disko
-        ./hosts/deployments/server/generic/configuration.nix
-        ./hosts/deployments/server/generic/disk-config.nix
-        ./modules/system/secrets/sops
-      ];
-    };
+    #nixosConfigurations.deployment-generic-server = nixpkgs.lib.nixosSystem {
+    #  system = "x86_64-linux";
+    #  specialArgs = {inherit inputs;};
+    #  modules = [
+    #    disko.nixosModules.disko
+    #    ./hosts/deployments/server/generic/configuration.nix
+    #    ./hosts/deployments/server/generic/disk-config.nix
+    #    #./modules/system/secrets/sops
+    #  ];
+    #};
 
     nixosConfigurations."dt-wsl-nix" = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";

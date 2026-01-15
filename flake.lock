@@ -654,7 +654,6 @@
         "nixpkgs_unstable": "nixpkgs_unstable",
         "nixvim": "nixvim",
         "noctalia": "noctalia",
-        "sops-nix": "sops-nix",
         "stylix": "stylix",
         "systems": "systems_5",
         "treefmt-nix": "treefmt-nix",
@@ -675,26 +674,6 @@
         "owner": "rust-lang",
         "ref": "nightly",
         "repo": "rust-analyzer",
-        "type": "github"
-      }
-    },
-    "sops-nix": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1768271704,
-        "narHash": "sha256-jJqlW8A3OZ5tYbXphF7U8P8g/3Cn8PPwPa4YlJ/9agg=",
-        "owner": "Mic92",
-        "repo": "sops-nix",
-        "rev": "691b8b6713855d0fe463993867291c158472fc6f",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Mic92",
-        "repo": "sops-nix",
         "type": "github"
       }
     },
