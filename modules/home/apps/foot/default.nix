@@ -1,4 +1,4 @@
-{...}: {
+{pkgs, ...}: {
   programs.foot = {
     enable = true;
     settings = {
@@ -23,6 +23,10 @@
       };
     };
   };
+
+  home.packages = with pkgs; [
+    jetbrains-mono
+  ];
   xdg.configFile."foot/themes/dracula".text = ''
     # Dracula
 
