@@ -1,7 +1,4 @@
-{
-  config,
-  ...
-}: {
+{config, ...}: {
   imports = [
     #inputs.sops-nix.nixosModules.sops #try <sops-nix/modules/sops>
   ];

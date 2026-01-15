@@ -2,7 +2,6 @@
   imports = [
     ./packages.nix
     ../../../shells/zsh
-    #../../../shells/bash
   ];
   home.username = "radekp";
   home.homeDirectory = "/home/radekp";

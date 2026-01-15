@@ -34,12 +34,18 @@
   };
 in {
   home.packages = with pkgs; [
+    dejavu_fonts
+    jetbrains-mono
+    nixos-icons
+
     (python313.withPackages (ps:
       with ps; [
         openpyxl
         collections-extended
         pandas
         numpy
+        pip
+        azure-mgmt-compute
       ]))
     gh
     htop
