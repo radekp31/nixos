@@ -8,6 +8,7 @@
   imports = [
     ./hardware-configuration.nix
     ./users.nix
+    ./variables.nix
 
     # Common base
     ../common/default.nix
@@ -26,6 +27,7 @@
     ../../modules/system/hardware/usb
     ../../modules/system/apps/desktop/kde-plasma6
   ];
+
   # Override common defaults
   system.autoUpgrade.enable = true;
   services.openssh.enable = true;

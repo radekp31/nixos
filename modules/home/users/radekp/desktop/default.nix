@@ -18,8 +18,8 @@
     # Zen browser
     ../../../apps/zen_browser
 
-    # Enable catppuccin
-    inputs.catppuccin.homeModules.catppuccin
+    # Enable catpuccin
+    ../../../colorschemes/catppuccin
   ];
 
   #Let Home Manager install and manage itself
@@ -34,11 +34,6 @@
   ];
   home.sessionVariables = {
     SDL_VIDEODRIVER = "wayland";
-  };
-
-  catppuccin = {
-    enable = true;
-    flavor = "macchiato";
   };
 
   programs.ssh = {

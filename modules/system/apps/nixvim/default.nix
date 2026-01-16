@@ -1,6 +1,7 @@
 {
   pkgs,
   inputs,
+  config,
   ...
 }: {
   imports = [
@@ -30,7 +31,11 @@
         #  };
         #};
         #disable_underline = true;
-        flavour = "macchiato";
+        flavour =
+          if (config ? catppuccinTheme)
+          then config.catppuccinTheme
+          else "macchiato";
+
         integrations = {
           cmp = true;
           gitsigns = true;
