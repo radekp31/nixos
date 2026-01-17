@@ -2,6 +2,7 @@
   imports = [
     ./packages.nix
     ../../../shells/zsh
+    ../../../colorschemes/catppuccin
   ];
   home.username = "radekp";
   home.homeDirectory = "/home/radekp";

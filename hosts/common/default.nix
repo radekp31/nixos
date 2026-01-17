@@ -93,7 +93,8 @@
     htop
     tree
     tmux
-    nh
+    nh #nix helper
+    nix-output-monitor #helper for rebuild debugging
   ];
 
   # SSH - disabled by default, let hosts opt-in

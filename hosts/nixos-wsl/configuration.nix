@@ -1,6 +1,7 @@
 {lib, ...}: {
   imports = [
     ./users.nix
+    ./variables.nix
     ../common/default.nix
     ../common/profiles/wsl.nix
     ../../modules/system/apps/nixvim
