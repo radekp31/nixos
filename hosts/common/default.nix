@@ -95,6 +95,13 @@
     tmux
     nh #nix helper
     nix-output-monitor #helper for rebuild debugging
+    nix-prefetch-git
+    nix-prefetch
+    nix-prefetch-docker
+    nix-prefetch-scripts
+    nix-prefetch
+    nix-prefetch-docker
+    nix-prefetch-scripts
   ];
 
   # SSH - disabled by default, let hosts opt-in

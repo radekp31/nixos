@@ -190,17 +190,8 @@
     git
     nixd # Nix LSP server
     vimPlugins.nvim-lspconfig
-    nix-prefetch-git
-    nix-prefetch-git
-    nix-prefetch
-    nix-prefetch-docker
-    nix-prefetch-scripts
-    nixos-anywhere
     age
     sops
-    nix-prefetch
-    nix-prefetch-docker
-    nix-prefetch-scripts
     nixos-anywhere
     age
     sops
@@ -244,7 +235,6 @@
     qadwaitadecorations-qt6
     font-awesome_6
     # Fonts
-    dejavu_fontsEnv
     meslo-lgs-nf
     nerd-fonts.fira-code
     nerd-fonts.fira-mono
@@ -264,11 +254,5 @@
     hunspellDicts.en_US-large # enUS dictionary for grammar checking
     hunspellDicts.en_GB-large # enGB dictionary for grammar checking
     hunspellDicts.cs_CZ # csCz dictionary for grammar checking
-    # Zsh Plugins
-    oh-my-zsh
-    zsh-fzf-tab
-    zsh-fzf-history-search
-    zsh-autosuggestions
-    zsh-syntax-highlighting
   ];
 }
