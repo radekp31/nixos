@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     # Setup zsh
     ../../../shells/zsh
@@ -202,7 +199,7 @@
     fastfetch
     fzf
     tldr
-    btop
+    btop-cuda
     dig
     tree
     usbutils

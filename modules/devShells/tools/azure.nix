@@ -1,6 +1,4 @@
-{
-  pkgs25_05,
-}: {
+{pkgs25_05}: {
   packages = [
     (pkgs25_05.azure-cli.withExtensions [
       pkgs25_05.azure-cli-extensions.storage-preview

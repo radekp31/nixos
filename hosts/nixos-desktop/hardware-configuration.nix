@@ -29,7 +29,7 @@
   };
 
   fileSystems."/nix" = {
-    device = "/dev/disk/by-uuid/afdb1618-6f2a-469f-83cc-4f4f37b3a780";
+    device = "/dev/disk/by-uuid/a140150a-2597-48c6-b377-e7b0f7307f8a";
     fsType = "btrfs";
     options = ["subvol=@nix" "compress=zstd" "noatime"];
   };

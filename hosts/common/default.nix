@@ -3,7 +3,26 @@
   lib,
   config,
   ...
-}: {
+}: let
+  hasNvme = lib.elem "nvme" config.boot.initrd.availableKernelModules;
+in {
+  # Move tmpfs to RAM on nvme drives and compress it, uses dynamic allocation
+  boot.tmp = lib.mkIf hasNvme {
+    useTmpfs = true;
+    tmpfsSize = "25%";
+  };
+
+  zramSwap = lib.mkIf hasNvme {
+    enable = true;
+    algorithm = "zstd";
+    memoryPercent = 15;
+  };
+
+  services.udev.extraRules = lib.mkIf hasNvme ''
+    # Set scheduler for NVMe to 'none' for maximum throughput
+    ACTION=="add|change", KERNEL=="nvme[0-9]n[1-9]", ATTR{queue/scheduler}="none"
+  '';
+
   # Networking
   networking.networkmanager.enable = lib.mkDefault true;
   networking.firewall.enable = true;
@@ -26,45 +45,6 @@
     randomizedDelaySec = "30min";
     persistent = true;
     allowReboot = false;
-  };
-
-  #Create notification after auto autoUpgrade
-  systemd.services.nixos-upgrade = {
-    # We use postStop because it runs after the main upgrade command finishes
-    postStop = ''
-      # Systemd provides $SERVICE_RESULT to this environment
-
-      # 1. Determine the message based on the upgrade result
-      if [ "$SERVICE_RESULT" = "success" ]; then
-          TITLE="Upgrade Ready"
-          MSG="System updated successfully. Please reboot to apply."
-          ICON="nix-snowflake"
-      else
-          TITLE="Upgrade Failed"
-          MSG="Auto-upgrade encountered an error. Check journalctl -u nixos-upgrade"
-          ICON="dialog-error"
-      fi
-
-      # 2. Find all real users logged into a graphical session
-      # This filters out the 'manager' and root to find your actual desktop session
-      for SID in $(loginctl list-sessions --no-legend | awk '$6 != "manager" {print $1}'); do
-          U_NAME=$(loginctl show-session "$SID" -p Name --value)
-          U_ID=$(id -u "$U_NAME")
-
-          # Only notify if the user has a bus available
-          if [ -S "/run/user/$U_ID/bus" ]; then
-            sudo -u "$U_NAME" \
-              DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$U_ID/bus \
-              busctl --user call \
-                org.freedesktop.Notifications \
-                /org/freedesktop/Notifications \
-                org.freedesktop.Notifications \
-                Notify \
-                susssasa{sv}i \
-                -- "NixOS Upgrade" 0 "$ICON" "$TITLE" "$MSG" 0 0 -1
-          fi
-      done
-    '';
   };
 
   nix = {
@@ -97,11 +77,8 @@
     nix-output-monitor #helper for rebuild debugging
     nix-prefetch-git
     nix-prefetch
-    nix-prefetch-docker
     nix-prefetch-scripts
-    nix-prefetch
     nix-prefetch-docker
-    nix-prefetch-scripts
   ];
 
   # SSH - disabled by default, let hosts opt-in
