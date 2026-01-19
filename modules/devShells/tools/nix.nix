@@ -1,5 +1,4 @@
-{ pkgs }:
-{
+{pkgs}: {
   packages = with pkgs; [
     nixfmt
     alejandra
@@ -11,4 +10,3 @@
     yamllint.enable = true;
   };
 }
-

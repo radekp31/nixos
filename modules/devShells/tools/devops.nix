@@ -1,6 +1,8 @@
-{ pkgs, pkgs_unstable, aztfexport }:
-
 {
+  pkgs,
+  pkgs_unstable,
+  aztfexport,
+}: {
   packages = with pkgs; [
     kubectl
     awscli2
@@ -34,4 +36,3 @@
     yamllint.enable = true;
   };
 }
-

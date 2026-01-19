@@ -1,4 +1,4 @@
-{ pkgs }:
+{pkgs}:
 pkgs.stdenv.mkDerivation {
   pname = "aztfexport";
   version = "0.18.0";
@@ -27,4 +27,3 @@ pkgs.stdenv.mkDerivation {
     platforms = ["x86_64-linux"];
   };
 }
-

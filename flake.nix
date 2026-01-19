@@ -13,7 +13,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    pre-commit-hooks = { 
+    pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -23,7 +23,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    disko = { 
+    disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -103,7 +103,6 @@
     treefmt-nix,
     systems,
     pre-commit-hooks,
-    flake-utils,
     ...
   } @ inputs: let
     system = "x86_64-linux";
@@ -208,15 +207,15 @@
     checks = eachSystem (pkgs: {
       formatting = treefmtEval.${pkgs.system}.config.build.check self;
     });
-    devShells = eachSystem (pkgs:
-      let
+    devShells = eachSystem (
+      pkgs: let
         system = pkgs.system;
         pkgs25_05 = nixpkgs25_05.legacyPackages.${system};
         pkgs_unstable = nixpkgs_unstable.legacyPackages.${system};
       in
-      import ./modules/devShells {
-        inherit pkgs pkgs25_05 pkgs_unstable pre-commit-hooks system;
-      }
+        import ./modules/devShells {
+          inherit pkgs pkgs25_05 pkgs_unstable pre-commit-hooks system;
+        }
     );
   };
 }

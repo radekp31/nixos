@@ -1,9 +1,16 @@
-{ pkgs, pkgs25_05, pkgs_unstable, pre-commit-hooks, system, hooks, pythonTools, devopsTools, azureTools, aztfexport }:
-
+{
+  pkgs,
+  pre-commit-hooks,
+  system,
+  hooks,
+  pythonTools,
+  devopsTools,
+  azureTools,
+}:
 pkgs.mkShell {
-  buildInputs = 
-    pythonTools.packages 
-    ++ devopsTools.packages 
+  buildInputs =
+    pythonTools.packages
+    ++ devopsTools.packages
     ++ azureTools.packages;
 
   shellHook = ''
@@ -19,4 +26,3 @@ pkgs.mkShell {
     exec ${pkgs.zsh}/bin/zsh
   '';
 }
-

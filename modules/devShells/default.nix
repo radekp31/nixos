@@ -1,17 +1,20 @@
-{ pkgs, pkgs25_05, pkgs_unstable, pre-commit-hooks, system }:
-let
+{
+  pkgs,
+  pkgs25_05,
+  pkgs_unstable,
+  pre-commit-hooks,
+  system,
+}: let
   # Import custom derivations
-  aztfexport = import ./derivations/aztfexport.nix { inherit pkgs; };
+  aztfexport = import ./derivations/aztfexport.nix {inherit pkgs;};
 
   # Import tool definitions
-  pythonTools = import ./tools/python.nix { inherit pkgs; };
-  devopsTools = import ./tools/devops.nix { inherit pkgs pkgs_unstable aztfexport; };
-  azureTools = import ./tools/azure.nix { inherit pkgs pkgs25_05; };
-  nixTools = import ./tools/nix.nix { inherit pkgs; };
+  pythonTools = import ./tools/python.nix {inherit pkgs;};
+  devopsTools = import ./tools/devops.nix {inherit pkgs pkgs_unstable aztfexport;};
+  azureTools = import ./tools/azure.nix {inherit pkgs pkgs25_05;};
+  nixTools = import ./tools/nix.nix {inherit pkgs;};
   hooks = import ./tools/hooks.nix;
-
-in
-{
+in {
   default = pkgs.mkShell {
     buildInputs = nixTools.packages;
     shellHook = ''
@@ -23,9 +26,9 @@ in
   };
 
   devops = pkgs.mkShell {
-    buildInputs = 
-      pythonTools.packages 
-      ++ devopsTools.packages 
+    buildInputs =
+      pythonTools.packages
+      ++ devopsTools.packages
       ++ azureTools.packages;
 
     shellHook = ''
@@ -42,4 +45,3 @@ in
     '';
   };
 }
-

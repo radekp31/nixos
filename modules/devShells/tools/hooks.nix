@@ -21,4 +21,3 @@
     check-yaml.enable = true;
   };
 }
-
