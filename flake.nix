@@ -8,27 +8,48 @@
     nixpkgs25_05.url = "github:NixOS/nixpkgs/nixos-25.05";
     nixpkgs_unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    home-manager.url = "github:nix-community/home-manager/release-25.11";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    alejandra.url = "github:kamadorueda/alejandra/4.0.0";
-    alejandra.inputs.nixpkgs.follows = "nixpkgs";
+    pre-commit-hooks = { 
+      url = "github:cachix/pre-commit-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    disko.url = "github:nix-community/disko";
-    disko.inputs.nixpkgs.follows = "nixpkgs";
+    alejandra = {
+      url = "github:kamadorueda/alejandra/4.0.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
+    disko = { 
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    #sops-nix.url = "github:Mic92/sops-nix";
-    #sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-facter-modules = {
+      url = "github:numtide/nixos-facter-modules";
+    };
+
+    #sops-nix = {
+    #  url = "github:Mic92/sops-nix";
+    #  sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    #};
 
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    treefmt-nix.url = "github:numtide/treefmt-nix";
-    systems.url = "github:nix-systems/default";
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    systems = {
+      url = "github:nix-systems/default";
+    };
 
     nixvim = {
       url = "github:nix-community/nixvim/nixos-25.11";
@@ -39,19 +60,19 @@
       url = "github:numtide/flake-utils";
     };
 
-    niri = {
-      url = "github:sodiboo/niri-flake";
-    };
+    #niri = {
+    #  url = "github:sodiboo/niri-flake";
+    #};
 
-    # Add Stylix (required for Niri)
-    stylix = {
-      url = "github:danth/stylix";
-    };
+    ## Add Stylix (required for Niri)
+    #stylix = {
+    #  url = "github:danth/stylix";
+    #};
 
-    noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    #noctalia = {
+    #  url = "github:noctalia-dev/noctalia-shell";
+    #  inputs.nixpkgs.follows = "nixpkgs";
+    #};
 
     # Zen browser
     zen-browser = {
@@ -81,11 +102,13 @@
     nixos-wsl,
     treefmt-nix,
     systems,
+    pre-commit-hooks,
+    flake-utils,
     ...
   } @ inputs: let
     system = "x86_64-linux";
 
-    # devShell vars
+    # pkgs inputs vars
     pkgs = import nixpkgs {
       inherit system;
       config.allowUnfree = true;
@@ -185,9 +208,15 @@
     checks = eachSystem (pkgs: {
       formatting = treefmtEval.${pkgs.system}.config.build.check self;
     });
-
-    #devShells.${system} = {
-    #  devops = import ./modules/devShells/devops.nix {inherit pkgs pkgs25_05 pkgs_unstable;};
-    #};
+    devShells = eachSystem (pkgs:
+      let
+        system = pkgs.system;
+        pkgs25_05 = nixpkgs25_05.legacyPackages.${system};
+        pkgs_unstable = nixpkgs_unstable.legacyPackages.${system};
+      in
+      import ./modules/devShells {
+        inherit pkgs pkgs25_05 pkgs_unstable pre-commit-hooks system;
+      }
+    );
   };
 }

@@ -8,7 +8,7 @@
     ../../../shells/zsh
 
     # Desktop (Niri + Noctalia)
-    inputs.niri.homeModules.niri
+    #inputs.niri.homeModules.niri
     #../../../apps/desktop/niri
     #../../../apps/desktop/noctalia
 
