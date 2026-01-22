@@ -2,6 +2,8 @@
   pkgs,
   pkgs25_05,
   pkgs_unstable,
+  pre-commit-hooks,
+  system
 }: let
   # Import custom derivations
   aztfexport = import ./derivations/aztfexport.nix {inherit pkgs;};
@@ -21,9 +23,6 @@ in {
       export DEVSHELL_NAME="devops"
       export NIXPKGS_ALLOW_UNFREE=1
       export SHELL=${pkgs.zsh}/bin/zsh
-      if command -v pre-commit >/dev/null && [ -d .git ] && [ ! -f .git/hooks/pre-commit ]; then
-        pre-commit install --install-hooks --hook-type pre-commit
-      fi
     '';
   };
 
@@ -38,9 +37,15 @@ in {
       export DEVSHELL_NAME="devops"
       export NIXPKGS_ALLOW_UNFREE=1
       export SHELL=${pkgs.zsh}/bin/zsh
-      if command -v pre-commit >/dev/null && [ -d .git ] && [ ! -f .git/hooks/pre-commit ]; then
-        pre-commit install --install-hooks --hook-type pre-commit
-      fi
+
+      ${pre-commit-hooks.lib.${system}.run {
+        src = ./.;
+        hooks = {
+          treefmt.enable = true;
+          detect-secrets.enable = true;
+          truffleHog.enable = true;
+        };
+      }}
     '';
   };
 }

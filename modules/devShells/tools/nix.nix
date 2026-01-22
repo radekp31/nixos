@@ -1,5 +1,6 @@
 {pkgs}: {
   packages = with pkgs; [
+    treefmt
     nixfmt
     alejandra
     nix
