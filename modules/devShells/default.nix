@@ -38,14 +38,8 @@ in {
       export NIXPKGS_ALLOW_UNFREE=1
       export SHELL=${pkgs.zsh}/bin/zsh
 
-      ${pre-commit-hooks.lib.${system}.run {
-        src = ./.;
-        hooks = {
-          treefmt.enable = true;
-          detect-secrets.enable = true;
-          truffleHog.enable = true;
-        };
-      }}
+      ${pre-commit-hooks.lib.${system}.install}
+
     '';
   };
 }
