@@ -32,11 +32,16 @@
       platforms = ["x86_64-linux"];
     };
   };
+  #fonts.packages = with pkgs; [
+  #  nerd-fonts.jetbrains-mono
+  #];
 in {
   home.packages = with pkgs; [
-    dejavu_fonts
-    jetbrains-mono
+    #dejavu_fonts
+    #jetbrains-mono
     nixos-icons
+    alejandra
+    nerd-fonts.jetbrains-mono
 
     (python313.withPackages (ps:
       with ps; [
@@ -68,6 +73,7 @@ in {
     inxi
 
     tmux
+
     (pkgs25_05.azure-cli.withExtensions [
       pkgs25_05.azure-cli-extensions.storage-preview
       pkgs25_05.azure-cli-extensions.azure-devops

@@ -67,6 +67,10 @@
       lualine = {
         enable = true;
         settings = {
+          options = {
+            icons_enabled = true;
+            colorcheme = "catppuccin";
+          };
           sections = {
             lualine_c = [
               {

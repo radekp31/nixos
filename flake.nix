@@ -18,10 +18,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    alejandra = {
-      url = "github:kamadorueda/alejandra/4.0.0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    #alejandra = {
+    #  url = "github:kamadorueda/alejandra/4.0.0";
+    #  inputs.nixpkgs.follows = "nixpkgs";
+    #};
 
     disko = {
       url = "github:nix-community/disko";
@@ -96,7 +96,7 @@
     nixpkgs,
     nixpkgs25_05,
     nixpkgs_unstable,
-    alejandra,
+    #alejandra,
     home-manager,
     #sops-nix,
     nixos-wsl,
@@ -130,7 +130,8 @@
       pkgs:
         treefmt-nix.lib.evalModule pkgs {
           imports = [./treefmt.nix];
-          programs.alejandra.package = alejandra.defaultPackage.${pkgs.system};
+          #programs.alejandra.package = alejandra.defaultPackage.${pkgs.system};
+          programs.alejandra.package = pkgs.alejandra;
         }
     );
   in {
@@ -140,7 +141,8 @@
       modules = [
         ./hosts/nixos-desktop/configuration.nix
         {
-          environment.systemPackages = [alejandra.defaultPackage.${system}];
+          #environment.systemPackages = [alejandra.defaultPackage.${system}];
+          environment.systemPackages = [pkgs.alejandra];
         }
         home-manager.nixosModules.home-manager
         {
@@ -186,7 +188,7 @@
     #};
 
     nixosConfigurations."dt-wsl-nix" = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
+      system = system;
       specialArgs = {inherit inputs;};
       modules = [
         nixos-wsl.nixosModules.wsl
@@ -214,7 +216,8 @@
         pkgs_unstable = nixpkgs_unstable.legacyPackages.${system};
       in
         import ./modules/devShells {
-          inherit pkgs pkgs25_05 pkgs_unstable pre-commit-hooks system;
+          #inherit pkgs pkgs25_05 pkgs_unstable pre-commit-hooks system;
+          inherit pkgs pkgs25_05 pkgs_unstable pre-commit-hooks;
         }
     );
   };

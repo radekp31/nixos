@@ -2,8 +2,6 @@
   pkgs,
   pkgs25_05,
   pkgs_unstable,
-  pre-commit-hooks,
-  system,
 }: let
   # Import custom derivations
   aztfexport = import ./derivations/aztfexport.nix {inherit pkgs;};
@@ -13,15 +11,19 @@
   devopsTools = import ./tools/devops.nix {inherit pkgs pkgs_unstable aztfexport;};
   azureTools = import ./tools/azure.nix {inherit pkgs pkgs25_05;};
   nixTools = import ./tools/nix.nix {inherit pkgs;};
-  hooks = import ./tools/hooks.nix;
 in {
   default = pkgs.mkShell {
-    buildInputs = nixTools.packages;
+    buildInputs =
+      nixTools.packages
+      ++ [pkgs.pre-commit];
+
     shellHook = ''
-      ${pre-commit-hooks.lib.${system}.run {
-        src = ./.;
-        hooks = hooks.nix;
-      }}
+      export DEVSHELL_NAME="devops"
+      export NIXPKGS_ALLOW_UNFREE=1
+      export SHELL=${pkgs.zsh}/bin/zsh
+      if command -v pre-commit >/dev/null && [ -d .git ] && [ ! -f .git/hooks/pre-commit ]; then
+        pre-commit install --install-hooks --hook-type pre-commit
+      fi
     '';
   };
 
@@ -29,19 +31,16 @@ in {
     buildInputs =
       pythonTools.packages
       ++ devopsTools.packages
-      ++ azureTools.packages;
+      ++ azureTools.packages
+      ++ [pkgs.pre-commit];
 
     shellHook = ''
       export DEVSHELL_NAME="devops"
-      export NIXPKGS_ALLOW_UNFREE="1"
+      export NIXPKGS_ALLOW_UNFREE=1
       export SHELL=${pkgs.zsh}/bin/zsh
-
-      ${pre-commit-hooks.lib.${system}.run {
-        src = ./.;
-        hooks = hooks.python // hooks.devops // azureTools.hooks;
-      }}
-
-      exec ${pkgs.zsh}/bin/zsh
+      if command -v pre-commit >/dev/null && [ -d .git ] && [ ! -f .git/hooks/pre-commit ]; then
+        pre-commit install --install-hooks --hook-type pre-commit
+      fi
     '';
   };
 }
