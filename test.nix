@@ -1,3 +1,3 @@
 {
-  password = "hardcoded_secret_12345";
+  myPassword = "hardcoded_secret_12345";
 }

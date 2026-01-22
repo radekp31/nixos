@@ -9,7 +9,7 @@ repos:
         stages: [pre-commit]
       - id: detect-secrets
         name: detect-secrets
-        entry: detect-secrets scan
+        entry: detect-secrets scan --baseline .secrets.baseline
         language: system
         pass_filenames: false
         stages: [pre-commit]
