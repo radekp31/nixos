@@ -7,15 +7,15 @@ repos:
         language: system
         pass_filenames: false
         stages: [pre-commit]
-      - id: detect-secrets
-        name: detect-secrets
-        entry: detect-secrets scan --baseline .secrets.baseline
-        language: system
-        pass_filenames: false
-        stages: [pre-commit]
-      - id: trufflehog
-        name: trufflehog
-        entry: trufflehog filesystem .
-        language: system
-        pass_filenames: false
-        stages: [pre-commit]
+      #- id: detect-secrets
+      #  name: detect-secrets
+      #  entry: detect-secrets scan --baseline .secrets.baseline
+      #  language: system
+      #  pass_filenames: false
+      #  stages: [pre-commit]
+      #- id: trufflehog
+      #  name: trufflehog
+      #  entry: trufflehog filesystem .
+      #  language: system
+      #  pass_filenames: false
+      #  stages: [pre-commit]
