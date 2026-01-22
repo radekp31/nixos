@@ -4,6 +4,8 @@
     nixfmt
     alejandra
     nix
+    detect-secrets
+    trufflehog
   ];
 
   hooks = {

@@ -2,8 +2,6 @@
   pkgs,
   pkgs25_05,
   pkgs_unstable,
-  pre-commit-hooks,
-  system
 }: let
   # Import custom derivations
   aztfexport = import ./derivations/aztfexport.nix {inherit pkgs;};
@@ -38,7 +36,10 @@ in {
       export NIXPKGS_ALLOW_UNFREE=1
       export SHELL=${pkgs.zsh}/bin/zsh
 
-      ${pre-commit-hooks.lib.${system}.install}
+      # Install pre-commit hooks from .pre-commit-config.yaml
+      if [ -f .pre-commit-config.yaml ]; then
+        pre-commit install --install-hooks
+      fi
 
     '';
   };

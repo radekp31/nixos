@@ -1,22 +1,21 @@
 repos:
   - repo: local
     hooks:
-      - id: treefmt
-        name: treefmt
-        entry: treefmt
+      - id: nix-fmt
+        name: nix fmt
+        entry: nix fmt
         language: system
         pass_filenames: false
-        stages: [commit]
+        stages: [pre-commit]
       - id: detect-secrets
         name: detect-secrets
         entry: detect-secrets scan
         language: system
         pass_filenames: false
-        stages: [commit]
-      - id: truffleHog
-        name: truffleHog
-        entry: truffleHog filesystem .
+        stages: [pre-commit]
+      - id: trufflehog
+        name: trufflehog
+        entry: trufflehog filesystem .
         language: system
         pass_filenames: false
-        stages: [commit]
-
+        stages: [pre-commit]
