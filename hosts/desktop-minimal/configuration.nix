@@ -82,8 +82,6 @@
     }
   '';
 
-  virtualisation.waydroid.enable = false;
-
   virtualisation.libvirtd = {
     enable = true;
     qemu = {

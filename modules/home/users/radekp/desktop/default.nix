@@ -218,6 +218,10 @@
     qemu_kvm
     spice-vdagent
     virt-viewer
+    virt-manager
+    qemu
+    OVMF
+
     # GUI Applications
     webcord # Discord alternative (better than discord)
     freecad-wayland

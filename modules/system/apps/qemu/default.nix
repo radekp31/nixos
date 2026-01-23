@@ -37,6 +37,9 @@
     spice-vdagent
     virt-viewer
     virt-manager
+    swtpm
     OVMF
+    virtio-win
+    bridge-utils
   ];
 }

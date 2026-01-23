@@ -138,7 +138,7 @@
       grep = "grep --color=auto";
       vi = "nvim";
       vim = "nvim";
-      cat = "bat -pp --theme=\"Dracula\"";
+      cat = "bat -pp";
       tf = "terraform";
       tfr = "terraformer";
       k = "kubectl";

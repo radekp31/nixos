@@ -15,7 +15,7 @@
     ../common/profiles/desktop.nix
 
     # System modules
-    #../../modules/system/apps/desktop/kde-plasma6
+    ../../modules/system/apps/waydroid
     ../../modules/system/apps/btrfs
     ../../modules/system/hardware/gpu/nvidia
     ../../modules/system/apps/nixvim
@@ -26,6 +26,7 @@
     ../../modules/system/apps/openrgb
     ../../modules/system/hardware/usb
     ../../modules/system/apps/desktop/kde-plasma6
+    ../../modules/system/apps/nix-ld
   ];
 
   # Override common defaults
