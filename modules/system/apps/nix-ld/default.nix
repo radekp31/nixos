@@ -1,7 +1,5 @@
-{pkgs,...}:
-
-{
-programs.nix-ld.enable = true;
+{pkgs, ...}: {
+  programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
     # General-purpose libraries for most binaries
     stdenv.cc.cc
@@ -12,7 +10,7 @@ programs.nix-ld.enable = true;
     openssl
     curl
     expat
-    
+
     # Graphics / Electron / GUI requirements
     xorg.libX11
     xorg.libXcomposite
@@ -43,6 +41,4 @@ programs.nix-ld.enable = true;
     alsa-lib
     systemd
   ];
-
 }
-

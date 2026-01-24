@@ -2,6 +2,7 @@
   pkgs,
   inputs,
   config,
+  lib,
   ...
 }: {
   imports = [
@@ -12,6 +13,34 @@
   programs.nixvim = {
     #Includes functions get_bufnrs
     enable = true;
+    keymaps = [
+      {
+        mode = "n";
+        key = "gl";
+        action = "<cmd>lua vim.diagnostic.open_float()<cr>";
+        options.desc = "Explain Error";
+      }
+      {
+        mode = "n";
+        key = "]d";
+        action = "<cmd>lua vim.diagnostic.goto_next()<cr>";
+        options.desc = "Next Error";
+      }
+      {
+        mode = "n";
+        key = "[d";
+        action = "<cmd>lua vim.diagnostic.goto_prev()<cr>";
+        options.desc = "Previous Error";
+      }
+      {
+        mode = "n";
+        key = "<leader>ca";
+        action = "<cmd>lua vim.lsp.buf.code_action()<cr>";
+        options = {
+          desc = "LSP Code Actions (Quick Fix)";
+        };
+      }
+    ];
     #colorschemes.tokyonight = {
     #  enable = true;
     #  settings = {
@@ -90,6 +119,9 @@
               search_dirs = ["/etc/mnt" "~"];
             };
           };
+          fzf-native.enable = true; # For fast searching
+          ui-select.enable = true; # For pretty LSP code-action menus
+          file-browser.enable = true; # To use telescope as a file explorer
         };
         keymaps = {
           "<leader>ff" = {
@@ -181,6 +213,61 @@
             #settings = {};
           };
           terraformls = {
+            enable = true;
+          };
+          bashls = {
+            enable = true;
+          };
+          dockerls = {
+            enable = true;
+          };
+          jsonls = {
+            enable = true;
+          };
+          lua_ls = {
+            enable = true;
+            settings = {
+              Lua = {
+                diagnostics = {
+                  globals = ["vim"]; # Stops the "Undefined global: vim" error
+                };
+                workspace = {
+                  library = [
+                    # This makes the LSP aware of Neovim's built-in functions
+                    #(lib.nixvim.mkRaw "vim.api.nvim_get_runtime_file('', true)")
+                    "vim.api.nvim_get_runtime_file('', true)"
+                  ];
+                  checkThirdParty = false;
+                };
+                telemetry.enable = false; # Keep it private
+              };
+            };
+          };
+          pyright = {
+            enable = true;
+            package = pkgs.basedpyright;
+            cmd = ["basedpyright-langserver" "--stdio"];
+            settings = {
+              basedpyright.analysis = {
+                typeCheckingMode = "strict"; # or "standard"
+                diagnosticMode = "workspace";
+              };
+              python.analysis.inlayHints = {
+                variableTypes = true;
+                functionReturnTypes = true;
+                callArgumentNames = true;
+                parameterTypes = true;
+              };
+            };
+          };
+          stylua = {
+            enable = true;
+          };
+          yamlls = {
+            enable = true;
+          };
+          # Switch to taplo if issues
+          tombi = {
             enable = true;
           };
         };
