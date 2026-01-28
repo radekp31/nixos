@@ -12,7 +12,7 @@
     ../../../apps/foot
 
     # Zen browser
-    ../../../apps/zen_browser
+    #../../../apps/zen_browser
 
     # Enable catpuccin
     ../../../colorschemes/catppuccin
@@ -163,7 +163,6 @@
   #TODO - Explore this
   #programs.lesspipe.enable = true;
 
-  programs.firefox.enable = true;
 
   # Home packages
   home.packages = with pkgs; [
@@ -204,6 +203,7 @@
     tree
     usbutils
     ntfs3g # NTFS filesystem support
+    p7zip
     # Media & Downloads
     yt-dlp
     ffmpeg

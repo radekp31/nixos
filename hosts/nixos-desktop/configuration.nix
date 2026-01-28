@@ -29,6 +29,10 @@
     ../../modules/system/apps/nix-ld
   ];
 
+  services.udev.extraRules = ''
+    SUBSYSTEM=="usb", ATTR{idVendor}=="2207", MODE="0666", GROUP="plugdev"
+  '';
+
   # Override common defaults
   system.autoUpgrade.enable = true;
   services.openssh.enable = true;

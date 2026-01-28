@@ -19,7 +19,7 @@
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/afdb1618-6f2a-469f-83cc-4f4f37b3a780";
     fsType = "btrfs";
-    options = ["subvol=@" "compress=zstd" "noatime"];
+    options = ["subvol=@" "compress=zstd" "noatime" "flushoncommit"];
   };
 
   fileSystems."/home" = {
@@ -31,13 +31,13 @@
   fileSystems."/nix" = {
     device = "/dev/disk/by-uuid/a140150a-2597-48c6-b377-e7b0f7307f8a";
     fsType = "btrfs";
-    options = ["subvol=@nix" "compress=zstd" "noatime"];
+    options = ["subvol=@nix" "compress=zstd" "noatime" "flushoncommit"];
   };
 
   fileSystems."/var/log" = {
     device = "/dev/disk/by-uuid/afdb1618-6f2a-469f-83cc-4f4f37b3a780";
     fsType = "btrfs";
-    options = ["subvol=@log" "compress=zstd" "noatime"];
+    options = ["subvol=@log" "compress=zstd" "noatime" "flushoncommit"];
   };
 
   fileSystems."/boot" = {
@@ -61,7 +61,7 @@
   fileSystems."/mnt/btr_pool" = {
     device = "/dev/disk/by-uuid/afdb1618-6f2a-469f-83cc-4f4f37b3a780";
     fsType = "btrfs";
-    options = ["subvolid=5"]; # This mounts the actual top-level of the drive
+    options = ["subvolid=5" "noatime"]; # This mounts the actual top-level of the drive
   };
 
   swapDevices = [];
