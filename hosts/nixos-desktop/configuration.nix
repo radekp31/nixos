@@ -34,7 +34,6 @@
   '';
 
   # Override common defaults
-  system.autoUpgrade.enable = true;
   services.openssh.enable = true;
   services.openssh.settings.PasswordAuthentication = true;
 
@@ -175,7 +174,7 @@
     ];
 
   # Cockpit
-  services.cockpit.enable = true;
+  #services.cockpit.enable = true;
 
   # Hardware-specific packages
   environment.systemPackages = with pkgs; [

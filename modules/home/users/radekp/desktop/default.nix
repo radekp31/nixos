@@ -166,6 +166,10 @@
 
   # Home packages
   home.packages = with pkgs; [
+    #browser
+    #firefox-esr-140
+    firefox-esr-unwrapped
+
     # Niri
     xwayland-satellite
 

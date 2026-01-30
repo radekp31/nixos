@@ -38,7 +38,7 @@ in {
 
   # Nix settings
   system.autoUpgrade = {
-    enable = true;
+    enable = false; # too unstable
     operation = "boot";
     flake = "git+https://github.com/radekp31/nixos.git#${config.networking.hostName}";
     dates = "02:30";

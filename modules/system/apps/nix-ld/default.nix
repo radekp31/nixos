@@ -10,6 +10,7 @@
     openssl
     curl
     expat
+    nspr
 
     # Graphics / Electron / GUI requirements
     xorg.libX11
@@ -23,6 +24,7 @@
     xorg.libXi
     xorg.libXcursor
     xorg.libXScrnSaver
+    libxcb
     libxkbcommon
     mesa
     libdrm
