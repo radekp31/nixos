@@ -12,6 +12,8 @@
           "networkmanager"
           "video"
           "input"
+	  "adbusers"
+	  "plugdev"
         ];
         packages = with pkgs; [
           zsh

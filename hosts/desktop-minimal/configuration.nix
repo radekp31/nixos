@@ -187,7 +187,7 @@
   users.users.radekp = {
     isNormalUser = true;
     description = "radekp";
-    extraGroups = ["networkmanager" "wheel" "libvirtd" "kvm" "video" "audio" "cdrom" "optical"];
+    extraGroups = ["networkmanager" "wheel" "libvirtd" "kvm" "video" "audio" "cdrom" "optical" "adbusers" "plugdev"];
     packages = with pkgs; [
       #  thunderbird
     ];

@@ -29,8 +29,17 @@
     ../../modules/system/apps/nix-ld
   ];
 
+  users.groups.adbusers = {};
+  users.groups.plugdev = {};
+
   services.udev.extraRules = ''
     SUBSYSTEM=="usb", ATTR{idVendor}=="2207", MODE="0666", GROUP="plugdev"
+    # Rockchip Maskrom mode
+    SUBSYSTEM=="usb", ATTR{idVendor}=="2207", ATTR{idProduct}=="350b", MODE="0660", GROUP="adbusers"
+    # Rockchip Loader mode
+    SUBSYSTEM=="usb", ATTR{idVendor}=="2207", ATTR{idProduct}=="350a", MODE="0660", GROUP="adbusers"
+    # General Rockchip device rules
+    SUBSYSTEM=="usb", ATTR{idVendor}=="2207", MODE="0660", GROUP="adbusers"
   '';
 
   # Override common defaults

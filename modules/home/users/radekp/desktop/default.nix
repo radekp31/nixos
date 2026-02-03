@@ -168,7 +168,7 @@
   home.packages = with pkgs; [
     #browser
     #firefox-esr-140
-    firefox-esr-unwrapped
+    firefox-esr
 
     # Niri
     xwayland-satellite
@@ -208,6 +208,13 @@
     usbutils
     ntfs3g # NTFS filesystem support
     p7zip
+    kdePackages.dolphin
+    kdePackages.dolphin-plugins
+    kdePackages.kdeconnect-kde
+    screen
+    file
+    rkdeveloptool
+    usbimager
     # Media & Downloads
     yt-dlp
     ffmpeg
@@ -217,7 +224,6 @@
     # File Management & Cloud
     rclone
     qpdf
-    nautilus
     # Virtualization
     qemu_kvm
     spice-vdagent
