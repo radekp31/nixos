@@ -34,6 +34,8 @@
     cairo
     gdk-pixbuf
     glib
+    libglibutil
+    libusb1
     atk
     at-spi2-atk
     at-spi2-core
