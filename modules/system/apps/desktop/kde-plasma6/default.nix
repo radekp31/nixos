@@ -17,6 +17,19 @@
     enable = true;
   };
 
+  # Trying to fix the kwin crashes
+  security.rtkit.enable = true;
+  
+  #environment.variables = {
+    ## Fixes flickering and some out-of-order frame crashes
+    #"KWIN_DRM_USE_MODIFIERS" = "0"; 
+    ## Forces Steam/Dota to use a stable windowing path
+    #"QT_QPA_PLATFORM" = "wayland;xcb";
+    ## Helps NVIDIA handle the buffer handoff better
+    #"__GL_GSYNC_ALLOWED" = "0";
+    #"__GL_VRR_ALLOWED" = "0";
+  #};
+
   users.users.sddm.extraGroups = ["video"];
 
   services.flatpak = {

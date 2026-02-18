@@ -22,7 +22,6 @@
     ../../modules/system/apps/qmk
     ../../modules/system/apps/qemu
     ../../modules/system/hardware/printers/brother/DCPL2622DW
-    ../../modules/system/scripts/fan-control.sh
     ../../modules/system/apps/openrgb
     ../../modules/system/hardware/usb
     ../../modules/system/apps/desktop/kde-plasma6
