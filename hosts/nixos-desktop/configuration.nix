@@ -22,7 +22,8 @@
     ../../modules/system/apps/qmk
     ../../modules/system/apps/qemu
     ../../modules/system/hardware/printers/brother/DCPL2622DW
-    ../../modules/system/apps/openrgb
+    # another possible cause for crashes - openrgb tries to lock i2c bus
+    #../../modules/system/apps/openrgb
     ../../modules/system/hardware/usb
     ../../modules/system/apps/desktop/kde-plasma6
     ../../modules/system/apps/nix-ld
@@ -87,7 +88,7 @@
   ];
 
   # Hardware-specific boot configuration
-  boot.blacklistedKernelModules = ["nouveau"];
+  boot.blacklistedKernelModules = ["nouveau" "fjes"];
   boot.initrd.availableKernelModules = [
     "nvme"
     "vesafb"
