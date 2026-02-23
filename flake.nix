@@ -102,7 +102,6 @@
     nixos-wsl,
     treefmt-nix,
     systems,
-    pre-commit-hooks,
     ...
   } @ inputs: let
     system = "x86_64-linux";
@@ -217,7 +216,7 @@
       in
         import ./modules/devShells {
           #inherit pkgs pkgs25_05 pkgs_unstable pre-commit-hooks system;
-          inherit pkgs pkgs25_05 pkgs_unstable pre-commit-hooks system;
+          inherit pkgs pkgs25_05 pkgs_unstable system;
         }
     );
   };

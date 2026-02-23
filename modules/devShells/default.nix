@@ -2,6 +2,7 @@
   pkgs,
   pkgs25_05,
   pkgs_unstable,
+  system,
 }: let
   # Import custom derivations
   aztfexport = import ./derivations/aztfexport.nix {inherit pkgs;};
