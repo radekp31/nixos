@@ -88,7 +88,7 @@
   ];
 
   # Hardware-specific boot configuration
-  boot.blacklistedKernelModules = ["nouveau" "fjes"];
+  boot.blacklistedKernelModules = ["nouveau" "fjes" "kvm_intel"];
   boot.initrd.availableKernelModules = [
     "nvme"
     "vesafb"
@@ -133,6 +133,9 @@
     "pcie_port_pm=off"
     "nvme_core.io_timeout=4294967295"
     "nvme_core.max_retries=5"
+    # Disable nvme power saving
+    "pcie_aspm=off" 
+    "nvme_core.default_ps_max_latency_us=0"
   ];
 
   boot.kernelModules = [
