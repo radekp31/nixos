@@ -163,7 +163,6 @@
   #TODO - Explore this
   #programs.lesspipe.enable = true;
 
-
   # Home packages
   home.packages = with pkgs; [
     #browser
