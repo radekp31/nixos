@@ -15,6 +15,7 @@
         email = "polasek.31@seznam.cz";
       };
       init.defaultBranch = "main";
+      safe.directory = "/etc/nixos";
       pull.rebase = true;
     };
     #extraConfig = {
