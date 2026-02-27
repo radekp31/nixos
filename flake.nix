@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs25_11.url = "github:NixOS/nixpkgs/nixos-25.11";
     # Azure CLI on 25.11 is fooked - revisit later to check if it works again
     # Use az login --tenant <TENANT_ID> --use-device-code
     nixpkgs25_05.url = "github:NixOS/nixpkgs/nixos-25.05";
@@ -95,6 +96,7 @@
     self,
     nixpkgs,
     nixpkgs25_05,
+    nixpkgs25_11,
     nixpkgs_unstable,
     #alejandra,
     home-manager,
@@ -112,6 +114,10 @@
       config.allowUnfree = true;
     };
     pkgs25_05 = import nixpkgs25_05 {
+      inherit system;
+      config.allowUnfree = true;
+    };
+    pkgs25_11 = import nixpkgs25_11 {
       inherit system;
       config.allowUnfree = true;
     };
@@ -198,7 +204,7 @@
           home-manager.useUserPackages = true;
           home-manager.users.radekp = import ./modules/home/users/radekp/wsl;
           home-manager.backupFileExtension = "backup";
-          home-manager.extraSpecialArgs = {inherit inputs pkgs pkgs25_05 pkgs_unstable;};
+          home-manager.extraSpecialArgs = {inherit inputs pkgs pkgs25_05 pkgs25_11 pkgs_unstable;};
         }
       ];
     };

@@ -1,6 +1,7 @@
 {
   pkgs,
   pkgs25_05,
+  pkgs25_11,
   pkgs_unstable,
   ...
 }: let
@@ -32,13 +33,17 @@
       platforms = ["x86_64-linux"];
     };
   };
-  #fonts.packages = with pkgs; [
-  #  nerd-fonts.jetbrains-mono
-  #];
+
+  # Look up working commit hashes here: https://www.nixhub.io/packages/azure-cli
+  nixhubio_azcli =
+    import (builtins.fetchTarball {
+      url = "https://github.com/NixOS/nixpkgs/archive/80d901ec0377e19ac3f7bb8c035201e2e098cc97.tar.gz";
+      sha256 = "1ik9a5zrzrcd50a055y3n4bljwf9yyd8hg6qj09nlbbjampkjgcv";
+    }) {
+      system = pkgs.stdenv.targetPlatform.system;
+    };
 in {
   home.packages = with pkgs; [
-    #dejavu_fonts
-    #jetbrains-mono
     nixos-icons
     alejandra
     nerd-fonts.jetbrains-mono
@@ -50,7 +55,6 @@ in {
         pandas
         numpy
         pip
-        azure-mgmt-compute
       ]))
     gh
     htop
@@ -74,19 +78,17 @@ in {
 
     tmux
 
-    (pkgs25_05.azure-cli.withExtensions [
-      pkgs25_05.azure-cli-extensions.storage-preview
-      pkgs25_05.azure-cli-extensions.azure-devops
-      pkgs25_05.azure-cli-extensions.resource-graph
-      pkgs25_05.azure-cli-extensions.ssh
-      pkgs25_05.azure-cli-extensions.quota
-
-      pkgs25_05.azure-cli-extensions.nsp
-      pkgs25_05.azure-cli-extensions.kusto
-      pkgs25_05.azure-cli-extensions.graphservices
-
-      pkgs25_05.azure-cli-extensions.fzf
-      pkgs25_05.azure-cli-extensions.dynatrace
+    # Use azure-cli from the pinned commit
+    (nixhubio_azcli.azure-cli.withExtensions [
+      nixhubio_azcli.azure-cli-extensions.storage-preview
+      nixhubio_azcli.azure-cli-extensions.azure-devops
+      nixhubio_azcli.azure-cli-extensions.resource-graph
+      nixhubio_azcli.azure-cli-extensions.quota
+      nixhubio_azcli.azure-cli-extensions.nsp
+      nixhubio_azcli.azure-cli-extensions.kusto
+      nixhubio_azcli.azure-cli-extensions.graphservices
+      nixhubio_azcli.azure-cli-extensions.fzf
+      nixhubio_azcli.azure-cli-extensions.dynatrace
     ])
 
     kubectl

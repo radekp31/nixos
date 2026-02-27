@@ -134,7 +134,7 @@
     "nvme_core.io_timeout=4294967295"
     "nvme_core.max_retries=5"
     # Disable nvme power saving
-    "pcie_aspm=off" 
+    "pcie_aspm=off"
     "nvme_core.default_ps_max_latency_us=0"
   ];
 
