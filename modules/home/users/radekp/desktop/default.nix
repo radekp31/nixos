@@ -3,16 +3,8 @@
     # Setup zsh
     ../../../shells/zsh
 
-    # Desktop (Niri + Noctalia)
-    #inputs.niri.homeModules.niri
-    #../../../apps/desktop/niri
-    #../../../apps/desktop/noctalia
-
     # Terminal emulator
     ../../../apps/foot
-
-    # Zen browser
-    #../../../apps/zen_browser
 
     # Enable catpuccin
     ../../../colorschemes/catppuccin
@@ -83,7 +75,6 @@
     enable = true;
     config = {
       paging = "never";
-      #theme = "tokyo-night-storm";
       decorations = "never";
     };
     themes = {

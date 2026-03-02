@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
-    nixpkgs25_11.url = "github:NixOS/nixpkgs/nixos-25.11";
     # Azure CLI on 25.11 is fooked - revisit later to check if it works again
     # Use az login --tenant <TENANT_ID> --use-device-code
     nixpkgs25_05.url = "github:NixOS/nixpkgs/nixos-25.05";
@@ -18,11 +17,6 @@
       url = "github:cachix/pre-commit-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    #alejandra = {
-    #  url = "github:kamadorueda/alejandra/4.0.0";
-    #  inputs.nixpkgs.follows = "nixpkgs";
-    #};
 
     disko = {
       url = "github:nix-community/disko";
@@ -61,31 +55,6 @@
       url = "github:numtide/flake-utils";
     };
 
-    #niri = {
-    #  url = "github:sodiboo/niri-flake";
-    #};
-
-    ## Add Stylix (required for Niri)
-    #stylix = {
-    #  url = "github:danth/stylix";
-    #};
-
-    #noctalia = {
-    #  url = "github:noctalia-dev/noctalia-shell";
-    #  inputs.nixpkgs.follows = "nixpkgs";
-    #};
-
-    # Zen browser
-    zen-browser = {
-      url = "github:0xc000022070/zen-browser-flake";
-      inputs = {
-        # IMPORTANT: we're using "libgbm" and is only available in unstable so ensure
-        # to have it up-to-date or simply don't specify the nixpkgs input
-        nixpkgs.follows = "nixpkgs";
-        home-manager.follows = "home-manager";
-      };
-    };
-
     catppuccin = {
       url = "github:catppuccin/nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -96,11 +65,8 @@
     self,
     nixpkgs,
     nixpkgs25_05,
-    nixpkgs25_11,
     nixpkgs_unstable,
-    #alejandra,
     home-manager,
-    #sops-nix,
     nixos-wsl,
     treefmt-nix,
     systems,
@@ -114,10 +80,6 @@
       config.allowUnfree = true;
     };
     pkgs25_05 = import nixpkgs25_05 {
-      inherit system;
-      config.allowUnfree = true;
-    };
-    pkgs25_11 = import nixpkgs25_11 {
       inherit system;
       config.allowUnfree = true;
     };
@@ -146,7 +108,6 @@
       modules = [
         ./hosts/nixos-desktop/configuration.nix
         {
-          #environment.systemPackages = [alejandra.defaultPackage.${system}];
           environment.systemPackages = [pkgs.alejandra];
         }
         home-manager.nixosModules.home-manager
@@ -204,7 +165,7 @@
           home-manager.useUserPackages = true;
           home-manager.users.radekp = import ./modules/home/users/radekp/wsl;
           home-manager.backupFileExtension = "backup";
-          home-manager.extraSpecialArgs = {inherit inputs pkgs pkgs25_05 pkgs25_11 pkgs_unstable;};
+          home-manager.extraSpecialArgs = {inherit inputs pkgs pkgs25_05 pkgs_unstable;};
         }
       ];
     };
@@ -221,7 +182,6 @@
         pkgs_unstable = nixpkgs_unstable.legacyPackages.${system};
       in
         import ./modules/devShells {
-          #inherit pkgs pkgs25_05 pkgs_unstable pre-commit-hooks system;
           inherit pkgs pkgs25_05 pkgs_unstable system;
         }
     );

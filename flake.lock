@@ -268,22 +268,6 @@
         "type": "github"
       }
     },
-    "nixpkgs25_11": {
-      "locked": {
-        "lastModified": 1772047000,
-        "narHash": "sha256-7DaQVv4R97cii/Qdfy4tmDZMB2xxtyIvNGSwXBBhSmo=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "1267bb4920d0fc06ea916734c11b0bf004bbe17e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixos-25.11",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs_unstable": {
       "locked": {
         "lastModified": 1772198003,
@@ -379,13 +363,11 @@
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
         "nixpkgs25_05": "nixpkgs25_05",
-        "nixpkgs25_11": "nixpkgs25_11",
         "nixpkgs_unstable": "nixpkgs_unstable",
         "nixvim": "nixvim",
         "pre-commit-hooks": "pre-commit-hooks",
         "systems": "systems_4",
-        "treefmt-nix": "treefmt-nix",
-        "zen-browser": "zen-browser"
+        "treefmt-nix": "treefmt-nix"
       }
     },
     "systems": {
@@ -465,29 +447,6 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
-        "type": "github"
-      }
-    },
-    "zen-browser": {
-      "inputs": {
-        "home-manager": [
-          "home-manager"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1772332855,
-        "narHash": "sha256-LPNnG/TXua9dSal3Ka+Rj0s34gbkJ4/AhxWBzn87j0E=",
-        "owner": "0xc000022070",
-        "repo": "zen-browser-flake",
-        "rev": "04e0729057ea01c3336f4751290a20f4ec564727",
-        "type": "github"
-      },
-      "original": {
-        "owner": "0xc000022070",
-        "repo": "zen-browser-flake",
         "type": "github"
       }
     }

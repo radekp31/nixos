@@ -1,7 +1,5 @@
 {
   pkgs,
-  pkgs25_05,
-  pkgs25_11,
   pkgs_unstable,
   ...
 }: let
@@ -103,7 +101,8 @@ in {
     git
     docker-compose
     helm
-    pkgs_unstable.terraform
+    #pkgs_unstable.terraform
+    terraform
     ansible
   ];
 }
