@@ -31,7 +31,11 @@ in
   };
 
   boot = {
-    kernelParams = ["nvidia_drm.fbdev=1"];
+    kernelParams = [
+      "nvidia_drm.fbdev=1"
+      "modprobe.blacklist=nouveau"
+      "nouveau.modeset=0"
+    ];
     supportedFilesystems = [
       "ntfs"
       "vfat"
