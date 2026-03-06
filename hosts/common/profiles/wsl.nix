@@ -1,6 +1,7 @@
 {lib, ...}: {
   wsl.enable = true;
   wsl.defaultUser = lib.mkDefault "nixos";
+  wsl.useWindowsDriver = true;
 
   # WSL networking - no DHCP
   networking.useDHCP = lib.mkDefault false;

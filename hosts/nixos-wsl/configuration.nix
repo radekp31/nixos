@@ -5,6 +5,9 @@
     ../common/default.nix
     ../common/profiles/wsl.nix
     ../../modules/system/apps/nixvim
+
+    #install nvidia drivers
+    ../../modules/system/hardware/gpu/nvidia/default.nix
   ];
 
   # WSL user

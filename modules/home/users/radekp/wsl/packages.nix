@@ -57,6 +57,9 @@ in {
     gh
     htop
 
+
+    bruno
+    cheat
     curl
     wget
     netcat

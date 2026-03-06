@@ -1,8 +1,14 @@
 {
   config,
   pkgs,
+  lib,
   ...
-}: {
+}:
+let
+  isWSL = config.networking.hostName == "dt-wsl-nix";
+in
+
+{
   #Accept NVIDIA licence
   nixpkgs.config.nvidia.acceptLicense = true;
 
@@ -32,7 +38,9 @@
       "ext4"
     ];
     initrd = {
-      enable = true;
+
+      # nixosConfigurations.dt-wsl-nix.config.networking.hostName
+      enable = lib.mkForce (if isWSL then false else true);
       supportedFilesystems = [
         "ntfs"
         "vfat"

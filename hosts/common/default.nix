@@ -66,6 +66,7 @@ in {
   # Basic packages
   environment.systemPackages = with pkgs; [
     # Core essentials
+    busybox
     vim
     wget
     curl

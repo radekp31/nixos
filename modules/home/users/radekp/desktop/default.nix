@@ -185,6 +185,7 @@
     age
     sops
     # System Utilities
+    cheat
     unzip
     wlr-randr
     termshark
