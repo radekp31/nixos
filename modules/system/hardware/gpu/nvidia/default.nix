@@ -126,6 +126,8 @@ in
     lm_sensors
   ];
 
+  programs.coolercontrol.enable = true;
+
   #Create power limit service
   systemd.services.nv-power-limit = {
     enable = true;
