@@ -62,7 +62,8 @@ in
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = ["nvidia"];
 
-  systemd.services.nvidia-powerd.enable = false;
+  #systemd.services.nvidia-powerd.enable = false;
+  systemd.services.nvidia-powerd.enable = lib.mkForce (if isWSL then false else true);
 
   hardware.nvidia = {
     # Modesetting is required.
@@ -130,7 +131,8 @@ in
 
   #Create power limit service
   systemd.services.nv-power-limit = {
-    enable = true;
+    #enable = true;
+    enable = lib.mkForce (if isWSL then false else true);
     path = with pkgs; [
       "${config.hardware.nvidia.package.bin}/bin/nvidia-smi"
       bash

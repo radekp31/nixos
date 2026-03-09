@@ -5,10 +5,19 @@
     ../common/default.nix
     ../common/profiles/wsl.nix
     ../../modules/system/apps/nixvim
-
-    #install nvidia drivers
-    ../../modules/system/hardware/gpu/nvidia/default.nix
+    ../../modules/system/apps/nix-ld-wsl
+    ../../modules/system/hardware/gpu/nvidia-wsl/default.nix
   ];
+
+  # Make WSL GPU libs visible to dynamic linker
+  environment.sessionVariables = {
+    LD_LIBRARY_PATH = lib.mkBefore "/usr/lib/wsl/lib";
+  };
+
+  wsl.useWindowsDriver = true;
+  wsl.interop.register = true;
+
+  wsl.ssh-agent.enable = true;
 
   # WSL user
   wsl.defaultUser = "radekp";
