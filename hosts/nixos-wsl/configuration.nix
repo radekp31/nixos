@@ -1,4 +1,8 @@
-{lib, ...}: {
+{
+  lib,
+  pkgs,
+  ...
+}: {
   imports = [
     ./users.nix
     ./variables.nix
@@ -10,9 +14,10 @@
   ];
 
   # Make WSL GPU libs visible to dynamic linker
-  environment.sessionVariables = {
-    LD_LIBRARY_PATH = lib.mkBefore "/usr/lib/wsl/lib";
-  };
+  #environment.sessionVariables = {
+  #  LD_LIBRARY_PATH = lib.mkBefore "/usr/lib/wsl/lib";
+  #  CPATH = lib.mkBefore "${pkgs.cudaPackages.cudatoolkit}/include";
+  #};
 
   wsl.useWindowsDriver = true;
   wsl.interop.register = true;

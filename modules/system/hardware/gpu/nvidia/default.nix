@@ -3,12 +3,9 @@
   pkgs,
   lib,
   ...
-}:
-let
+}: let
   isWSL = config.networking.hostName == "dt-wsl-nix";
-in
-
-{
+in {
   #Accept NVIDIA licence
   nixpkgs.config.nvidia.acceptLicense = true;
 
@@ -42,9 +39,12 @@ in
       "ext4"
     ];
     initrd = {
-
       # nixosConfigurations.dt-wsl-nix.config.networking.hostName
-      enable = lib.mkForce (if isWSL then false else true);
+      enable = lib.mkForce (
+        if isWSL
+        then false
+        else true
+      );
       supportedFilesystems = [
         "ntfs"
         "vfat"
@@ -63,7 +63,11 @@ in
   services.xserver.videoDrivers = ["nvidia"];
 
   #systemd.services.nvidia-powerd.enable = false;
-  systemd.services.nvidia-powerd.enable = lib.mkForce (if isWSL then false else true);
+  systemd.services.nvidia-powerd.enable = lib.mkForce (
+    if isWSL
+    then false
+    else true
+  );
 
   hardware.nvidia = {
     # Modesetting is required.
@@ -132,7 +136,11 @@ in
   #Create power limit service
   systemd.services.nv-power-limit = {
     #enable = true;
-    enable = lib.mkForce (if isWSL then false else true);
+    enable = lib.mkForce (
+      if isWSL
+      then false
+      else true
+    );
     path = with pkgs; [
       "${config.hardware.nvidia.package.bin}/bin/nvidia-smi"
       bash

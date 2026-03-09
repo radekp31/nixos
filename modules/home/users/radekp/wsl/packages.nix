@@ -57,9 +57,10 @@ in {
     gh
     htop
 
-
     bruno
     cheat
+    nvd
+    nvdtools
     curl
     wget
     netcat

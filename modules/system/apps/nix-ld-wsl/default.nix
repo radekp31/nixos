@@ -1,6 +1,9 @@
-{ config, pkgs, lib, ... }:
-
 {
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
   programs.nix-ld = {
     enable = true;
     # Provide common libs for foreign binaries
@@ -10,6 +13,4 @@
       # add more if some foreign binary complains about missing libs
     ];
   };
-
 }
-
