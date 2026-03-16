@@ -33,6 +33,7 @@
   };
 
   # Look up working commit hashes here: https://www.nixhub.io/packages/azure-cli
+  # azcli is for some reason not working from nixpkgs
   nixhubio_azcli =
     import (builtins.fetchTarball {
       url = "https://github.com/NixOS/nixpkgs/archive/80d901ec0377e19ac3f7bb8c035201e2e098cc97.tar.gz";
@@ -53,6 +54,13 @@ in {
         pandas
         numpy
         pip
+	autopep8
+	hy
+	pathlib2
+	requests
+	pyyaml
+	pydantic
+
       ]))
     gh
     htop
