@@ -89,6 +89,7 @@
 
   # Hardware-specific boot configuration
   boot.blacklistedKernelModules = ["nouveau" "fjes" "kvm_intel"];
+  boot.extraModulePackages = [ config.boot.kernelPackages.it87 ]; # CPU fan goes full rpm due to missing driver
   boot.initrd.availableKernelModules = [
     "nvme"
     "vesafb"
@@ -131,17 +132,22 @@
     "nvme_core.default_ps_max_latency_us=0"
     "pcie_aspm=off"
     "pcie_port_pm=off"
-    "nvme_core.io_timeout=4294967295"
+    "nvme_core.io_timeout=30"
     "nvme_core.max_retries=5"
     # Disable nvme power saving
     "pcie_aspm=off"
     "nvme_core.default_ps_max_latency_us=0"
+    # CPU cooler driver setup
+    "acpi_enforce_resources=lax"
+    "it87.ignore_resource_conflict=1"
+
   ];
 
   boot.kernelModules = [
     "kvm-amd"
     "kvm-intel"
     "xfs"
+    "it87"
   ];
 
   powerManagement.cpuFreqGovernor = "performance";
