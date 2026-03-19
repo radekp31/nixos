@@ -9,13 +9,28 @@
 
   programs.git = {
     enable = true;
+    #includes = [
+    #  {
+    #    condition = "gitdir:/mnt/c/workspaces/dt_workspaces/**";
+    #    #path = "${config.xdg.configHome}/git/user-dynatrace.gitconfig";
+    #    path = "${config.xdg.configHome}/git/bitbucket.lab.dynatrace.org.gitconfig";
+    #  }
+    #  {
+    #    condition = "gitdir:/mnt/c/workspaces/dt_github_workspaces/**";
+    #    #path = "${config.xdg.configHome}/git/user-dynatrace.gitconfig";
+    #    path = "${config.xdg.configHome}/git/github-dynatrace.gitconfig";
+    #  }
+    #];
     includes = [
       {
         condition = "gitdir:/mnt/c/workspaces/dt_workspaces/**";
-        path = "${config.xdg.configHome}/git/user-dynatrace.gitconfig";
+        path = "${config.xdg.configHome}/git/user-dynatrace-bitbucket.gitconfig";
+      }
+      {
+        condition = "gitdir:/mnt/c/workspaces/dt_github_workspaces/**";
+        path = "${config.xdg.configHome}/git/user-dynatrace-github.gitconfig";
       }
     ];
-
     settings = {
       user = {
         name = "Radek Polasek";
@@ -24,22 +39,30 @@
       init.defaultBranch = "main";
       safe.directory = "/etc/nixos";
       pull.rebase = true;
-    # Use work identity for repos under work workspaces
-    #includeIf."gitdir:/mnt/c/workspaces/dt_workspaces/**".path =
-    #  "${config.xdg.configHome}/git/user-dynatrace.gitconfig";
     };
   };
 
-  xdg.configFile."git/user-dynatrace.gitconfig".text = ''
+  #xdg.configFile."git/user-dynatrace.gitconfig".text = ''
+  #  [user]
+  #    name = Radek Polasek (Dynatrace)
+  #    email = radek.polasek@dynatrace.com
+  #'';
+
+  #xdg.configFile."git/user-personal.gitconfig".text = ''
+  #  [user]
+  #    name = Radek Polasek
+  #    email = polasek.31@seznam.cz
+  #'';
+  xdg.configFile."git/user-dynatrace-bitbucket.gitconfig".text = ''
     [user]
       name = Radek Polasek (Dynatrace)
       email = radek.polasek@dynatrace.com
   '';
-
-  xdg.configFile."git/user-personal.gitconfig".text = ''
+  
+  xdg.configFile."git/user-dynatrace-github.gitconfig".text = ''
     [user]
-      name = Radek Polasek
-      email = polasek.31@seznam.cz
+      name = Radek Polasek (Dynatrace)
+      email = radek.polasek@dynatrace.com
   '';
 
   programs.fzf = {
@@ -47,18 +70,6 @@
     enableZshIntegration = true;
     enableBashIntegration = true;
   };
-
-  #programs.ssh = {
-  #  enable = true;
-  #  enableDefaultConfig = false;
-  #  matchBlocks = {
-  #    "github.com" = {
-  #      hostname = "github.com";
-  #      user = "git";
-  #      identityFile = "~/.ssh/github";
-  #    };
-  #  };
-  #};
 
   programs.ssh = {
   enable = true;
