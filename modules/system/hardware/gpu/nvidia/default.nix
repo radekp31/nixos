@@ -32,6 +32,9 @@ in {
       "nvidia_drm.fbdev=1"
       "modprobe.blacklist=nouveau"
       "nouveau.modeset=0"
+      "nvme_core.default_ps_max_latency_us=0"
+      "pcie_aspm=off"
+      "pcie_port_pm=off"
     ];
     supportedFilesystems = [
       "ntfs"
@@ -77,7 +80,7 @@ in {
     # Enable this if you have graphical corruption issues or application crashes after waking
     # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead
     # of just the bare essentials.
-    powerManagement.enable = false;
+    powerManagement.enable = true;
 
     # Fine-grained power management. Turns off GPU when not in use.
     # Experimental and only works on modern Nvidia GPUs (Turing or newer).
@@ -100,14 +103,15 @@ in {
     open = true;
 
     # Enable DRM kernel mode setting
-    forceFullCompositionPipeline = true;
+    #forceFullCompositionPipeline = true;
+    forceFullCompositionPipeline = false;
 
     # Enable the Nvidia settings menu,
     # accessible via `nvidia-settings`.
     nvidiaSettings = true;
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
-    #package = config.boot.kernelPackages.nvidiaPackages.latest;
+    #package = config.boot.kernelPackages.nvidiaPackages.production;
     #package = config.boot.kernelPackages.nvidiaPackages.beta;
 
     # Pin specific driver version

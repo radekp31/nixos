@@ -88,8 +88,7 @@
   ];
 
   # Hardware-specific boot configuration
-  boot.blacklistedKernelModules = ["nouveau" "fjes" "kvm_intel"];
-  boot.extraModulePackages = [ config.boot.kernelPackages.it87 ]; # CPU fan goes full rpm due to missing driver
+  boot.blacklistedKernelModules = ["nouveau" "fjes" "kvm_intel" "it87"];
   boot.initrd.availableKernelModules = [
     "nvme"
     "vesafb"
@@ -139,7 +138,7 @@
     "nvme_core.default_ps_max_latency_us=0"
     # CPU cooler driver setup
     "acpi_enforce_resources=lax"
-    "it87.ignore_resource_conflict=1"
+    "pcie_ports=native"
 
   ];
 
@@ -147,8 +146,10 @@
     "kvm-amd"
     "kvm-intel"
     "xfs"
-    "it87"
+    "nct6775"
   ];
+
+  services.logind.settings.Login = { HandlePowerKey = "ignore"; HandleSuspendKey = "ignore"; HandleHibernateKey = "ignore";};
 
   powerManagement.cpuFreqGovernor = "performance";
 
@@ -175,7 +176,7 @@
   time.timeZone = "Europe/Prague";
 
   # ASUS motherboard control (hardware-specific)
-  services.asusd.enable = true;
+  #services.asusd.enable = true;
 
   # Steam
   programs.steam = {
