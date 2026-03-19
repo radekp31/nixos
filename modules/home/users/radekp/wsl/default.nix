@@ -71,10 +71,16 @@
       identityFile = "~/.ssh/github_personal";
     };
     # Dynatrace GitHub account
-    "github-work" = {
+    "github-dynatrace" = {
       hostname = "github.com";
       user = "git";
       identityFile = "~/.ssh/github_dynatrace";
+    };
+    # Dynatrace Bitbucket account
+    "bitbucket.lab.dynatrace.org" = {
+      hostname = "bitbucket.lab.dynatrace.org";
+      user = "git";
+      identityFile = "~/.ssh/dt_bitbucket";
     };
   };
 };
