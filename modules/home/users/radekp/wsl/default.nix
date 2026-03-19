@@ -1,4 +1,4 @@
-{...}: {
+{config, ...}: {
   imports = [
     ./packages.nix
     ../../../shells/zsh
@@ -9,6 +9,13 @@
 
   programs.git = {
     enable = true;
+    includes = [
+      {
+        condition = "gitdir:/mnt/c/workspaces/dt_workspaces/**";
+        path = "${config.xdg.configHome}/git/user-dynatrace.gitconfig";
+      }
+    ];
+
     settings = {
       user = {
         name = "Radek Polasek";
@@ -17,12 +24,23 @@
       init.defaultBranch = "main";
       safe.directory = "/etc/nixos";
       pull.rebase = true;
+    # Use work identity for repos under work workspaces
+    #includeIf."gitdir:/mnt/c/workspaces/dt_workspaces/**".path =
+    #  "${config.xdg.configHome}/git/user-dynatrace.gitconfig";
     };
-    #extraConfig = {
-    #  init.defaultBranch = "main";
-    #  pull.rebase = true;
-    #};
   };
+
+  xdg.configFile."git/user-dynatrace.gitconfig".text = ''
+    [user]
+      name = Radek Polasek (Dynatrace)
+      email = radek.polasek@dynatrace.com
+  '';
+
+  xdg.configFile."git/user-personal.gitconfig".text = ''
+    [user]
+      name = Radek Polasek
+      email = polasek.31@seznam.cz
+  '';
 
   programs.fzf = {
     enable = true;
@@ -30,17 +48,42 @@
     enableBashIntegration = true;
   };
 
+  #programs.ssh = {
+  #  enable = true;
+  #  enableDefaultConfig = false;
+  #  matchBlocks = {
+  #    "github.com" = {
+  #      hostname = "github.com";
+  #      user = "git";
+  #      identityFile = "~/.ssh/github";
+  #    };
+  #  };
+  #};
+
   programs.ssh = {
-    enable = true;
-    enableDefaultConfig = false;
-    matchBlocks = {
-      "github.com" = {
-        hostname = "github.com";
-        user = "git";
-        identityFile = "~/.ssh/github";
-      };
+  enable = true;
+  enableDefaultConfig = false;
+  matchBlocks = {
+    # Personal GitHub account
+    "github.com" = {
+      hostname = "github.com";
+      user = "git";
+      identityFile = "~/.ssh/github_personal";
+    };
+    # Dynatrace GitHub account
+    "github-dynatrace" = {
+      hostname = "github.com";
+      user = "git";
+      identityFile = "~/.ssh/github_dynatrace";
+    };
+    # Dynatrace Bitbucket account
+    "bitbucket.lab.dynatrace.org" = {
+      hostname = "bitbucket.lab.dynatrace.org";
+      user = "git";
+      identityFile = "~/.ssh/dt_bitbucket";
     };
   };
+};
 
   programs.direnv = {
     enable = true;
