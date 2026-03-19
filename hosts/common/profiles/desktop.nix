@@ -51,16 +51,16 @@
   ];
 
   # Enable XDG portal
-  xdg.portal = {
-    enable = true;
-    extraPortals = [
-    ];
-    config = {
-      common = {
-        default = ["kde"];
-      };
-    };
-  };
+  #xdg.portal = {
+  #  enable = true;
+  #  extraPortals = [
+  #  ];
+  #  config = {
+  #    common = {
+  #      default = ["kde"];
+  #    };
+  #  };
+  #};
 
   environment.pathsToLink = [
     "/share/applications"
