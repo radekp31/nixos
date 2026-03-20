@@ -1,6 +1,6 @@
 #/etc/nixos/modules/usb/usb.nix
 {pkgs, ...}: {
-  nixpkgs.config.segger-jlink.acceptLicense = true;
+  #nixpkgs.config.segger-jlink.acceptLicense = true; moved to configuration.nix
 
   hardware.keyboard.qmk.enable = true;
 

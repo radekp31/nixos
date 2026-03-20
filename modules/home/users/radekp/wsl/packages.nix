@@ -54,13 +54,12 @@ in {
         pandas
         numpy
         pip
-	autopep8
-	hy
-	pathlib2
-	requests
-	pyyaml
-	pydantic
-
+        autopep8
+        hy
+        pathlib2
+        requests
+        pyyaml
+        pydantic
       ]))
     gh
     htop
@@ -116,5 +115,8 @@ in {
     #pkgs_unstable.terraform
     terraform
     ansible
+
+    #Required for Github Copilot
+    nodejs_24
   ];
 }

@@ -2,10 +2,10 @@
   pkgs,
   inputs,
   config,
+  lib,
   ...
 }: {
   imports = [
-    #nixvim.nixosModules.nixvim
     inputs.nixvim.nixosModules.nixvim
   ];
 
@@ -204,7 +204,7 @@
             enable = true;
             settings = {
               formatting.command = ["nixpkgs-fmt"];
-              nixpkgs.expr = "import <nixpkgs> { }";
+              #nixpkgs.expr = "import <nixpkgs> { }";
             };
           };
           gopls = {
@@ -429,12 +429,41 @@
           };
         };
       };
+      copilot-chat = {
+        enable = false;
+      };
+      copilot-cmp = {
+        enable = false;
+      };
+      copilot-lsp = {
+        enable = false;
+        settings = {
+          nes = {
+            distance_threshold = 100;
+            move_count_threshold = 5;
+            reset_on_approaching = false;
+          };
+        };
+      };
+      copilot-vim = {
+        enable = false;
+        settings = {
+          filetypes = {
+            "*" = true;
+            #python = true;
+          };
+          #workspace_folders = [
+          #  "~/Projects/myproject"
+          #];
+        };
+      };
     };
     extraConfigLua = ''
     '';
     extraPlugins = [
       pkgs.vimPlugins.nvim-lspconfig
       pkgs.vimPlugins.friendly-snippets
+      pkgs.vimPlugins.copilot-vim
     ];
     extraPackages = [
       pkgs.wl-clipboard

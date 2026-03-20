@@ -29,6 +29,9 @@
     ../../modules/system/apps/nix-ld
   ];
 
+  nixpkgs.config.nvidia.acceptLicense = true;
+  nixpkgs.config.segger-jlink.acceptLicense = true;
+
   users.groups.adbusers = {};
   users.groups.plugdev = {};
 
@@ -88,7 +91,8 @@
   ];
 
   # Hardware-specific boot configuration
-  boot.blacklistedKernelModules = ["nouveau" "fjes" "kvm_intel" "it87"];
+  boot.blacklistedKernelModules = ["nouveau" "fjes" "kvm_intel"];
+  boot.extraModulePackages = [config.boot.kernelPackages.it87]; # CPU fan goes full rpm due to missing driver
   boot.initrd.availableKernelModules = [
     "nvme"
     "vesafb"
@@ -186,23 +190,23 @@
     localNetworkGameTransfers.openFirewall = true;
   };
 
-  nixpkgs.config.allowUnfreePredicate = pkg:
-    builtins.elem (lib.getName pkg) [
-      "steam"
-      "steam-unwrapped"
-    ];
+  #nixpkgs.config.allowUnfreePredicate = pkg:
+  #  builtins.elem (lib.getName pkg) [
+  #    "steam"
+  #    "steam-unwrapped"
+  #  ];
 
   # Cockpit
   #services.cockpit.enable = true;
 
   # Hardware-specific packages
   environment.systemPackages = with pkgs; [
+    alejandra
     linuxKernel.packages.linux_6_18.asus-ec-sensors
     nvfancontrol
     nvme-cli
     ntfs3g
     libxfs
-    #qt6.full
     gnome-multi-writer
   ];
 

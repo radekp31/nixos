@@ -58,7 +58,7 @@
       name = Radek Polasek (Dynatrace)
       email = radek.polasek@dynatrace.com
   '';
-  
+
   xdg.configFile."git/user-dynatrace-github.gitconfig".text = ''
     [user]
       name = Radek Polasek (Dynatrace)
@@ -72,29 +72,29 @@
   };
 
   programs.ssh = {
-  enable = true;
-  enableDefaultConfig = false;
-  matchBlocks = {
-    # Personal GitHub account
-    "github.com" = {
-      hostname = "github.com";
-      user = "git";
-      identityFile = "~/.ssh/github_personal";
-    };
-    # Dynatrace GitHub account
-    "github-dynatrace" = {
-      hostname = "github.com";
-      user = "git";
-      identityFile = "~/.ssh/github_dynatrace";
-    };
-    # Dynatrace Bitbucket account
-    "bitbucket.lab.dynatrace.org" = {
-      hostname = "bitbucket.lab.dynatrace.org";
-      user = "git";
-      identityFile = "~/.ssh/dt_bitbucket";
+    enable = true;
+    enableDefaultConfig = false;
+    matchBlocks = {
+      # Personal GitHub account
+      "github.com" = {
+        hostname = "github.com";
+        user = "git";
+        identityFile = "~/.ssh/github_personal";
+      };
+      # Dynatrace GitHub account
+      "github-dynatrace" = {
+        hostname = "github.com";
+        user = "git";
+        identityFile = "~/.ssh/github_dynatrace";
+      };
+      # Dynatrace Bitbucket account
+      "bitbucket.lab.dynatrace.org" = {
+        hostname = "bitbucket.lab.dynatrace.org";
+        user = "git";
+        identityFile = "~/.ssh/dt_bitbucket";
+      };
     };
   };
-};
 
   programs.direnv = {
     enable = true;

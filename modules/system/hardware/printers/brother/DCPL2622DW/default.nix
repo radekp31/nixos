@@ -204,7 +204,7 @@
   hardware.sane.brscan4.enable = false;
 
   # Allow unfree packages (Brother drivers are proprietary)
-  nixpkgs.config.allowUnfree = true;
+  #nixpkgs.config.allowUnfree = true;
 
   # Add your user to printing and scanning groups
   users.users.radekp = {

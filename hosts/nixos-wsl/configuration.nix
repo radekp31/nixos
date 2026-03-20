@@ -8,16 +8,12 @@
     ./variables.nix
     ../common/default.nix
     ../common/profiles/wsl.nix
-    ../../modules/system/apps/nixvim
+    ../../modules/system/apps/wsl-nixvim
     ../../modules/system/apps/nix-ld-wsl
     ../../modules/system/hardware/gpu/nvidia-wsl/default.nix
   ];
 
-  # Make WSL GPU libs visible to dynamic linker
-  #environment.sessionVariables = {
-  #  LD_LIBRARY_PATH = lib.mkBefore "/usr/lib/wsl/lib";
-  #  CPATH = lib.mkBefore "${pkgs.cudaPackages.cudatoolkit}/include";
-  #};
+  nixpkgs.config.allowUnfree = true;
 
   wsl.useWindowsDriver = true;
   wsl.interop.register = true;
@@ -33,9 +29,6 @@
 
   # More conservative GC for WSL
   nix.gc.options = lib.mkForce "--delete-older-than 30d";
-
-  # Unfree packages
-  nixpkgs.config.allowUnfree = true;
 
   # Neovim as editor
   environment.variables.EDITOR = "nvim";

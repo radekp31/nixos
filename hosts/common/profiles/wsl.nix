@@ -9,6 +9,5 @@
   # Environment variables for WSL
   environment.variables = {
     EDITOR = lib.mkDefault "vim";
-    NIXPKGS_ALLOW_UNFREE = "1";
   };
 }

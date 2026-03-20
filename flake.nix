@@ -2,11 +2,18 @@
   description = "NixOS config flake.";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs = {
+      url = "github:NixOS/nixpkgs/nixos-25.11";
+    };
+
     # Azure CLI on 25.11 is fooked - revisit later to check if it works again
     # Use az login --tenant <TENANT_ID> --use-device-code
-    nixpkgs25_05.url = "github:NixOS/nixpkgs/nixos-25.05";
-    nixpkgs_unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs25_05 = {
+      url = "github:NixOS/nixpkgs/nixos-25.05";
+    };
+    nixpkgs_unstable = {
+      url = "github:NixOS/nixpkgs/nixos-unstable";
+    };
 
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
@@ -74,20 +81,6 @@
   } @ inputs: let
     system = "x86_64-linux";
 
-    # pkgs inputs vars
-    pkgs = import nixpkgs {
-      inherit system;
-      config.allowUnfree = true;
-    };
-    pkgs25_05 = import nixpkgs25_05 {
-      inherit system;
-      config.allowUnfree = true;
-    };
-    pkgs_unstable = import nixpkgs_unstable {
-      inherit system;
-      config.allowUnfree = true;
-    };
-
     # Treefmt-nix
     # Small tool to iterate over each systems
     eachSystem = f: nixpkgs.lib.genAttrs (import systems) (system: f nixpkgs.legacyPackages.${system});
@@ -107,9 +100,9 @@
       specialArgs = {inherit inputs;};
       modules = [
         ./hosts/nixos-desktop/configuration.nix
-        {
-          environment.systemPackages = [pkgs.alejandra];
-        }
+        #{
+        #  environment.systemPackages = [pkgs.alejandra];
+        #}
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
@@ -156,6 +149,7 @@
     nixosConfigurations."dt-wsl-nix" = nixpkgs.lib.nixosSystem {
       system = system;
       specialArgs = {inherit inputs;};
+
       modules = [
         nixos-wsl.nixosModules.wsl
         ./hosts/nixos-wsl/configuration.nix
@@ -165,7 +159,7 @@
           home-manager.useUserPackages = true;
           home-manager.users.radekp = import ./modules/home/users/radekp/wsl;
           home-manager.backupFileExtension = "backup";
-          home-manager.extraSpecialArgs = {inherit inputs pkgs pkgs25_05 pkgs_unstable;};
+          home-manager.extraSpecialArgs = {inherit inputs;};
         }
       ];
     };

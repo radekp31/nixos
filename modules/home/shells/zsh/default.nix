@@ -13,7 +13,7 @@
       enable = true;
     };
     envExtra = ''
-      export NIXPKGS_ALLOW_UNFREE=1
+      #export NIXPKGS_ALLOW_UNFREE=1
       export EDITOR='nvim'
       export VISUAL='nvim'
       export C='/mnt/c'

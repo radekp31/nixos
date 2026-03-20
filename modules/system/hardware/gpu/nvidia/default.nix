@@ -7,7 +7,7 @@
   isWSL = config.networking.hostName == "dt-wsl-nix";
 in {
   #Accept NVIDIA licence
-  nixpkgs.config.nvidia.acceptLicense = true;
+  #nixpkgs.config.nvidia.acceptLicense = true; # moved to configurations.nix
 
   # Enable OpenGL
   hardware.graphics = {

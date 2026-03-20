@@ -17,7 +17,7 @@
     cudaPackages.cuda_nvcc
   ];
 
-  nixpkgs.config.allowUnfree = true;
+  #nixpkgs.config.allowUnfree = true;
 
   environment.sessionVariables = {
     # WSL NVIDIA driver, *and* CUDA libs (we'll use lib and lib64)
