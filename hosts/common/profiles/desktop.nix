@@ -27,12 +27,12 @@
   programs.dconf.enable = true;
 
   # XDG Base Directory
-  environment.variables = {
-    XDG_CACHE_HOME = "$HOME/.cache";
-    XDG_CONFIG_HOME = "$HOME/.config";
-    XDG_DATA_HOME = "$HOME/.local/share";
-    XDG_STATE_HOME = "$HOME/.local/state";
-  };
+  #environment.variables = {
+  #  XDG_CACHE_HOME = "$HOME/.cache";
+  #  XDG_CONFIG_HOME = "$HOME/.config";
+  #  XDG_DATA_HOME = "$HOME/.local/share";
+  #  XDG_STATE_HOME = "$HOME/.local/state";
+  #};
 
   # Desktop fonts - system-wide
   fonts.packages = with pkgs; [
@@ -44,7 +44,7 @@
 
   # Desktop system packages - only system-critical
   environment.systemPackages = with pkgs; [
-    xdg-utils # Desktop integration (xdg-open, etc.)
+    #xdg-utils # Desktop integration (xdg-open, etc.)
     pciutils # Hardware info (lspci)
     smartmontools # Drive monitoring
     lm_sensors # Temperature/fan sensors
@@ -62,8 +62,8 @@
   #  };
   #};
 
-  environment.pathsToLink = [
-    "/share/applications"
-    "/share/xdg-desktop-portal"
-  ];
+  #environment.pathsToLink = [
+  #  "/share/applications"
+  #  "/share/xdg-desktop-portal"
+  #];
 }
