@@ -103,8 +103,7 @@ in {
     open = true;
 
     # Enable DRM kernel mode setting
-    #forceFullCompositionPipeline = true;
-    forceFullCompositionPipeline = false;
+    forceFullCompositionPipeline = true;
 
     # Enable the Nvidia settings menu,
     # accessible via `nvidia-settings`.
