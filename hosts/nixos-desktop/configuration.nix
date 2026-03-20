@@ -29,6 +29,7 @@
     ../../modules/system/apps/nix-ld
   ];
 
+  nixpkgs.config.allowUnfree = true;
   nixpkgs.config.nvidia.acceptLicense = true;
   nixpkgs.config.segger-jlink.acceptLicense = true;
 
