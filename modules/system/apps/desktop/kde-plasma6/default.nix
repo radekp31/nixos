@@ -22,4 +22,19 @@
     elisa
   ];
 
+xdg.portal = {
+  enable = true;
+  # This is critical for Plasma 6/Wayland
+  xdgOpenUsePortal = true; 
+  extraPortals = [ 
+    pkgs.kdePackages.xdg-desktop-portal-kde
+    # Include the GTK portal as a fallback for Steam/Electron apps
+    pkgs.xdg-desktop-portal-gtk 
+  ];
+  config = {
+    common = {
+      default = [ "kde" ];
+    };
+  };
+};
 }

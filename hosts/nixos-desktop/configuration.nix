@@ -25,6 +25,7 @@
     # another possible cause for crashes - openrgb tries to lock i2c bus
     #../../modules/system/apps/openrgb
     ../../modules/system/hardware/usb
+    ../../modules/system/hardware/sound/pipewire
     ../../modules/system/apps/desktop/kde-plasma6
     ../../modules/system/apps/nix-ld
   ];
@@ -133,19 +134,21 @@
     "fbcon=map:0"
     "video=DP-2:1920x1080"
     "video=DP-3:off"
-    "nvme_core.default_ps_max_latency_us=0"
-    "pcie_aspm=off"
-    "pcie_port_pm=off"
+    #"pcie_port_pm=off"
     "nvme_core.io_timeout=30"
     "nvme_core.max_retries=5"
     # Disable nvme power saving
-    "pcie_aspm=off"
-    "nvme_core.default_ps_max_latency_us=0"
+    #"pcie_aspm=off"
+    #"nvme_core.default_ps_max_latency_us=0"
     # CPU cooler driver setup
     "acpi_enforce_resources=lax"
     "pcie_ports=native"
 
   ];
+
+  boot.kernel.sysctl."kernel.unprivileged_userns_clone" = 1;
+  boot.kernel.sysctl."kernel.sysrq" = 1;
+
 
   boot.kernelModules = [
     "kvm-amd"
@@ -177,6 +180,15 @@
     QT_QPA_PLATFORMTHEME = "qt6ct";
   };
 
+  # Fix NVIDIA + Wayland + Steam know decorations not drawn issue
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+    __GL_GSYNC_ALLOWED = "1";
+    __GL_VRR_ALLOWED = "1";
+    __GL_THREADED_OPTIMIZATIONS = "0";
+    DXVK_ASYNC = "1";
+  };
+
   # Timezone override
   time.timeZone = "Europe/Prague";
 
@@ -184,6 +196,8 @@
   #services.asusd.enable = true;
 
   # Steam
+  # Dota 2 parameters for Wayland, to force xwayland session to avoid crashes:
+  # SDL_VIDEODRIVER=x11 %command% -vulkan
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true;
@@ -209,6 +223,8 @@
     ntfs3g
     libxfs
     gnome-multi-writer
+    
+
   ];
 
   #networking.networkManager.enable = true;
