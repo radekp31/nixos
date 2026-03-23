@@ -17,31 +17,31 @@
   boot.extraModulePackages = [];
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/afdb1618-6f2a-469f-83cc-4f4f37b3a780";
+    device = "/dev/disk/by-uuid/f0258479-2d9c-4f3e-b20d-a42a2401b828";
     fsType = "btrfs";
     options = ["subvol=@" "compress=zstd" "noatime" "flushoncommit"];
   };
 
   fileSystems."/home" = {
-    device = "/dev/disk/by-uuid/afdb1618-6f2a-469f-83cc-4f4f37b3a780";
+    device = "/dev/disk/by-uuid/f0258479-2d9c-4f3e-b20d-a42a2401b828";
     fsType = "btrfs";
     options = ["subvol=@home" "compress=zstd" "noatime"];
   };
 
   fileSystems."/nix" = {
-    device = "/dev/disk/by-uuid/a140150a-2597-48c6-b377-e7b0f7307f8a";
+    device = "/dev/disk/by-uuid/f0258479-2d9c-4f3e-b20d-a42a2401b828";
     fsType = "btrfs";
     options = ["subvol=@nix" "compress=zstd" "noatime" "flushoncommit"];
   };
 
   fileSystems."/var/log" = {
-    device = "/dev/disk/by-uuid/afdb1618-6f2a-469f-83cc-4f4f37b3a780";
+    device = "/dev/disk/by-uuid/f0258479-2d9c-4f3e-b20d-a42a2401b828";
     fsType = "btrfs";
     options = ["subvol=@log" "compress=zstd" "noatime" "flushoncommit"];
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/91EC-ACD4";
+    device = "/dev/disk/by-uuid/7EC6-13B5";
     fsType = "vfat";
   };
 
@@ -54,12 +54,11 @@
   fileSystems."/media/A400" = {
     device = "/dev/disk/by-uuid/2b232c2c-3198-432d-bcbe-9d6056700d12";
     fsType = "xfs";
-    #options = ["rw" "nofail"];
     options = ["rw" "nofail" "defaults" "noatime"];
   };
 
   fileSystems."/mnt/btr_pool" = {
-    device = "/dev/disk/by-uuid/afdb1618-6f2a-469f-83cc-4f4f37b3a780";
+    device = "/dev/disk/by-uuid/f0258479-2d9c-4f3e-b20d-a42a2401b828";
     fsType = "btrfs";
     options = ["subvolid=5" "noatime"]; # This mounts the actual top-level of the drive
   };
