@@ -214,6 +214,16 @@
   # Cockpit
   #services.cockpit.enable = true;
 
+  virtualisation.docker.enable = true;
+
+    networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [22 5432 5050]; 
+    allowedUDPPorts = [53 123 5432 5050];
+  };
+
+
+
   # Hardware-specific packages
   environment.systemPackages = with pkgs; [
     alejandra
@@ -222,8 +232,7 @@
     nvme-cli
     ntfs3g
     libxfs
-    gnome-multi-writer
-    
+    docker-compose
 
   ];
 

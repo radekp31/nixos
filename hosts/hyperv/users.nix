@@ -1,6 +1,6 @@
 {...}: {
   users.users.radekp = {
     isNormalUser = true;
-    extraGroups = ["wheel"];
+    extraGroups = ["wheel" "docker"];
   };
 }

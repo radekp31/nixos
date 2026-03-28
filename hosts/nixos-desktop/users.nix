@@ -14,6 +14,7 @@
           "input"
           "adbusers"
           "plugdev"
+	  "docker"
         ];
         packages = with pkgs; [
           zsh

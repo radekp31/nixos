@@ -74,12 +74,15 @@ in {
     htop
     tree
     tmux
+
+    #nix tools
     nh #nix helper
     nix-output-monitor #helper for rebuild debugging
     nix-prefetch-git
     nix-prefetch
     nix-prefetch-scripts
     nix-prefetch-docker
+    nps # alternative to nix-search-cli
   ];
 
   # SSH - disabled by default, let hosts opt-in

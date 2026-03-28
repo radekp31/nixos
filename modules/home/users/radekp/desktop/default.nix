@@ -126,7 +126,7 @@
   };
 
   programs.librewolf = {
-    enable = true;
+    enable = false;
     settings = {
       "privacy.resistFingerprinting" = false;
       "privacy.resistFingerprinting.letterboxing" = true;
@@ -178,6 +178,7 @@
 
   # Home packages
   home.packages = with pkgs; [
+
     #browser
     #firefox-esr-140
     firefox-esr
