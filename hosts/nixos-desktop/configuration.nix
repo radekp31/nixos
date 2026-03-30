@@ -22,12 +22,11 @@
     ../../modules/system/apps/qmk
     ../../modules/system/apps/qemu
     ../../modules/system/hardware/printers/brother/DCPL2622DW
-    # another possible cause for crashes - openrgb tries to lock i2c bus
-    #../../modules/system/apps/openrgb
     ../../modules/system/hardware/usb
     ../../modules/system/hardware/sound/pipewire
     ../../modules/system/apps/desktop/kde-plasma6
     ../../modules/system/apps/nix-ld
+    ../../modules/system/apps/steam
   ];
 
   nixpkgs.config.allowUnfree = true;
@@ -195,15 +194,7 @@
   # ASUS motherboard control (hardware-specific)
   #services.asusd.enable = true;
 
-  # Steam
-  # Dota 2 parameters for Wayland, to force xwayland session to avoid crashes:
-  # SDL_VIDEODRIVER=x11 %command% -vulkan
-  programs.steam = {
-    enable = true;
-    remotePlay.openFirewall = true;
-    dedicatedServer.openFirewall = true;
-    localNetworkGameTransfers.openFirewall = true;
-  };
+  
 
   #nixpkgs.config.allowUnfreePredicate = pkg:
   #  builtins.elem (lib.getName pkg) [
@@ -221,8 +212,6 @@
     allowedTCPPorts = [22 5432 5050]; 
     allowedUDPPorts = [53 123 5432 5050];
   };
-
-
 
   # Hardware-specific packages
   environment.systemPackages = with pkgs; [
