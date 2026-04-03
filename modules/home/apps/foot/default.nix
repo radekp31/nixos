@@ -9,6 +9,7 @@
         dpi-aware = "yes";
         # Include the color theme file
         font = "JetBrains Mono:size=14.5";
+	initial-window-size-chars = "130x35";
         # Explicitly specify bold variants too
         #font-bold = "DejaVu Sans Mono:style=Bold:size=11";
         #font-italic = "DejaVu Sans Mono:style=Oblique:size=11";

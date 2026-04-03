@@ -17,6 +17,8 @@
       export EDITOR='nvim'
       export VISUAL='nvim'
       export C='/mnt/c'
+      #export MANPAGER='nvim +Man!'
+
     '';
     profileExtra = ''
     '';

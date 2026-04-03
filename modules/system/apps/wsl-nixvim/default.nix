@@ -8,6 +8,12 @@
   imports = [
     inputs.nixvim.nixosModules.nixvim
   ];
+  
+  environment.variables = {
+     MANPAGER = "nvim +Man!";
+     EDITOR = "nvim";
+     VISUAL = "nvim";
+  };
 
   programs.nixvim = {
     #Includes functions get_bufnrs

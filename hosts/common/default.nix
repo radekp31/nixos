@@ -38,11 +38,11 @@ in {
 
   # Nix settings
   system.autoUpgrade = {
-    enable = false; # too unstable
-    operation = "switch";
+    enable = true; # too unstable
+    operation = "boot";
     flake = "git+https://github.com/radekp31/nixos.git#${config.networking.hostName}";
-    dates = "02:30";
-    randomizedDelaySec = "30min";
+    #dates = "02:30";
+    #randomizedDelaySec = "30min";
     persistent = true;
     allowReboot = false;
   };
