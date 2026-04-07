@@ -99,6 +99,14 @@
       #  fi
       #}
 
+      set_subscription() {
+      az account list --query '[].{name:name, id:id}' -o tsv \
+        | fzf \
+        | awk '{print $2}' \
+        | xargs -I {} az account set --subscription "{}" && echo "Current subscription: "$(az account show --query name -o tsv)
+      Current subscription: Dynatrace-Runecast-Contentcreation
+      }
+
       #simplified nixpush(), because of pre-commit
       nixpush() {
         local message="$1"

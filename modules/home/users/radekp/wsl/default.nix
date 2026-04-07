@@ -9,18 +9,6 @@
 
   programs.git = {
     enable = true;
-    #includes = [
-    #  {
-    #    condition = "gitdir:/mnt/c/workspaces/dt_workspaces/**";
-    #    #path = "${config.xdg.configHome}/git/user-dynatrace.gitconfig";
-    #    path = "${config.xdg.configHome}/git/bitbucket.lab.dynatrace.org.gitconfig";
-    #  }
-    #  {
-    #    condition = "gitdir:/mnt/c/workspaces/dt_github_workspaces/**";
-    #    #path = "${config.xdg.configHome}/git/user-dynatrace.gitconfig";
-    #    path = "${config.xdg.configHome}/git/github-dynatrace.gitconfig";
-    #  }
-    #];
     includes = [
       {
         condition = "gitdir:/mnt/c/workspaces/dt_workspaces/**";
@@ -40,29 +28,27 @@
       safe.directory = "/etc/nixos";
       pull.rebase = true;
     };
+
   };
 
-  #xdg.configFile."git/user-dynatrace.gitconfig".text = ''
-  #  [user]
-  #    name = Radek Polasek (Dynatrace)
-  #    email = radek.polasek@dynatrace.com
-  #'';
-
-  #xdg.configFile."git/user-personal.gitconfig".text = ''
-  #  [user]
-  #    name = Radek Polasek
-  #    email = polasek.31@seznam.cz
-  #'';
   xdg.configFile."git/user-dynatrace-bitbucket.gitconfig".text = ''
     [user]
       name = Radek Polasek (Dynatrace)
       email = radek.polasek@dynatrace.com
   '';
 
+  #xdg.configFile."git/user-dynatrace-github.gitconfig".text = ''
+  #  [user]
+  #    name = Radek Polasek (Dynatrace)
+  #    email = radek.polasek@dynatrace.com
+  #'';
   xdg.configFile."git/user-dynatrace-github.gitconfig".text = ''
     [user]
       name = Radek Polasek (Dynatrace)
       email = radek.polasek@dynatrace.com
+    
+    [url "ssh://git@github.com/Dynatrace-Internal/rnd-ai-knowledgebase"]
+      insteadOf = https://github.com/Dynatrace-Internal/rnd-ai-knowledgebase
   '';
 
   programs.fzf = {

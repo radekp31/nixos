@@ -1,6 +1,5 @@
 {
   pkgs,
-  pkgs_unstable,
   ...
 }: let
   aztfexport = pkgs.stdenv.mkDerivation {
@@ -112,9 +111,11 @@ in {
     git
     docker-compose
     helm
-    #pkgs_unstable.terraform
     terraform
     ansible
+    powershell
+    github-cli
+    copilot-cli
 
     #Required for Github Copilot
     nodejs_24
