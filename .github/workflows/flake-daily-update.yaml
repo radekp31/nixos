@@ -18,10 +18,14 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
 
+      - name: Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@v2
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          #fetch-depth: 1
+          fetch-depth: 0
 
       - name: Update flake.lock
         run: nix flake update
@@ -57,15 +61,6 @@ jobs:
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      #- name: Enable auto-merge (squash)
-      #  if: steps.check-changes.outputs.changed == 'true'
-      #  uses: peter-evans/enable-pull-request-automerge@v3
-      #  with:
-      #    pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
-      #    merge-method: squash
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #
       - name: Merge Pull Request
         if: steps.check-changes.outputs.changed == 'true'
         run: gh pr merge ${{ steps.cpr.outputs.pull-request-number }} --merge --admin
