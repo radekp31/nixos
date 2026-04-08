@@ -8,11 +8,11 @@
   imports = [
     inputs.nixvim.nixosModules.nixvim
   ];
-  
+
   environment.variables = {
-     MANPAGER = "nvim +Man!";
-     EDITOR = "nvim";
-     VISUAL = "nvim";
+    MANPAGER = "nvim +Man!";
+    EDITOR = "nvim";
+    VISUAL = "nvim";
   };
 
   programs.nixvim = {
@@ -45,17 +45,130 @@
           desc = "LSP Code Actions (Quick Fix)";
         };
       }
+      # OpenCode: Ask with context
+      {
+        mode = ["n" "x"];
+        key = "<C-a>";
+        action = "<cmd>lua require('opencode').ask('@this: ', { submit = true })<cr>";
+        options = {desc = "Ask opencode…";};
+      }
+      # OpenCode: Execute action
+      {
+        mode = ["n" "x"];
+        key = "<C-x>";
+        action = "<cmd>lua require('opencode').select()<cr>";
+        options = {desc = "Execute opencode action…";};
+      }
+      # OpenCode: Toggle
+      {
+        mode = ["n" "t"];
+        #key = "<C-.>";
+        key = "<leader>.";
+        action = "<cmd>lua require('opencode').toggle()<cr>";
+        options = {desc = "Toggle opencode";};
+      }
+      # OpenCode: Add range
+      {
+        mode = ["n" "x"];
+        key = "go";
+        action = "<cmd>lua require('opencode').operator('@this ')<cr>";
+        options = {
+          desc = "Add range to opencode";
+          expr = false;
+        };
+      }
+      # OpenCode: Add line
+      {
+        mode = "n";
+        key = "goo";
+        action = "<cmd>lua require('opencode').operator('@this ') .. '_'<cr>";
+        options = {
+          desc = "Add line to opencode";
+          expr = false;
+        };
+      }
+      # OpenCode: Scroll up
+      {
+        mode = "n";
+        key = "<S-C-u>";
+        action = "<cmd>lua require('opencode').command('session.half.page.up')<cr>";
+        options = {desc = "Scroll opencode up";};
+      }
+      # OpenCode: Scroll down
+      {
+        mode = "n";
+        key = "<S-C-d>";
+        action = "<cmd>lua require('opencode').command('session.half.page.down')<cr>";
+        options = {desc = "Scroll opencode down";};
+      }
+      # OpenCode: Execute action
+      {
+        mode = ["n" "x"];
+        key = "<C-x>";
+        action = "<cmd>lua require('opencode').select()<cr>";
+        options = {desc = "Execute opencode action…";};
+      }
+      # OpenCode: Toggle
+      {
+        mode = ["n" "t"];
+        key = "<leader>.";
+        action = "<cmd>lua require('opencode').toggle()<cr>";
+        options = {desc = "Toggle opencode";};
+      }
+      # OpenCode: Add range
+      {
+        mode = ["n" "x"];
+        key = "go";
+        action = "<cmd>lua require('opencode').operator('@this ')<cr>";
+        options = {
+          desc = "Add range to opencode";
+          expr = false;
+        };
+      }
+      # OpenCode: Add line
+      {
+        mode = "n";
+        key = "goo";
+        action = "<cmd>lua require('opencode').operator('@this ') .. '_'<cr>";
+        options = {
+          desc = "Add line to opencode";
+          expr = false;
+        };
+      }
+      # OpenCode: Scroll up
+      {
+        mode = "n";
+        key = "<S-C-u>";
+        action = "<cmd>lua require('opencode').command('session.half.page.up')<cr>";
+        options = {desc = "Scroll opencode up";};
+      }
+      # OpenCode: Scroll down
+      {
+        mode = "n";
+        key = "<S-C-d>";
+        action = "<cmd>lua require('opencode').command('session.half.page.down')<cr>";
+        options = {desc = "Scroll opencode down";};
+      }
+      # Remap standard Vim increment/decrement (if using opinionated C-a/C-x above)
+      {
+        mode = "n";
+        key = "+";
+        action = "<C-a>";
+        options = {
+          desc = "Increment under cursor";
+          noremap = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "-";
+        action = "<C-x>";
+        options = {
+          desc = "Decrement under cursor";
+          noremap = true;
+        };
+      }
     ];
-    #colorschemes.tokyonight = {
-    #  enable = true;
-    #  settings = {
-    #    #style = "moon";
-    #    style = "night";
-    #  };
-    #};
-    #colorschemes.dracula = {
-    #  enable = true;
-    #};
     colorschemes.catppuccin = {
       enable = true;
       settings = {
@@ -433,6 +546,9 @@
             debounce = 100;
             enabled = true;
           };
+	  terminal = {
+	    enabled = true;
+	  };
         };
       };
       copilot-chat = {
@@ -463,6 +579,9 @@
           #];
         };
       };
+      opencode = {
+	enable = true;
+      };
     };
     extraConfigLua = ''
     '';
@@ -470,6 +589,7 @@
       pkgs.vimPlugins.nvim-lspconfig
       pkgs.vimPlugins.friendly-snippets
       pkgs.vimPlugins.copilot-vim
+      pkgs.vimPlugins.opencode-nvim
     ];
     extraPackages = [
       pkgs.wl-clipboard

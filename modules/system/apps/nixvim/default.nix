@@ -10,11 +10,10 @@
   ];
 
   environment.variables = {
-     MANPAGER = "nvim +Man!";
-     EDITOR = "nvim";
-     VISUAL = "nvim";
+    MANPAGER = "nvim +Man!";
+    EDITOR = "nvim";
+    VISUAL = "nvim";
   };
-
 
   programs.nixvim = {
     #Includes functions get_bufnrs

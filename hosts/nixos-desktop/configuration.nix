@@ -142,12 +142,10 @@
     # CPU cooler driver setup
     "acpi_enforce_resources=lax"
     "pcie_ports=native"
-
   ];
 
   boot.kernel.sysctl."kernel.unprivileged_userns_clone" = 1;
   boot.kernel.sysctl."kernel.sysrq" = 1;
-
 
   boot.kernelModules = [
     "kvm-amd"
@@ -156,7 +154,11 @@
     "nct6775"
   ];
 
-  services.logind.settings.Login = { HandlePowerKey = "ignore"; HandleSuspendKey = "ignore"; HandleHibernateKey = "ignore";};
+  services.logind.settings.Login = {
+    HandlePowerKey = "ignore";
+    HandleSuspendKey = "ignore";
+    HandleHibernateKey = "ignore";
+  };
 
   powerManagement.cpuFreqGovernor = "performance";
 
@@ -194,8 +196,6 @@
   # ASUS motherboard control (hardware-specific)
   #services.asusd.enable = true;
 
-  
-
   #nixpkgs.config.allowUnfreePredicate = pkg:
   #  builtins.elem (lib.getName pkg) [
   #    "steam"
@@ -207,9 +207,9 @@
 
   virtualisation.docker.enable = true;
 
-    networking.firewall = {
+  networking.firewall = {
     enable = true;
-    allowedTCPPorts = [22 5432 5050]; 
+    allowedTCPPorts = [22 5432 5050];
     allowedUDPPorts = [53 123 5432 5050];
   };
 
@@ -222,7 +222,6 @@
     ntfs3g
     libxfs
     docker-compose
-
   ];
 
   #networking.networkManager.enable = true;

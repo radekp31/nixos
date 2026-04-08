@@ -178,11 +178,10 @@
 
   # Home packages
   home.packages = with pkgs; [
-
     lmstudio
-   
+
     mangowc
-    
+
     #browser
     #firefox-esr-140
     firefox-esr

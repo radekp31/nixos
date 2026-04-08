@@ -28,7 +28,6 @@
       safe.directory = "/etc/nixos";
       pull.rebase = true;
     };
-
   };
 
   xdg.configFile."git/user-dynatrace-bitbucket.gitconfig".text = ''
@@ -46,7 +45,7 @@
     [user]
       name = Radek Polasek (Dynatrace)
       email = radek.polasek@dynatrace.com
-    
+
     [url "ssh://git@github.com/Dynatrace-Internal/rnd-ai-knowledgebase"]
       insteadOf = https://github.com/Dynatrace-Internal/rnd-ai-knowledgebase
   '';

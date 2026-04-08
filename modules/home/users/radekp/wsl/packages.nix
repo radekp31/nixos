@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: let
+{pkgs, ...}: let
   aztfexport = pkgs.stdenv.mkDerivation {
     pname = "aztfexport";
     version = "0.18.0";
@@ -115,9 +112,10 @@ in {
     ansible
     powershell
     github-cli
-    copilot-cli
 
     #Required for Github Copilot
     nodejs_24
+    copilot-cli
+    opencode
   ];
 }
