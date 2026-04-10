@@ -546,9 +546,9 @@
             debounce = 100;
             enabled = true;
           };
-	  terminal = {
-	    enabled = true;
-	  };
+          terminal = {
+            enabled = true;
+          };
         };
       };
       copilot-chat = {
@@ -580,7 +580,7 @@
         };
       };
       opencode = {
-	enable = true;
+        enable = true;
       };
     };
     extraConfigLua = ''

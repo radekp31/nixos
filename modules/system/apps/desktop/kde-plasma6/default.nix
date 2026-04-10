@@ -36,7 +36,4 @@
       };
     };
   };
-
-  boot.kernelModules = ["btusb"];
-  boot.kernelParams = ["usbcore.autosuspend=-1"];
 }

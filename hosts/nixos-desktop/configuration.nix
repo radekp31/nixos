@@ -27,6 +27,7 @@
     ../../modules/system/apps/desktop/kde-plasma6
     ../../modules/system/apps/nix-ld
     ../../modules/system/apps/steam
+    ../../modules/system/hardware/bluetooth
   ];
 
   nixpkgs.config.allowUnfree = true;
