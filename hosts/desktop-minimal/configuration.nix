@@ -37,13 +37,12 @@
 
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
-  systemd.extraConfig = ''
-    DefaultTimeoutStopSec=10s
-    DefaultTimeoutAbortSec=10s
-    ShutdownWatchdogSec=off
-    RuntimeWatchdogSec=off
-  '';
-
+  systemd.settings.Manager = {
+    DefaultTimeoutStopSec = "10s";
+    DefaultTimeoutAbortSec = "10s";
+    ShutdownWatchdogSec = "off";
+    RuntimeWatchdogSec = "off";
+  };
   systemd.watchdog.runtimeTime = "off";
   systemd.watchdog.rebootTime = "off";
   systemd.watchdog.kexecTime = "off";
@@ -89,9 +88,6 @@
       package = pkgs.qemu_kvm;
       runAsRoot = false;
       swtpm.enable = true;
-      ovmf = {
-        enable = true;
-      };
     };
   };
 
@@ -136,13 +132,6 @@
     LC_TIME = "cs_CZ.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  # services.xserver.enable = true;
-
-  # Enable the XFCE Desktop Environment.
-  # services.xserver.displayManager.lightdm.enable = true;
-  # services.xserver.desktopManager.xfce.enable = true;
-
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
@@ -158,9 +147,11 @@
     enable32Bit = true;
     extraPackages = with pkgs; [
       intel-media-driver
-      vaapiIntel
-      vaapiVdpau
+      #vaapiIntel
+      intel-vaapi-driver
+      #vaapiVdpau
       libvdpau-va-gl
+      intel-vaapi-driver
       intel-compute-runtime
     ];
   };
@@ -200,11 +191,6 @@
   services.gvfs.enable = true;
   programs.dconf.enable = true;
 
-  #programs.sway = {
-  #  enable = true;
-  #  wrapperFeatures.gtk = true;
-  #};
-
   programs.sway = {
     enable = true;
     extraPackages = with pkgs; [
@@ -224,27 +210,6 @@
     '';
   };
   
-  # Force sway to use your custom config or just ensure these commands run
-  # If you use a custom sway config file in ~/.config/sway/config, add these:
-  # exec waybar
-  # exec nm-applet --indicator
-  # bindsym $mod+d exec wofi --show drun
-
-  #environment.etc."sway/config".text = ''
-  #  set $mod Mod4
-
-  #  bindsym $mod+Space exec ${pkgs.wofi}/bin/wofi --show drun
-
-  #  bindsym $mod+Shift+c reload
-
-  #  bindsym $mod+Return exec ${pkgs.foot}/bin/foot
-
-  #  bindsym $mod+Shift+q kill
-
-  #  bindsym $mod+Shift+e exec swaymsg exit
-
-  #'';
-
   environment.etc."sway/config".text = ''
     set $mod Mod4
   
@@ -296,15 +261,12 @@
 
   '';
 
-  
-
   programs.bash = {
     shellAliases = {
       ll = "ls -lah";
     };
 
   }; 
-
 
   # Install firefox.
   programs.firefox.enable = true;
@@ -462,10 +424,6 @@
 '';
 
   
-  #environment.etc."xdg/waybar/style.css".text = ''
-  #  []
-  #'';
-
   # This replaces the manual ~/.config/gtk-3.0/settings.ini
   environment.etc."gtk-3.0/settings.ini".text = ''
     [Settings]
