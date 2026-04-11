@@ -232,6 +232,8 @@
     file
     rkdeveloptool
     usbimager
+    waypipe
+
     # Media & Downloads
     yt-dlp
     ffmpeg
@@ -281,5 +283,8 @@
     hunspellDicts.en_US-large # enUS dictionary for grammar checking
     hunspellDicts.en_GB-large # enGB dictionary for grammar checking
     hunspellDicts.cs_CZ # csCz dictionary for grammar checking
+
+    gcompris
+ 
   ];
 }
