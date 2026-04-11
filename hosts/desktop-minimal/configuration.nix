@@ -42,10 +42,13 @@
     DefaultTimeoutAbortSec = "10s";
     ShutdownWatchdogSec = "off";
     RuntimeWatchdogSec = "off";
+    KExecWatchdogSec = "off";
+    RebootWatchdogSec = "off";
+    RuntimeWatchodogSec = "off";
   };
-  systemd.watchdog.runtimeTime = "off";
-  systemd.watchdog.rebootTime = "off";
-  systemd.watchdog.kexecTime = "off";
+  #systemd.watchdog.runtimeTime = "off";
+  #systemd.watchdog.rebootTime = "off";
+  #systemd..kexecTime = "off";
 
   systemd.services.systemd-udevd.serviceConfig = {
     TimeoutStopSec = 1;
@@ -334,6 +337,7 @@
     papirus-icon-theme
     hicolor-icon-theme
     font-awesome
+    nerd-fonts.symbols-only
     mako
 
   ];
