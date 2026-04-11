@@ -147,12 +147,9 @@
     enable32Bit = true;
     extraPackages = with pkgs; [
       intel-media-driver
-      #vaapiIntel
-      intel-vaapi-driver
-      #vaapiVdpau
-      libvdpau-va-gl
       intel-vaapi-driver
       intel-compute-runtime
+      libvdpau-va-gl
     ];
   };
 
@@ -167,6 +164,7 @@
     pulse.enable = true;
     # If you want to use JACK applications, uncomment this
     jack.enable = true;
+    wireplumber.enable = true;
 
     # use the example session manager (no others are packaged yet so this is enabled by default,
     # no need to redefine it in your config for now)
@@ -326,7 +324,7 @@
 
     #Desktop
     waybar
-    font-awesome
+    font-awesome_6
     wofi
     pavucontrol
     networkmanagerapplet
@@ -420,6 +418,10 @@
   
   #clock, #pulseaudio, #network, #cpu, #memory, #tray {
       padding: 0 10px;
+  }
+
+  #pulseaudio, #network, #cpu, #memory, #clock {
+    color: #fabd2f; 
   }
 '';
 
