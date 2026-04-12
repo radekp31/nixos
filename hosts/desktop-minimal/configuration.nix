@@ -83,16 +83,16 @@
     }
   '';
 
-  virtualisation.waydroid.enable = false;
+  #virtualisation.waydroid.enable = false;
 
-  virtualisation.libvirtd = {
-    enable = true;
-    qemu = {
-      package = pkgs.qemu_kvm;
-      runAsRoot = false;
-      swtpm.enable = true;
-    };
-  };
+  #virtualisation.libvirtd = {
+  #  enable = true;
+  #  qemu = {
+  #    package = pkgs.qemu_kvm;
+  #    runAsRoot = false;
+  #    swtpm.enable = true;
+  #  };
+  #};
 
   systemd.services.libvirtd.serviceConfig = {
     TimeoutStopSec = 5;
@@ -105,7 +105,7 @@
 
   virtualisation.spiceUSBRedirection.enable = true;
 
-  services.xserver.desktopManager.kodi.enable = true;
+  #services.xserver.desktopManager.kodi.enable = true;
   
   networking.hostName = "elitedesk-media"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -217,6 +217,7 @@
     # Start Waybar and Tray Applets
     exec waybar
     exec nm-applet --indicator
+    exec /run/current-system/sw/libexec/polkit-gnome-authentication-agent-1
   
     # Focus follows mouse (Standard i3/Sway behavior)
     focus_follows_mouse yes
@@ -251,7 +252,7 @@
       exec mako
     fi
 
-    alias ll = "ls -lah"
+    #alias ll = "ls -lah"
 
     export EDITOR="vim"
 
@@ -290,11 +291,11 @@
     wofi
     fzf
  
-    (python3.withPackages (ps: with ps; [
-      inquirer
-      requests
-      tqdm
-    ]))
+    #(python3.withPackages (ps: with ps; [
+    #  inquirer
+    #  requests
+    #  tqdm
+    #]))
     lzip
   
     htop
@@ -308,11 +309,11 @@
     gcompris
 
     #Virtualisation
-    virt-manager
-    virt-viewer
-    spice
-    spice-gtk
-    spice-protocol
+    #virt-manager
+    #virt-viewer
+    #spice
+    #spice-gtk
+    #spice-protocol
 
     cdrtools
     libburn
@@ -339,6 +340,8 @@
     font-awesome
     nerd-fonts.symbols-only
     mako
+    waypipe
+    polkit_gnome
 
   ];
 
@@ -349,6 +352,13 @@
     config.common.default = "*";
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
+
+  fonts.packages = with pkgs; [
+    nerd-fonts.symbols-only
+    font-awesome
+    dejavu_fonts
+    roboto
+  ];
 
   services.dbus.enable = true;
 
@@ -450,7 +460,17 @@
 
   environment.pathsToLink = [ "/share/icons" ]; 
 
-  environment.sessionVariables.GST_PLUGIN_SYSTEM_PATH_1_0 = "/run/current-system/sw/lib/gstreamer-1.0";
+  #environment.sessionVariables.GST_PLUGIN_SYSTEM_PATH_1_0 = "/run/current-system/sw/lib/gstreamer-1.0";
+
+  environment.sessionVariables = {
+    GST_PLUGIN_SYSTEM_PATH_1_0 = "/run/current-system/sw/lib/gstreamer-1.0";
+    XDG_DATA_DIRTS = [
+      "${pkgs.adwaita-icon-theme}/share"
+      "${pkgs.papirus-icon-theme}/share"
+      "/run/current-system/sw/share"
+    ];
+
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
