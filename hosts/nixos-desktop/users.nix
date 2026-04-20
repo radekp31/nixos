@@ -15,7 +15,7 @@
           "adbusers"
           "plugdev"
           "docker"
-	  "dialout"
+          "dialout"
         ];
         packages = with pkgs; [
           zsh

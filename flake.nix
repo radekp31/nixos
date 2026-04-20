@@ -100,14 +100,16 @@
       specialArgs = {inherit inputs;};
       modules = [
         ./hosts/nixos-desktop/configuration.nix
-        #{
-        #  environment.systemPackages = [pkgs.alejandra];
-        #}
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.radekp = import ./modules/home/users/radekp/desktop;
+          home-manager.users.radekp = {
+            imports = [
+              (import ./modules/home/users/radekp/desktop)
+              ./patches/opencode-stub.nix
+            ];
+          };
           home-manager.backupFileExtension = "backup";
           home-manager.extraSpecialArgs = {inherit inputs;};
         }

@@ -46,7 +46,7 @@
     # General Rockchip device rules
     SUBSYSTEM=="usb", ATTR{idVendor}=="2207", MODE="0660", GROUP="adbusers"
   '';
-  services.udev.packages = [ pkgs.arduino-core ];
+  services.udev.packages = [pkgs.arduino-core];
 
   # Override common defaults
   services.openssh.enable = true;

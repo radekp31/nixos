@@ -1,14 +1,16 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ config, pkgs, lib,... }:
-
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  config,
+  pkgs,
+  lib,
+  ...
+}: {
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -30,7 +32,7 @@
     "amdgpu"
     "dm_mod"
   ];
-  
+
   boot.kernel.sysctl = {
     "kernel.sysctl" = 1;
   };
@@ -56,17 +58,16 @@
     KillSignal = "SIGKILL";
     SendSIGKILL = "yes";
     FinalKillSignal = "SIGKILL";
-   };
+  };
 
   systemd.services.systemd-udevd.unitConfig = {
     DefaultDependencies = "no";
   };
-  
+
   systemd.services.systemd-udev-trigger.serviceConfig.TimeoutStopSec = 1;
   systemd.services.systemd-udev-settle.serviceConfig.TimeoutStopSec = 1;
   systemd.services.NetworkManager-wait-online.enable = false;
   systemd.services.systemd-udev-settle.enable = false;
-  
 
   services.udev.extraRules = ''
     ACTION=="remove", SUBSYSTEM=="block", ENV{DEVTYPE}=="disk", RUN+="${pkgs.coreutils}/bin/true"
@@ -75,7 +76,7 @@
   services.lvm = {
     enable = false;
     boot.thin.enable = false;
-  }; 
+  };
 
   environment.etc."lvm/lvm.conf".text = ''
     devices {
@@ -106,7 +107,7 @@
   virtualisation.spiceUSBRedirection.enable = true;
 
   #services.xserver.desktopManager.kodi.enable = true;
-  
+
   networking.hostName = "elitedesk-media"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -156,7 +157,6 @@
     ];
   };
 
- 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -181,9 +181,9 @@
   users.users.radekp = {
     isNormalUser = true;
     description = "radekp";
-    extraGroups = [ "networkmanager" "wheel" "libvirtd" "kvm" "video" "audio" "cdrom" "optical"];
+    extraGroups = ["networkmanager" "wheel" "libvirtd" "kvm" "video" "audio" "cdrom" "optical"];
     packages = with pkgs; [
-    #  thunderbird
+      #  thunderbird
     ];
   };
 
@@ -210,56 +210,56 @@
       export GDK_BACKEND=wayland,x11
     '';
   };
-  
+
   environment.etc."sway/config".text = ''
     set $mod Mod4
-  
+
     # Start Waybar and Tray Applets
     exec waybar
     exec nm-applet --indicator
     exec /run/current-system/sw/libexec/polkit-gnome-authentication-agent-1
-  
+
     # Focus follows mouse (Standard i3/Sway behavior)
     focus_follows_mouse yes
-  
+
     bindsym $mod+Space exec ${pkgs.wofi}/bin/wofi --show drun
     bindsym $mod+Shift+c reload
     bindsym $mod+Return exec ${pkgs.foot}/bin/foot
     bindsym $mod+Shift+q kill
     bindsym $mod+Shift+e exec swaymsg exit
-  
+
     # Optional: include default sway gaps/borders if you want it to look less 'raw'
     default_border pixel 2
     gaps inner 5
   '';
-  
+
   programs.foot = {
-   enable = true;
-   settings = {
-     main = {
-       font = "DejaVu Sans Mono:size=14";
-       dpi-aware = "yes";
-     };
-   };
+    enable = true;
+    settings = {
+      main = {
+        font = "DejaVu Sans Mono:size=14";
+        dpi-aware = "yes";
+      };
+    };
   };
   # Autologin
   services.getty.autologinUser = "radekp";
 
   environment.loginShellInit = ''
-    if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
-      #exec sway
-      exec dbus-run-session sway
-      exec mako
+     if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
+       #exec sway
+       exec dbus-run-session sway
+       exec mako
+     fi
+
+     #alias ll = "ls -lah"
+
+     export EDITOR="vim"
+
+    if command -v fzf-share >/dev/null; then
+      source "$(fzf-share)/key-bindings.bash"
+      source "$(fzf-share)/completion.bash"
     fi
-
-    #alias ll = "ls -lah"
-
-    export EDITOR="vim"
-
-   if command -v fzf-share >/dev/null; then
-     source "$(fzf-share)/key-bindings.bash"
-     source "$(fzf-share)/completion.bash"
-   fi
 
   '';
 
@@ -267,8 +267,7 @@
     shellAliases = {
       ll = "ls -lah";
     };
-
-  }; 
+  };
 
   # Install firefox.
   programs.firefox.enable = true;
@@ -278,31 +277,31 @@
 
   services.openssh = {
     enable = true;
-    settings.PasswordAuthentication = true; 
+    settings.PasswordAuthentication = true;
   };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    wget 
-    
+    wget
+
     foot
     wofi
     fzf
- 
+
     #(python3.withPackages (ps: with ps; [
     #  inquirer
     #  requests
     #  tqdm
     #]))
     lzip
-  
+
     htop
     curl
     wget
     git
- 
+
     mpv
     firefox
 
@@ -342,7 +341,6 @@
     mako
     waypipe
     polkit_gnome
-
   ];
 
   # Dekstop setup
@@ -350,7 +348,7 @@
     enable = true;
     wlr.enable = true;
     config.common.default = "*";
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    extraPortals = [pkgs.xdg-desktop-portal-gtk];
   };
 
   fonts.packages = with pkgs; [
@@ -362,84 +360,83 @@
 
   services.dbus.enable = true;
 
-  programs.xwayland.enable = true;  
+  programs.xwayland.enable = true;
 
   environment.etc."xdg/waybar/config".text = ''
-  {
-      "layer": "top",
-      "position": "top",
-      "height": 30,
-      "modules-left": ["sway/workspaces", "sway/mode"],
-      "modules-center": ["sway/window"],
-      "modules-right": ["pulseaudio", "network", "cpu", "memory", "clock", "tray"],
-  
-      "sway/workspaces": {
-          "disable-scroll": true,
-          "all-outputs": true,
-          "format": "{name}"
-      },
-      "pulseaudio": {
-          "format": "{volume}% {icon}",
-          "format-bluetooth": "{volume}% {icon}",
-          "format-muted": "",
-          "format-icons": {
-              "headphone": "",
-              "default": ["", ""]
-          },
-          "on-click": "pavucontrol"
-      },
-      "network": {
-          "format-wifi": "{essid} ",
-          "format-ethernet": "Connected ",
-          "format-disconnected": "Disconnected ⚠",
-          "on-click": "nm-connection-editor"
-      },
-      "clock": {
-          "format": "{:%H:%M} ",
-          "format-alt": "{:%A, %B %d, %Y} "
-      }
-  }
+    {
+        "layer": "top",
+        "position": "top",
+        "height": 30,
+        "modules-left": ["sway/workspaces", "sway/mode"],
+        "modules-center": ["sway/window"],
+        "modules-right": ["pulseaudio", "network", "cpu", "memory", "clock", "tray"],
+
+        "sway/workspaces": {
+            "disable-scroll": true,
+            "all-outputs": true,
+            "format": "{name}"
+        },
+        "pulseaudio": {
+            "format": "{volume}% {icon}",
+            "format-bluetooth": "{volume}% {icon}",
+            "format-muted": "",
+            "format-icons": {
+                "headphone": "",
+                "default": ["", ""]
+            },
+            "on-click": "pavucontrol"
+        },
+        "network": {
+            "format-wifi": "{essid} ",
+            "format-ethernet": "Connected ",
+            "format-disconnected": "Disconnected ⚠",
+            "on-click": "nm-connection-editor"
+        },
+        "clock": {
+            "format": "{:%H:%M} ",
+            "format-alt": "{:%A, %B %d, %Y} "
+        }
+    }
   '';
-  
+
   environment.etc."xdg/waybar/style.css".text = ''
-  * {
-      border: none;
-      font-family: "Font Awesome 6 Free", Roboto, Helvetica, Arial, sans-serif;
-      font-size: 13px;
-  }
-  
-  window#waybar {
-      background: #1d2021; /* Deep dark grey (Gruvbox Dark) */
-      color: #ebdbb2;
-      border-bottom: 2px solid #3c3836;
-  }
-  
-  #workspaces button {
-      padding: 0 10px;
-      background: transparent;
-      color: #a89984;
-  }
-  
-  #workspaces button.focused {
-      color: #ebdbb2;
-      background-color: #3c3836;
-      border-bottom: 2px solid #fabd2f; /* i3 Yellow highlight */
-  }
-  
-  #workspaces button.urgent {
-      background-color: #fb4934;
-  }
-  
-  #clock, #pulseaudio, #network, #cpu, #memory, #tray {
-      padding: 0 10px;
-  }
+    * {
+        border: none;
+        font-family: "Font Awesome 6 Free", Roboto, Helvetica, Arial, sans-serif;
+        font-size: 13px;
+    }
 
-  #pulseaudio, #network, #cpu, #memory, #clock {
-    color: #fabd2f; 
-  }
-'';
+    window#waybar {
+        background: #1d2021; /* Deep dark grey (Gruvbox Dark) */
+        color: #ebdbb2;
+        border-bottom: 2px solid #3c3836;
+    }
 
-  
+    #workspaces button {
+        padding: 0 10px;
+        background: transparent;
+        color: #a89984;
+    }
+
+    #workspaces button.focused {
+        color: #ebdbb2;
+        background-color: #3c3836;
+        border-bottom: 2px solid #fabd2f; /* i3 Yellow highlight */
+    }
+
+    #workspaces button.urgent {
+        background-color: #fb4934;
+    }
+
+    #clock, #pulseaudio, #network, #cpu, #memory, #tray {
+        padding: 0 10px;
+    }
+
+    #pulseaudio, #network, #cpu, #memory, #clock {
+      color: #fabd2f;
+    }
+  '';
+
   # This replaces the manual ~/.config/gtk-3.0/settings.ini
   environment.etc."gtk-3.0/settings.ini".text = ''
     [Settings]
@@ -449,16 +446,16 @@
     gtk-cursor-theme-name = Adwaita
     gtk-font-name = Sans 10
   '';
-  
+
   # For modern GTK4 apps (some still look for this)
   environment.etc."gtk-4.0/settings.ini".text = ''
     [Settings]
     gtk-icon-theme-name = Adwaita
     gtk-theme-name = Adwaita-dark
     gtk-application-prefer-dark-theme = true
-  ''; 
+  '';
 
-  environment.pathsToLink = [ "/share/icons" ]; 
+  environment.pathsToLink = ["/share/icons"];
 
   #environment.sessionVariables.GST_PLUGIN_SYSTEM_PATH_1_0 = "/run/current-system/sw/lib/gstreamer-1.0";
 
@@ -469,7 +466,6 @@
       "${pkgs.papirus-icon-theme}/share"
       "/run/current-system/sw/share"
     ];
-
   };
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -486,10 +482,10 @@
   # services.openssh.enable = true;
 
   # Open ports in the firewall.
-   networking.firewall.allowedTCPPorts = [ 22 ];
-   networking.firewall.allowedUDPPorts = [ 22 ];
-   #Or disable the firewall altogether.
-   networking.firewall.enable = true;
+  networking.firewall.allowedTCPPorts = [22];
+  networking.firewall.allowedUDPPorts = [22];
+  #Or disable the firewall altogether.
+  networking.firewall.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -498,5 +494,4 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.05"; # Did you read the comment?
-
 }

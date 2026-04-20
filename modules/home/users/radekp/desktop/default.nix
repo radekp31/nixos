@@ -14,6 +14,10 @@
     ../../../colorschemes/catppuccin
   ];
 
+  disabledModules = [
+    "/nix/store/dqmxyxfndh0lzc1x57fbyi7kaa4j3qjg-source/modules/home-manager/opencode.nix"
+  ];
+
   #Let Home Manager install and manage itself
   programs.home-manager.enable = true;
 
@@ -287,6 +291,5 @@
     hunspellDicts.cs_CZ # csCz dictionary for grammar checking
 
     gcompris
- 
   ];
 }
