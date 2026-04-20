@@ -182,6 +182,8 @@
 
     mangowc
 
+    arduino-ide
+
     #browser
     #firefox-esr-140
     firefox-esr
