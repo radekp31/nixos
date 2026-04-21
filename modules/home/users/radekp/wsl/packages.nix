@@ -1,6 +1,5 @@
 {
   pkgs,
-  nixpkgs_unstable,
   ...
 }: let
   aztfexport = pkgs.stdenv.mkDerivation {
@@ -121,6 +120,5 @@ in {
     nodejs_24
     copilot-cli
     opencode
-    nixpkgs_unstable.freecad
   ];
 }
