@@ -120,5 +120,7 @@ in {
     nodejs_24
     copilot-cli
     opencode
+
+    firefox
   ];
 }
