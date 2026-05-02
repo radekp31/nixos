@@ -1,5 +1,9 @@
 # modules/home/apps/foot/default.nix
-{pkgs, lib, ...}: {
+{
+  pkgs,
+  lib,
+  ...
+}: {
   programs.foot = {
     enable = true;
     settings = {
@@ -46,4 +50,18 @@
   home.packages = with pkgs; [
     jetbrains-mono
   ];
+  systemd.user.services.foot-server = {
+    Unit = {
+      Description = "Foot Terminal Server";
+      After = ["graphical-session-pre.target"];
+      PartOf = ["graphical-session.target"];
+    };
+    Service = {
+      ExecStart = "${pkgs.foot}/bin/foot --server";
+      Restart = "always";
+    };
+    Install = {
+      WantedBy = ["graphical-session.target"];
+    };
+  };
 }

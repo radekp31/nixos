@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: let
+{pkgs, ...}: let
   aztfexport = pkgs.stdenv.mkDerivation {
     pname = "aztfexport";
     version = "0.18.0";

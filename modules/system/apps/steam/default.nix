@@ -28,4 +28,12 @@
     bottles
     protonup-ng
   ];
+  systemd.user.services.steam = {
+    description = "Steam Background";
+    serviceConfig = {
+      ExecStart = "${pkgs.steam}/bin/steam -silent";
+      Restart = "on-failure";
+    };
+    wantedBy = ["graphical-session.target"];
+  };
 }
