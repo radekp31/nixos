@@ -216,7 +216,7 @@
         settings = {
           options = {
             icons_enabled = true;
-            colorcheme = "catppuccin";
+            colorscheme = "catppuccin";
           };
           sections = {
             lualine_c = [
@@ -300,9 +300,9 @@
         };
       };
       lightline = {
-        enable = true;
+        enable = false;
         settings = {
-          colorcheme = "Tommorow_Night_Blue";
+          colorscheme = "Tommorow_Night_Blue";
         };
       };
       lsp = {

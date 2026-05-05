@@ -32,12 +32,14 @@
   # azcli is for some reason not working from nixpkgs
   nixhubio_azcli =
     import (builtins.fetchTarball {
-      url = "https://github.com/NixOS/nixpkgs/archive/80d901ec0377e19ac3f7bb8c035201e2e098cc97.tar.gz";
-      sha256 = "1ik9a5zrzrcd50a055y3n4bljwf9yyd8hg6qj09nlbbjampkjgcv";
+      #url = "https://github.com/NixOS/nixpkgs/archive/80d901ec0377e19ac3f7bb8c035201e2e098cc97.tar.gz";
+      url = "https://github.com/NixOS/nixpkgs/archive/01fbdeef22b76df85ea168fbfe1bfd9e63681b30.tar.gz";
+      sha256 = "0b76m4i1sn0dg78ylapvbkgw9knkf6lm1lss39w6zyshgv1rbi0q";
     }) {
       system = pkgs.stdenv.targetPlatform.system;
     };
 in {
+   
   home.packages = with pkgs; [
     nixos-icons
     alejandra
@@ -56,6 +58,10 @@ in {
         requests
         pyyaml
         pydantic
+	hy
+	sysctl
+	requests
+	argparse
       ]))
     gh
     htop
@@ -119,5 +125,6 @@ in {
     opencode
 
     firefox
+
   ];
 }
