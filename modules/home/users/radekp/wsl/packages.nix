@@ -62,6 +62,8 @@ in {
 	sysctl
 	requests
 	argparse
+	thefuzz
+	datetime
       ]))
     gh
     htop
@@ -100,6 +102,7 @@ in {
       nixhubio_azcli.azure-cli-extensions.graphservices
       nixhubio_azcli.azure-cli-extensions.fzf
       nixhubio_azcli.azure-cli-extensions.dynatrace
+      nixhubio_azcli.azure-cli-extensions.costmanagement
     ])
 
     kubectl
