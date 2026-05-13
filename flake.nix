@@ -6,11 +6,10 @@
       url = "github:NixOS/nixpkgs/nixos-25.11";
     };
 
-    # Azure CLI on 25.11 is fooked - revisit later to check if it works again
-    # Use az login --tenant <TENANT_ID> --use-device-code
     nixpkgs25_05 = {
       url = "github:NixOS/nixpkgs/nixos-25.05";
     };
+
     nixpkgs_unstable = {
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
@@ -34,10 +33,10 @@
       url = "github:numtide/nixos-facter-modules";
     };
 
-    #sops-nix = {
-    #  url = "github:Mic92/sops-nix";
-    #  sops-nix.inputs.nixpkgs.follows = "nixpkgs";
-    #};
+    # sops-nix = {
+    #   url = "github:Mic92/sops-nix";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL/release-25.11";
@@ -63,10 +62,12 @@
     };
 
     catppuccin = {
-      url = "github:catppuccin/nix";
+      url = "github:catppuccin/nix/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
+
+
 
   outputs = {
     self,
