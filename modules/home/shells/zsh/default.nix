@@ -154,6 +154,7 @@
       tfr = "terraformer";
       k = "kubectl";
       pf = "fzf --preview='type -p bat >/dev/null && bat --color=always --style=numbers {} || less {}'"; # preview files, use bat, if not available failover to less, Shift+UP/Down to scroll
+      az-account-set = "az account list --query '[].{name:name, id:id}' -o tsv | fzf | awk '{print $2}' | xargs -I {} az account set --subscription \"{}\" && echo \"Current subscription: \"$(az account show --query name -o tsv)";
     };
     oh-my-zsh = {
       enable = true;

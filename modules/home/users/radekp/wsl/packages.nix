@@ -28,6 +28,43 @@
     };
   };
 
+  # Define python-tss-sdk from GitHub
+  python-tss-sdk = pkgs.python313Packages.buildPythonPackage {
+    pname = "python-tss-sdk";
+    version = "git-2025-01-01"; # or any label you like
+
+    src = pkgs.fetchFromGitHub {
+      owner = "DelineaXPM";
+      repo = "python-tss-sdk";
+      # You MUST pin to a commit or tag; use `nix-prefetch-git` to get these:
+      rev = "f483f8148447a9da7bbca3f973f3280560f81e91";
+      sha256 = "1i36qwh9z6hh9b3s02qqs0f0ln3a462slasr9palgsjd5nmvwhxd";
+    };
+
+    # If the project uses pyproject.toml, you may need:
+    # format = "pyproject";
+    # nativeBuildInputs = [ pkgs.python313Packages.setuptools pkgs.python313Packages.wheel ];
+
+    # This tells Nix to use the PEP 517/518 pyproject build backend
+    format = "pyproject";
+
+    # Build-system: [ "setuptools" ]
+    nativeBuildInputs = with pkgs.python313Packages; [
+      flit-core
+    ];
+
+
+
+    # If tests fail or pull in huge deps:
+    doCheck = false;
+
+    # Add any runtime deps if needed, e.g. requests:
+    propagatedBuildInputs = with pkgs.python313Packages; [
+      requests
+    ];
+  };
+
+
   # Look up working commit hashes here: https://www.nixhub.io/packages/azure-cli
   # azcli is for some reason not working from nixpkgs
   nixhubio_azcli =
@@ -64,6 +101,9 @@ in {
 	argparse
 	thefuzz
 	datetime
+	argparse
+
+	python-tss-sdk
       ]))
     gh
     htop
@@ -128,6 +168,11 @@ in {
     opencode
 
     firefox
+
+    podman
+    podman-compose
+    cmake
+    gnumake
 
   ];
 }

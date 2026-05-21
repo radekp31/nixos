@@ -10,4 +10,8 @@
   environment.variables = {
     EDITOR = lib.mkDefault "vim";
   };
+
+  virtualisation.podman = {
+    enable = true;
+  };
 }
