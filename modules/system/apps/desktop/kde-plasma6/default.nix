@@ -15,11 +15,18 @@
     wayland.enable = true;
   };
 
+  environment.systemPackages = with pkgs; [
+    kdePackages.kcalc
+    kde-rounded-corners
+  ];
+
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
     plasma-browser-integration
     konsole
     elisa
   ];
+
+  programs.kdeconnect.enable = true;
 
   xdg.portal = {
     enable = true;
