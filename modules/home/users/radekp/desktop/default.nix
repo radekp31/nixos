@@ -36,7 +36,7 @@
     enable = true;
     enableDefaultConfig = false;
 
-    matchBlocks = {
+    settings = {
       "github.com" = {
         user = "git";
         hostname = "github.com";
@@ -198,7 +198,6 @@
     # Security & Secrets
     age
     sops
-    bitwarden-desktop
     bitwarden-cli
 
     # Development Tools
@@ -258,7 +257,6 @@
     OVMF
 
     # GUI Applications
-    webcord # Discord alternative (better than discord)
     freecad-wayland
     # Hardware Control
     mangohud # GPU overlay

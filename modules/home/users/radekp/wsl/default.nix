@@ -36,11 +36,6 @@
       email = radek.polasek@dynatrace.com
   '';
 
-  #xdg.configFile."git/user-dynatrace-github.gitconfig".text = ''
-  #  [user]
-  #    name = Radek Polasek (Dynatrace)
-  #    email = radek.polasek@dynatrace.com
-  #'';
   xdg.configFile."git/user-dynatrace-github.gitconfig".text = ''
     [user]
       name = Radek Polasek (Dynatrace)
@@ -59,7 +54,7 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks = {
+    settings = {
       # Personal GitHub account
       "github.com" = {
         hostname = "github.com";

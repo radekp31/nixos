@@ -4,5 +4,7 @@
     package = pkgs.waydroid-nftables;
   };
 
-  programs.adb.enable = true;
+  environment.systemPackages = with pkgs; [
+    android-tools
+  ];
 }

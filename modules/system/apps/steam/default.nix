@@ -24,7 +24,6 @@
   environment.systemPackages = with pkgs; [
     mangohud
     lutris
-    heroic
     bottles
     protonup-ng
   ];

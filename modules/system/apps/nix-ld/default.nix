@@ -13,17 +13,28 @@
     nspr
 
     # Graphics / Electron / GUI requirements
-    xorg.libX11
-    xorg.libXcomposite
-    xorg.libXdamage
-    xorg.libXext
-    xorg.libXfixes
-    xorg.libXrandr
-    xorg.libXrender
-    xorg.libXtst
-    xorg.libXi
-    xorg.libXcursor
-    xorg.libXScrnSaver
+    #xorg.libX11
+    #xorg.libXcomposite
+    #xorg.libXdamage
+    #xorg.libXext
+    #xorg.libXfixes
+    #xorg.libXrandr
+    #xorg.libXrender
+    #xorg.libXtst
+    #xorg.libXi
+    #xorg.libXcursor
+    #xorg.libXScrnSaver
+    libx11
+    libxcomposite
+    libxdamage
+    libXext
+    libxfixes
+    libxrandr
+    libxrender
+    libXtst
+    libxi
+    libxcursor
+    libxscrnsaver
     libxcb
     libxkbcommon
     mesa

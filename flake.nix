@@ -1,192 +1,48 @@
 {
-  description = "NixOS config flake.";
+  description = "NixOS config flake framework via flake-parts.";
 
   inputs = {
-    nixpkgs = {
-      url = "github:NixOS/nixpkgs/nixos-25.11";
-    };
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nixpkgs_deprecated.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs_unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    nixpkgs25_05 = {
-      url = "github:NixOS/nixpkgs/nixos-25.05";
-    };
-
-    nixpkgs_unstable = {
-      url = "github:NixOS/nixpkgs/nixos-unstable";
-    };
+    flake-parts.url = "github:hercules-ci/flake-parts";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    pre-commit-hooks = {
-      url = "github:cachix/pre-commit-hooks.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nixos-facter-modules = {
-      url = "github:numtide/nixos-facter-modules";
-    };
-
-    # sops-nix = {
-    #   url = "github:Mic92/sops-nix";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
 
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    treefmt-nix = {
-      url = "github:numtide/treefmt-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    systems = {
-      url = "github:nix-systems/default";
-    };
-
     nixvim = {
-      url = "github:nix-community/nixvim/nixos-25.11";
+      url = "github:nix-community/nixvim/nixos-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    flake-utils = {
-      url = "github:numtide/flake-utils";
     };
 
     catppuccin = {
-      url = "github:catppuccin/nix/release-25.11";
+      url = "github:catppuccin/nix/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    pre-commit-hooks.url     = "github:cachix/pre-commit-hooks.nix";
+    disko.url                = "github:nix-community/disko";
+    treefmt-nix.url          = "github:numtide/treefmt-nix";
+    systems.url              = "github:nix-systems/default";
+    nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
   };
 
+  outputs = inputs@{ flake-parts, systems, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = import systems;
 
-
-  outputs = {
-    self,
-    nixpkgs,
-    nixpkgs25_05,
-    nixpkgs_unstable,
-    home-manager,
-    nixos-wsl,
-    treefmt-nix,
-    systems,
-    ...
-  } @ inputs: let
-    system = "x86_64-linux";
-
-    # Treefmt-nix
-    # Small tool to iterate over each systems
-    eachSystem = f: nixpkgs.lib.genAttrs (import systems) (system: f nixpkgs.legacyPackages.${system});
-
-    # Eval the treefmt modules from ./treefmt.nix
-    treefmtEval = eachSystem (
-      pkgs:
-        treefmt-nix.lib.evalModule pkgs {
-          imports = [./treefmt.nix];
-          #programs.alejandra.package = alejandra.defaultPackage.${pkgs.system};
-          programs.alejandra.package = pkgs.alejandra;
-        }
-    );
-  in {
-    nixosConfigurations.nixos-desktop = nixpkgs.lib.nixosSystem {
-      system = system;
-      specialArgs = {inherit inputs;};
-      modules = [
-        ./hosts/nixos-desktop/configuration.nix
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.users.radekp = {
-            imports = [
-              (import ./modules/home/users/radekp/desktop)
-              ./patches/opencode-stub.nix
-            ];
-          };
-          home-manager.backupFileExtension = "backup";
-          home-manager.extraSpecialArgs = {inherit inputs;};
-        }
+      imports = [
+        ./parts/formatting.nix
+        ./parts/shells.nix
+        ./parts/hosts.nix
       ];
     };
-
-    # Uncomment when sops is fixed
-    #nixosConfigurations.generic-server = nixpkgs.lib.nixosSystem {
-    #  system = "x86_64-linux";
-    #  specialArgs = {inherit inputs;};
-    #  modules = [
-    #    ./hosts/server/generic/configuration.nix
-    #    #./modules/system/secrets/sops
-    #  ];
-    #};
-
-    #nixosConfigurations.web-server = nixpkgs.lib.nixosSystem {
-    #  system = "x86_64-linux";
-    #  specialArgs = {inherit inputs;};
-    #  modules = [
-    #    ./hosts/server/generic/configuration.nix
-    #    ./modules/system/secrets/sops
-    #    ./modules/system/server/webserver
-    #    #sops-nix.nixosModules.sops
-    #  ];
-    #};
-
-    #nixosConfigurations.deployment-generic-server = nixpkgs.lib.nixosSystem {
-    #  system = "x86_64-linux";
-    #  specialArgs = {inherit inputs;};
-    #  modules = [
-    #    disko.nixosModules.disko
-    #    ./hosts/deployments/server/generic/configuration.nix
-    #    ./hosts/deployments/server/generic/disk-config.nix
-    #    #./modules/system/secrets/sops
-    #  ];
-    #};
-
-    nixosConfigurations."dt-wsl-nix" = nixpkgs.lib.nixosSystem {
-      system = system;
-      specialArgs = {inherit inputs;};
-
-      modules = [
-        nixos-wsl.nixosModules.wsl
-        ./hosts/nixos-wsl/configuration.nix
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          #home-manager.users.radekp = import ./modules/home/users/radekp/wsl;
-          home-manager.users.radekp = {
-            imports = [
-              (import ./modules/home/users/radekp/wsl)
-              ./patches/opencode-stub.nix
-            ];
-          };
-          home-manager.backupFileExtension = "backup";
-          home-manager.extraSpecialArgs = {inherit inputs;};
-        }
-      ];
-    };
-
-    formatter = eachSystem (pkgs: treefmtEval.${pkgs.system}.config.build.wrapper);
-
-    checks = eachSystem (pkgs: {
-      formatting = treefmtEval.${pkgs.system}.config.build.check self;
-    });
-    devShells = eachSystem (
-      pkgs: let
-        system = pkgs.system;
-        pkgs25_05 = nixpkgs25_05.legacyPackages.${system};
-        pkgs_unstable = nixpkgs_unstable.legacyPackages.${system};
-      in
-        import ./modules/devShells {
-          inherit pkgs pkgs25_05 pkgs_unstable system;
-        }
-    );
-  };
 }

@@ -16,7 +16,7 @@
       mouse = {
         hide-when-typing = "yes";
       };
-      colors = {
+      colors-dark = {
         cursor = "181926 f4dbd6";
         foreground = "cad3f5";
         background = "24273a";
