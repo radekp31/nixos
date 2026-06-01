@@ -43,7 +43,6 @@
     # or: nerd-fonts.fira-code, nerd-fonts.hack, etc.
   ];
 
-
   # Avoid conflicts with openssh
   systemd.services.sshd.enable = false;
 

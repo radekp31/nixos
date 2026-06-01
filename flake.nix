@@ -28,15 +28,19 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    pre-commit-hooks.url     = "github:cachix/pre-commit-hooks.nix";
-    disko.url                = "github:nix-community/disko";
-    treefmt-nix.url          = "github:numtide/treefmt-nix";
-    systems.url              = "github:nix-systems/default";
+    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+    disko.url = "github:nix-community/disko";
+    treefmt-nix.url = "github:numtide/treefmt-nix";
+    systems.url = "github:nix-systems/default";
     nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
   };
 
-  outputs = inputs@{ flake-parts, systems, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
+  outputs = inputs @ {
+    flake-parts,
+    systems,
+    ...
+  }:
+    flake-parts.lib.mkFlake {inherit inputs;} {
       systems = import systems;
 
       imports = [

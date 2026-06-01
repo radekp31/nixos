@@ -1,11 +1,10 @@
-{ inputs, ... }: 
-let
+{inputs, ...}: let
   system = "x86_64-linux";
 in {
   flake.nixosConfigurations = {
     nixos-desktop = inputs.nixpkgs.lib.nixosSystem {
       inherit system;
-      specialArgs = { inherit inputs; };
+      specialArgs = {inherit inputs;};
       modules = [
         ../hosts/nixos-desktop/configuration.nix
         inputs.home-manager.nixosModules.home-manager
@@ -19,14 +18,14 @@ in {
             ];
           };
           home-manager.backupFileExtension = "backup";
-          home-manager.extraSpecialArgs = { inherit inputs; };
+          home-manager.extraSpecialArgs = {inherit inputs;};
         }
       ];
     };
 
     "dt-wsl-nix" = inputs.nixpkgs.lib.nixosSystem {
       inherit system;
-      specialArgs = { inherit inputs; };
+      specialArgs = {inherit inputs;};
       modules = [
         inputs.nixos-wsl.nixosModules.wsl
         ../hosts/nixos-wsl/configuration.nix
@@ -41,7 +40,7 @@ in {
             ];
           };
           home-manager.backupFileExtension = "backup";
-          home-manager.extraSpecialArgs = { inherit inputs; };
+          home-manager.extraSpecialArgs = {inherit inputs;};
         }
       ];
     };

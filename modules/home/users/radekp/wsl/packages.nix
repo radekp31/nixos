@@ -53,8 +53,6 @@
       flit-core
     ];
 
-
-
     # If tests fail or pull in huge deps:
     doCheck = false;
 
@@ -63,7 +61,6 @@
       requests
     ];
   };
-
 
   # Look up working commit hashes here: https://www.nixhub.io/packages/azure-cli
   # azcli is for some reason not working from nixpkgs
@@ -76,7 +73,6 @@
       system = pkgs.stdenv.targetPlatform.system;
     };
 in {
-   
   home.packages = with pkgs; [
     nixos-icons
     alejandra
@@ -95,15 +91,15 @@ in {
         requests
         pyyaml
         pydantic
-	hy
-	sysctl
-	requests
-	argparse
-	thefuzz
-	datetime
-	argparse
+        hy
+        sysctl
+        requests
+        argparse
+        thefuzz
+        datetime
+        argparse
 
-	python-tss-sdk
+        python-tss-sdk
       ]))
     gh
     htop
@@ -173,6 +169,5 @@ in {
     podman-compose
     cmake
     gnumake
-
   ];
 }

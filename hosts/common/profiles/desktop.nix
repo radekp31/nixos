@@ -48,6 +48,7 @@
     pciutils # Hardware info (lspci)
     smartmontools # Drive monitoring
     lm_sensors # Temperature/fan sensors
+    ptyxis # use terminal of choice here
   ];
 
   # Enable XDG portal
