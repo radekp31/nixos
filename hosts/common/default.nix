@@ -18,6 +18,15 @@ in {
     memoryPercent = 15;
   };
 
+  documentation = {
+    enable = true;
+    man = {
+      enable = true;
+      cache.enable = true;
+    };
+    dev.enable = true; # This is the crucial one for developer/section 2/3 man pages
+  };
+
   services.udev.extraRules = lib.mkIf hasNvme ''
     # Set scheduler for NVMe to 'none' for maximum throughput
     ACTION=="add|change", KERNEL=="nvme[0-9]n[1-9]", ATTR{queue/scheduler}="none"
@@ -41,8 +50,6 @@ in {
     enable = true; # too unstable
     operation = "boot";
     flake = "git+https://github.com/radekp31/nixos.git#${config.networking.hostName}";
-    #dates = "02:30";
-    #randomizedDelaySec = "30min";
     persistent = true;
     allowReboot = false;
   };
@@ -83,6 +90,10 @@ in {
     nix-prefetch-scripts
     nix-prefetch-docker
     nps # alternative to nix-search-cli
+
+    #documentation
+    man-pages # POSIX and Linux extra man-pages (sections 2, 3, 4, 5, 7)
+    man-pages-posix # POSIX-specific variants
   ];
 
   # SSH - disabled by default, let hosts opt-in

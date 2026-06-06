@@ -126,7 +126,6 @@
         src = "${pkgs.vimPlugins.tokyonight-nvim}/extras/sublime/tokyonight_storm.tmTheme";
       };
     };
-    extraPackages = with pkgs.bat-extras; [batdiff batman batgrep batwatch];
   };
 
   programs.librewolf = {
@@ -182,18 +181,10 @@
 
   # Home packages
   home.packages = with pkgs; [
-    lmstudio
-
-    mangowc
-
     arduino-ide
 
     #browser
-    #firefox-esr-140
     firefox-esr
-
-    # Niri
-    xwayland-satellite
 
     # Security & Secrets
     age
@@ -202,21 +193,14 @@
 
     # Development Tools
     cmake
-    lld_18
     jq
     nurl
     ripgrep-all
-    delta # Fancy git diff
     git
     nixd # Nix LSP server
     vimPlugins.nvim-lspconfig
-    age
-    sops
     nixos-anywhere
-    age
-    sops
     # System Utilities
-    cheat
     unzip
     wlr-randr
     termshark
@@ -226,14 +210,12 @@
     tldr
     btop-cuda
     dig
-    tree
     usbutils
     ntfs3g # NTFS filesystem support
     p7zip
     kdePackages.dolphin
     kdePackages.dolphin-plugins
     kdePackages.kdeconnect-kde
-    screen
     file
     rkdeveloptool
     usbimager
@@ -244,10 +226,11 @@
     ffmpeg
     vlc
     mpv
-    qbittorrent-enhanced-nox
+
     # File Management & Cloud
     rclone
     qpdf
+
     # Virtualization
     qemu_kvm
     spice-vdagent
@@ -258,15 +241,19 @@
 
     # GUI Applications
     freecad-wayland
+
     # Hardware Control
     mangohud # GPU overlay
+
     # Clipboard
     wl-clipboard
+
     # Theming & Icons
     adwaita-icon-theme
     bibata-cursors
     qadwaitadecorations-qt6
     font-awesome_6
+
     # Fonts
     meslo-lgs-nf
     nerd-fonts.fira-code
