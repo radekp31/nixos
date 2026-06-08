@@ -33,7 +33,8 @@ in {
   '';
 
   # Networking
-  networking.networkmanager.enable = lib.mkDefault true;
+  #networking.networkmanager.enable = lib.mkDefault true;
+  networking.resolvconf.enable = false;
   networking.firewall.enable = true;
 
   # Locale - use defaults that hosts can override

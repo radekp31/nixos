@@ -117,7 +117,7 @@ in {
     tree
     microfetch
     xsel
-    docker_28
+    docker_29
 
     inetutils
 
@@ -125,7 +125,14 @@ in {
     age
     inxi
 
-    tmux
+    #tmux
+
+    # Claude tools
+    bubblewrap
+    socat
+    claude-code
+    libseccomp
+    cmake
 
     # Use azure-cli from the pinned commit
     (nixhubio_azcli.azure-cli.withExtensions [
@@ -139,6 +146,7 @@ in {
       nixhubio_azcli.azure-cli-extensions.fzf
       nixhubio_azcli.azure-cli-extensions.dynatrace
       nixhubio_azcli.azure-cli-extensions.costmanagement
+      nixhubio_azcli.azure-cli-extensions.databricks
     ])
 
     kubectl
@@ -160,7 +168,6 @@ in {
 
     #Required for Github Copilot
     nodejs_24
-    copilot-cli
     opencode
 
     firefox

@@ -142,6 +142,10 @@
         nvim "+$line" "$file"
       fi
       }
+      
+      #Integrate direnv
+      eval "$(direnv hook zsh)"
+
     '';
     shellAliases = {
       devops = "nix develop \".#devops\" --command zsh -i";
