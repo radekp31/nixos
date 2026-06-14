@@ -7,6 +7,11 @@
   # mangohud %command%
   # gamescope %command%
 
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
+
   environment.sessionVariables = {
     STEAM_EXTRA_COMPAT_TOOLS_PATH = "/home/radekp/.steam/root/compatibilitytools.d";
   };

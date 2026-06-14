@@ -1,114 +1,66 @@
-## TODO List
+# NixOS Configuration Roadmap
 
-### Priority 1: Core Fixes & Structure ✅ COMPLETE
+## 🔐 Security & Secrets
+- [ ] **SOPS-nix Integration** (High Priority)
+  - Review sops-nix configuration and ensure secrets are decrypted in deployments.
+  - Move sensitive environment variables and udev rules into secrets.
+- [ ] Audit security settings across all host configurations.
 
-- [x] Rename `git.nix` → `default.nix` (and similar files in modules)
-- [x] Rename `radekp.nix` → `default.nix` in user modules
-- [x] Rename `home.nix` → `default.nix` in wsl
-- [x] Update all imports to use directory paths instead of file paths
-- [x] Set up flake checks/formatting with `treefmt` (via nixpush(), local only)
-- [x] Add proper .gitignore
-- [x] Fix nixpkgs.config warning with home-manager
-- [x] Fix disko module import in deployment configuration
+## 🏗 Architecture & Core Refactoring
+- [ ] **Refactor Host Definitions (mkHost)**
+  - Implement a helper in `parts/hosts.nix` to reduce boilerplate for new hosts.
+- [ ] **Transition to "Smart" Modules**
+  - Convert static imports (like KDE/Plasma) to use `options` and `mkEnableOption`.
+- [ ] **Centralize Global Constants**
+  - Define `my.user.name`, `email`, etc., in a global module instead of hardcoding.
+- [ ] **Clean up Path References**
+  - Replace deep relative imports (`../../../../`) with `inputs.self` references.
+- [ ] **Update Auto-Upgrade Logic**
+  - Remove hardcoded GitHub URLs from `system.autoUpgrade.flake`.
 
-### Priority 2: Base Configuration ✅ COMPLETE
+## 💻 Hardware & Desktop Applications
+- [ ] **Hardware Abstraction**
+  - Extract kernel parameters and blacklisted modules from `nixos-desktop` into dedicated hardware files or use `nixos-hardware` profiles.
+- [ ] **Host Configuration Cleanup**
+  - Strip `nixos-desktop/configuration.nix` of settings already covered by `common` or `desktop` profiles.
+  - Review and potentially remove `modules/home/users/radekp/wsl/packages.nix`.
+  - Standardize `deployments/server/generic/configuration.nix`.
+- [ ] **Browser Extension Management**
+  - Replace `builtins.fetchurl` in Firefox/Librewolf with `nix-firefox-addons` or declarative policies.
 
-- [x] Create `hosts/common/default.nix` with minimal sane secure defaults
-  - [x] Networking basics
-  - [x] Security settings (firewall, sudo, SSH)
-  - [x] Nix settings (flakes, gc, auto-optimise)
-  - [x] Basic system packages
-- [x] Import common base in all host configurations
-- [x] Document override patterns with `lib.mkDefault` for host-specific changes
-- [x] Create host profiles
-  - [x] `hosts/common/profiles/desktop.nix`
-  - [x] `hosts/common/profiles/server.nix`
-  - [x] `hosts/common/profiles/wsl.nix`
-  - [x] `hosts/common/profiles/hyperv.nix`
+## 🛠 Developer Experience & Documentation
+- [ ] **Comprehensive Documentation**
+  - Document the directory structure and module hierarchy.
+  - Explain the strategic difference between `hosts/` and `deployments/`.
+  - Add usage comments/READMEs to major modules.
+- [ ] **CI/CD & Automation**
+  - Implement GitHub Actions to run `nix flake check` and build validations.
+  - Add pre-commit hooks for automatic treefmt application.
 
-### Priority 3: DRY & Package Management ✅ MOSTLY COMPLETE
-
-- [x] Move GUI applications to home-manager
-  - [x] discord, vlc, spotify, vscode, etc.
-  - [x] Categorized and organized in `modules/home/users/radekp/desktop/default.nix`
-- [x] Keep only system-critical packages in `environment.systemPackages`
-  - [x] Kernel modules, drivers, system services
-- [x] Extract common settings into reusable modules
-- [x] Clean up duplicate packages across all hosts
-- [ ] ~~Create shared package lists~~ (Decided against - using home-manager directly)
-  - ~~`modules/home/packages/common.nix` - CLI tools~~
-  - ~~`modules/home/packages/desktop.nix` - GUI apps~~
-  - ~~`modules/home/packages/development.nix` - Dev tools~~
-
-### Priority 4: Documentation
-
-- [ ] Document module structure in main README.md
-  - What goes in `modules/system/` vs `modules/home/`
-  - How to add new modules
-  - How to enable/disable features
-- [ ] Add comments to complex modules explaining their purpose
-- [ ] Document the difference between `hosts/` and `deployments/`
-  - `hosts/` = Configurations for existing machines
-  - `deployments/` = Fresh installations with nixos-anywhere
-- [ ] Create `hosts/common/README.md` explaining base configuration
-- [ ] Add usage examples to each major module
-
-### Priority 5: Module Consistency ✅ MOSTLY COMPLETE
-
-- [x] Standardize module structure across all modules
-  - [x] Consistent file naming (all `default.nix`)
-  - [x] Similar configuration patterns
-  - [x] Predictable import paths
-- [x] Use `lib.mkDefault` for overrideable defaults
-- [ ] Add module options with `mkEnableOption` (only if needed for flexibility)
-- [ ] Use `lib.mkIf` for conditional features
-
-### Priority 6: Advanced Features (Future)
-
-- [x] ~~Decide on `hosts/server/generic/` vs `deployments/server/generic/` strategy~~
-  - [x] Kept separate - they serve different purposes
-  - [x] Extracted common config into `hosts/common/profiles/server.nix`
-- [x] Create host profiles ✅ COMPLETE
-  - [x] `hosts/common/profiles/desktop.nix`
-  - [x] `hosts/common/profiles/server.nix`
-  - [x] `hosts/common/profiles/wsl.nix`
-  - [x] `hosts/common/profiles/hyperv.nix`
-- [ ] Setup CI/CD with GitHub Actions
-  - [ ] Run `nix flake check` on push
-  - [ ] Validate all configurations build
-  - [ ] Check formatting with treefmt
-- [ ] Create `default.nix` at repo root for `nix-build` compatibility
-- [ ] Add pre-commit hooks for automatic formatting
-- [ ] Test module isolation and independence
-
-### Priority 7: Optimization (Low Priority)
-
-- [ ] Profile build times and optimize slow modules
-- [ ] Review and minimize closure sizes
-- [ ] Audit security settings across all configurations
-- [ ] Set up automatic security updates strategy
-- [ ] Consider binary cache setup for faster rebuilds
-
-### Priority 8: Remaining Cleanup & Fixes
-
-- [ ] FIX: sops-nix integration
-  - [ ] Review sops-nix configuration
-  - [ ] Ensure proper secret management across hosts
-  - [ ] Test secret decryption in deployments
-- [ ] FIX: flake inputs bloat
-  - [ ] Audit all flake inputs for necessity
-  - [ ] Remove unused dependencies
-  - [ ] Document why each input is needed
-- [x] Added flake.lock update GitHub Actions ✅ COMPLETE
-  - [x] Subtask: Monitor how it works, troubleshoot as needed
-- [ ] Clean up `nixos-desktop/configuration.nix` to match the new pattern
-  - [ ] Remove duplicates from common/profiles
-  - [ ] Keep only hardware-specific configuration
-- [ ] Review and potentially remove `modules/home/users/radekp/wsl/packages.nix` if redundant
-- [ ] Update `deployments/server/generic/configuration.nix` to use common base + server profile
-- [ ] Add section comments to all configuration files for better readability
+## ⏳ Pending Discussion
+- [ ] **FIX: flake inputs bloat**
+  - *Strategy:* Having multiple `nixpkgs` (unstable/stable/deprecated) is valid for cherry-picking broken packages, but needs careful management.
+  - *Evaluation Cost:* Bloat is primarily in evaluation time, not final system size. Keep it "lazy" where possible.
+  - *Standardization:* Use `flake-parts` (`_module.args`) to expose `pkgs-unstable` or `pkgs-old` globally to all modules.
+  - *Overlays:* Use overlays for "seamless" cherry-picking when a package is a shared dependency.
+  - *Input Following:* Ensure all flake inputs (home-manager, catppuccin, etc.) use `follows` to point to the primary `nixpkgs` to prevent unnecessary version multiplication.
 
 ---
 
-**Next session focus:** FIX: sops-nix integration
+## ✅ Completed Tasks (Archive)
 
+### Core Structure & Base Config
+- [x] Standardized file naming (use `default.nix`) across modules and users.
+- [x] Updated all imports to use directory paths.
+- [x] Created `hosts/common/default.nix` with secure defaults.
+- [x] Implemented host profiles (Desktop, Server, WSL, Hyper-V).
+- [x] Setup `treefmt` for repository-wide formatting.
+- [x] Added proper `.gitignore`.
+- [x] Fixed nixpkgs.config warnings and disko module imports.
+
+### Package & Module Management
+- [x] Moved GUI applications to Home Manager.
+- [x] Categorized apps in `modules/home/users/radekp/desktop/default.nix`.
+- [x] Cleaned up duplicate packages across hosts.
+- [x] Standardized module structure and usage of `lib.mkDefault`.
+- [x] Added `flake.lock` update GitHub Action.
