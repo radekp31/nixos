@@ -21,7 +21,7 @@
     ../../modules/system/apps/nixvim
     ../../modules/system/apps/qmk
     ../../modules/system/apps/qemu
-    ../../modules/system/hardware/printers/brother/DCPL2622DW
+    #../../modules/system/hardware/printers/brother/DCPL2622DW
     ../../modules/system/hardware/usb
     ../../modules/system/hardware/sound/pipewire
     ../../modules/system/apps/desktop/kde-plasma6
