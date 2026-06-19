@@ -67,13 +67,36 @@
   nixhubio_azcli =
     import (builtins.fetchTarball {
       #url = "https://github.com/NixOS/nixpkgs/archive/80d901ec0377e19ac3f7bb8c035201e2e098cc97.tar.gz";
-      url = "https://github.com/NixOS/nixpkgs/archive/01fbdeef22b76df85ea168fbfe1bfd9e63681b30.tar.gz";
-      sha256 = "0b76m4i1sn0dg78ylapvbkgw9knkf6lm1lss39w6zyshgv1rbi0q";
+      #url = "https://github.com/NixOS/nixpkgs/archive/01fbdeef22b76df85ea168fbfe1bfd9e63681b30.tar.gz";
+      url = "https://github.com/NixOS/nixpkgs/archive/b503dde361500433ca25a32e8f4d218bf58fb659.tar.gz";
+      #sha256 = "0b76m4i1sn0dg78ylapvbkgw9knkf6lm1lss39w6zyshgv1rbi0q";
+      sha256 = "0k8z28gyg263smja05r272p8qpij898s49dpl75q82v3098vh9qk";
     }) {
       system = pkgs.stdenv.targetPlatform.system;
     };
 in {
+  
+  xdg.configFile."containers/containers.conf".text = ''
+  [engine]
+  helper_binaries_dir = ["${pkgs.podman}/libexec/podman"]
+'';
+
+
   home.packages = with pkgs; [
+    
+    # QEMU packages
+    qemu
+    quickemu
+    quickgui
+    gvproxy
+    virtiofsd
+
+    # Podman packages
+    podman
+    netavark
+    aardvark-dns
+    passt        # provides pasta
+
     nixos-icons
     alejandra
     nerd-fonts.jetbrains-mono
@@ -117,7 +140,8 @@ in {
     tree
     microfetch
     xsel
-    docker_29
+    #docker_29
+    #docker-compose
 
     inetutils
 
@@ -159,7 +183,6 @@ in {
     fzf
     jq
     git
-    docker-compose
     helm
     terraform
     ansible

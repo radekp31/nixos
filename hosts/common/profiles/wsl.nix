@@ -13,6 +13,7 @@
 
   virtualisation.podman = {
     enable = true;
+    dockerCompat = true;
   };
   
   users.users.root.subUidRanges = [{ startUid = 100000; count = 655360; }];

@@ -52,5 +52,5 @@
 
   # Enable docker
   # dont forget to add user to "docker" group to run docker without sudo
-  virtualisation.docker.enable = true;
+  virtualisation.docker.enable = false;
 }
