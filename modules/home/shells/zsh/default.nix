@@ -46,6 +46,24 @@
 
         fi
       fi
+      
+
+      # Only for interactive shells
+      if [[ $- == *i* ]]; then
+        # Check if running inside WSL
+        if grep -qi microsoft /proc/version &> /dev/null; then
+          firefox-wsl() {
+            env \
+              -u LD_LIBRARY_PATH \
+              -u LIBRARY_PATH \
+              MOZ_DISABLE_GPU_ACCELERATION=1 \
+              MOZ_X11_EGL=0 \
+              MOZ_ENABLE_WAYLAND=0 \
+              LIBGL_ALWAYS_INDIRECT=1 \
+              firefox "$@"
+          }
+        fi
+      fi
 
       source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
 
