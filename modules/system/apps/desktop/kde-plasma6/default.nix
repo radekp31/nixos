@@ -10,18 +10,6 @@
     installPhase = "cp $src $out";
   };
 
-  sddmTheme = pkgs.stdenv.mkDerivation {
-    name = "sddm-breeze-custom";
-    buildCommand = ''
-      mkdir -p $out/share/sddm/themes/breeze-custom
-      cp -r ${pkgs.kdePackages.plasma-desktop}/share/sddm/themes/breeze/. \
-        $out/share/sddm/themes/breeze-custom/
-      chmod -R u+w $out/share/sddm/themes/breeze-custom
-      sed -i "s|background=.*|background=${wallpaper}|" \
-        $out/share/sddm/themes/breeze-custom/theme.conf
-    '';
-  };
-
   plasma-tokyo-night = pkgs.stdenv.mkDerivation {
     name = "plasma-tokyo-night";
     src = pkgs.fetchFromGitHub {
@@ -36,53 +24,42 @@
 
     installPhase = ''
       runHook preInstall
-
-      # Aurorae window decorations
       mkdir -p $out/share/aurorae/themes
       cp -r aurorae/TokyoNight $out/share/aurorae/themes/
-
-      # Plasma Look-and-Feel (check plasma/ subdir structure if this fails)
       mkdir -p $out/share/plasma/look-and-feel
       cp -r plasma/look-and-feel/. $out/share/plasma/look-and-feel/
-
-      # Color schemes
       mkdir -p $out/share/color-schemes
       cp -r colorscheme/. $out/share/color-schemes/
-
-      # Wallpapers
       mkdir -p $out/share/wallpapers
       cp -r wallpapers/. $out/share/wallpapers/
-
       runHook postInstall
     '';
   };
 in {
   services.desktopManager.plasma6.enable = true;
+
+  # 2. Configure SDDM to target the true Qt6 structure theme
   services.displayManager.sddm = {
     enable = true;
     wayland.enable = true;
-    theme = "breeze-custom";
+    
+    # Sugar Candy relies on the graphical SVG core layout elements inside raw components
     extraPackages = with pkgs.kdePackages; [
-      breeze-icons
-      breeze
+      qtsvg
+      qtdeclarative
     ];
-    };
+  };
 
   environment.systemPackages = with pkgs; [
     kdePackages.kcalc
     kde-rounded-corners
     plasma-tokyo-night
-    sddmTheme
   ];
 
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
     plasma-browser-integration
     konsole
     elisa
-    (pkgs.writeTextDir "share/sddm/themes/breeze/theme.conf.user" ''
-      [General]
-      background=${wallpaper}
-    '')
   ];
 
   programs.kdeconnect.enable = true;
@@ -101,27 +78,21 @@ in {
     "xdg/kdeglobals".text = ''
       [KDE]
       LookAndFeelPackage=com.github.Jayy-Dev.Plasma.Tokyo.Night
-
       [General]
       ColorScheme=TokyoNight
     '';
-
     "xdg/kwinrc".text = ''
       [org.kde.kdecoration2]
       library=org.kde.kwin.aurorae
       theme=__aurorae__svg__TokyoNight
     '';
-
     "xdg/plasmarc".text = ''
       [Theme]
       name=com.github.Jayy-Dev.Plasma.Tokyo.Night
     '';
-
-    # Lock screen wallpaper
     "xdg/kscreenlockerrc".text = ''
       [Greeter]
       WallpaperPlugin=org.kde.image
-
       [Greeter][Wallpaper][org.kde.image][General]
       Image=file://${wallpaper}
     '';

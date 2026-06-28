@@ -207,7 +207,7 @@
   # Cockpit
   #services.cockpit.enable = true;
 
-  virtualisation.docker.enable = true;
+  #virtualisation.docker.enable = true;
 
   networking.firewall = {
     enable = true;

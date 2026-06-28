@@ -24,6 +24,22 @@ in {
       libdrm
       dxvk
       mesa
+
+    # CUDA and OpenGL
+    cudatoolkit
+    libGLU libGL
+    libXi
+    libXmu
+    freeglut
+    libXext
+    libX11
+    libXv 
+    libXrandr 
+    zlib
+    ncurses5
+    stdenv.cc
+    binutils
+
     ];
   };
 
@@ -61,6 +77,9 @@ in {
       ];
     };
   };
+
+  # CUDA drivers
+  #hardware.nvidia.datacenter.enable = true;
 
   # Load nvidia driver for Xorg and Wayland
   services.xserver.videoDrivers = ["nvidia"];

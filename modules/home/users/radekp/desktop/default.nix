@@ -181,6 +181,15 @@
 
   # Home packages
   home.packages = with pkgs; [
+   
+   lmstudio
+   llmfit
+
+    uv # python package installer and env manager
+
+    opencode
+    qutebrowser-qt5
+ 
     arduino-ide
 
     #browser
@@ -232,12 +241,13 @@
     qpdf
 
     # Virtualization
-    qemu_kvm
-    spice-vdagent
-    virt-viewer
-    virt-manager
+    #qemu_kvm
+    #spice-vdagent
+    #virt-viewer
+    #virt-manager
     qemu
-    OVMF
+    quickemu
+    #OVMF
 
     # GUI Applications
     freecad-wayland

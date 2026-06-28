@@ -12,6 +12,21 @@
     expat
     nspr
 
+    cudaPackages.cudatoolkit
+    linuxPackages.nvidia_x11
+
+    stdenv.cc.cc
+    glib
+    zlib
+    libGL
+    libGLU
+    freeglut
+    libXmu
+    libXrandr
+    libXv
+    ncurses5
+    binutils
+
     # Graphics / Electron / GUI requirements
     #xorg.libX11
     #xorg.libXcomposite
