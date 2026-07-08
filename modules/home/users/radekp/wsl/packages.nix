@@ -78,9 +78,8 @@ in {
   
   xdg.configFile."containers/containers.conf".text = ''
   [engine]
-  helper_binaries_dir = ["${pkgs.podman}/libexec/podman"]
+  helper_binaries_dir = ["${pkgs.gvproxy}/bin", "${pkgs.netavark}/bin", "${pkgs.aardvark-dns}/bin", "${pkgs.passt}/bin", "${pkgs.podman}/libexec/podman"]
 '';
-
 
   home.packages = with pkgs; [
     
@@ -183,7 +182,7 @@ in {
     fzf
     jq
     git
-    helm
+    openshift
     terraform
     ansible
     powershell
@@ -199,5 +198,7 @@ in {
     podman-compose
     cmake
     gnumake
+    gvproxy
+    gvisor
   ];
 }
