@@ -120,9 +120,16 @@ in {
         thefuzz
         datetime
         argparse
+	websocket-client
+	pyperclip
+	openssh
 
         python-tss-sdk
       ]))
+
+    microsoft-edge
+    chromium
+    
     gh
     htop
 
@@ -170,7 +177,7 @@ in {
       nixhubio_azcli.azure-cli-extensions.dynatrace
       nixhubio_azcli.azure-cli-extensions.costmanagement
       nixhubio_azcli.azure-cli-extensions.databricks
-    ])
+      ])
 
     kubectl
     awscli2
