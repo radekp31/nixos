@@ -75,14 +75,12 @@
       system = pkgs.stdenv.targetPlatform.system;
     };
 in {
-  
   xdg.configFile."containers/containers.conf".text = ''
-  [engine]
-  helper_binaries_dir = ["${pkgs.gvproxy}/bin", "${pkgs.netavark}/bin", "${pkgs.aardvark-dns}/bin", "${pkgs.passt}/bin", "${pkgs.podman}/libexec/podman"]
-'';
+    [engine]
+    helper_binaries_dir = ["${pkgs.gvproxy}/bin", "${pkgs.netavark}/bin", "${pkgs.aardvark-dns}/bin", "${pkgs.passt}/bin", "${pkgs.podman}/libexec/podman"]
+  '';
 
   home.packages = with pkgs; [
-    
     # QEMU packages
     qemu
     quickemu
@@ -94,7 +92,7 @@ in {
     podman
     netavark
     aardvark-dns
-    passt        # provides pasta
+    passt # provides pasta
 
     nixos-icons
     alejandra
@@ -120,16 +118,16 @@ in {
         thefuzz
         datetime
         argparse
-	websocket-client
-	pyperclip
-	openssh
+        websocket-client
+        pyperclip
+        openssh
 
         python-tss-sdk
       ]))
 
     microsoft-edge
     chromium
-    
+
     gh
     htop
 
@@ -177,7 +175,7 @@ in {
       nixhubio_azcli.azure-cli-extensions.dynatrace
       nixhubio_azcli.azure-cli-extensions.costmanagement
       nixhubio_azcli.azure-cli-extensions.databricks
-      ])
+    ])
 
     kubectl
     awscli2

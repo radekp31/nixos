@@ -48,7 +48,7 @@
 
         fi
       fi
-      
+
 
       # Only for interactive shells
       if [[ $- == *i* ]]; then
@@ -162,7 +162,7 @@
         nvim "+$line" "$file"
       fi
       }
-      
+
       #Integrate direnv
       eval "$(direnv hook zsh)"
 

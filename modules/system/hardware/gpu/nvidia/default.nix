@@ -25,21 +25,21 @@ in {
       dxvk
       mesa
 
-    # CUDA and OpenGL
-    cudatoolkit
-    libGLU libGL
-    libXi
-    libXmu
-    freeglut
-    libXext
-    libX11
-    libXv 
-    libXrandr 
-    zlib
-    ncurses5
-    stdenv.cc
-    binutils
-
+      # CUDA and OpenGL
+      cudatoolkit
+      libGLU
+      libGL
+      libXi
+      libXmu
+      freeglut
+      libXext
+      libX11
+      libXv
+      libXrandr
+      zlib
+      ncurses5
+      stdenv.cc
+      binutils
     ];
   };
 

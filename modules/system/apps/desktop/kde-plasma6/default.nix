@@ -42,7 +42,7 @@ in {
   services.displayManager.sddm = {
     enable = true;
     wayland.enable = true;
-    
+
     # Sugar Candy relies on the graphical SVG core layout elements inside raw components
     extraPackages = with pkgs.kdePackages; [
       qtsvg

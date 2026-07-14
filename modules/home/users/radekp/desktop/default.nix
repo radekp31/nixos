@@ -181,15 +181,14 @@
 
   # Home packages
   home.packages = with pkgs; [
-   
-   lmstudio
-   llmfit
+    lmstudio
+    llmfit
 
     uv # python package installer and env manager
 
     opencode
     qutebrowser-qt5
- 
+
     arduino-ide
 
     #browser

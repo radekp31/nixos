@@ -18,6 +18,13 @@
   programs.nixvim = {
     #Includes functions get_bufnrs
     enable = true;
+
+    extraConfigLuaPre = ''
+      vim.g.netrw_sort_by = "time"
+      vim.g.netrw_liststyle = 1
+      vim.g.netrw_sort_direction = "reverse"
+    '';
+
     nixpkgs.source = inputs.nixpkgs;
     keymaps = [
       {

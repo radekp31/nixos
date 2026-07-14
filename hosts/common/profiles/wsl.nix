@@ -15,7 +15,17 @@
     enable = true;
     dockerCompat = true;
   };
-  
-  users.users.root.subUidRanges = [{ startUid = 100000; count = 655360; }];
-  users.users.root.subGidRanges = [{ startGid = 100000; count = 655360; }];
+
+  users.users.root.subUidRanges = [
+    {
+      startUid = 100000;
+      count = 655360;
+    }
+  ];
+  users.users.root.subGidRanges = [
+    {
+      startGid = 100000;
+      count = 655360;
+    }
+  ];
 }
