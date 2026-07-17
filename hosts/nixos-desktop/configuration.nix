@@ -135,16 +135,14 @@
     "fbcon=map:0"
     "video=DP-2:1920x1080"
     "video=DP-3:off"
-    #"pcie_port_pm=off"
     "nvme_core.io_timeout=30"
     "nvme_core.max_retries=5"
-    # Disable nvme power saving
-    #"pcie_aspm=off"
-    #"nvme_core.default_ps_max_latency_us=0"
-    # CPU cooler driver setup
     "acpi_enforce_resources=lax"
     "pcie_ports=native"
+
+    "crash_kexec_post_notifiers"
   ];
+
 
   boot.kernel.sysctl."kernel.unprivileged_userns_clone" = 1;
   boot.kernel.sysctl."kernel.sysrq" = 1;
