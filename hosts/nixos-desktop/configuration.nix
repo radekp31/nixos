@@ -139,8 +139,6 @@
     "nvme_core.max_retries=5"
     "acpi_enforce_resources=lax"
     "pcie_ports=native"
-
-    "crash_kexec_post_notifiers"
   ];
 
 
