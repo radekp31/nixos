@@ -121,6 +121,13 @@ in {
         websocket-client
         pyperclip
         openssh
+	rapidfuzz
+	beautifulsoup4
+	lxml
+	pdfminer-six
+	pdfplumber
+
+	
 
         python-tss-sdk
       ]))
@@ -205,5 +212,7 @@ in {
     gnumake
     gvproxy
     gvisor
+
+    zstd
   ];
 }
