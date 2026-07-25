@@ -20,6 +20,9 @@
       # Enable mouse
       set -g mouse on
 
+      # Move tmux status bar on top of the screen
+      set -g status-position top
+
       # Enable terminal/CSD title updates
       set -g set-titles on
       set -g set-titles-string "#S: #W"
