@@ -11,11 +11,19 @@
     customPaneNavigationAndResize = true;
     aggressiveResize = true;
     newSession = true;
-    #shortcut = "b";
     shortcut = "Space";
-    terminal = "screen-256color";
+
+    # Modern tmux terminfo profile
+    terminal = "tmux-256color";
 
     extraConfig = ''
+      # Enable mouse
+      set -g mouse on
+
+      # Enable terminal/CSD title updates
+      set -g set-titles on
+      set -g set-titles-string "#S: #W"
+
       # Status bar styling
       set-option -g status-left-length 50
       set-option -g status-right-length 50
@@ -45,9 +53,17 @@
       bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
       bind-key -T copy-mode-vi 'y' send-keys -X copy-selection-and-cancel
 
-      # Use terminal colorscheme
-      set-option -sa terminal-overrides ",xterm*:Tc"
+      # True color (24-bit) support for foot and modern terminals
+      set-option -sa terminal-overrides ",foot:Tc,xterm*:Tc"
 
+      # Session management
+      # Always have sessions created
+
+      # System management session
+      new-session -d -s mgmt -c "/etc/nixos"
+
+      # Scratch session for random stuff
+      new-session -d -s scratch -c "/tmp"
     '';
 
     plugins = with pkgs.tmuxPlugins; [

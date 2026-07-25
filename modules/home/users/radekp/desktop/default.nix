@@ -8,7 +8,10 @@
     ../../../shells/zsh
 
     # Terminal emulator
-    ../../../apps/foot
+    ../../../apps/alacritty
+
+    # Tmux
+    ../../../apps/tmux
 
     # Enable catpuccin
     ../../../colorschemes/catppuccin
@@ -187,7 +190,6 @@
     uv # python package installer and env manager
 
     opencode
-    qutebrowser-qt5
 
     arduino-ide
 

@@ -12,7 +12,21 @@
         dpi-aware = "yes";
         font = "JetBrains Mono:size=14.5";
         initial-window-size-chars = "130x35";
+        #decorations = "client"; # title bar
+
+        # Launch tmux directly on foot startup
+        shell = "${pkgs.tmux}/bin/tmux new-session -A -s main";
       };
+      csd = {
+        preferred = "client";
+        size = "32"; # Title bar height in pixels
+        font = "Noto Sans:size=10";
+        color = "ff24273a"; # Matches your Catppuccin Macchiato background (ARGB format)
+        button-color = "ffcad3f5"; # Close/minimize button color
+        border-width = "1";
+        border-color = "ff494d64";
+      };
+
       mouse = {
         hide-when-typing = "yes";
       };
@@ -47,9 +61,11 @@
       };
     };
   };
+
   home.packages = with pkgs; [
     jetbrains-mono
   ];
+
   systemd.user.services.foot-server = {
     Unit = {
       Description = "Foot Terminal Server";

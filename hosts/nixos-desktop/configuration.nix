@@ -141,7 +141,6 @@
     "pcie_ports=native"
   ];
 
-
   boot.kernel.sysctl."kernel.unprivileged_userns_clone" = 1;
   boot.kernel.sysctl."kernel.sysrq" = 1;
 
