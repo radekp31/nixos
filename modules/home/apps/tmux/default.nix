@@ -19,6 +19,7 @@
       set -g set-clipboard on
 
       # 2. Configure tmux-yank for Wayland / KDE
+      # User 'Ctrl+<Shortcut>+[' to enter vim style copy mode
       set -g @override_copy_command 'wl-copy'
 
       # Enable mouse support for click-and-drag selection directly to clipboard
