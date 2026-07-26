@@ -1,5 +1,4 @@
-# Config here: https://www.youtube.com/watch?v=DzNmUNvnB04&t
-{pkgs, ...}: {
+{ pkgs, ... }: {
   programs.tmux = {
     enable = true;
     clock24 = true;
@@ -13,59 +12,50 @@
     newSession = true;
     shortcut = "Space";
 
-    # Modern tmux terminfo profile
     terminal = "tmux-256color";
 
     extraConfig = ''
-      # Enable mouse
+      # 1. Enable native terminal clipboard sync (OSC 52)
+      set -g set-clipboard on
+
+      # 2. Configure tmux-yank for Wayland / KDE
+      set -g @override_copy_command 'wl-copy'
+
+      # Enable mouse support for click-and-drag selection directly to clipboard
       set -g mouse on
 
-      # Move tmux status bar on top of the screen
-      set -g status-position top
+      # Vi mode selection bindings
+      bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
+      bind-key -T copy-mode-vi 'y' send-keys -X copy-pipe-and-cancel "wl-copy"
 
-      # Enable terminal/CSD title updates
+      # Optional: Bind 'p' in normal tmux mode to paste directly from Wayland clipboard
+      bind-key p run "wl-paste --no-newline | tmux load-buffer - && tmux paste-buffer"
+
+      # --- Rest of your existing extraConfig ---
+      set -g status-position top
       set -g set-titles on
       set -g set-titles-string "#S: #W"
 
-      # Status bar styling
       set-option -g status-left-length 50
       set-option -g status-right-length 50
-
-      # Show current session and window list
       set-option -g status-left "#[fg=cyan,bold]#S#[default] | "
       set-option -g status-right "#[fg=green]%H:%M#[default] %d-%b-%y"
       set-option -g status-justify left
       set-option -g status-interval 1
 
-      # Pane borders
       set-option -g pane-border-style "fg=white"
       set-option -g pane-active-border-style "fg=cyan"
 
-      # Session switcher with fzf
       bind-key s display-popup -E "tmux list-sessions -F '#{session_name}' | fzf | xargs tmux switch-client -t"
-
-      # Additional useful bindings
       bind-key -n C-l choose-session
-      bind-key r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded"
+      bind-key r source-file ~/.config/tmux/tmux.conf \\; display "Config reloaded"
 
-      # Improved split bindings
       bind-key v split-window -h -c "#{pane_current_path}"
       bind-key c new-window -c "#{pane_current_path}"
 
-      # VI mode navigation
-      bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
-      bind-key -T copy-mode-vi 'y' send-keys -X copy-selection-and-cancel
+      set-option -sa terminal-overrides ",foot:Tc,xterm*:Tc,konsole:Tc"
 
-      # True color (24-bit) support for foot and modern terminals
-      set-option -sa terminal-overrides ",foot:Tc,xterm*:Tc"
-
-      # Session management
-      # Always have sessions created
-
-      # System management session
       new-session -d -s mgmt -c "/etc/nixos"
-
-      # Scratch session for random stuff
       new-session -d -s scratch -c "/tmp"
     '';
 
@@ -74,7 +64,7 @@
       vim-tmux-navigator
       resurrect
       continuum
-      yank
+      yank # Handles yanks and mouse selection copying
     ];
   };
 }
