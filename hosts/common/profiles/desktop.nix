@@ -3,6 +3,14 @@
   # Enable networking (already in common/default.nix, so remove or keep for clarity)
   # networking.networkmanager.enable = true;  # Remove - duplicate from common
 
+  environment.sessionVariables = {
+    #ensure any GTK app launched under KDE or Wayland can reliably locate its interface schemas
+    XDG_DATA_DIRS = [
+      "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}"
+      "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}"
+    ];
+  };
+
   # Sound with pipewire
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -35,7 +43,24 @@
   #};
 
   # Desktop fonts - system-wide
+
+  fonts = {
+    fontconfig = {
+      enable = true;
+      defaultFonts = {
+        sansSerif = ["Noto Sans" "DejaVu Sans"];
+        serif = ["Noto Serif" "DejaVu Serif"];
+        monospace = ["FiraCode Nerd Font" "JetBrainsMono Nerd Font"];
+      };
+    };
+  };
+
   fonts.packages = with pkgs; [
+    noto-fonts
+    cantarell-fonts
+    liberation_ttf
+    dejavu_fonts
+
     dejavu_fonts
     nerd-fonts.fira-code
     nerd-fonts.jetbrains-mono

@@ -182,6 +182,11 @@
   #TODO - Explore this
   #programs.lesspipe.enable = true;
 
+  programs.firefox = {
+    enable = true;
+    package = pkgs.firefox-esr;
+  };
+
   # Home packages
   home.packages = with pkgs; [
     lmstudio
@@ -194,7 +199,7 @@
     arduino-ide
 
     #browser
-    firefox-esr
+    #firefox-esr
 
     # Security & Secrets
     age

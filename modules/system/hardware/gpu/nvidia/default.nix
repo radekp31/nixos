@@ -119,7 +119,8 @@ in {
     # https://github.com/NVIDIA/open-gpu-kernel-modules#compatible-gpus
     # Only available from driver 515.43.04+
     # Currently alpha-quality/buggy, so false is currently the recommended setting.
-    open = true;
+    #open = true;
+    open = false;
 
     # Enable DRM kernel mode setting
     forceFullCompositionPipeline = true;
