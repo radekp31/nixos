@@ -6,6 +6,7 @@
   imports = [
     ./users.nix
     ./variables.nix
+    ./devbox.nix
     ../common/default.nix
     ../common/profiles/wsl.nix
     ../../modules/system/apps/wsl-nixvim
