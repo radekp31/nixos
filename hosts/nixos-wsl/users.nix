@@ -11,7 +11,7 @@
     radekp = {
       isNormalUser = true;
       createHome = true;
-      extraGroups = ["wheel" "docker"];
+      extraGroups = ["wheel" "docker" "kvm"];
       group = "users";
       home = "/home/radekp";
       shell = pkgs.zsh;
