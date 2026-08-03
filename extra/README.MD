@@ -70,9 +70,10 @@ protect reproducibility and prevent broken auto-deploys.
   below.)
 - **Identity is hardcoded.** The string `radekp` appears in 17 `.nix` files.
   Add a `my.user` option set and reference it. (Also tracked below.)
-- **Dead code remains.** `modules/home/apps/desktop/niri/default.nix.bak`,
-  large commented blocks in `parts/hosts.nix`, `modules/system/secrets/sops`,
-  and `hosts/common/profiles/desktop.nix` add noise. Remove or restore them.
+- **Dead code remains.** [DONE 2026-08-04] The niri module and its `.bak`, plus
+  all niri references in `noctalia`, `nvidia`, and `zsh`, are removed. Still
+  open: large commented blocks in `parts/hosts.nix`, `modules/system/secrets/sops`,
+  and `hosts/common/profiles/desktop.nix`. Remove or restore them.
 - **devShell pin name misleads.** `parts/shells.nix:13` binds
   `pkgs25_11` to an argument named `pkgs25_05`. Rename for one term, one
   meaning.
@@ -98,6 +99,10 @@ protect reproducibility and prevent broken auto-deploys.
   - Convert static imports (like KDE/Plasma) to use `options` and `mkEnableOption`.
 - [ ] **Centralize Global Constants**
   - Define `my.user.name`, `email`, etc., in a global module instead of hardcoding.
+- [ ] **Host-Wide Version Selector**
+  - Add one option to set the major nixpkgs release per host.
+  - Keep an escape hatch to override specific packages from another release.
+  - Design together with `mkHost` and the `my.*` option set.
 - [ ] **Clean up Path References**
   - Replace deep relative imports (`../../../../`) with `inputs.self` references.
 - [ ] **Update Auto-Upgrade Logic**

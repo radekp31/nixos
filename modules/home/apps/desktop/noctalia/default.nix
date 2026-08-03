@@ -403,7 +403,6 @@
         telegram = true;
         cava = false;
         emacs = false;
-        niri = true;
         enableUserTemplates = false;
       };
       nightLight = {
