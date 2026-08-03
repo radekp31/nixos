@@ -189,6 +189,9 @@
 
   # Home packages
   home.packages = with pkgs; [
+    claude-code
+    claude-monitor
+   
     lmstudio
     llmfit
 

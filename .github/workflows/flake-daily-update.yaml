@@ -39,6 +39,24 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
+      - name: Validate flake evaluation (build gate)
+        if: steps.check-changes.outputs.changed == 'true'
+        run: nix flake check --print-build-logs
+
+      - name: Build all host system closures (build gate)
+        if: steps.check-changes.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
+          hosts=$(nix eval '.#nixosConfigurations' \
+            --apply 'cfgs: builtins.concatStringsSep " " (builtins.attrNames cfgs)' --raw)
+          echo "Building hosts: $hosts"
+          for host in $hosts; do
+            echo "::group::Build $host"
+            nix build ".#nixosConfigurations.${host}.config.system.build.toplevel" \
+              --no-link --print-build-logs
+            echo "::endgroup::"
+          done
+
       - name: Create Pull Request
         if: steps.check-changes.outputs.changed == 'true'
         id: cpr
