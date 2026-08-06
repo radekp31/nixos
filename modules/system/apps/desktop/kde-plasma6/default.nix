@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: let
+{pkgs, ...}: let
   wallpaper = pkgs.stdenvNoCC.mkDerivation {
     name = "sddm-wallpaper";
     src = ./piqsels.com-id-oanpz.jpg;

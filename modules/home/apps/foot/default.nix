@@ -1,8 +1,5 @@
 # modules/home/apps/foot/default.nix
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   programs.foot = {
     enable = true;
     settings = {

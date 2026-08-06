@@ -1,7 +1,6 @@
 {
   inputs,
   osConfig,
-  config,
   ...
 }: let
   flavor =

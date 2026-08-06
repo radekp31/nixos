@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   programs.nix-ld = {
     enable = true;
     # Provide common libs for foreign binaries

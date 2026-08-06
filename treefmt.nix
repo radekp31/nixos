@@ -10,6 +10,11 @@
   #programs.alejandra.package = pkgs.alejandra;
   programs.prettier.enable = true;
   programs.deadnix.enable = true;
+
+  # Run deadnix before alejandra. deadnix removes unused arguments.
+  # alejandra then reformats the result. This makes one pass idempotent.
+  settings.formatter.deadnix.priority = 1;
+  settings.formatter.alejandra.priority = 2;
   #programs.dockerfmt.enable = true;
   #programs.terraform.enable = true;
   #programs.tomlsort.enable = true;
