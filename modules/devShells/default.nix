@@ -11,7 +11,7 @@
   # Import tool definitions
   pythonTools = import ./tools/python.nix {inherit pkgs;};
   devopsTools = import ./tools/devops.nix {inherit pkgs pkgs_unstable aztfexport;};
-  azureTools = import ./tools/azure.nix {inherit pkgs pkgs25_05;};
+  azureTools = import ./tools/azure.nix {inherit pkgs25_05;};
   nixTools = import ./tools/nix.nix {inherit pkgs;};
 in {
   default = pkgs.mkShell {

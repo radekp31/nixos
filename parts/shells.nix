@@ -4,9 +4,12 @@
     system,
     ...
   }: {
-    devShells.default = let
+    devShells = let
       pkgs25_11 = inputs.nixpkgs_deprecated.legacyPackages.${system};
-      pkgs_unstable = inputs.nixpkgs_unstable.legacyPackages.${system};
+      pkgs_unstable = import inputs.nixpkgs_unstable {
+        inherit system;
+        config.allowUnfree = true;
+      };
     in
       import ../modules/devShells {
         inherit pkgs pkgs_unstable system;
