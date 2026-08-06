@@ -1,7 +1,6 @@
 # modules/home/apps/foot/default.nix
 {
   pkgs,
-  lib,
   ...
 }: {
   programs.foot = {

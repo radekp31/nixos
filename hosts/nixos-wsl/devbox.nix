@@ -9,10 +9,10 @@
     podman-compose
     jq
     gnumake
-    gvproxy   # podman machine network proxy
+    gvproxy # podman machine network proxy
     virtiofsd # podman machine filesystem share
-    qemu      # provides qemu-system-x86_64
-    shadow    # provides sg/newgrp — activates kvm group without re-login
+    qemu # provides qemu-system-x86_64
+    shadow # provides sg/newgrp — activates kvm group without re-login
   ];
 
   # Persistent /dev/kvm ownership so QEMU can open it after WSL restarts

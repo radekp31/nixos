@@ -7,47 +7,49 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, rust-overlay, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        overlays = [ (import rust-overlay) ];
-        pkgs = import nixpkgs {
-          inherit system overlays;
-        };
+  outputs = {
+    nixpkgs,
+    rust-overlay,
+    flake-utils,
+  }:
+    flake-utils.lib.eachDefaultSystem (system: let
+      overlays = [(import rust-overlay)];
+      pkgs = import nixpkgs {
+        inherit system overlays;
+      };
 
-        rustToolchain = pkgs.rust-bin.stable.latest.default.override {
-          extensions = [ "rust-src" "rust-analyzer"];
-	  targets = [ "wasm32-unknown-unknown" ];
-        };
-      in
-      {
-        devShells.default = pkgs.mkShell {
-          buildInputs = with pkgs; [
-	    wasm-pack
-	    binaryen
-	    
-            rustToolchain
+      rustToolchain = pkgs.rust-bin.stable.latest.default.override {
+        extensions = ["rust-src" "rust-analyzer"];
+        targets = ["wasm32-unknown-unknown"];
+      };
+    in {
+      devShells.default = pkgs.mkShell {
+        buildInputs = with pkgs; [
+          wasm-pack
+          binaryen
 
-            # build tooling
-            pkg-config
-            openssl
+          rustToolchain
 
-            # useful for testing the actual CLI tools this project wraps
-            ripgrep
-            fzf
+          # build tooling
+          pkg-config
+          openssl
 
-            # handy extras for a web+rust project
-            cargo-watch
-            cargo-edit
-            nodejs_22   # only if you end up wanting a JS build step for the frontend
-          ];
+          # useful for testing the actual CLI tools this project wraps
+          ripgrep
+          fzf
 
-          # some crates (e.g. openssl-sys via tokio-tungstenite tls features) need this
-          PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
+          # handy extras for a web+rust project
+          cargo-watch
+          cargo-edit
+          nodejs_22 # only if you end up wanting a JS build step for the frontend
+        ];
 
-          shellHook = ''
-            echo "codesearch dev shell — rustc $(rustc --version)"
-          '';
-        };
-      });
+        # some crates (e.g. openssl-sys via tokio-tungstenite tls features) need this
+        PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
+
+        shellHook = ''
+          echo "codesearch dev shell — rustc $(rustc --version)"
+        '';
+      };
+    });
 }

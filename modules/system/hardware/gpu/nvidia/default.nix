@@ -176,5 +176,4 @@ in {
       ${config.hardware.nvidia.package.bin}/bin/nvidia-smi -i 0 -pl 130
     '';
   };
-
 }

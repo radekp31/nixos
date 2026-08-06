@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{ ...}: {
   boot.kernelModules = ["btusb" "uhid"];
   boot.kernelParams = ["usbcore.autosuspend=-1"];
 

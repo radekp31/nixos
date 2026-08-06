@@ -1,6 +1,5 @@
 {
   pkgs,
-  lib,
   ...
 }: let
   wallpaper = pkgs.stdenvNoCC.mkDerivation {

@@ -2,7 +2,6 @@
   pkgs,
   pkgs25_05,
   pkgs_unstable,
-  system,
   ...
 }: let
   # Import custom derivations

@@ -2,14 +2,12 @@
   inputs,
   osConfig,
   config,
-  lib,
   ...
 }: let
   flavor =
     if (osConfig ? catppuccinTheme)
     then osConfig.catppuccinTheme
     else "macchiato";
-  sources = config.catppuccin.sources;
 in {
   imports = [inputs.catppuccin.homeModules.catppuccin];
   catppuccin = {
