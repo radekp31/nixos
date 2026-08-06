@@ -13,6 +13,12 @@ jobs:
   update-flake:
     runs-on: ubuntu-latest
     steps:
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          large-packages: false
+
       - name: Install Nix
         uses: cachix/install-nix-action@v27
         with:
