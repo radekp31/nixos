@@ -1,4 +1,5 @@
----
+name: Update Flake Lock
+
 on:
   schedule:
     - cron: "0 2 * * *"
@@ -13,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Nix
-        uses: cachix/install-nix-action@v27 # the marketplace action
+        uses: cachix/install-nix-action@v27
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
@@ -24,7 +25,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          #fetch-depth: 1
           fetch-depth: 0
 
       - name: Update flake.lock
@@ -70,7 +70,6 @@ jobs:
           labels: |
             automation
             dependencies
-          reviewers: ""
 
       - name: Auto-approve
         if: steps.check-changes.outputs.changed == 'true'
@@ -86,6 +85,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BOT_PAT }}
 
       - name: Clean up branch if merge failed
-        if: steps.check-changes.outputs.changed == 'true'
+        if: failure() && steps.check-changes.outputs.changed == 'true'
         run: |
           git push origin --delete chore/daily-flake-update || true
