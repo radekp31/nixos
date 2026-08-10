@@ -1,43 +1,66 @@
 local wezterm = require 'wezterm'
-local act = wezterm.action
 local config = wezterm.config_builder()
 
--- OS specific
+--------------------------------------------------------------------------------
+-- OS-Specific Configuration
+--------------------------------------------------------------------------------
 if wezterm.target_triple:find("windows") then
   config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
   config.integrated_title_buttons = { 'Hide', 'Maximize', 'Close' }
   config.integrated_title_button_style = "Windows"
   config.integrated_title_button_alignment = "Right"
   config.default_prog = { 'wsl.exe', '-d', 'NixOS', '--cd', '~' }
+  config.font_size = 13.5
 else
   config.window_decorations = "NONE"
+  config.font_size = 16
 end
 
--- Appearance
+--------------------------------------------------------------------------------
+-- Performance & Low Latency
+--------------------------------------------------------------------------------
+config.front_end = "WebGpu"
+config.webgpu_power_preference = "LowPower"
+config.animation_fps = 1
+config.cursor_blink_ease_in = "Constant"
+config.cursor_blink_ease_out = "Constant"
+config.check_for_updates = false
+
+--------------------------------------------------------------------------------
+-- Appearance (tmux takes care of tabs/status)
+--------------------------------------------------------------------------------
 config.color_scheme = 'Catppuccin Macchiato'
-config.font_size = 13.5
+
 config.use_fancy_tab_bar = false
-config.enable_scroll_bar = false
+config.enable_tab_bar = true
+config.enable_scroll_bar = true
+
 config.scrollback_lines = 5000
 config.audible_bell = "Disabled"
+config.window_padding = {
+  left = 6,
+  right = 6,
+  top = 6,
+  bottom = 6,
+}
 
--- Performance
-config.front_end = "OpenGL"
+--------------------------------------------------------------------------------
+-- Font Configuration
+--------------------------------------------------------------------------------
+config.harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' }
 
--- Font
 config.font = wezterm.font_with_fallback({
-  {
-    family = 'JetBrains Mono',
-    weight = 'Regular',
-    harfbuzz_features = { 'calt=0', 'clig=0', 'liga=0' },
-  },
-  'Symbols Nerd Font Mono',
+  { family = 'JetBrains Mono', weight = 'Regular' },
+  { family = 'Symbols Nerd Font Mono' },
 })
 
--- Keymaps
+--------------------------------------------------------------------------------
+-- Keybindings (Minimalist - Let tmux handle the rest)
+--------------------------------------------------------------------------------
+-- Keeping default OS pass-throughs; add full-screen toggles or font zoom if needed
 config.keys = {
-  { key = 'mapped:+', mods = 'SHIFT|ALT', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
-  { key = 'mapped:_', mods = 'SHIFT|ALT', action = act.SplitVertical { domain = 'CurrentPaneDomain' } },
-  { key = 'LeftArrow', mods = 'ALT', action = act.ActivatePaneDirection 'Left' },
-  { key = 'RightArrow', mods = 'ALT', action = act.ActivatePaneDirection 'Right' },
-  { key = 'UpArrow', mods = 'ALT', action = act.Activ
+  -- Example: Toggle fullscreen window
+  { key = 'F11', mods = 'NONE', action = wezterm.action.ToggleFullScreen },
+}
+
+return config
