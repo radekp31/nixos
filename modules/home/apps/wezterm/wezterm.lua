@@ -11,6 +11,30 @@ if wezterm.target_triple:find("windows") then
   config.integrated_title_button_alignment = "Right"
   config.default_prog = { 'wsl.exe', '-d', 'NixOS', '--cd', '~' }
   config.font_size = 13.5
+
+--------------------------------------------------------------------------------
+-- Windows-Specific Launch menu
+--------------------------------------------------------------------------------
+
+    config.launch_menu = {
+    {
+      label = 'NixOS stable',
+      args = { 'wsl.exe', '-d', 'NixOS', '--cd', '~' },
+    },
+    {
+      label = 'Ubuntu 24.04',
+      args = { 'wsl.exe', '-d', 'Ubuntu_24.04', '--cd', '~' },
+    },
+    {
+      label = 'Ubuntu 26.04',
+      args = { 'wsl.exe', '-d', 'Ubuntu_26.04', '--cd', '~' },
+    },
+    {
+      label = 'PowerShell',
+      args = { 'powershell.exe', '-NoLogo' },
+    },
+  }
+
 else
   config.window_decorations = "NONE"
   config.font_size = 16
@@ -62,5 +86,12 @@ config.keys = {
   -- Example: Toggle fullscreen window
   { key = 'F11', mods = 'NONE', action = wezterm.action.ToggleFullScreen },
 }
+
+-- Add platform-specific keys
+if wezterm.target_triple:find("windows") then
+  table.insert(config.keys, {
+    key = 'u', mods = 'ALT', action = wezterm.action.ShowLauncher,
+  })
+end
 
 return config
