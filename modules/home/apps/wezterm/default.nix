@@ -1,4 +1,4 @@
-{ ... }: {
+{...}: {
   programs.wezterm = {
     enable = true;
     enableZshIntegration = true;
@@ -9,5 +9,4 @@
   # Either: cp /mnt/c/Users/radek.polasek/.config/wezterm/wezterm.lua /etc/nixos/modules/home/apps/wezterm/wezterm.lua
   #
   # Or:  Copy-Item "\\wsl$\NixOS\etc\nixos\modules\home\apps\wezterm\wezterm_win.lua" -Destination "$env:USERPROFILE\.config\wezterm\wezterm.lua" -Force
-  
 }

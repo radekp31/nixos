@@ -90,7 +90,7 @@ config.keys = {
 -- Add platform-specific keys
 if wezterm.target_triple:find("windows") then
   table.insert(config.keys, {
-    key = 'u', mods = 'ALT', action = wezterm.action.ShowLauncher,
+    key = 'i', mods = 'ALT', action = wezterm.action.ShowLauncher,
   })
 end
 

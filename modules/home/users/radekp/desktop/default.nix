@@ -20,7 +20,6 @@
 
   xdg.configFile."wezterm/wezterm.lua".source = ../../../apps/wezterm/wezterm.lua;
 
-
   disabledModules = [
     "/nix/store/dqmxyxfndh0lzc1x57fbyi7kaa4j3qjg-source/modules/home-manager/opencode.nix"
   ];
