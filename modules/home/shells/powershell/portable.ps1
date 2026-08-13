@@ -1,5 +1,8 @@
 #!/usr/bin/env pwsh
 
+# This script in intented for install on Linux environments
+# Requires powershell installed
+
 if (Test-Path $PROFILE) {
     Copy-Item $PROFILE "$PROFILE.manual-backup"
 }
