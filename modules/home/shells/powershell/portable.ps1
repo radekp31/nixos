@@ -11,6 +11,8 @@
 #
 #Bash:
 #curl -fsSL "https://raw.githubusercontent.com/radekp31/nixos/refs/heads/main/modules/home/shells/powershell/portable.ps1" | pwsh -NoProfile -Command -
+
+
 if (Test-Path $PROFILE) {
     Copy-Item $PROFILE "$PROFILE.manual-backup"
 }
