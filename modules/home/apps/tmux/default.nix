@@ -9,7 +9,6 @@
     historyLimit = 15000;
     customPaneNavigationAndResize = true;
     aggressiveResize = true;
-    newSession = true;
     shortcut = "Space";
 
     terminal = "tmux-256color";

@@ -8,7 +8,6 @@
     ../../../shells/zsh
 
     # Terminal emulator
-    ../../../apps/alacritty
     ../../../apps/wezterm
 
     # Tmux
@@ -199,6 +198,7 @@
     llmfit
 
     uv # python package installer and env manager
+    python3
 
     opencode
 

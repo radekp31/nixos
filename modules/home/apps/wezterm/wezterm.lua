@@ -4,6 +4,8 @@ local config = wezterm.config_builder()
 --------------------------------------------------------------------------------
 -- OS-Specific Configuration
 --------------------------------------------------------------------------------
+-- Windows-Specific Launch menu
+--------------------------------------------------------------------------------
 if wezterm.target_triple:find("windows") then
   config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
   config.integrated_title_buttons = { 'Hide', 'Maximize', 'Close' }
@@ -12,9 +14,6 @@ if wezterm.target_triple:find("windows") then
   config.default_prog = { 'wsl.exe', '-d', 'NixOS', '--cd', '~' }
   config.font_size = 13.5
 
---------------------------------------------------------------------------------
--- Windows-Specific Launch menu
---------------------------------------------------------------------------------
 
     config.launch_menu = {
     {
@@ -35,9 +34,20 @@ if wezterm.target_triple:find("windows") then
     },
   }
 
-else
-  config.window_decorations = "NONE"
+--------------------------------------------------------------------------------
+-- Linux-Specific Launch menu
+--------------------------------------------------------------------------------
+elseif wezterm.target_triple:find("linux") then
+  config.default_prog = { 'tmux' }
+  config.window_decorations = "RESIZE"
+  -- WORKAROUND: KWin on Wayland always draws its own server-side title bar
+  -- and ignores window_decorations over the native Wayland protocol.
+  -- Force XWayland so KWin honors window_decorations via X11 MWM hints instead.
+  -- config.enable_wayland = false
   config.font_size = 16
+  config.use_fancy_tab_bar = false
+  config.enable_tab_bar = false
+  config.enable_scroll_bar = true
 end
 
 --------------------------------------------------------------------------------
@@ -51,13 +61,13 @@ config.cursor_blink_ease_out = "Constant"
 config.check_for_updates = false
 
 --------------------------------------------------------------------------------
--- Appearance (tmux takes care of tabs/status)
+-- Appearance 
 --------------------------------------------------------------------------------
 config.color_scheme = 'Catppuccin Macchiato'
 
-config.use_fancy_tab_bar = false
-config.enable_tab_bar = true
-config.enable_scroll_bar = true
+-- config.use_fancy_tab_bar = false
+-- config.enable_tab_bar = true
+-- config.enable_scroll_bar = true
 
 config.scrollback_lines = 5000
 config.audible_bell = "Disabled"
