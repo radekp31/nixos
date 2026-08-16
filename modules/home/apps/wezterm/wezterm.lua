@@ -38,18 +38,20 @@ if wezterm.target_triple:find("windows") then
 -- Linux-Specific Launch menu
 --------------------------------------------------------------------------------
 elseif wezterm.target_triple:find("linux") then
-  config.default_prog = { 'tmux' }
-  config.window_decorations = "RESIZE"
-  -- WORKAROUND: KWin on Wayland always draws its own server-side title bar
-  -- and ignores window_decorations over the native Wayland protocol.
-  -- Force XWayland so KWin honors window_decorations via X11 MWM hints instead.
-  -- config.enable_wayland = false
+  config.default_prog = { 'tmux', 'new-session', '-A', '-s', 'mgmt' }
   config.font_size = 16
+
+  -- Keep Wayland enabled
+  config.enable_wayland = true
+
+  -- Completely disable title bar and window decorations
+  config.window_decorations = "NONE"
+  config.integrated_title_buttons = {}
+
   config.use_fancy_tab_bar = false
   config.enable_tab_bar = false
-  config.enable_scroll_bar = true
+  config.enable_scroll_bar = false
 end
-
 --------------------------------------------------------------------------------
 -- Performance & Low Latency
 --------------------------------------------------------------------------------
