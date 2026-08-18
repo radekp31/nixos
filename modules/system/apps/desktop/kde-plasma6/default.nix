@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-let
+{pkgs, ...}: let
   wallpaper = pkgs.stdenvNoCC.mkDerivation {
     name = "sddm-wallpaper";
     src = ./piqsels.com-id-oanpz.jpg;
@@ -39,7 +38,7 @@ let
   # Script that updates kwinrulesrc idempotently using kreadconfig6/kwriteconfig6
   kwinRuleScript = pkgs.writeShellScript "kwin-set-rules" ''
     KCONFIG="$HOME/.config/kwinrulesrc"
-    
+
     # 1. Append rule UUID to [General] rules array if not present
     EXISTING_RULES="$(${pkgs.kdePackages.kconfig}/bin/kreadconfig6 --file "$KCONFIG" --group "General" --key "rules" 2>/dev/null || true)"
     if ! echo "$EXISTING_RULES" | grep -q "${weztermRuleId}"; then
