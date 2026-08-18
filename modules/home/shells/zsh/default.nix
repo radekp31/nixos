@@ -25,10 +25,13 @@
 
     initContent = ''
 
-    # Check if tmux session is active, if not launch tmux
-    if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
-      exec tmux
-    fi
+      if command -v tmux &>/dev/null \
+        && [[ -n "$PS1" ]] \
+        && [[ "$TERM" != screen* ]] \
+        && [[ "$TERM" != tmux* ]] \
+        && [[ -z "$TMUX" ]]; then
+        exec tmux new-session -A -s mgmt -c /etc/nixos
+      fi
 
       setopt HIST_IGNORE_SPACE
 

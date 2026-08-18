@@ -14,6 +14,11 @@
     terminal = "tmux-256color";
 
     extraConfig = ''
+
+      set -g allow-passthrough off
+      set -g status-interval 5
+      set -g set-titles off
+      
       # 1. Enable native terminal clipboard sync (OSC 52)
       set -g set-clipboard on
 
@@ -55,8 +60,6 @@
 
       set-option -sa terminal-overrides ",foot:Tc,xterm*:Tc,konsole:Tc"
 
-      new-session -d -s mgmt -c "/etc/nixos"
-      new-session -d -s scratch -c "/tmp"
     '';
 
     plugins = with pkgs.tmuxPlugins; [
