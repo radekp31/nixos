@@ -1,7 +1,4 @@
 {pkgs, ...}: {
-  imports = [
-    ../../modules/home/apps/tmux
-  ];
 
   programs.zsh.enable = true;
 

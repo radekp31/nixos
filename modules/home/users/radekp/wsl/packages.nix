@@ -211,6 +211,8 @@ in {
     gvproxy
     gvisor
 
+    vault
+
     zstd
   ];
 }

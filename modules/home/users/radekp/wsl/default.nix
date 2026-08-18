@@ -3,6 +3,7 @@
     ./packages.nix
     ../../../shells/zsh
     ../../../colorschemes/catppuccin
+    ../../../apps/tmux
   ];
   home.username = "radekp";
   home.homeDirectory = "/home/radekp";

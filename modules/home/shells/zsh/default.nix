@@ -25,6 +25,11 @@
 
     initContent = ''
 
+    # Check if tmux session is active, if not launch tmux
+    if command -v tmux &> /dev/null && [ -n "$PS1" ] && [[ ! "$TERM" =~ screen ]] && [[ ! "$TERM" =~ tmux ]] && [ -z "$TMUX" ]; then
+      exec tmux
+    fi
+
       setopt HIST_IGNORE_SPACE
 
 
@@ -37,10 +42,7 @@
       if [[ $- == *i* ]]; then
         # Check if running inside WSL
         if grep -qi microsoft /proc/version &> /dev/null; then
-          #fastfetch --config ${pkgs.fastfetch}/share/fastfetch/presets/examples/3.jsonc
-          #zsh -c microfetch
           inxi -S
-
         fi
       fi
 

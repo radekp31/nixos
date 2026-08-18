@@ -7,13 +7,20 @@ local config = wezterm.config_builder()
 -- Windows-Specific Launch menu
 --------------------------------------------------------------------------------
 if wezterm.target_triple:find("windows") then
-  config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
-  config.integrated_title_buttons = { 'Hide', 'Maximize', 'Close' }
-  config.integrated_title_button_style = "Windows"
-  config.integrated_title_button_alignment = "Right"
-  config.default_prog = { 'wsl.exe', '-d', 'NixOS', '--cd', '~' }
-  config.font_size = 13.5
+  config.window_decorations = "RESIZE"
 
+  config.default_prog = {
+    "wsl.exe",
+    "-d",
+    "NixOS",
+    "--cd",
+    "~",
+  }
+
+  config.font_size = 13.5
+  config.use_fancy_tab_bar = false
+  config.enable_tab_bar = false
+  config.enable_scroll_bar = true
 
     config.launch_menu = {
     {
