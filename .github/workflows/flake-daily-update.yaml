@@ -62,7 +62,7 @@ jobs:
           for host in $hosts; do
             echo "::group::Build $host"
             nix build ".#nixosConfigurations.${host}.config.system.build.toplevel" \
-              --no-link --print-build-logs
+              --no-link --print-build-logs --fallback
             echo "::endgroup::"
           done
 
