@@ -98,6 +98,7 @@ in {
     alejandra
     nerd-fonts.jetbrains-mono
     wl-clipboard
+    shellcheck
 
     (python313.withPackages (ps:
       with ps; [

@@ -30,7 +30,9 @@
       # Vi mode selection bindings
       bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
       bind-key -T copy-mode-vi 'y' send-keys -X copy-selection-and-cancel
-      bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-selection-no-clear
+
+      # Prevent focus-click from entering copy mode
+      unbind -T root MouseDrag1Pane
 
       # --- Rest of your existing extraConfig ---
       set -g status-position top
