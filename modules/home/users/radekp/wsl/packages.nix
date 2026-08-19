@@ -97,6 +97,7 @@ in {
     nixos-icons
     alejandra
     nerd-fonts.jetbrains-mono
+    wl-clipboard
 
     (python313.withPackages (ps:
       with ps; [
