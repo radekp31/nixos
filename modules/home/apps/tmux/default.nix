@@ -15,26 +15,22 @@
 
     extraConfig = ''
 
-      set -g allow-passthrough off
       set -g status-interval 5
-      set -g set-titles off
 
-      # 1. Enable native terminal clipboard sync (OSC 52)
-      set -g set-clipboard on
+      # Copy: tmux sends the selection to the terminal with OSC 52.
+      # WezTerm sets the real clipboard. This works on WSL and on native Linux.
+      set -s set-clipboard on
+      # Let nvim and other applications send their own OSC 52 through tmux.
+      set -g allow-passthrough on
 
-      # 2. Configure tmux-yank for Wayland / KDE
-      # User 'Ctrl+<Shortcut>+[' to enter vim style copy mode
-      set -g @override_copy_command 'wl-copy'
+      # Paste: use the WezTerm default binding Ctrl+Shift+V.
 
-      # Enable mouse support for click-and-drag selection directly to clipboard
       set -g mouse on
 
       # Vi mode selection bindings
       bind-key -T copy-mode-vi 'v' send-keys -X begin-selection
-      bind-key -T copy-mode-vi 'y' send-keys -X copy-pipe-and-cancel "wl-copy"
-
-      # Optional: Bind 'p' in normal tmux mode to paste directly from Wayland clipboard
-      bind-key p run "wl-paste --no-newline | tmux load-buffer - && tmux paste-buffer"
+      bind-key -T copy-mode-vi 'y' send-keys -X copy-selection-and-cancel
+      bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-selection-no-clear
 
       # --- Rest of your existing extraConfig ---
       set -g status-position top
@@ -67,7 +63,6 @@
       vim-tmux-navigator
       resurrect
       continuum
-      yank # Handles yanks and mouse selection copying
     ];
   };
 }
