@@ -6,31 +6,6 @@
     installPhase = "cp $src $out";
   };
 
-  plasma-tokyo-night = pkgs.stdenv.mkDerivation {
-    name = "plasma-tokyo-night";
-    src = pkgs.fetchFromGitHub {
-      owner = "Jayy-Dev";
-      repo = "Plasma-Tokyo-Night";
-      rev = "plasma-6";
-      hash = "sha256-Y+ta28tOYA5woAj9bcTunz5+9o3QUdKgeBAB//c48gk=";
-    };
-
-    dontBuild = true;
-    dontConfigure = true;
-
-    installPhase = ''
-      runHook preInstall
-      mkdir -p $out/share/aurorae/themes
-      cp -r aurorae/TokyoNight $out/share/aurorae/themes/
-      mkdir -p $out/share/plasma/look-and-feel
-      cp -r plasma/look-and-feel/. $out/share/plasma/look-and-feel/
-      mkdir -p $out/share/color-schemes
-      cp -r colorscheme/. $out/share/color-schemes/
-      mkdir -p $out/share/wallpapers
-      cp -r wallpapers/. $out/share/wallpapers/
-      runHook postInstall
-    '';
-  };
 
   # UUID for the WezTerm window rule
   weztermRuleId = "d5c6279a-3677-4d2b-b846-94f70a458720";
@@ -78,7 +53,6 @@ in {
   environment.systemPackages = with pkgs; [
     kdePackages.kcalc
     kde-rounded-corners
-    plasma-tokyo-night
   ];
 
   environment.plasma6.excludePackages = with pkgs.kdePackages; [
