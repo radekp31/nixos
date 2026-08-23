@@ -36,8 +36,29 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Update flake.lock
-        run: nix flake update
+      - name: Update inputs granularly
+        run: |
+          set -euo pipefail
+          # Extract all input names from flake.nix
+          inputs=$(nix flake metadata --json | jq -r '.locks.nodes.root.inputs | keys[]')
+          
+          for input in $inputs; do
+            echo "::group::Attempting update for input: $input"
+            # Create a temporary stash or branch checkpoint
+            git checkout -b "temp-$input" || git checkout "temp-$input"
+            
+            if nix flake update "$input"; then
+              # Test if system closures still build with this specific input updated
+              if nix flake check --print-build-logs; then
+                echo "Input $input updated successfully!"
+                git commit -am "chore(flake): update $input" || true
+              else
+                echo "Build failed after updating $input. Reverting..."
+                git reset --hard HEAD
+              fi
+            fi
+            echo "::endgroup::"
+          done
 
       - name: Check if lock file changed
         id: check-changes
