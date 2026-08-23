@@ -6,7 +6,6 @@
     installPhase = "cp $src $out";
   };
 
-
   # UUID for the WezTerm window rule
   weztermRuleId = "d5c6279a-3677-4d2b-b846-94f70a458720";
 

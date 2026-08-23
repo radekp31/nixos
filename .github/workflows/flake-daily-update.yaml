@@ -39,6 +39,9 @@ jobs:
       - name: Update flake.lock
         run: nix flake update
 
+      - name: Format repository
+        run: nix fmt
+
       - name: Check if lock file changed
         id: check-changes
         run: |
