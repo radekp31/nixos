@@ -1,4 +1,8 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  inputs,
+  ...
+}: let
   aztfexport = pkgs.stdenv.mkDerivation {
     pname = "aztfexport";
     version = "0.18.0";
@@ -64,16 +68,11 @@
 
   # Look up working commit hashes here: https://www.nixhub.io/packages/azure-cli
   # azcli is for some reason not working from nixpkgs
-  nixhubio_azcli =
-    import (builtins.fetchTarball {
-      #url = "https://github.com/NixOS/nixpkgs/archive/80d901ec0377e19ac3f7bb8c035201e2e098cc97.tar.gz";
-      #url = "https://github.com/NixOS/nixpkgs/archive/01fbdeef22b76df85ea168fbfe1bfd9e63681b30.tar.gz";
-      url = "https://github.com/NixOS/nixpkgs/archive/b503dde361500433ca25a32e8f4d218bf58fb659.tar.gz";
-      #sha256 = "0b76m4i1sn0dg78ylapvbkgw9knkf6lm1lss39w6zyshgv1rbi0q";
-      sha256 = "0k8z28gyg263smja05r272p8qpij898s49dpl75q82v3098vh9qk";
-    }) {
-      system = pkgs.stdenv.targetPlatform.system;
-    };
+  # Pin tracked as the nixpkgs_azcli_pin flake input, so `nix flake update`
+  # and the flake lock cover it.
+  nixhubio_azcli = import inputs.nixpkgs_azcli_pin {
+    system = pkgs.stdenv.targetPlatform.system;
+  };
 in {
   xdg.configFile."containers/containers.conf".text = ''
     [engine]

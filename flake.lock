@@ -263,6 +263,19 @@
         "type": "github"
       }
     },
+    "nixpkgs_azcli_pin": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1781141223,
+        "narHash": "sha256-Eye4UQJjC4TLobclolFCMl6MrjgiF6Bk1cOI5x8SH00=",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/b503dde361500433ca25a32e8f4d218bf58fb659.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs/archive/b503dde361500433ca25a32e8f4d218bf58fb659.tar.gz"
+      }
+    },
     "nixpkgs_deprecated": {
       "locked": {
         "lastModified": 1782847189,
@@ -344,6 +357,7 @@
         "nixos-facter-modules": "nixos-facter-modules",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_2",
+        "nixpkgs_azcli_pin": "nixpkgs_azcli_pin",
         "nixpkgs_deprecated": "nixpkgs_deprecated",
         "nixpkgs_unstable": "nixpkgs_unstable",
         "nixvim": "nixvim",

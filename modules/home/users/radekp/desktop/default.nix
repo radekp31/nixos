@@ -152,35 +152,6 @@
     };
   };
 
-  ##LibreWolf extensions
-  ## setup tokyonight extension
-  ## setup ublock origin
-  ## setup canvasblocker
-  ## setup privacy badger
-
-  # OLD?
-  home.file = {
-    ".librewolf/profile/extensions/ublock@raymondhill.net.xpi".source = builtins.fetchurl {
-      url = "https://addons.mozilla.org/firefox/downloads/file/4121906/ublock_origin-1.67.0.xpi";
-      sha256 = "1cx5nzyjznhlyahlrb3pywanp7nk8qqkfvlr2wzqqlhbww1q0q8h";
-    };
-  };
-
-  ##Bitwarden, link is changing, needs update
-  home.file = {
-    ".librewolf/profile/extensions/{446900e4-71c2-419f-a6a7-df9c091e268b}.xpi".source = builtins.fetchurl {
-      url = "https://addons.mozilla.org/firefox/downloads/file/4440363/bitwarden_password_manager-2025.2.0.xpi";
-      sha256 = "0x53sdqmz1nw1vwcs90g34aza69wrrzsrvah5x4215i6l9az7my4";
-    };
-  };
-
-  #home.file = {
-  #  ".librewolf/profile/extensions/ublock@raymondhill.net.xpi".source = ublock;
-  #  ".librewolf/profile/extensions/{446900e4-71c2-419f-a6a7-df9c091e268b}.xpi".source = bitwarden;
-  #  ".librewolf/profile/extensions/CanvasBlocker@kkapsner.de.xpi".source = canvasblocker;
-  #  ".librewolf/profile/extensions/jid1-MnnxcxisBPnSXQ@jetpack.xpi".source = privacybadger;
-  #};
-
   #TODO - Explore this
   #programs.lesspipe.enable = true;
 

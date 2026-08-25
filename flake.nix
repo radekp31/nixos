@@ -6,6 +6,13 @@
     nixpkgs_deprecated.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs_unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    # azure-cli is broken on the main nixpkgs input; this pins the last
+    # revision where azure-cli and its extensions build cleanly.
+    nixpkgs_azcli_pin = {
+      url = "https://github.com/NixOS/nixpkgs/archive/b503dde361500433ca25a32e8f4d218bf58fb659.tar.gz";
+      flake = false;
+    };
+
     flake-parts.url = "github:hercules-ci/flake-parts";
 
     home-manager = {
