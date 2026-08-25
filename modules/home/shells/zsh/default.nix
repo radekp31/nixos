@@ -50,6 +50,19 @@
       fi
 
 
+      # Alert if this host has not been rebuilt in a while.
+      # /nix/var/nix/profiles/system is updated by both `nixos-rebuild switch`
+      # and `nixos-rebuild boot`, and survives reboots (unlike /run/current-system).
+      if [[ $- == *i* ]]; then
+        __last_rebuild=$(stat -c %Y /nix/var/nix/profiles/system 2>/dev/null || echo 0)
+        __days_stale=$(( ($(date +%s) - __last_rebuild) / 86400 ))
+        if (( __days_stale >= 14 )); then
+          echo "System not rebuilt in ''${__days_stale} days (last: $(date -d @''${__last_rebuild} '+%Y-%m-%d'))."
+        fi
+        unset __last_rebuild __days_stale
+      fi
+
+
       # Only for interactive shells
       if [[ $- == *i* ]]; then
         # Check if running inside WSL

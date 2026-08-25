@@ -48,7 +48,7 @@ in {
 
   # Nix settings
   system.autoUpgrade = {
-    enable = true; # too unstable
+    enable = false; # A shell staleness check alerts instead; run upgrades manually.
     operation = "boot";
     flake = "git+https://github.com/radekp31/nixos.git#${config.networking.hostName}";
     persistent = true;
