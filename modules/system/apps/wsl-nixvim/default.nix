@@ -18,6 +18,8 @@
     #Includes functions get_bufnrs
     enable = true;
 
+    nixpkgs.source = inputs.nixpkgs;
+
     extraConfigLuaPre = ''
       vim.g.netrw_sort_by = "time"
       vim.g.netrw_liststyle = 1
