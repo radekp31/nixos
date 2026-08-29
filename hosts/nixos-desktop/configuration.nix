@@ -25,6 +25,8 @@
     ../../modules/system/hardware/usb
     ../../modules/system/hardware/sound/pipewire
     ../../modules/system/apps/desktop/kde-plasma6
+    # try dwl
+    ../../modules/system/apps/desktop/dwl
     ../../modules/system/apps/nix-ld
     ../../modules/system/apps/steam
     ../../modules/system/hardware/bluetooth

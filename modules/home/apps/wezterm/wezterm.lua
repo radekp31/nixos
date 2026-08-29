@@ -62,8 +62,7 @@ end
 --------------------------------------------------------------------------------
 -- Performance & Low Latency
 --------------------------------------------------------------------------------
-config.front_end = "WebGpu"
-config.webgpu_power_preference = "LowPower"
+config.front_end = "OpenGL"
 config.animation_fps = 1
 config.cursor_blink_ease_in = "Constant"
 config.cursor_blink_ease_out = "Constant"
