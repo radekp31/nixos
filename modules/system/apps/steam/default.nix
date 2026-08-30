@@ -14,7 +14,7 @@
 
   environment.sessionVariables = {
     STEAM_EXTRA_COMPAT_TOOLS_PATH = "/home/radekp/.steam/root/compatibilitytools.d";
-  };
+ };
 
   programs.gamemode.enable = true;
 
