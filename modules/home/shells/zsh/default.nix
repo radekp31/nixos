@@ -1,10 +1,18 @@
-{pkgs, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   programs.fzf.enable = true;
 
   programs.bat.enable = true;
 
   programs.zsh = {
     enable = true;
+    # Pin the dotfile directory to $HOME. The default moves to
+    # $XDG_CONFIG_HOME/zsh once home.stateVersion reaches 26.05.
+    # That move also relocates .zsh_history, which holds real data.
+    dotDir = config.home.homeDirectory;
     enableCompletion = true;
     syntaxHighlighting = {
       enable = true;
