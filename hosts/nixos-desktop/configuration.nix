@@ -124,8 +124,8 @@
   };
 
   # Kernel
-  #boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
-  boot.kernelPackages = pkgs.linuxPackages_6_18;
+  #boot.kernelPackages = pkgs.linuxPackages_6_18;
+  boot.kernelPackages = pkgs.linuxPackages_7_2;
   boot.kernelParams = [
     "boot.shell_on_fail"
     "trace_clock=local"
@@ -213,7 +213,8 @@
   # Hardware-specific packages
   environment.systemPackages = with pkgs; [
     alejandra
-    linuxKernel.packages.linux_6_18.asus-ec-sensors
+    #linuxKernel.packages.linux_6_18.asus-ec-sensors
+    linuxKernel.packages.linux_7_2.asus-ec-sensors
     nvfancontrol
     nvme-cli
     ntfs3g

@@ -28,6 +28,12 @@
     keymaps = [
       {
         mode = "n";
+        key = "<leader>b";
+        action = "<cmd>lua vim.lsp.buf.format()<CR>";
+        options.desc = "Format current buffer";
+      }
+      {
+        mode = "n";
         key = "gl";
         action = "<cmd>lua vim.diagnostic.open_float()<cr>";
         options.desc = "Explain Error";
@@ -219,6 +225,9 @@
               formatting.command = ["nixpkgs-fmt"];
               #nixpkgs.expr = "import <nixpkgs> { }";
             };
+          };
+          clangd = {
+            enable = true;
           };
           gopls = {
             enable = true;
