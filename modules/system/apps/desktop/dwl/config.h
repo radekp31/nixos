@@ -29,9 +29,22 @@ static char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 /* logging */
 static int log_level = WLR_ERROR;
 
-/* Keep at least one rule declared. */
+/* window rules */
 static const Rule rules[] = {
-    { "Gimp_EXAMPLE", NULL, 0, 1, -1 },
+	/* app_id            title   tags mask   isfloating   monitor */
+	/* "monitor" is an index into dwl's mons list, not a monrules index and
+	 * not a name. dwl inserts each new monitor at the head of that list, so
+	 * index 0 is the monitor that dwl created LAST. On this machine index 0
+	 * is DP-2 (2560x1440) and index 1 is HDMI-A-1 (1920x1080). Re-check the
+	 * order after you replug a cable or change the boot order.
+	 * A "tags mask" of 0 keeps the client on the tag you currently view.
+	 * A non-zero mask pins the client to that tag, and dwl does NOT switch
+	 * the view, so the window becomes invisible when you view another tag. */
+	{ "dota2",           NULL,   0,          0,           0 },
+	/* gamescope wraps the game in its own surface. The window then reports
+	 * app_id "gamescope", not "dota2", so it needs its own rule. */
+	{ "gamescope",       NULL,   0,          0,           0 },
+	{ "Gimp_EXAMPLE",    NULL,   0,          1,          -1 },
 };
 
 /* layouts */
@@ -41,9 +54,16 @@ static const Layout layouts[] = {
     { "[M]", monocle },
 };
 
-/* monitors */
+///* monitors */
+//static const MonitorRule monrules[] = {
+//    { NULL, 0.55f, 1, 1, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, -1, -1 },
+//};
 static const MonitorRule monrules[] = {
-    { NULL, 0.55f, 1, 1, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, -1, -1 },
+	/* name        mfact  nmaster scale layout       rotate/reflect                x     y */
+	{ "HDMI-A-1",  0.55f, 1,      1.0f, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,    0,    0 },
+	{ "DP-2",      0.55f, 1,      1.0f, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, 1920,    0 },
+	/* default fallback */
+	{ NULL,        0.55f, 1,      1.0f, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,   -1 },
 };
 
 /* keyboard */
