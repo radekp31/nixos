@@ -23,7 +23,6 @@
     ../../modules/system/apps/qemu
     #../../modules/system/hardware/printers/brother/DCPL2622DW
     ../../modules/system/hardware/usb
-    ../../modules/system/hardware/sound/pipewire
     ../../modules/system/apps/desktop/kde-plasma6
     ../../modules/system/apps/nix-ld
     ../../modules/system/apps/steam
@@ -129,7 +128,7 @@
   boot.kernelParams = [
     "boot.shell_on_fail"
     "trace_clock=local"
-    "usbcore.autosuspend=-1"
+    # usbcore.autosuspend=-1 comes from modules/system/hardware/bluetooth.
     "console=tty1"
     "fbcon=map:0"
     "video=DP-2:1920x1080"
@@ -214,7 +213,6 @@
   ];
 
   #networking.networkManager.enable = true;
-  hardware.bluetooth.enable = true;
   services.power-profiles-daemon.enable = true;
   services.upower.enable = true;
 

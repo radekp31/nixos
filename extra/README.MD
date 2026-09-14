@@ -174,20 +174,49 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
 
 ### P1 — Duplication and dead code
 
-- **[ ] 5. Definitions repeat across files.**
-  The PipeWire block exists in `hosts/common/profiles/desktop.nix:17` and again
-  in the imported `modules/system/hardware/sound/pipewire`.
-  Bluetooth is set three times: the desktop profile, the host, and the module.
-  Three Nerd Fonts install system wide and again through home-manager.
-  `mangohud`, `ntfs3g`, `git`, and `qemu` repeat.
-  `dejavu_fonts` appears twice in one list.
-  - *Found 2026-09-14 during Group B:* `usbcore.autosuspend=-1` is set twice.
-    `modules/system/hardware/bluetooth/default.nix:3` sets it, and
-    `hosts/nixos-desktop/configuration.nix:132` sets it again. The built
-    `kernel-params` file carries the value twice. The kernel accepts the repeat,
-    so this is noise, not a fault. Delete the host copy.
-  - *Found 2026-09-14 during Group B:* `spice-vdagent` is listed twice in
-    `modules/system/apps/qemu/default.nix:36-37`.
+- **[x] 5. [DONE 2026-09-14] Definitions repeated across files.**
+  Each setting now has one owner. The rule: a dedicated module owns a subsystem,
+  and the host and the profile do not repeat it.
+  - *Why the build never failed:* NixOS merges a repeated option with
+    `mergeEqualOption`. That function throws only when the values DIFFER. Every
+    duplicate here held the same value, so evaluation stayed silent. These were
+    maintenance faults, not build faults.
+  - *[DONE]* **PipeWire.** `modules/system/hardware/sound/pipewire/default.nix`
+    duplicated `hosts/common/profiles/desktop.nix:15-22` byte for byte, and held
+    nothing unique. Deleted the module and its import. The profile keeps the
+    block, so `hosts/hyperv` keeps sound too.
+  - *[DONE]* **Bluetooth (three places).** The module is now the single owner,
+    because it alone carried the `settings` block and the `btusb`/`uhid` modules.
+    Deleted `hardware.bluetooth` from the desktop profile. Deleted
+    `hardware.bluetooth.enable` from the host. Moved `services.blueman.enable`
+    into the module, so the module is self-contained.
+  - *[DONE]* `usbcore.autosuspend=-1` was set in the bluetooth module and in the
+    host. Deleted the host copy. The built `kernel-params` now holds it once.
+  - *[DONE]* `dejavu_fonts` was listed twice in one list. Deleted one.
+  - *[DONE]* `spice-vdagent` was listed twice in the qemu module. Deleted one.
+  - *[DONE]* **Nerd Fonts.** `nerd-fonts.fira-code` and `nerd-fonts.meslo-lg`
+    installed system wide AND through home-manager. Deleted the home-manager
+    copies. The system keeps them, because `fonts.fontconfig.defaultFonts`
+    names "FiraCode Nerd Font". The other nine home fonts have no system copy
+    and stay.
+  - *[DONE]* **Repeated packages.** Deleted `git`, `ntfs3g`, `qemu`, and
+    `mangohud` from the home package list. The system supplies each one:
+    `git` from `hosts/common/default.nix:81` and from `programs.git`, `ntfs3g`
+    from the host, `qemu_kvm` from the qemu module, and `mangohud` from the
+    steam module.
+  - *Verified:* `nixos-rebuild build` succeeded. In the built system,
+    `pipewire.service`, `rtkit-daemon.service`, `bluetooth.service`, and
+    `blueman-mechanism.service` all exist. `etc/bluetooth/main.conf` keeps
+    `Experimental=false`, `MultiProfile=multiple`, and `AutoEnable=true`.
+    `usbcore.autosuspend=-1` appears exactly once. All 12 Nerd Font store paths
+    are present. `git`, `ntfs-3g`, `mangohud`, `qemu-kvm`, `virt-manager`, and
+    `blueman-manager` all resolve under `sw/bin`.
+  - *Measured:* the closure is 36.501 GiB before and after. A dedup changes no
+    size, because the packages were always in the closure once.
+  - *Trade-off (suboptimal):* `hosts/hyperv` imports the desktop profile but not
+    the bluetooth module, so it loses bluetooth. `hosts/hyperv` is an orphan that
+    the flake never builds (finding 6), and a Hyper-V guest has no bluetooth
+    adapter. Import the module there if that host ever returns.
 
 - **[ ] 6. Roughly 1700 lines never evaluate.**
   `parts/hosts.nix` builds two hosts. `nix flake check` validates two hosts.
@@ -201,14 +230,13 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
   - `cockpit`, `openrgb`, `gnome`, `k8s`, and `webserver` have no importer.
   - The `nixos-facter-modules` flake input has zero uses.
 
-- **[ ] 9. A placeholder string reached the repository.**
-  `modules/system/apps/qemu/default.nix:4` sets
-  `users.groups.libvirtd.members = ["your_username"];`. The value is the
-  upstream example text, not a real user. Line 12 already adds `radekp` to
-  `libvirtd` through `users.users.radekp.extraGroups`, so line 4 is both wrong
-  and redundant.
-  - *Action:* Delete line 4. Commit it alone, because it is not a Group B
-    kernel change.
+- **[x] 9. [DONE 2026-09-14] A placeholder string reached the repository.**
+  `modules/system/apps/qemu/default.nix:4` set
+  `users.groups.libvirtd.members = ["your_username"];`. The value was upstream
+  example text, not a real user. Line 12 already adds `radekp` to `libvirtd`
+  through `users.users.radekp.extraGroups`, so the line was wrong and redundant.
+  - *[DONE]* Deleted the line. Folded into the Group D commit, because both
+    changes touch the qemu module.
 
 - **[ ] 7. Home packages carry heavy applications.**
   `lmstudio` costs 2.2 GiB. `libreoffice` costs 1.5 GiB. `arduino-ide` with
@@ -226,7 +254,7 @@ group keeps a regression traceable.
 | A | Environment variables | 2, 4 | none (36.5 GiB both) | **done 2026-09-14** (on `config_maintenance`) |
 | B | Kernel settings | 3 | none (35 KiB) | **done 2026-09-14** (on `config_maintenance`) |
 | C | `nix-ld` libraries → `flakes/compat` | 1 | **−5.8 GiB** | **done 2026-09-14** |
-| D | Duplicate definitions | 5 | small | open |
+| D | Duplicate definitions | 5, 9 | none (36.501 GiB both) | **done 2026-09-14** (on `config_maintenance`) |
 | E | Dead code | 6 | none | open |
 | F | Opt-in heavy packages | 7 | large | open |
 

@@ -207,7 +207,7 @@
     jq
     nurl
     ripgrep-all
-    git
+    # git comes from programs.git above and from hosts/common.
     nixd # Nix LSP server
     vimPlugins.nvim-lspconfig
     nixos-anywhere
@@ -222,7 +222,7 @@
     btop-cuda
     dig
     usbutils
-    ntfs3g # NTFS filesystem support
+    # ntfs3g comes from hosts/nixos-desktop.
     p7zip
     kdePackages.dolphin
     kdePackages.dolphin-plugins
@@ -247,7 +247,7 @@
     #spice-vdagent
     #virt-viewer
     #virt-manager
-    qemu
+    # qemu_kvm comes from modules/system/apps/qemu.
     quickemu
     #OVMF
 
@@ -255,7 +255,7 @@
     freecad-wayland
 
     # Hardware Control
-    mangohud # GPU overlay
+    # mangohud comes from modules/system/apps/steam.
 
     # Clipboard
     wl-clipboard
@@ -267,12 +267,11 @@
     font-awesome_6
 
     # Fonts
+    # fira-code and meslo-lg come from hosts/common/profiles/desktop.nix.
     meslo-lgs-nf
-    nerd-fonts.fira-code
     nerd-fonts.fira-mono
     nerd-fonts.dejavu-sans-mono
     nerd-fonts.inconsolata
-    nerd-fonts.meslo-lg
     nerd-fonts.space-mono
     nerd-fonts.ubuntu
     nerd-fonts.ubuntu-sans

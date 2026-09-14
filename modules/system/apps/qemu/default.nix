@@ -1,8 +1,6 @@
 {pkgs, ...}: {
   programs.virt-manager.enable = true;
 
-  users.groups.libvirtd.members = ["your_username"];
-
   virtualisation.libvirtd.enable = true;
 
   # nixos-desktop is the only importer and runs an AMD CPU.
@@ -34,7 +32,6 @@
     spice-gtk
     spice-protocol
     spice-autorandr
-    spice-vdagent
     spice-vdagent
     virt-viewer
     virt-manager

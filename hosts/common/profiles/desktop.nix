@@ -24,12 +24,7 @@
   # Printing
   services.printing.enable = true;
 
-  # Bluetooth
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = true;
-  };
-  services.blueman.enable = true;
+  # Bluetooth lives in modules/system/hardware/bluetooth.
 
   # dconf for GNOME/GTK apps configuration
   programs.dconf.enable = true;
@@ -59,8 +54,6 @@
     noto-fonts
     cantarell-fonts
     liberation_ttf
-    dejavu_fonts
-
     dejavu_fonts
     nerd-fonts.fira-code
     nerd-fonts.jetbrains-mono
