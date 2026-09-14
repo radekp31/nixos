@@ -1,0 +1,43 @@
+Restore the seat keyboard when a keyboard group is destroyed.
+
+dwl gives each virtual keyboard its own KeyboardGroup. createkeyboardgroup()
+points the seat keyboard at the new group. destroykeyboardgroup() destroys that
+group but never points the seat back at the physical keyboard group, so the seat
+keeps a dead keyboard pointer.
+
+A Wayland client that connects in that state receives no keymap. wezterm then
+aborts with "no keymap" at window/src/os/wayland/keyboard.rs:113. A terminal
+keybinding therefore opens no window at all.
+
+keypress() repairs the seat, but only for keys that it does not handle. A
+keybinding returns before that line, so a key that spawns a client never
+repairs the seat. A key that fuzzel or a shell consumes does repair it. That is
+why a terminal starts from fuzzel but not from Mod+Shift+Return.
+
+--- a/dwl.c
++++ b/dwl.c
+@@ -1676,11 +1676,24 @@
+ destroykeyboardgroup(struct wl_listener *listener, void *data)
+ {
+ 	KeyboardGroup *group = wl_container_of(listener, group, destroy);
++	/* Read the seat keyboard before the group goes away. */
++	int held_seat = wlr_seat_get_keyboard(seat) == &group->wlr_group->keyboard;
++	int is_main = group == kb_group;
++
+ 	wl_event_source_remove(group->key_repeat_source);
+ 	UNLISTEN(&group->key);
+ 	UNLISTEN(&group->modifiers);
+ 	UNLISTEN(&group->destroy);
+ 	wlr_keyboard_group_destroy(group->wlr_group);
++
++	/* Give the seat a keyboard again. A virtual keyboard makes its own
++	 * group, and createkeyboardgroup() points the seat at that group. The
++	 * seat keeps a dead pointer when the group goes away. A client that
++	 * connects then gets no keymap. Skip this during cleanup(), because
++	 * there kb_group is the group that we destroy. */
++	if (held_seat && !is_main)
++		wlr_seat_set_keyboard(seat, &kb_group->wlr_group->keyboard);
++
+ 	free(group);
+ }
+ 
