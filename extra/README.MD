@@ -83,13 +83,40 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
     VA-API setting resolves to a real driver. Remove them one at a time later
     and test.
 
-- **[ ] 3. Kernel settings contradict each other.**
-  `hosts/nixos-desktop/configuration.nix:97` blacklists `kvm_intel`.
-  Line 149 loads `kvm-intel`. Same module, both directions.
-  Line 133 sets `usbcore.debug=1`, which floods the kernel log.
-  Line 150 loads `xfs`, but every filesystem is btrfs.
-  - *Action:* Keep one direction for `kvm_intel`. Delete `usbcore.debug=1`.
-    Delete the `xfs` module.
+- **[x] 3. [DONE 2026-09-14] Kernel settings contradicted each other.**
+  `hosts/nixos-desktop/configuration.nix:97` blacklisted `kvm_intel`.
+  Line 149 loaded `kvm-intel`. Same module, both directions.
+  Line 133 set `usbcore.debug=1`, which floods the kernel log.
+  - *Correction 1:* The root cause sat in the module, not in the host.
+    `modules/system/apps/qemu/default.nix:8` set
+    `boot.kernelModules = ["kvm-amd" "kvm-intel"]`. The host imports that module
+    at line 23. The host lines 148-149 only repeated it. A host-only edit leaves
+    the module still asking for `kvm-intel`. `nixos-desktop` is the only
+    importer of the qemu module.
+  - *Correction 2:* The CPU is AMD (`AuthenticAMD`), and `kvm_amd` is the loaded
+    module. `kvm_intel` cannot load on this machine. The contradiction was dead
+    noise, not active breakage. The true severity is P2, not P0.
+  - *Correction 3:* The earlier claim "every filesystem is btrfs" is FALSE.
+    `hosts/nixos-desktop/hardware-configuration.nix:56` declares `/media/A400`
+    with `fsType = "xfs"`. The user confirmed on 2026-09-14 that the disk is a
+    live scratch disk. **Keep `xfs` in `boot.kernelModules`. Do not remove the
+    `/media/A400` block.**
+  - *[DONE 2026-09-14]* `modules/system/apps/qemu/default.nix:8` now sets
+    `["kvm-amd"]`. Removed `"kvm_intel"` from the blacklist on line 97. Deleted
+    `"usbcore.debug=1"` from the kernel parameters. Deleted the duplicate
+    `"kvm-amd"` and `"kvm-intel"` from the host `boot.kernelModules`.
+  - *Verified:* `nixos-rebuild build` succeeded. In the built system,
+    `etc/modules-load.d/nixos.conf` lists `kvm-amd`, `xfs`, and `nct6775`, and
+    no `kvm-intel`. `etc/modprobe.d/nixos.conf` no longer blacklists
+    `kvm_intel`. The only kernel-parameter change is the loss of
+    `usbcore.debug=1`. The closure moved by 35 KiB, so the size is unchanged.
+  - *Open (needs the disk attached):* `/media/A400` is NOT mounted, and the UUID
+    `2b232c2c-3198-432d-bcbe-9d6056700d12` does not resolve. `nofail` hides the
+    failure. Attach the disk and check the UUID. Also note that
+    `boot.supportedFilesystems` on line 106 omits `xfs`, so the xfs user-space
+    tools (`xfsprogs`) are absent. The mount still works, because the kernel
+    loads the module on demand. Add `"xfs"` to that list only if you want
+    `xfs_repair` and `mkfs.xfs`.
 
 - **[x] 4. [DONE 2026-09-14] The Steam module contradicted a recorded decision.**
   `modules/system/apps/steam/default.nix:19,26` enable `gamemode` and
@@ -134,8 +161,10 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
     this branch for the maintenance work. The dwl work stays on `dwl`.
   - *[DONE 2026-09-14]* The `dwl` branch is pushed. `origin/dwl` and `dwl`
     both point at `0d0a1e2`.
-  - *Action (open):* Test Group A with `nixos-rebuild build`, not `switch`.
-    A `switch` on this branch takes dwl off the running system.
+  - *[DONE 2026-09-14]* `nixos-rebuild build --flake /etc/nixos#nixos-desktop`
+    succeeded with Groups A, B, and C on the branch. The build used `build`,
+    never `switch`. A `switch` on this branch takes dwl off the running system.
+    The rule stands for every later group.
   - *Action (open):* Merge `dwl` first, then rebase `config_maintenance` on
     top. Only then is a `switch` from this branch safe.
   - *Note:* The `dwl` module is not treefmt-formatted. `treefmt.nix` enables
@@ -152,6 +181,13 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
   Three Nerd Fonts install system wide and again through home-manager.
   `mangohud`, `ntfs3g`, `git`, and `qemu` repeat.
   `dejavu_fonts` appears twice in one list.
+  - *Found 2026-09-14 during Group B:* `usbcore.autosuspend=-1` is set twice.
+    `modules/system/hardware/bluetooth/default.nix:3` sets it, and
+    `hosts/nixos-desktop/configuration.nix:132` sets it again. The built
+    `kernel-params` file carries the value twice. The kernel accepts the repeat,
+    so this is noise, not a fault. Delete the host copy.
+  - *Found 2026-09-14 during Group B:* `spice-vdagent` is listed twice in
+    `modules/system/apps/qemu/default.nix:36-37`.
 
 - **[ ] 6. Roughly 1700 lines never evaluate.**
   `parts/hosts.nix` builds two hosts. `nix flake check` validates two hosts.
@@ -164,6 +200,15 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
     commented out at the import.
   - `cockpit`, `openrgb`, `gnome`, `k8s`, and `webserver` have no importer.
   - The `nixos-facter-modules` flake input has zero uses.
+
+- **[ ] 9. A placeholder string reached the repository.**
+  `modules/system/apps/qemu/default.nix:4` sets
+  `users.groups.libvirtd.members = ["your_username"];`. The value is the
+  upstream example text, not a real user. Line 12 already adds `radekp` to
+  `libvirtd` through `users.users.radekp.extraGroups`, so line 4 is both wrong
+  and redundant.
+  - *Action:* Delete line 4. Commit it alone, because it is not a Group B
+    kernel change.
 
 - **[ ] 7. Home packages carry heavy applications.**
   `lmstudio` costs 2.2 GiB. `libreoffice` costs 1.5 GiB. `arduino-ide` with
@@ -179,7 +224,7 @@ group keeps a regression traceable.
 | Group | Scope | Finding | Size change | Status |
 |---|---|---|---|---|
 | A | Environment variables | 2, 4 | none (36.5 GiB both) | **done 2026-09-14** (on `config_maintenance`) |
-| B | Kernel settings | 3 | none | open |
+| B | Kernel settings | 3 | none (35 KiB) | **done 2026-09-14** (on `config_maintenance`) |
 | C | `nix-ld` libraries → `flakes/compat` | 1 | **−5.8 GiB** | **done 2026-09-14** |
 | D | Duplicate definitions | 5 | small | open |
 | E | Dead code | 6 | none | open |

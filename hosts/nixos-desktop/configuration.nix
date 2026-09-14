@@ -94,7 +94,7 @@
   ];
 
   # Hardware-specific boot configuration
-  boot.blacklistedKernelModules = ["nouveau" "fjes" "kvm_intel"];
+  boot.blacklistedKernelModules = ["nouveau" "fjes"];
   boot.extraModulePackages = [config.boot.kernelPackages.it87]; # CPU fan goes full rpm due to missing driver
   boot.initrd.availableKernelModules = [
     "nvme"
@@ -130,7 +130,6 @@
     "boot.shell_on_fail"
     "trace_clock=local"
     "usbcore.autosuspend=-1"
-    "usbcore.debug=1"
     "console=tty1"
     "fbcon=map:0"
     "video=DP-2:1920x1080"
@@ -145,9 +144,8 @@
   boot.kernel.sysctl."kernel.sysrq" = 1;
 
   boot.kernelModules = [
-    "kvm-amd"
-    "kvm-intel"
-    "xfs"
+    # kvm-amd comes from modules/system/apps/qemu.
+    "xfs" # /media/A400, see hardware-configuration.nix
     "nct6775"
   ];
 

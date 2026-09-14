@@ -5,7 +5,8 @@
 
   virtualisation.libvirtd.enable = true;
 
-  boot.kernelModules = ["kvm-amd" "kvm-intel"];
+  # nixos-desktop is the only importer and runs an AMD CPU.
+  boot.kernelModules = ["kvm-amd"];
 
   virtualisation.spiceUSBRedirection.enable = true;
 
