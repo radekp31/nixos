@@ -58,12 +58,33 @@ static const Layout layouts[] = {
 //static const MonitorRule monrules[] = {
 //    { NULL, 0.55f, 1, 1, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, -1, -1 },
 //};
+/* dwl has no "primary monitor" option. It picks the initial selmon with
+ * selmon = xytomon(0, 0), so the monitor that covers the layout origin
+ * becomes the main monitor. The first client opens there. Keep DP-2 at
+ * x=0, y=0 to make the 1440p screen the main one.
+ * Layout:
+ *           +----------------+
+ *           |                |
+ *   +-------+                |
+ *   | HDMI  |   DP-2  1440p  |
+ *   | 1080p |   main         |
+ *   +-------+                |
+ *           |                |
+ *           +----------------+
+ *   x=-1920            x=0
+ *   y=180              y=0
+ * dwl always uses the preferred mode of each monitor: 2560x1440@144 on
+ * DP-2 and 1920x1080@60 on HDMI-A-1. */
 static const MonitorRule monrules[] = {
-	/* name        mfact  nmaster scale layout       rotate/reflect                x     y */
-	{ "HDMI-A-1",  0.55f, 1,      1.0f, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,    0,    0 },
-	{ "DP-2",      0.55f, 1,      1.0f, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, 1920,    0 },
+	/* name        mfact  nmaster scale layout       rotate/reflect                 x     y */
+	/* LG 27GL850, 2560x1440. Main monitor, because it covers the origin. */
+	{ "DP-2",      0.55f, 1,      1.0f, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,     0,    0 },
+	/* Samsung S24E650, 1920x1080. A negative x puts it left of DP-2.
+	 * y=180 centres its 1080 px against the 1440 px of DP-2. That leaves
+	 * 180 px at the top and at the bottom of DP-2 with no neighbour. */
+	{ "HDMI-A-1",  0.55f, 1,      1.0f, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL, -1920,  180 },
 	/* default fallback */
-	{ NULL,        0.55f, 1,      1.0f, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,   -1 },
+	{ NULL,        0.55f, 1,      1.0f, &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,    -1,   -1 },
 };
 
 /* keyboard */
@@ -101,15 +122,83 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-//static const char *termcmd[] = { "wezterm", NULL };
-static const char *termcmd[] = { "xdg-terminal-exec", NULL }; /*this works */
+
+/* ---------------------------------------------------------------------------
+ * 2026-09-14: why termcmd is a plain binary and NOT xdg-terminal-exec.
+ * Read this before you change termcmd back. The investigation took hours.
+ *
+ * SYMPTOM
+ *   Mod+Shift+Return started no terminal. The fallback Mod+Shift+T also
+ *   started no terminal. No window appeared on any tag or on any monitor.
+ *   Mod+p, Mod+j, Mod+k, Mod+Shift+C and Mod+1 to Mod+9 all worked.
+ *
+ * CAUSE
+ *   termcmd was "xdg-terminal-exec". That command is a dash script of 1484
+ *   lines. Every instance that dwl forks hangs. The script never reaches its
+ *   final exec, so no terminal ever starts.
+ *
+ * EVIDENCE
+ *   One session left 34 of these processes alive. All were direct children
+ *   of dwl. All were blocked in anon_pipe_read. All stopped at exactly the
+ *   same place: byte 40855 of 43718 in the script. An identical offset in
+ *   every process proves the fault is deterministic and is not a race.
+ *   Bursts of 3 to 4 processes in one second come from key repeat.
+ *
+ * WHAT THE EVIDENCE PROVES
+ *   The keybinding matches correctly. spawn() works correctly. dwl forked
+ *   the command 34 times, so the key and the compositor are not at fault.
+ *   Only the script fails. fuzzel is a plain binary and always starts from
+ *   Mod+p, which confirms that spawn() itself is healthy.
+ *
+ * CAUSES TESTED AND RULED OUT - do not test these again
+ *   - SIGCHLD ignored across execvp. SigIgn is 0 in dwl and in the child.
+ *   - stdin is /dev/tty3. An stdin that never gives EOF still succeeds.
+ *   - A different environment. The environment of a real hung child was
+ *     read from /proc and it matches a run that succeeds.
+ *   - The cold cache path inside the script. It succeeds.
+ *   - A process limit. pids.max is "max" and pids.events shows "max 0".
+ *   The hang never appeared outside dwl. A faithful copy of the dwl spawn
+ *   conditions (stdin /dev/tty3, stderr the append log, stdout dup2 from
+ *   stderr, setsid, the dwl environment) succeeded under strace every time.
+ *   The mechanism inside dash stays unknown. This entry removes the failing
+ *   component. It does not repair dash.
+ *
+ * RULE THAT FOLLOWS
+ *   Put only a plain binary in a spawn() command. Do not put a shell script
+ *   there. The SHCMD() macro above carries the same risk. Use it with care.
+ *
+ * NOTE ON seat-keyboard-restore.patch IN default.nix
+ *   That patch works. This session shows no "no keymap" abort from wezterm.
+ *   The keymap defect was a separate fault. It was NOT the cause of this
+ *   symptom. Keep the patch. Do not expect it to fix a terminal keybinding.
+ *
+ * HOW TO DIAGNOSE THIS AGAIN
+ *   dwl sends the stderr of every spawned child to
+ *     ~/.local/share/sddm/wayland-session.log
+ *   List the children that dwl spawned with
+ *     ps -eo pid,ppid,args | awk '$2==<dwl pid>'
+ *   For a hung shell script, read the script offset with
+ *     cat /proc/<pid>/fdinfo/10
+ *   The "pos" value gives the byte that dash has read to. Compare that value
+ *   across the hung processes. Equal values mean a deterministic fault.
+ * ------------------------------------------------------------------------- */
+
+/* --always-new-process gives one new window for each keypress. Without the
+ * flag wezterm gives the request to the GUI instance that already runs, and
+ * the new window then belongs to that instance. */
+static const char *termcmd[] = { "wezterm", "start", "--always-new-process", NULL };
 //static const char *menucmd[] = { "fuzzel", "--dmenu", NULL };
 static const char *menucmd[] = { "fuzzel", NULL };
 
 static const Key keys[] = {
     { MODKEY, XKB_KEY_p, spawn, {.v = menucmd} },
     { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Return, spawn, {.v = termcmd} },
-    //{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_T, spawn, {.v = termcmd2} },
+    /* Fallback key for the same terminal. The test that this comment once
+     * described is complete. Both keys failed together while termcmd was
+     * xdg-terminal-exec. The Return key was therefore never the fault. See
+     * the long note above termcmd. Keep this key only as a second way to
+     * start a terminal. Delete it freely. */
+    { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_T, spawn, {.v = termcmd} },
     { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_R, reload, {0} },
     { MODKEY, XKB_KEY_b, togglebar, {0} },
 

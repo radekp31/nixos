@@ -10,6 +10,10 @@ patchedDwl = (pkgs.dwl.override {
     patches = (oldAttrs.patches or [ ]) ++ [
       ./patches/hot-reload-0.8.patch
       ./patches/bar-0.7.patch
+      # Fixes a dwl 0.8 defect: destroykeyboardgroup() leaves the seat with no
+      # keyboard after a virtual keyboard disconnects. wezterm then aborts with
+      # "no keymap", so a terminal keybinding opens no window.
+      ./patches/seat-keyboard-restore.patch
     ];
 
     buildInputs = (oldAttrs.buildInputs or [ ]) ++ [
