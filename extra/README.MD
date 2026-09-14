@@ -218,17 +218,93 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
     the flake never builds (finding 6), and a Hyper-V guest has no bluetooth
     adapter. Import the module there if that host ever returns.
 
-- **[ ] 6. Roughly 1700 lines never evaluate.**
-  `parts/hosts.nix` builds two hosts. `nix flake check` validates two hosts.
-  - `hosts/desktop-minimal` (497 lines) and `hosts/hyperv` are orphans.
-  - `modules/home/apps/desktop/noctalia` (424 lines) calls `inputs.noctalia`.
-    `flake.nix` does not declare that input. The module cannot evaluate.
-  - The `foot`, `alacritty`, `zen_browser`, `bash`, and `powershell` home
-    modules have no importer.
-  - `modules/system/hardware/printers/brother/DCPL2622DW` (239 lines) is
-    commented out at the import.
-  - `cockpit`, `openrgb`, `gnome`, `k8s`, and `webserver` have no importer.
-  - The `nixos-facter-modules` flake input has zero uses.
+- **[ ] 6. 2739 lines never evaluate. DECISION LIST — DELETE NOTHING YET.**
+  The repository holds 75 `.nix` files and 6486 lines. A reachability walk from
+  the real flake roots reaches 44 files. **31 files, 2739 lines, stay unreached.**
+  The earlier estimate of "roughly 1700 lines" was low.
+
+  *Method:* follow every relative path token from `flake.nix`,
+  `hosts/nixos-desktop/configuration.nix`, `hosts/nixos-wsl/configuration.nix`,
+  both home entry points, `patches/opencode-stub.nix`, and `treefmt.nix`. The
+  walk counts a path in a comment as NO reference. It counts a path in any other
+  position as a reference, so the result never calls a live file dead.
+
+  *The user owns this decision (2026-09-14).* Some of this code is parked work,
+  not waste. Fill the Keep column before anybody deletes a line.
+
+  **Group 6a — Broken. Cannot evaluate today (444 lines).**
+  Each one imports a flake input that `flake.nix` does not declare. An import
+  fails with `attribute '<name>' missing`. Revival needs the input, not a rewrite.
+
+  | Path | Lines | Missing input | Last touched | Keep? |
+  |---|---|---|---|---|
+  | `modules/home/apps/desktop/noctalia` | 424 | `inputs.noctalia` | 2026-08-04 | |
+  | `modules/home/apps/zen_browser` | 20 | `inputs.zen-browser` | 2026-01-14 | |
+
+  **Group 6b — Dead flake inputs.**
+  Each input costs lock churn and evaluation time. None reaches a built host.
+
+  | Input | Referenced by | Keep? |
+  |---|---|---|
+  | `nixos-facter-modules` | nothing at all, zero references | |
+  | `disko` | only `hosts/deployments/.../disk-config.nix` (unreached) and a comment | |
+  | `pre-commit-hooks` | only `modules/devShells/devops/default.nix` (unreached) | |
+
+  *Note:* `flake-parts` and `systems` ARE live. `flake.nix:46-51` uses both.
+
+  **Group 6c — Superseded. A working replacement already exists (124 lines).**
+
+  | Path | Lines | Superseded by | Keep? |
+  |---|---|---|---|
+  | `modules/devShells/devops/default.nix` | 28 | the inline `devops` shell in `modules/devShells/default.nix:28` | |
+  | `modules/devShells/tools/hooks.nix` | 23 | data for the old devops shell above | |
+  | `modules/devShells/tools/shell.nix` | 22 | `flakes/compat` does the same FHS job. This file also reads `<nixpkgs>`, so it bypasses the flake lock. | |
+  | `modules/system/secrets/sops` | 51 | nothing. It is ALSO broken: line 3 comments out the only `sops-nix` import, so the `sops.*` options never exist. | |
+
+  **Group 6d — Orphan hosts. The 2025-11 era (935 lines).**
+  `parts/hosts.nix` builds exactly two hosts. None of these appears there.
+
+  | Path | Lines | Last touched | Keep? |
+  |---|---|---|---|
+  | `hosts/desktop-minimal` | 497 | 2026-04-21 | |
+  | `hosts/deployments/server/generic` | 171 | 2025-11-17 | |
+  | `hosts/hyperv` | 86 | 2026-03-28 | |
+  | `hosts/server/generic` | 86 | 2025-11-19 | |
+  | `hosts/common/profiles/hyperv.nix` | 50 | 2025-11-19 | |
+  | `hosts/common/profiles/server.nix` | 45 | 2025-11-19 | |
+
+  `parts/hosts.nix:47-77` holds the commented host blocks that would import them.
+
+  **Group 6e — Parked modules. Each one evaluates. Only the importer is missing
+  (996 lines).**
+  I checked every file in this group: none references an undeclared input. Add
+  one import line and the module works. The recent dates mark active intent.
+
+  | Path | Lines | Last touched | Note | Keep? |
+  |---|---|---|---|---|
+  | `modules/system/hardware/printers/brother/DCPL2622DW` | 239 | 2026-03-20 | import is commented at `hosts/nixos-desktop/configuration.nix:24` | |
+  | `modules/system/server/k8s` (master + node) | 192 | 2025-11-17 | | |
+  | `modules/home/shells/bash` | 158 | 2026-03-20 | | |
+  | `modules/home/shells/powershell` | 102 | **2026-08-13** | newest unreached file in the repository | |
+  | `modules/home/apps/foot` | 79 | **2026-08-06** | `catppuccin/default.nix:15` says foot theming is broken upstream. A `foot-fix` branch exists. | |
+  | `modules/home/apps/alacritty` | 76 | **2026-07-25** | commit says "setting up alacritty with tmux" | |
+  | `modules/system/server/webserver` | 75 | 2026-01-15 | commented at `parts/hosts.nix:63` | |
+  | `modules/system/apps/cockpit` | 23 | 2025-11-16 | commented at `hosts/nixos-desktop/configuration.nix:193` | |
+  | `modules/system/apps/openrgb` | 20 | 2025-11-17 | carries an mbedtls overlay | |
+  | `modules/system/apps/desktop/gnome` | 17 | 2026-05-03 | | |
+  | `modules/system/apps/desktop/xfce` | 15 | 2025-11-19 | | |
+
+  **Group 6f — NOT dead. Do not touch (240 lines).**
+  The reachability walk misses these, because a nested flake is its own entry
+  point. Both are live.
+
+  | Path | Lines | Status |
+  |---|---|---|
+  | `flakes/compat` | 185 | **Actively used.** Group C moved the `nix-ld` library set here. |
+  | `flakes/rust` | 55 | Standalone shell. Review 2026-08-03 already tracks its lock drift. |
+
+  - *Action:* The user marks the Keep column. Delete only what the column says.
+    Commit one group at a time.
 
 - **[x] 9. [DONE 2026-09-14] A placeholder string reached the repository.**
   `modules/system/apps/qemu/default.nix:4` set
