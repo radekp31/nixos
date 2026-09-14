@@ -35,11 +35,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+    # disko has no user yet. It stays for the planned dynamic disko setup.
     disko.url = "github:nix-community/disko";
     treefmt-nix.url = "github:numtide/treefmt-nix";
     systems.url = "github:nix-systems/default";
-    nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
   };
 
   outputs = inputs @ {

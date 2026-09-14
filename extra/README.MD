@@ -218,10 +218,36 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
     the flake never builds (finding 6), and a Hyper-V guest has no bluetooth
     adapter. Import the module there if that host ever returns.
 
-- **[ ] 6. 2739 lines never evaluate. DECISION LIST — DELETE NOTHING YET.**
-  The repository holds 75 `.nix` files and 6486 lines. A reachability walk from
-  the real flake roots reaches 44 files. **31 files, 2739 lines, stay unreached.**
-  The earlier estimate of "roughly 1700 lines" was low.
+- **[x] 6. [DONE 2026-09-15] 2739 lines never evaluated. The user decided.**
+  The repository held 75 `.nix` files and 6486 lines. A reachability walk from
+  the real flake roots reached 44 files. **31 files, 2739 lines, stayed
+  unreached.** The earlier estimate of "roughly 1700 lines" was low.
+
+  **The user marked the Keep column on 2026-09-15. The result:**
+
+  *Deleted — 6 files, 534 lines, and 2 flake inputs:*
+  `modules/home/apps/desktop/noctalia` (424), `modules/home/apps/zen_browser`
+  (20), `modules/devShells/devops` (28), `modules/devShells/tools/hooks.nix`
+  (23), `modules/devShells/tools/shell.nix` (22), and
+  `modules/system/apps/desktop/gnome` (17). The inputs `nixos-facter-modules`
+  and `pre-commit-hooks` left `flake.nix`.
+
+  *Kept — 2205 lines.* Every orphan host, every parked module except `gnome`,
+  the `sops` module, the `disko` input, and both nested flakes. This code is
+  parked work, not waste. **Do not propose it for deletion again.** Read the
+  Keep column below before any later cleanup.
+
+  *Verified 2026-09-15:* `nix flake check` passed both hosts and the treefmt
+  gate. `nixos-rebuild build` produced store path
+  `ynis4z46vjm2vd4nd83xd6f9sg2b06q4`, which is IDENTICAL to the path before the
+  deletions. Dead code produces no output, so an identical path proves the cut
+  removed nothing live. The WSL host also built. Both devShells still evaluate.
+  `flake.lock` fell from 22 nodes to 18, because `pre-commit-hooks` also carried
+  `flake-compat` and its own `nixpkgs`.
+
+  *Note:* `modules/devShells/tools/devops.nix` is LIVE and stays. Do not confuse
+  it with the deleted `modules/devShells/devops/default.nix`. The names differ by
+  one directory level.
 
   *Method:* follow every relative path token from `flake.nix`,
   `hosts/nixos-desktop/configuration.nix`, `hosts/nixos-wsl/configuration.nix`,
@@ -238,17 +264,17 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
 
   | Path | Lines | Missing input | Last touched | Keep? |
   |---|---|---|---|---|
-  | `modules/home/apps/desktop/noctalia` | 424 | `inputs.noctalia` | 2026-08-04 | |
-  | `modules/home/apps/zen_browser` | 20 | `inputs.zen-browser` | 2026-01-14 | |
+  | `modules/home/apps/desktop/noctalia` | 424 | `inputs.noctalia` | 2026-08-04 | N |
+  | `modules/home/apps/zen_browser` | 20 | `inputs.zen-browser` | 2026-01-14 | N |
 
   **Group 6b — Dead flake inputs.**
   Each input costs lock churn and evaluation time. None reaches a built host.
 
   | Input | Referenced by | Keep? |
   |---|---|---|
-  | `nixos-facter-modules` | nothing at all, zero references | |
-  | `disko` | only `hosts/deployments/.../disk-config.nix` (unreached) and a comment | |
-  | `pre-commit-hooks` | only `modules/devShells/devops/default.nix` (unreached) | |
+  | `nixos-facter-modules` | nothing at all, zero references | N |
+  | `disko` | only `hosts/deployments/.../disk-config.nix` (unreached) and a comment | Yes, I want to create dynamic disko setup later, add that to README.md |
+  | `pre-commit-hooks` | only `modules/devShells/devops/default.nix` (unreached) | No |
 
   *Note:* `flake-parts` and `systems` ARE live. `flake.nix:46-51` uses both.
 
@@ -256,24 +282,24 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
 
   | Path | Lines | Superseded by | Keep? |
   |---|---|---|---|
-  | `modules/devShells/devops/default.nix` | 28 | the inline `devops` shell in `modules/devShells/default.nix:28` | |
-  | `modules/devShells/tools/hooks.nix` | 23 | data for the old devops shell above | |
-  | `modules/devShells/tools/shell.nix` | 22 | `flakes/compat` does the same FHS job. This file also reads `<nixpkgs>`, so it bypasses the flake lock. | |
-  | `modules/system/secrets/sops` | 51 | nothing. It is ALSO broken: line 3 comments out the only `sops-nix` import, so the `sops.*` options never exist. | |
+  | `modules/devShells/devops/default.nix` | 28 | the inline `devops` shell in `modules/devShells/default.nix:28` | No |
+  | `modules/devShells/tools/hooks.nix` | 23 | data for the old devops shell above | No |
+  | `modules/devShells/tools/shell.nix` | 22 | `flakes/compat` does the same FHS job. This file also reads `<nixpkgs>`, so it bypasses the flake lock. | No |
+  | `modules/system/secrets/sops` | 51 | nothing. It is ALSO broken: line 3 comments out the only `sops-nix` import, so the `sops.*` options never exist. | Yes, I want to fix t his later |
 
   **Group 6d — Orphan hosts. The 2025-11 era (935 lines).**
-  `parts/hosts.nix` builds exactly two hosts. None of these appears there.
+  `parts/hosts.nix` builds exactly two hosts. None of these appears there. KEEP!
 
   | Path | Lines | Last touched | Keep? |
   |---|---|---|---|
-  | `hosts/desktop-minimal` | 497 | 2026-04-21 | |
-  | `hosts/deployments/server/generic` | 171 | 2025-11-17 | |
-  | `hosts/hyperv` | 86 | 2026-03-28 | |
-  | `hosts/server/generic` | 86 | 2025-11-19 | |
-  | `hosts/common/profiles/hyperv.nix` | 50 | 2025-11-19 | |
-  | `hosts/common/profiles/server.nix` | 45 | 2025-11-19 | |
+  | `hosts/desktop-minimal` | 497 | 2026-04-21 | Yes for later revision |
+  | `hosts/deployments/server/generic` | 171 | 2025-11-17 | yes for later revision |
+  | `hosts/hyperv` | 86 | 2026-03-28 | yes |
+  | `hosts/server/generic` | 86 | 2025-11-19 | yes |
+  | `hosts/common/profiles/hyperv.nix` | 50 | 2025-11-19 | yes |
+  | `hosts/common/profiles/server.nix` | 45 | 2025-11-19 | yes |
 
-  `parts/hosts.nix:47-77` holds the commented host blocks that would import them.
+  `parts/hosts.nix:47-77` holds the commented host blocks that would import them. - KEEP!
 
   **Group 6e — Parked modules. Each one evaluates. Only the importer is missing
   (996 lines).**
@@ -282,29 +308,29 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
 
   | Path | Lines | Last touched | Note | Keep? |
   |---|---|---|---|---|
-  | `modules/system/hardware/printers/brother/DCPL2622DW` | 239 | 2026-03-20 | import is commented at `hosts/nixos-desktop/configuration.nix:24` | |
-  | `modules/system/server/k8s` (master + node) | 192 | 2025-11-17 | | |
-  | `modules/home/shells/bash` | 158 | 2026-03-20 | | |
-  | `modules/home/shells/powershell` | 102 | **2026-08-13** | newest unreached file in the repository | |
-  | `modules/home/apps/foot` | 79 | **2026-08-06** | `catppuccin/default.nix:15` says foot theming is broken upstream. A `foot-fix` branch exists. | |
-  | `modules/home/apps/alacritty` | 76 | **2026-07-25** | commit says "setting up alacritty with tmux" | |
-  | `modules/system/server/webserver` | 75 | 2026-01-15 | commented at `parts/hosts.nix:63` | |
-  | `modules/system/apps/cockpit` | 23 | 2025-11-16 | commented at `hosts/nixos-desktop/configuration.nix:193` | |
-  | `modules/system/apps/openrgb` | 20 | 2025-11-17 | carries an mbedtls overlay | |
-  | `modules/system/apps/desktop/gnome` | 17 | 2026-05-03 | | |
-  | `modules/system/apps/desktop/xfce` | 15 | 2025-11-19 | | |
+  | `modules/system/hardware/printers/brother/DCPL2622DW` | 239 | 2026-03-20 | import is commented at `hosts/nixos-desktop/configuration.nix:24` | Yes |
+  | `modules/system/server/k8s` (master + node) | 192 | 2025-11-17 | | Yes I want to make this work later |
+  | `modules/home/shells/bash` | 158 | 2026-03-20 | | yes |
+  | `modules/home/shells/powershell` | 102 | **2026-08-13** | newest unreached file in the repository | yes |
+  | `modules/home/apps/foot` | 79 | **2026-08-06** | `catppuccin/default.nix:15` says foot theming is broken upstream. A `foot-fix` branch exists. | Yes |
+  | `modules/home/apps/alacritty` | 76 | **2026-07-25** | commit says "setting up alacritty with tmux" | yes |
+  | `modules/system/server/webserver` | 75 | 2026-01-15 | commented at `parts/hosts.nix:63` | yes |
+  | `modules/system/apps/cockpit` | 23 | 2025-11-16 | commented at `hosts/nixos-desktop/configuration.nix:193` | Yes I want to make this work later |
+  | `modules/system/apps/openrgb` | 20 | 2025-11-17 | carries an mbedtls overlay | Yes, it supposedly works in newer kernerls, want to fix later |
+  | `modules/system/apps/desktop/gnome` | 17 | 2026-05-03 | | No |
+  | `modules/system/apps/desktop/xfce` | 15 | 2025-11-19 | | Yes |
 
   **Group 6f — NOT dead. Do not touch (240 lines).**
   The reachability walk misses these, because a nested flake is its own entry
   point. Both are live.
 
-  | Path | Lines | Status |
-  |---|---|---|
-  | `flakes/compat` | 185 | **Actively used.** Group C moved the `nix-ld` library set here. |
-  | `flakes/rust` | 55 | Standalone shell. Review 2026-08-03 already tracks its lock drift. |
+  | Path | Lines | Status | |
+  |---|---|---|---|
+  | `flakes/compat` | 185 | **Actively used.** Group C moved the `nix-ld` library set here. | Keep |
+  | `flakes/rust` | 55 | Standalone shell. Review 2026-08-03 already tracks its lock drift. | Keep |
 
-  - *Action:* The user marks the Keep column. Delete only what the column says.
-    Commit one group at a time.
+  - *[DONE 2026-09-15]* The user marked the column. The deletions above are the
+    only ones authorised. Every other row stays.
 
 - **[x] 9. [DONE 2026-09-14] A placeholder string reached the repository.**
   `modules/system/apps/qemu/default.nix:4` set
@@ -331,7 +357,7 @@ group keeps a regression traceable.
 | B | Kernel settings | 3 | none (35 KiB) | **done 2026-09-14** (on `config_maintenance`) |
 | C | `nix-ld` libraries → `flakes/compat` | 1 | **−5.8 GiB** | **done 2026-09-14** |
 | D | Duplicate definitions | 5, 9 | none (36.501 GiB both) | **done 2026-09-14** (on `config_maintenance`) |
-| E | Dead code | 6 | none | open |
+| E | Dead code | 6 | 534 lines, 4 lock nodes | **done 2026-09-15** (on `config_maintenance`) |
 | F | Opt-in heavy packages | 7 | large | open |
 
 Measure each step with `nvd diff /run/current-system result`.
@@ -414,6 +440,15 @@ The completed items from this review sit in the archive. The open items follow.
 ## 🔐 Security & Secrets
 
 - [ ] **SOPS-nix Integration** (High Priority)
+  - The user confirmed on 2026-09-15: keep `modules/system/secrets/sops` and fix
+    it later. Review 2026-09-14, finding 6, group 6c holds the diagnosis.
+  - *The blocker:* `modules/system/secrets/sops/default.nix:3` comments out the
+    only `sops-nix` import. The module then sets `sops.defaultSopsFile` and
+    `sops.secrets` at lines 14-49, but no module defines the `sops.*` options.
+    Importing this file fails with "The option `sops' does not exist".
+  - *The first step:* Add `sops-nix` to `flake.nix` inputs with
+    `inputs.nixpkgs.follows = "nixpkgs"`. The flake does NOT declare it today.
+    Then uncomment line 3. Only then does the rest of the file evaluate.
   - Review the sops-nix configuration. Confirm that secrets decrypt on deploy.
   - Move sensitive environment variables and udev rules into secrets.
 - [ ] Audit the security settings across all host configurations.
@@ -424,6 +459,16 @@ The completed items from this review sit in the archive. The open items follow.
 
 ## 🏗 Architecture & Core Refactoring
 
+- [ ] **Dynamic disko setup** (user request, 2026-09-15)
+  - The `disko` flake input stays declared, but nothing imports it today. The
+    only consumer is `hosts/deployments/server/generic/disk-config.nix`, and
+    `parts/hosts.nix:68-77` keeps that host commented out.
+  - *Goal:* Build the disk layout from options instead of one hardcoded file.
+    Take the device, the partition sizes, and the filesystem as arguments.
+  - *Design it together with `mkHost`.* A host should declare its disk layout in
+    the same place it declares everything else.
+  - *Note:* Keep the input in `flake.nix` until this work starts. A later
+    dead-input scan will flag `disko` again. This entry is the reason to keep it.
 - [ ] **Refactor Host Definitions (mkHost)**
   - Implement a helper in `parts/hosts.nix` to reduce boilerplate for new hosts.
 - [ ] **Transition to "Smart" Modules**
