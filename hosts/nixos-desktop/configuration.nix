@@ -162,29 +162,22 @@
   # Networking
   networking.hostName = "nixos-desktop";
 
-  # NVIDIA-specific environment variables
   environment.variables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
-    TERM = "xterm-256color";
     NIXOS_CONFIG_LOCATION = "/etc/nixos";
+
+    # NVIDIA driver selection. These stay global on purpose: they steer
+    # libglvnd, GBM, and VA-API for every client. Keep them under review.
+    # Remove one at a time and test Firefox, video playback, and Steam.
     LIBVA_DRIVER_NAME = "nvidia";
     GBM_BACKEND = "nvidia-drm";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-    WLR_NO_HARDWARE_CURSORS = "1";
-    GDK_SCALE = "1";
-    GDK_DPI_SCALE = "1";
-    XCURSOR_SCALE = "24";
-    QT_QPA_PLATFORMTHEME = "qt6ct";
   };
 
-  # Fix NVIDIA + Wayland + Steam know decorations not drawn issue
   environment.sessionVariables = {
+    # Electron and Chromium applications run on Wayland.
     NIXOS_OZONE_WL = "1";
-    __GL_GSYNC_ALLOWED = "1";
-    __GL_VRR_ALLOWED = "1";
-    __GL_THREADED_OPTIMIZATIONS = "0";
-    DXVK_ASYNC = "1";
   };
 
   # Timezone override

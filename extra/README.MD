@@ -1,75 +1,198 @@
 # NixOS Configuration Roadmap
 
+## How to read this file
+
+Reviews sit at the top. The newest review comes first. Each review holds
+verified findings with a file reference, an action, and a severity.
+
+The thematic backlog follows the reviews. It holds work with no deadline.
+
+The archive sits at the bottom. Move an item there when the work is complete.
+Keep the reason and the date. The archive explains why the repository looks as
+it does today.
+
+---
+
+## 🔎 Review 2026-09-14 — Desktop Runtime Hygiene
+
+This review examines `nixos-desktop` at runtime, not on paper. The audit used
+the live system closure, not only the source files.
+
+**The finding in one sentence:** the desktop host sets global overrides that
+fight the desktop stack, and those overrides cause random application failures.
+
+Disk size is a symptom. Interference is the disease. Fix the interference first.
+
+### Measured evidence (2026-09-14)
+
+| Item | Size in the system closure |
+|---|---|
+| Total `/run/current-system` | 36.5 GiB |
+| `ld-library-path` (from `nix-ld`) | **6.0 GiB** |
+| ├ `cuda-merged-12.9` | 3.9 GiB |
+| └ `nvidia-x11-595.71.05` (wrong version) | 782 MiB |
+| `mbrola-voices` (through `speech-dispatcher`) | 644 MiB |
+| `/nix/store` on disk | 75 GiB across 18 generations |
+
+### P0 — Active interference
+
+- **[ ] 1. `nix-ld` supplies a wrong NVIDIA driver.**
+  `modules/system/apps/nix-ld/default.nix:16` adds `linuxPackages.nvidia_x11`.
+  That resolves to **595.71.05**. The kernel module runs **610.57.04**.
+  Every FHS binary that starts through `nix-ld` receives the 595 user space
+  against the 610 kernel module. This breaks graphics at random.
+  Line 15 adds `cudaPackages.cudatoolkit` and costs 3.9 GiB.
+  - *Action:* Remove `cudatoolkit`. Replace `linuxPackages.nvidia_x11` with
+    `config.hardware.nvidia.package`.
+
+- **[x] 2. [DONE 2026-09-14] Global variables overrode each application.**
+  All references point to `hosts/nixos-desktop/configuration.nix`.
+  - `:169` `TERM = "xterm-256color"` forces one terminfo on every session,
+    local and remote. It breaks key handling and colour in WezTerm and foot.
+  - `:174` `WLR_NO_HARDWARE_CURSORS` is a wlroots variable. The host runs KDE
+    and KWin. The variable is dead.
+  - `:178` `QT_QPA_PLATFORMTHEME = "qt6ct"` conflicts with Plasma 6. Plasma
+    supplies its own platform theme.
+  - `:175-177` `GDK_SCALE` and `GDK_DPI_SCALE` repeat the default value.
+    `XCURSOR_SCALE` is not a valid Xcursor variable. Use `XCURSOR_SIZE`.
+  - `:184-187` `__GL_GSYNC_ALLOWED`, `__GL_VRR_ALLOWED`,
+    `__GL_THREADED_OPTIMIZATIONS`, and `DXVK_ASYNC` apply to every process.
+    They belong to games only.
+  - *Done:* Deleted `TERM`, `WLR_NO_HARDWARE_CURSORS`, `QT_QPA_PLATFORMTHEME`,
+    `GDK_SCALE`, `GDK_DPI_SCALE`, and `XCURSOR_SCALE`. Deleted `DXVK_ASYNC`,
+    which only ever worked with the third-party dxvk-async patch and is a
+    no-op on mainline DXVK 2.x. Moved `__GL_GSYNC_ALLOWED`, `__GL_VRR_ALLOWED`,
+    and `__GL_THREADED_OPTIMIZATIONS` into
+    `programs.steam.package = pkgs.steam.override { extraEnv = { ... }; }`.
+    They now live in the Steam FHS profile and reach games only.
+  - *Kept:* `LIBVA_DRIVER_NAME`, `GBM_BACKEND`, and `__GLX_VENDOR_LIBRARY_NAME`
+    stay global. `nvidia_drv_video.so` exists in `/run/opengl-driver`, so the
+    VA-API setting resolves to a real driver. Remove them one at a time later
+    and test.
+
+- **[ ] 3. Kernel settings contradict each other.**
+  `hosts/nixos-desktop/configuration.nix:97` blacklists `kvm_intel`.
+  Line 149 loads `kvm-intel`. Same module, both directions.
+  Line 133 sets `usbcore.debug=1`, which floods the kernel log.
+  Line 150 loads `xfs`, but every filesystem is btrfs.
+  - *Action:* Keep one direction for `kvm_intel`. Delete `usbcore.debug=1`.
+    Delete the `xfs` module.
+
+- **[x] 4. [DONE 2026-09-14] The Steam module contradicted a recorded decision.**
+  `modules/system/apps/steam/default.nix:19,26` enable `gamemode` and
+  `gamescopeSession`. A note from 2026-09-08 says keep both off, because a
+  Steam launch option called the removed binaries and Dota 2 failed to start.
+  The live closure holds `gamescope-3.16.23`. The fix never reached git.
+  Line 16 also sets `STEAM_EXTRA_COMPAT_TOOLS_PATH`. Steam reads
+  `STEAM_EXTRA_COMPAT_TOOLS_PATHS`, with a final "S". The name is wrong, and
+  the value hardcodes `/home/radekp`.
+  Line 35 starts Steam at every graphical login.
+  - *[DONE 2026-09-14]* Deleted `STEAM_EXTRA_COMPAT_TOOLS_PATH`. The name was
+    wrong, and Steam already reads `~/.steam/root/compatibilitytools.d` by
+    default, so the variable was also redundant.
+  - *[DONE 2026-09-14]* The background service ran `${pkgs.steam}/bin/steam`.
+    The plain package ignores every `programs.steam` setting, including
+    `extraEnv`. The service now runs `${config.programs.steam.package}`.
+  - *[DONE 2026-09-14]* The user confirmed: **no gamescope**.
+    `gamescopeSession.enable` is now `false` with a comment that states the
+    decision and the date. Verified: the new closure carries no gamescope
+    session file, and `gamescope` is not on `PATH`.
+    The `gamescope-3.16.23` store path still appears in the closure, because
+    `bottles` depends on it. A store path is not an active session. Remove
+    `bottles` from `modules/system/apps/steam/default.nix` if you want the
+    path gone too.
+    Checked `localconfig.vdf` first: no launch option calls `gamescope` now,
+    so this removal cannot repeat the 2026-09-08 failure.
+  - *[DONE 2026-09-14]* `programs.gamemode.enable` stays commented out.
+    The user confirmed the decision on 2026-09-14: keep gamemode off.
+    An earlier note in this file said gamemode stays `true`. That note is
+    superseded. The code and this file now agree.
+  - *Action (open):* Decide whether the Steam background service should exist.
+
+- **[ ] 8. The running system does not come from this branch.**
+  `/run/current-system` carries a `dwl.desktop` session and a `dwl` binary.
+  This branch carries neither. `git rev-list` reports `config_maintenance`
+  0 ahead and `dwl` 6 ahead. `config_maintenance` and `main` both point at
+  `0e38ef1`, so this branch holds no unique commit.
+  - *Risk (high):* `nixos-rebuild switch` on `config_maintenance` removes the
+    dwl compositor, its session entry, and the hot-reload, bar, and
+    seat-keyboard-restore patches from the running system.
+  - *[DONE 2026-09-14]* Group A lives on `config_maintenance`. The user chose
+    this branch for the maintenance work. The dwl work stays on `dwl`.
+  - *[DONE 2026-09-14]* The `dwl` branch is pushed. `origin/dwl` and `dwl`
+    both point at `0d0a1e2`.
+  - *Action (open):* Test Group A with `nixos-rebuild build`, not `switch`.
+    A `switch` on this branch takes dwl off the running system.
+  - *Action (open):* Merge `dwl` first, then rebase `config_maintenance` on
+    top. Only then is a `switch` from this branch safe.
+  - *Note:* The `dwl` module is not treefmt-formatted. `treefmt.nix` enables
+    `deadnix`, which strips the unused `config` and `lib` arguments. The next
+    repo-wide `nix fmt` changes 56 lines in that file. Format it in its own
+    commit, so the change never hides inside a feature diff.
+
+### P1 — Duplication and dead code
+
+- **[ ] 5. Definitions repeat across files.**
+  The PipeWire block exists in `hosts/common/profiles/desktop.nix:17` and again
+  in the imported `modules/system/hardware/sound/pipewire`.
+  Bluetooth is set three times: the desktop profile, the host, and the module.
+  Three Nerd Fonts install system wide and again through home-manager.
+  `mangohud`, `ntfs3g`, `git`, and `qemu` repeat.
+  `dejavu_fonts` appears twice in one list.
+
+- **[ ] 6. Roughly 1700 lines never evaluate.**
+  `parts/hosts.nix` builds two hosts. `nix flake check` validates two hosts.
+  - `hosts/desktop-minimal` (497 lines) and `hosts/hyperv` are orphans.
+  - `modules/home/apps/desktop/noctalia` (424 lines) calls `inputs.noctalia`.
+    `flake.nix` does not declare that input. The module cannot evaluate.
+  - The `foot`, `alacritty`, `zen_browser`, `bash`, and `powershell` home
+    modules have no importer.
+  - `modules/system/hardware/printers/brother/DCPL2622DW` (239 lines) is
+    commented out at the import.
+  - `cockpit`, `openrgb`, `gnome`, `k8s`, and `webserver` have no importer.
+  - The `nixos-facter-modules` flake input has zero uses.
+
+- **[ ] 7. Home packages carry heavy applications.**
+  `lmstudio` costs 2.2 GiB. `libreoffice` costs 1.5 GiB. `arduino-ide` with
+  `gcc-arm-embedded` and `avr-gcc` costs about 2.6 GiB. `freecad` with `vtk`
+  costs about 0.8 GiB. `speech-dispatcher` pulls `mbrola-voices` at 644 MiB.
+  - *Action:* Convert each one into an opt-in module with `mkEnableOption`.
+
+### Plan
+
+Commit each group alone. Rebuild and test after each commit. One commit per
+group keeps a regression traceable.
+
+| Group | Scope | Finding | Size change | Status |
+|---|---|---|---|---|
+| A | Environment variables | 2, 4 | none (36.5 GiB both) | **done 2026-09-14** (on `config_maintenance`) |
+| B | Kernel settings | 3 | none | open |
+| C | `nix-ld` libraries | 1 | −4.7 GiB | open |
+| D | Duplicate definitions | 5 | small | open |
+| E | Dead code | 6 | none | open |
+| F | Opt-in heavy packages | 7 | large | open |
+
+Measure each step with `nvd diff /run/current-system result`.
+
+*Trade-off (risky):* Group A removes NVIDIA variables that possibly still fix a
+real bug. Test Steam, Firefox, and video playback after the rebuild. Revert one
+variable at a time if a problem appears.
+
+*Trade-off (complex):* Group C changes the `nix-ld` library set. An FHS binary
+that needs CUDA then fails. Supply CUDA through a dev shell instead.
+
+*Trade-off (suboptimal):* Group E deletes work you possibly want later. The git
+history keeps it. The branches `noctalia`, `dwl`, and `foot-fix` also keep it.
+
+---
+
 ## 🔎 Review 2026-08-03 — Reproducibility and Maintainability
 
-This section lists verified findings from a full read of the flake. Each item
-gives a file reference, an action, and a severity. Fix P0 items first. They
-protect reproducibility and prevent broken auto-deploys.
-
-### P0 — Reliability and reproducibility risks
-
-- **[DONE 2026-08-03] Auto-merge now has a build gate.**
-  `.github/workflows/flake-daily-update.yaml` runs a gate after
-  `nix flake update` and before the PR steps. The gate runs `nix flake check`
-  and builds every `nixosConfigurations.*.config.system.build.toplevel`. A
-  failed gate aborts the job, so no PR is created and no broken lock reaches
-  `main`. The failed workflow run is the notification.
-  - *Trade-off (risky):* Full host builds can exceed free GitHub-runner disk or
-    time, because the desktop closure pulls NVIDIA, CUDA, KDE, and Steam. Watch
-    the first runs. If they fail on runner limits, move to a self-hosted runner
-    or reduce the gate to `nix flake check` only.
-
-- **[DONE 2026-08-25] Auto-upgrade pulls from a remote branch, not the local tree.**
-  `hosts/common/default.nix:50` set `system.autoUpgrade.flake` to track GitHub
-  `main`, confirmed intentional now that the P0 build gate protects `main`
-  from broken locks. The contradictory `# too unstable` comment is resolved:
-  `system.autoUpgrade.enable` is now `false`. Background builds no longer run
-  unattended, since a stale scheduled window (`04:40`, missed whenever the
-  host is off) combined with `persistent = true` meant the build actually
-  fired on every power-on, competing with active use for CPU.
-  - *Replacement:* `modules/home/shells/zsh/default.nix` prints a banner on
-    every interactive shell when `/nix/var/nix/profiles/system` (the local
-    generation, updated by both `switch` and `boot`, surviving reboots) is
-    14+ days old. Upgrades stay manual, triggered when convenient.
-
-- **[DONE 2026-08-25] Impure fetches no longer bypass the flake lock.**
-  The two `builtins.fetchurl` Librewolf extension entries in
-  `modules/home/users/radekp/desktop/default.nix` were dead code (marked
-  `# OLD?`, `programs.librewolf.enable = false`, Firefox-ESR is the active
-  browser) and are removed. `modules/home/users/radekp/wsl/packages.nix` now
-  imports the Azure CLI nixpkgs pin from the new `nixpkgs_azcli_pin` flake
-  input (`flake.nix`) instead of a hardcoded `builtins.fetchTarball`, so the
-  pin is tracked in `flake.lock` and refreshed by `nix flake update`. The pin
-  itself is unchanged (same revision) — it exists because azure-cli is broken
-  on the main `nixpkgs` input, not because of neglect. Verified with
-  `nix flake check` and a full build of both
-  `nixosConfigurations.*.config.system.build.toplevel`.
+The completed items from this review sit in the archive. The open items follow.
 
 ### P1 — Input hygiene and evaluation cost
 
-- **[DONE 2026-08-25] `nixvim` now follows the main `nixpkgs`.**
-  `flake.nix` sets `inputs.nixpkgs.follows = "nixpkgs";` on the `nixvim`
-  input. The prior comment-out (commit `b8f37f5`, "fixing nixvim warning")
-  worked around a real warning, but the true cause was a second, separate
-  nixvim module: `modules/system/apps/wsl-nixvim/default.nix` (used by the
-  WSL host) never got the `programs.nixvim.nixpkgs.source = inputs.nixpkgs;`
-  fix that `modules/system/apps/nixvim/default.nix` (desktop host) already
-  had. Adding the same line to the WSL module fixed the warning at its
-  source, so the flake input can safely follow the main `nixpkgs` on both
-  hosts. The lock now holds four `nixpkgs` nodes instead of five. Verified
-  with `nix flake check` (no nixvim warning on either host) and a full build
-  of both `nixosConfigurations.*.config.system.build.toplevel`.
-
-- **[DONE, predates this review] Release channels already align.**
-  `flake.nix` pins `nixpkgs`, `home-manager`, `nixos-wsl`, `nixvim`, and
-  `catppuccin` all to `26.05` (commit `5752578`, "WSL update to 26.05"). This
-  review's original claim that `nixos-wsl` tracked `release-25.11` was
-  already stale when written. `nixpkgs_deprecated` stays on `nixos-25.11` on
-  purpose: `parts/shells.nix` exposes it as `pkgs25_11` in a devShell, for
-  cherry-picking a package version off the main release train (see
-  "Pending Discussion" below). No action needed.
-
-- **The nested Rust flake drifts.** `flakes/rust/flake.nix` declares its own
+- **[ ] The nested Rust flake drifts.** `flakes/rust/flake.nix` declares its own
   `nixos-unstable`, `rust-overlay`, and `flake-utils`. The main flake does not
   reference it. The daily update workflow does not update its lock. It ages
   independently.
@@ -78,109 +201,165 @@ protect reproducibility and prevent broken auto-deploys.
 
 ### P2 — Maintainability
 
-- **Host wiring repeats.** `parts/hosts.nix` copies the full home-manager block
-  for each host. Add a `mkHost` helper to remove the boilerplate. (Also tracked
-  below.)
-- **Hardcoded values repeat across the repo.** The string `radekp` appears in
-  17 `.nix` files. The git email `polasek.31@seznam.cz` repeats in 3 files.
-  `time.timeZone` and `system.stateVersion` repeat per host with no shared
-  source. The GitHub repo string `radekp31` repeats in `hosts/common/default.nix`
-  and the daily-update workflow. Treat identity as one instance of a general
-  pattern, not the only one.
-  - *Action:* Add a `my.user` option set (name, email) and a small set of
-    global constants (repo owner/URL). Reference them everywhere instead of
-    the literal. Leave `time.timeZone` and `system.stateVersion` as per-host
-    values (they are correct to differ) but note the rule once, centrally,
-    instead of repeating the reasoning in each host file. (Also tracked
-    below.)
-- **Dead code remains.** [DONE 2026-08-04] The niri module and its `.bak`, plus
-  all niri references in `noctalia`, `nvidia`, and `zsh`, are removed. Still
-  open: large commented blocks in `parts/hosts.nix`, `modules/system/secrets/sops`,
-  and `hosts/common/profiles/desktop.nix`. Remove or restore them.
-- **devShell pin name misleads.** `parts/shells.nix:13` binds
-  `pkgs25_11` to an argument named `pkgs25_05`. Rename for one term, one
-  meaning.
-- **stateVersion varies by host** (`24.05`, `24.11`, `25.05`). This is correct
-  and you must not change existing values. Add a short note in each host to
-  state the rule for new readers.
-- **Secret scanning is off.** `.pre-commit-config.yaml` comments out
-  `detect-secrets` and `trufflehog`, though `.secrets.baseline` exists. Re-enable
-  one scanner.
+- **[ ] Host wiring repeats.** `parts/hosts.nix` copies the full home-manager
+  block for each host. Add a `mkHost` helper to remove the boilerplate.
+- **[ ] Hardcoded values repeat across the repository.** The string `radekp`
+  appears in 17 `.nix` files. The git email `polasek.31@seznam.cz` repeats in
+  3 files. The GitHub repo string `radekp31` repeats in
+  `hosts/common/default.nix` and the daily-update workflow. Treat identity as
+  one instance of a general pattern, not the only one.
+  - *Action:* Add a `my.user` option set (name, email) and a small set of global
+    constants (repo owner and URL). Reference them everywhere.
+    Leave `time.timeZone` and `system.stateVersion` as per-host values. They are
+    correct to differ. State the rule once, centrally.
+- **[ ] Commented blocks remain.** Large commented blocks sit in
+  `parts/hosts.nix`, `modules/system/secrets/sops`, and
+  `hosts/common/profiles/desktop.nix`. Remove them or restore them.
+  (Review 2026-09-14, finding 6 extends this item.)
+- **[ ] devShell pin name misleads.** `parts/shells.nix:13` binds `pkgs25_11` to
+  an argument named `pkgs25_05`. Rename for one term, one meaning.
+- **[ ] stateVersion varies by host** (`24.05`, `24.11`, `25.05`). This is
+  correct. Do not change existing values. Add a short note in each host to state
+  the rule for new readers.
+- **[ ] Secret scanning is off.** `.pre-commit-config.yaml` comments out
+  `detect-secrets` and `trufflehog`, though `.secrets.baseline` exists.
+  Re-enable one scanner.
 
 ---
 
 ## 🔐 Security & Secrets
+
 - [ ] **SOPS-nix Integration** (High Priority)
-  - Review sops-nix configuration and ensure secrets are decrypted in deployments.
+  - Review the sops-nix configuration. Confirm that secrets decrypt on deploy.
   - Move sensitive environment variables and udev rules into secrets.
-- [ ] Audit security settings across all host configurations.
+- [ ] Audit the security settings across all host configurations.
+  - `hosts/nixos-desktop/configuration.nix:53` sets
+    `openssh.settings.PasswordAuthentication = true`. The common default is
+    `false`. Confirm that the host needs the weaker setting.
+  - Line 209 opens TCP ports 22, 5432, and 5050 on a desktop. Confirm the need.
 
 ## 🏗 Architecture & Core Refactoring
+
 - [ ] **Refactor Host Definitions (mkHost)**
   - Implement a helper in `parts/hosts.nix` to reduce boilerplate for new hosts.
 - [ ] **Transition to "Smart" Modules**
-  - Convert static imports (like KDE/Plasma) to use `options` and `mkEnableOption`.
+  - Convert static imports (such as KDE and Plasma) to use `options` and
+    `mkEnableOption`. Review 2026-09-14, finding 7 depends on this work.
 - [ ] **Centralize Global Constants**
-  - Define `my.user.name`, `email`, etc., in a global module instead of hardcoding.
-  - Scope is not limited to identity. Audit for any value repeated across
-    files with one true source: the GitHub repo owner/URL (`radekp31`),
-    the git email, and similar literals.
-  - Do not centralize `time.timeZone` or `system.stateVersion`. These vary by
-    host on purpose. Document the rule once instead.
+  - Define `my.user.name`, `my.user.email`, and similar in a global module.
+  - Do not centralize `time.timeZone` or `system.stateVersion`.
 - [ ] **Host-Wide Version Selector**
   - Add one option to set the major nixpkgs release per host.
   - Keep an escape hatch to override specific packages from another release.
-  - Design together with `mkHost` and the `my.*` option set.
+  - Design it together with `mkHost` and the `my.*` option set.
 - [ ] **Clean up Path References**
-  - Replace deep relative imports (`../../../../`) with `inputs.self` references.
+  - Replace deep relative imports (`../../../../`) with `inputs.self`.
 - [ ] **Update Auto-Upgrade Logic**
-  - Remove hardcoded GitHub URLs from `system.autoUpgrade.flake`.
+  - Remove the hardcoded GitHub URL from `system.autoUpgrade.flake`.
 
 ## 💻 Hardware & Desktop Applications
+
 - [ ] **Hardware Abstraction**
-  - Extract kernel parameters and blacklisted modules from `nixos-desktop` into dedicated hardware files or use `nixos-hardware` profiles.
+  - Extract the kernel parameters and the blacklisted modules from
+    `nixos-desktop` into dedicated hardware files. Consider `nixos-hardware`.
 - [ ] **Host Configuration Cleanup**
-  - Strip `nixos-desktop/configuration.nix` of settings already covered by `common` or `desktop` profiles.
-  - Review and potentially remove `modules/home/users/radekp/wsl/packages.nix`.
+  - Strip `nixos-desktop/configuration.nix` of settings that `common` or the
+    `desktop` profile already covers. Review 2026-09-14, finding 5 lists them.
+  - Review `modules/home/users/radekp/wsl/packages.nix`.
   - Standardize `deployments/server/generic/configuration.nix`.
-- [x] **Browser Extension Management** — [DONE 2026-08-25] The dead
-  `builtins.fetchurl` Librewolf extension entries are removed (see P0
-  reproducibility review above). No declarative addon module is in place;
-  revisit with `nix-firefox-addons` if Librewolf extensions are needed again.
 
 ## 🛠 Developer Experience & Documentation
+
 - [ ] **Comprehensive Documentation**
-  - Document the directory structure and module hierarchy.
-  - Explain the strategic difference between `hosts/` and `deployments/`.
-  - Add usage comments/READMEs to major modules.
+  - Document the directory structure and the module hierarchy.
+  - Explain the difference between `hosts/` and `deployments/`.
+  - Add a README to each major module.
 - [ ] **CI/CD & Automation**
-  - Implement GitHub Actions to run `nix flake check` and build validations.
-  - Add pre-commit hooks for automatic treefmt application.
+  - Add pre-commit hooks that apply treefmt automatically.
 
 ## ⏳ Pending Discussion
-- [ ] **FIX: flake inputs bloat**
-  - *Strategy:* Having multiple `nixpkgs` (unstable/stable/deprecated) is valid for cherry-picking broken packages, but needs careful management.
-  - *Evaluation Cost:* Bloat is primarily in evaluation time, not final system size. Keep it "lazy" where possible.
-  - *Standardization:* Use `flake-parts` (`_module.args`) to expose `pkgs-unstable` or `pkgs-old` globally to all modules.
-  - *Overlays:* Use overlays for "seamless" cherry-picking when a package is a shared dependency.
-  - *Input Following:* Ensure all flake inputs (home-manager, catppuccin, etc.) use `follows` to point to the primary `nixpkgs` to prevent unnecessary version multiplication.
+
+- [ ] **Flake input bloat**
+  - *Strategy:* Multiple `nixpkgs` inputs (unstable, stable, deprecated) help
+    when you cherry-pick a broken package. They need careful management.
+  - *Evaluation cost:* The cost sits in evaluation time, not in system size.
+    Keep the inputs lazy where you can.
+  - *Standardization:* Use `flake-parts` `_module.args` to expose
+    `pkgs-unstable` or `pkgs-old` to all modules.
+  - *Overlays:* Use an overlay when a cherry-picked package is a shared
+    dependency.
+  - *Input following:* Confirm that every input uses `follows` on the primary
+    `nixpkgs`.
 
 ---
 
 ## ✅ Completed Tasks (Archive)
 
+### Review 2026-08-03 completions
+
+- **[DONE 2026-08-03] Auto-merge has a build gate.**
+  `.github/workflows/flake-daily-update.yaml` runs a gate after
+  `nix flake update` and before the PR steps. The gate runs `nix flake check`
+  and builds every `nixosConfigurations.*.config.system.build.toplevel`. A
+  failed gate aborts the job, so no PR appears and no broken lock reaches
+  `main`. The failed workflow run is the notification.
+  - *Trade-off (risky):* Full host builds can exceed free GitHub-runner disk or
+    time, because the desktop closure pulls NVIDIA, CUDA, KDE, and Steam. Move
+    to a self-hosted runner if the runner limits fail the job.
+
+- **[DONE 2026-08-25] Auto-upgrade no longer runs unattended.**
+  `hosts/common/default.nix:50` sets `system.autoUpgrade.flake` to track GitHub
+  `main`. `system.autoUpgrade.enable` is now `false`. A stale scheduled window
+  (`04:40`, missed whenever the host is off) plus `persistent = true` fired the
+  build on every power-on and competed with active use for CPU.
+  - *Replacement:* `modules/home/shells/zsh/default.nix` prints a banner on every
+    interactive shell when `/nix/var/nix/profiles/system` is 14+ days old.
+    Upgrades stay manual.
+
+- **[DONE 2026-08-25] Impure fetches no longer bypass the flake lock.**
+  The two `builtins.fetchurl` Librewolf extension entries in
+  `modules/home/users/radekp/desktop/default.nix` were dead code and are
+  removed. `modules/home/users/radekp/wsl/packages.nix` imports the Azure CLI
+  pin from the `nixpkgs_azcli_pin` flake input instead of a hardcoded
+  `builtins.fetchTarball`. The lock now tracks the pin. The pin exists because
+  azure-cli is broken on the main `nixpkgs` input.
+
+- **[DONE 2026-08-25] `nixvim` follows the main `nixpkgs`.**
+  `flake.nix` sets `inputs.nixpkgs.follows = "nixpkgs"` on the `nixvim` input.
+  The true cause of the earlier warning was
+  `modules/system/apps/wsl-nixvim/default.nix`. It never received the
+  `programs.nixvim.nixpkgs.source = inputs.nixpkgs;` line that the desktop
+  module already had. The lock now holds four `nixpkgs` nodes instead of five.
+
+- **[DONE, predates the review] Release channels align.**
+  `flake.nix` pins `nixpkgs`, `home-manager`, `nixos-wsl`, `nixvim`, and
+  `catppuccin` to `26.05`. `nixpkgs_deprecated` stays on `nixos-25.11` on
+  purpose. `parts/shells.nix` exposes it as `pkgs25_11` in a devShell.
+
+- **[DONE 2026-08-04] The niri module is removed.**
+  The module, its `.bak` file, and all niri references in `noctalia`, `nvidia`,
+  and `zsh` are gone.
+
+- **[DONE 2026-08-25] Browser extension management.**
+  The dead `builtins.fetchurl` Librewolf extension entries are removed. No
+  declarative addon module is in place. Revisit with `nix-firefox-addons` if
+  Librewolf extensions are needed again.
+
 ### Core Structure & Base Config
+
 - [x] Standardized file naming (use `default.nix`) across modules and users.
 - [x] Updated all imports to use directory paths.
 - [x] Created `hosts/common/default.nix` with secure defaults.
 - [x] Implemented host profiles (Desktop, Server, WSL, Hyper-V).
 - [x] Setup `treefmt` for repository-wide formatting.
-- [x] Added proper `.gitignore`.
-- [x] Fixed nixpkgs.config warnings and disko module imports.
+- [x] Added a proper `.gitignore`.
+- [x] Fixed the nixpkgs.config warnings and the disko module imports.
 
 ### Package & Module Management
+
 - [x] Moved GUI applications to Home Manager.
 - [x] Categorized apps in `modules/home/users/radekp/desktop/default.nix`.
 - [x] Cleaned up duplicate packages across hosts.
-- [x] Standardized module structure and usage of `lib.mkDefault`.
-- [x] Added `flake.lock` update GitHub Action.
+- [x] Standardized the module structure and the use of `lib.mkDefault`.
+- [x] Added the `flake.lock` update GitHub Action.
+- [x] Added GitHub Actions that run `nix flake check` and build validations.
