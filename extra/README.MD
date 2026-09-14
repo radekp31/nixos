@@ -614,6 +614,8 @@ The completed items from this review sit in the archive. The open items follow.
 ## 🔐 Security & Secrets
 
 - [ ] **SOPS-nix Integration** (High Priority)
+  - **>>> NEXT ITEM. The user chose this on 2026-09-15 and asked that no work
+    start yet. Begin here in the next session. <<<**
   - The user confirmed on 2026-09-15: keep `modules/system/secrets/sops` and fix
     it later. Review 2026-09-14, finding 6, group 6c holds the diagnosis.
   - *The blocker:* `modules/system/secrets/sops/default.nix:3` comments out the
@@ -625,11 +627,47 @@ The completed items from this review sit in the archive. The open items follow.
     Then uncomment line 3. Only then does the rest of the file evaluate.
   - Review the sops-nix configuration. Confirm that secrets decrypt on deploy.
   - Move sensitive environment variables and udev rules into secrets.
-- [ ] Audit the security settings across all host configurations.
-  - `hosts/nixos-desktop/configuration.nix:53` sets
-    `openssh.settings.PasswordAuthentication = true`. The common default is
-    `false`. Confirm that the host needs the weaker setting.
-  - Line 209 opens TCP ports 22, 5432, and 5050 on a desktop. Confirm the need.
+- [x] **[AUDITED 2026-09-15] Security settings on `nixos-desktop`.**
+  The audit checked the live system, not only the source. `sshd` is active and
+  listens on `0.0.0.0:22` and `[::]:22`.
+
+  - **[DECIDED 2026-09-15] SSH password authentication stays ON.**
+    `hosts/nixos-desktop/configuration.nix:53` sets
+    `openssh.settings.PasswordAuthentication = true`. That overrides the
+    `lib.mkDefault false` in `hosts/common/default.nix:105`.
+    - *The reason the override exists:* no key is authorized for this host.
+      `/home/radekp/.ssh/authorized_keys` does not exist, and no
+      `users.users.radekp.openssh.authorizedKeys` appears for `nixos-desktop`.
+      Only `hosts/server/generic` and `hosts/deployments/server/generic`
+      declare keys, and neither host is built. A password is therefore the ONLY
+      way in. Disabling it without a key removes SSH access entirely.
+    - *The user decided on 2026-09-15 to keep the setting.*
+      **Do not raise this again as a defect.** It is a recorded choice.
+    - *The upgrade path, when you want it:* declare
+      `users.users.radekp.openssh.authorizedKeys.keys` with the public half of
+      `~/.ssh/id_ed25519`, confirm the key reaches the built system, then delete
+      line 53 so the common default applies.
+    - *Residual exposure, stated plainly:* port 22 accepts password logins from
+      the local network. `PermitRootLogin = "no"` in the common file limits the
+      damage to the `radekp` account.
+
+  - **[DONE 2026-09-15] Closed every firewall port with no listener.**
+    The block held `allowedTCPPorts = [22 5432 5050]` and
+    `allowedUDPPorts = [53 123 5432 5050]`.
+    - *Measured:* `ss -tulnp` showed a listener on port 22 only. Ports 5432
+      (postgres) and 5050 (pgadmin) served nothing, and a repository-wide grep
+      found no `postgresql` or `pgadmin` service anywhere. The two port numbers
+      were the only occurrences in the whole repository.
+    - *Why inbound UDP 53 and 123 were never needed:* this host is a DNS and
+      NTP **client**. A reply to an outbound query returns through conntrack.
+      An inbound port serves a **server** only.
+    - *Done:* the block is now `allowedTCPPorts = [22];` with a dated comment.
+      `allowedUDPPorts` is deleted.
+    - *Verified:* in the built `firewall-start` script the rules for 53, 123,
+      5432 and 5050 are gone and `dport 22` remains. Ports 1714, 10400-10401
+      (KDE Connect) and 27015-27040 (Steam) also remain. Those come from
+      `programs.kdeconnect` and the Steam `openFirewall` options, not from this
+      list, and the audit did not touch them.
 
 ## 🏗 Architecture & Core Refactoring
 

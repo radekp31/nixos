@@ -195,8 +195,11 @@
 
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [22 5432 5050];
-    allowedUDPPorts = [53 123 5432 5050];
+    # 2026-09-15: 22 is the only port with a listener. Nothing served 5432
+    # (postgres) or 5050 (pgadmin), and neither is declared anywhere in this
+    # repository. DNS and NTP replies reach a client through conntrack, so
+    # inbound UDP 53 and 123 were never needed either.
+    allowedTCPPorts = [22];
   };
 
   # Hardware-specific packages
