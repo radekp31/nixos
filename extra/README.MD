@@ -33,7 +33,39 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
 | ├ `cuda-merged-12.9` | 3.9 GiB (removed) |
 | └ `nvidia-x11-595.71.05` (wrong version) | 782 MiB (removed) |
 | `mbrola-voices` (through `speech-dispatcher`) | 644 MiB |
-| `/nix/store` on disk | 75 GiB across 18 generations |
+| `/nix/store` on disk (2026-09-14) | 75 GiB across 18 generations |
+| `/nix/store` on disk (2026-09-15) | **86 GiB across 21 generations** |
+
+### Disk reclaim — measured 2026-09-15, NOT executed
+
+Groups A-F cut the closure by 10.25 GiB. The disk did not shrink. It grew,
+from 75 GiB to 86 GiB, because every old generation still pins its own
+closure. A garbage collection is the only step that turns the review into
+free space.
+
+*Method:* sum `narSize` over each path set. `du` under-reports, because
+`auto-optimise-store = true` hardlinks identical files. Expect the real
+reclaim to land about 8% below each figure.
+
+| Policy | Generations kept | Reclaim (narSize) | Rollback cost |
+|---|---|---|---|
+| A. Garbage only (`nix-store --gc`) | all 21 | **13.3 GiB** | none |
+| B. Keep booted + current | 373, 374 | **56.8 GiB** | all 19 older generations |
+
+**The booted system is generation 373, not 374.** The switch to 374 happened
+on 2026-09-15 at 00:46 and no reboot followed. Generation 373 holds the
+running kernel and its modules. Keep it in every policy until a reboot.
+
+*Recommendation: run policy A, or nothing at all.* The root filesystem is
+1.9 TiB with 1.2 TiB free, at 39% use. No disk pressure exists. Policy B
+trades every rollback for space the machine does not need.
+
+*Cost of policy B, stated plainly:* generations 367-371 are the only BUILT
+systems that carry dwl. The source is safe on `origin/dwl`, so a rebuild can
+recreate them, but the instant rollback disappears.
+
+*Not a constraint:* `/boot` is 5.0 GiB at 12% use with 5 loader entries.
+The boot partition does not force a collection.
 
 ### P0 — Active interference
 
