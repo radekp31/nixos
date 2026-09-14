@@ -150,7 +150,7 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
     superseded. The code and this file now agree.
   - *Action (open):* Decide whether the Steam background service should exist.
 
-- **[ ] 8. The running system does not come from this branch.**
+- **[x] 8. [CLOSED 2026-09-15] The running system does not come from this branch.**
   `/run/current-system` carries a `dwl.desktop` session and a `dwl` binary.
   This branch carries neither. `git rev-list` reports `config_maintenance`
   0 ahead and `dwl` 6 ahead. `config_maintenance` and `main` both point at
@@ -166,9 +166,41 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
     succeeded with Groups A, B, and C on the branch. The build used `build`,
     never `switch`. A `switch` on this branch takes dwl off the running system.
     The rule stands for every later group.
-  - *Action (open):* Merge `dwl` first, then rebase `config_maintenance` on
-    top. Only then is a `switch` from this branch safe.
-  - *Note:* The `dwl` module is not treefmt-formatted. `treefmt.nix` enables
+  - *[FACT 2026-09-15]* The switch already happened. Generation 372
+    (2026-09-14 18:56) is the first system without dwl. Generation 374
+    (2026-09-15 00:46) carries groups A-F at 26.3 GiB. The risk above is
+    now history, not a warning.
+
+    | Generation | Date | dwl | Closure |
+    |---|---|---|---|
+    | 371 | 2026-09-14 00:43 | yes | 36.5 GiB |
+    | 372 | 2026-09-14 18:56 | no | 36.5 GiB |
+    | 374 (current) | 2026-09-15 00:46 | no | 26.3 GiB |
+
+  - *[DECIDED 2026-09-15]* **No merge. dwl stays on the `dwl` branch.**
+    The user chose this. `config_maintenance` never carries the compositor.
+    A `switch` from `config_maintenance` is therefore safe and expected.
+    Build and run dwl from the `dwl` branch when you want it.
+  - *Measured, for the record:* a merge would have been small. `git merge-tree`
+    of `config_maintenance` and `dwl` auto-merges
+    `hosts/nixos-desktop/configuration.nix` and conflicts only in
+    `modules/system/apps/steam/default.nix`. The dwl branch commented out
+    `gamemode` and `gamescopeSession`; finding 4 already did the same thing
+    properly. Keep the `config_maintenance` side if a merge ever happens.
+  - *[DONE 2026-09-15]* **Waydroid is disabled.** The `dwl` branch had commented
+    out the import; `config_maintenance` still had it live at
+    `hosts/nixos-desktop/configuration.nix:18`, so the running system carried
+    the `waydroid` binary and an enabled `waydroid-container.service`. The user
+    confirmed the decision on 2026-09-15. The import is now commented with the
+    date and the reason.
+    *Measured:* 28.1 MiB exclusive, not the 686 MiB its closure reports.
+    `waydroid`, `lxc`, `android-tools`, `libgbinder` and `gbinder-python` all
+    left, but python3, dbus and glib stay for the rest of the system. This is
+    the same exclusive-versus-closure trap finding 7 documents.
+    *Verified:* the built system has no `waydroid` binary and no
+    `waydroid-container.service`. The closure fell from 26.256 to 26.229 GiB.
+  - *Open, and it belongs to the `dwl` branch:* The `dwl` module is not
+    treefmt-formatted. `treefmt.nix` enables
     `deadnix`, which strips the unused `config` and `lib` arguments. The next
     repo-wide `nix fmt` changes 56 lines in that file. Format it in its own
     commit, so the change never hides inside a feature diff.
