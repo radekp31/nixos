@@ -36,36 +36,51 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
 | `/nix/store` on disk (2026-09-14) | 75 GiB across 18 generations |
 | `/nix/store` on disk (2026-09-15) | **86 GiB across 21 generations** |
 
-### Disk reclaim — measured 2026-09-15, NOT executed
+### Disk reclaim — measured 2026-09-15. No manual action needed.
 
-Groups A-F cut the closure by 10.25 GiB. The disk did not shrink. It grew,
-from 75 GiB to 86 GiB, because every old generation still pins its own
-closure. A garbage collection is the only step that turns the review into
-free space.
+**Conclusion first: run no garbage collection. The system already does it.**
 
-*Method:* sum `narSize` over each path set. `du` under-reports, because
-`auto-optimise-store = true` hardlinks identical files. Expect the real
-reclaim to land about 8% below each figure.
+`hosts/common/default.nix:60` sets `nix.gc.automatic = true`.
+`hosts/nixos-desktop/configuration.nix:56-59` overrides the schedule to
+`weekly` and the options to `--delete-older-than 14d`. The timer is enabled
+and active.
 
-| Policy | Generations kept | Reclaim (narSize) | Rollback cost |
-|---|---|---|---|
-| A. Garbage only (`nix-store --gc`) | all 21 | **13.3 GiB** | none |
-| B. Keep booted + current | 373, 374 | **56.8 GiB** | all 19 older generations |
+*Proof that it works:* `nix-gc.service` ran on 2026-09-14 at 00:02. It
+deleted 23200 store paths and freed **28.9 GiB** in 2.5 minutes. The journal
+holds the full log.
 
-**The booted system is generation 373, not 374.** The switch to 374 happened
-on 2026-09-15 at 00:46 and no reboot followed. Generation 373 holds the
-running kernel and its modules. Keep it in every policy until a reboot.
+So why did the store grow from 75 GiB to 86 GiB? Groups A-F ran on 2026-09-14
+and 2026-09-15, AFTER that collection. Each group built a system closure. The
+growth is normal build garbage between two scheduled runs, and it corrects
+itself.
 
-*Recommendation: run policy A, or nothing at all.* The root filesystem is
-1.9 TiB with 1.2 TiB free, at 39% use. No disk pressure exists. Policy B
-trades every rollback for space the machine does not need.
+| Path set | narSize | Fate |
+|---|---|---|
+| Unreachable garbage today | **13.3 GiB** | the 2026-09-21 run deletes it |
+| Held by generations 354-367 | part of 43.5 GiB | the 2026-09-21 run deletes it |
+| Booted (373) + current (374) + `result` | 36.8 GiB | kept |
 
-*Cost of policy B, stated plainly:* generations 367-371 are the only BUILT
-systems that carry dwl. The source is safe on `origin/dwl`, so a rebuild can
-recreate them, but the instant rollback disappears.
+*Method:* sum `narSize` per path set. `du` under-reports, because
+`auto-optimise-store = true` hardlinks identical files. The 2026-09-14 run
+reported 8.2 GiB saved by hard linking.
 
-*Not a constraint:* `/boot` is 5.0 GiB at 12% use with 5 loader entries.
-The boot partition does not force a collection.
+**Two facts to act on, both time-bounded:**
+
+1. **The booted system is generation 373, not 374.** The switch to 374 ran on
+   2026-09-15 at 00:46 and no reboot followed. Generation 373 holds the running
+   kernel and its modules. Reboot to make 374 the booted system.
+2. **The 2026-09-21 run deletes every generation older than 2026-09-07.** That
+   is generations 354 to 367. Generation 367 (2026-09-04 21:30) is the oldest
+   BUILT system that carries dwl. Generations 368 to 371 carry dwl too, and
+   later runs take them in turn.
+   - *This costs nothing if you accept a rebuild.* The dwl source is safe on
+     `origin/dwl`. Only the instant rollback disappears.
+   - *Act only if you want a permanent dwl fallback.* Pin one generation with
+     a GC root, or raise `--delete-older-than`.
+
+*Not a constraint:* the root filesystem is 1.9 TiB with 1.2 TiB free, at 39%
+use. `/boot` is 5.0 GiB at 12% use with 5 loader entries. No disk pressure
+exists anywhere.
 
 ### P0 — Active interference
 
