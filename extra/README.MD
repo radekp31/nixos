@@ -28,22 +28,35 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
 | Item | Size in the system closure |
 |---|---|
 | Total `/run/current-system` | 36.5 GiB |
-| `ld-library-path` (from `nix-ld`) | **6.0 GiB** |
-| ├ `cuda-merged-12.9` | 3.9 GiB |
-| └ `nvidia-x11-595.71.05` (wrong version) | 782 MiB |
+| `ld-library-path` (from `nix-ld`) | **6.0 GiB** → 200.9 MiB (fixed 2026-09-14) |
+| ├ `cuda-merged-12.9` | 3.9 GiB (removed) |
+| └ `nvidia-x11-595.71.05` (wrong version) | 782 MiB (removed) |
 | `mbrola-voices` (through `speech-dispatcher`) | 644 MiB |
 | `/nix/store` on disk | 75 GiB across 18 generations |
 
 ### P0 — Active interference
 
-- **[ ] 1. `nix-ld` supplies a wrong NVIDIA driver.**
-  `modules/system/apps/nix-ld/default.nix:16` adds `linuxPackages.nvidia_x11`.
-  That resolves to **595.71.05**. The kernel module runs **610.57.04**.
-  Every FHS binary that starts through `nix-ld` receives the 595 user space
-  against the 610 kernel module. This breaks graphics at random.
-  Line 15 adds `cudaPackages.cudatoolkit` and costs 3.9 GiB.
-  - *Action:* Remove `cudatoolkit`. Replace `linuxPackages.nvidia_x11` with
-    `config.hardware.nvidia.package`.
+- **[x] 1. [DONE 2026-09-14] `nix-ld` supplied a wrong NVIDIA driver.**
+  `modules/system/apps/nix-ld/default.nix` added `linuxPackages.nvidia_x11`.
+  That resolved to **595.71.05**. The kernel module runs **610.57.04**.
+  Every FHS binary that started through `nix-ld` received the 595 user space
+  against the 610 kernel module. This broke graphics at random.
+  The list also held `cudaPackages.cudatoolkit` at 3.9 GiB. Nothing on this
+  machine used it.
+  - *[DONE 2026-09-14]* The whole library set moved to `flakes/compat`. The
+    system module now sets `programs.nix-ld.enable` and nothing else. The shim
+    costs 67.8 KiB and stays, because it owns `/lib64/ld-linux-x86-64.so.2`.
+    That path sits outside the store, so only the system can create it.
+  - *Measured:* the `ld-library-path` closure fell from **6.0 GiB** to
+    **200.9 MiB**. The remainder is the upstream default list in
+    `nixos/modules/programs/nix-ld.nix`. `programs.nix-ld.libraries` is a list
+    option, so any value in this repository MERGES with that default instead of
+    replacing it. Use `lib.mkForce []` to go lower. The lost base is not worth
+    it, because the default already covers zlib, curl, openssl, and systemd.
+  - *Verified:* inside `nix run /etc/nixos/flakes/compat#fhs` the driver reads
+    `libnvidia-glcore.so.610.57.04`. Both compat paths take the driver from the
+    host at `/run/opengl-driver`, so the user space always matches the kernel
+    module. The 595-against-610 mismatch cannot return.
 
 - **[x] 2. [DONE 2026-09-14] Global variables overrode each application.**
   All references point to `hosts/nixos-desktop/configuration.nix`.
@@ -167,7 +180,7 @@ group keeps a regression traceable.
 |---|---|---|---|---|
 | A | Environment variables | 2, 4 | none (36.5 GiB both) | **done 2026-09-14** (on `config_maintenance`) |
 | B | Kernel settings | 3 | none | open |
-| C | `nix-ld` libraries | 1 | −4.7 GiB | open |
+| C | `nix-ld` libraries → `flakes/compat` | 1 | **−5.8 GiB** | **done 2026-09-14** |
 | D | Duplicate definitions | 5 | small | open |
 | E | Dead code | 6 | none | open |
 | F | Opt-in heavy packages | 7 | large | open |
@@ -178,8 +191,30 @@ Measure each step with `nvd diff /run/current-system result`.
 real bug. Test Steam, Firefox, and video playback after the rebuild. Revert one
 variable at a time if a problem appears.
 
-*Trade-off (complex):* Group C changes the `nix-ld` library set. An FHS binary
-that needs CUDA then fails. Supply CUDA through a dev shell instead.
+*Trade-off (complex):* Group C moved the `nix-ld` library set into
+`flakes/compat`. That flake holds two mechanisms. The FHS sandbox is the
+default, because it is a superset of the nix-ld path and removes the need to
+choose:
+
+- `nix develop /etc/nixos/flakes/compat` gives an interactive sandbox.
+- `nix run /etc/nixos/flakes/compat -- ./installer.run` runs one command.
+- `nix develop /etc/nixos/flakes/compat#light` gives the nix-ld path. It starts
+  no sandbox, so it is faster, and it leaves `/etc` alone. The sandbox replaces
+  `/etc` with a tmpfs, which a binary that reads an unusual `/etc` file can
+  notice.
+
+*Note:* The two mechanisms never run together. nix-ld works by being the ELF
+interpreter at `/lib64/ld-linux-x86-64.so.2`. Inside the sandbox that path is
+the real glibc loader, so nix-ld is bypassed. `NIX_LD` and
+`NIX_LD_LIBRARY_PATH` leak into the sandbox, but nothing reads them there.
+
+*Note:* `nix develop -c CMD` does not work on the default shell. Its shellHook
+execs the sandbox, so `CMD` never runs. Use `nix run` for one command.
+
+*Trade-off (workaround):* a binary launched outside both compat paths now fails
+with a missing `.so`. That is the price of an on-demand environment. A binary
+that needs CUDA also fails; add `cudaPackages.cudatoolkit` to the list in
+`flakes/compat/flake.nix` if that day comes. Do not add it to the system.
 
 *Trade-off (suboptimal):* Group E deletes work you possibly want later. The git
 history keeps it. The branches `noctalia`, `dwl`, and `foot-fix` also keep it.
