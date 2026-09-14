@@ -203,7 +203,8 @@
 
     opencode
 
-    arduino-ide
+    # arduino-ide moved to flakes/tools#arduino on 2026-09-15. It cost 527 MiB.
+    #   nix develop /etc/nixos/flakes/tools#arduino -c arduino-ide
 
     #browser
     #firefox-esr
@@ -253,13 +254,9 @@
     rclone
     qpdf
 
-    # Virtualization
-    #qemu_kvm
-    #spice-vdagent
-    #virt-viewer
-    #virt-manager
-    # qemu_kvm comes from modules/system/apps/qemu.
-    quickemu
+    # Virtualization moved to flakes/tools#vm on 2026-09-15.
+    # quickemu carries its own qemu at 963 MiB.
+    #   nix develop /etc/nixos/flakes/tools#vm
     #OVMF
 
     # GUI Applications
