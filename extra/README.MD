@@ -27,7 +27,8 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
 
 | Item | Size in the system closure |
 |---|---|
-| Total `/run/current-system` | 36.5 GiB |
+| Total `/run/current-system` (at review start) | 36.5 GiB |
+| Total after groups A–F (2026-09-15) | **27.45 GiB** (−9.05) |
 | `ld-library-path` (from `nix-ld`) | **6.0 GiB** → 200.9 MiB (fixed 2026-09-14) |
 | ├ `cuda-merged-12.9` | 3.9 GiB (removed) |
 | └ `nvidia-x11-595.71.05` (wrong version) | 782 MiB (removed) |
@@ -340,11 +341,84 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
   - *[DONE]* Deleted the line. Folded into the Group D commit, because both
     changes touch the qemu module.
 
-- **[ ] 7. Home packages carry heavy applications.**
-  `lmstudio` costs 2.2 GiB. `libreoffice` costs 1.5 GiB. `arduino-ide` with
-  `gcc-arm-embedded` and `avr-gcc` costs about 2.6 GiB. `freecad` with `vtk`
-  costs about 0.8 GiB. `speech-dispatcher` pulls `mbrola-voices` at 644 MiB.
-  - *Action:* Convert each one into an opt-in module with `mkEnableOption`.
+- **[x] 7. [DONE 2026-09-15] Heavy packages sat in the always-on closure.**
+  **The closure fell from 36.50 GiB to 27.45 GiB. That is 9.05 GiB, or 25%.**
+
+  *Method:* measure EXCLUSIVE closure size per package — bytes reachable
+  through that package alone. A plain closure size double-counts shared
+  dependencies and overstates every candidate. The script `extra/dead-code-scan.py`
+  does the reachability walk; the size walk used `nix path-info -r --json`.
+
+  **Three corrections to the earlier estimate in this finding:**
+  - `arduino-ide` does NOT cost 2.6 GiB. It costs **527 MiB**.
+    `gcc-arm-embedded` (1.07 GiB) and `avr-gcc` (0.51 GiB) belong to the
+    **`qmk`** system module. The exclusive walk proves it: both toolchains were
+    reachable only through `qmk`.
+  - `freecad` does NOT cost 0.8 GiB. It costs **3.13 GiB** — the largest single
+    item on the machine (vtk 473 MiB, gfortran 315 MiB, ifcopenshell 266 MiB).
+  - `speech-dispatcher` is NOT declared anywhere in this repository. Plasma 6
+    enables it through Orca. See below.
+
+  **Part 1 — packages in the wrong place. 5.47 GiB. These were defects.**
+  - *[DONE]* `modules/system/hardware/gpu/nvidia/default.nix:29` put
+    `cudatoolkit` in `hardware.graphics.extraPackages`. That option becomes
+    `/run/opengl-driver`, which takes driver libraries only. Measured: the
+    64-bit `graphics-drivers` closure was 6.59 GiB and `cuda-merged-12.9` was
+    **3.94 GiB** of it. Worse, every FHS environment mounts the driver path, so
+    `steam` and `steam-run` each carried it. **Group C removed this same CUDA
+    from `nix-ld`. This was the second door.**
+  - *[DONE]* The same list held `stdenv.cc`, `binutils`, `ncurses5` and `zlib`
+    (~540 MiB). A compiler is not a driver.
+  - *[DONE]* The same list held `intel-media-driver` and `intel-vaapi-driver`
+    (~160 MiB). The CPU is AMD and the GPU is NVIDIA. No Intel graphics exists.
+  - *[DONE]* `hosts/nixos-desktop/configuration.nix:67` held
+    `user ALL=(ALL) NOPASSWD: ${pkgs.linuxPackages.nvidia_x11.settings}`.
+    Two faults in one line. The user was literally `user`, and `getent passwd
+    user` returns nothing — only `radekp` and `root` exist. And
+    `pkgs.linuxPackages.nvidia_x11` is the DEFAULT driver, 595.71.05, while the
+    pinned driver is 610.57.04. The rule held **782 MiB** of the wrong driver.
+    **This is the same 595-against-610 mismatch finding 1 was meant to end.**
+  - *[DONE]* Disabled Orca and speech-dispatcher in the plasma6 module.
+    The chain was `plasma6.nix` → `services.orca.enable` → `orca.nix` →
+    `services.speechd.enable` → `mbrola` → `mbrola-voices` at **644 MiB**.
+    Orca is the screen reader. The user confirmed on 2026-09-15 that nobody
+    here needs one. **Re-enable both if that changes.** A 56 MiB
+    `speech-dispatcher` library remains, because Firefox and qtspeech link it.
+  - *[DONE]* Replaced `bibata-cursors` (322 MiB) with `breeze_cursors` from
+    `kdePackages.breeze`, which Plasma 6 already installs, so it is free.
+    `home.pointerCursor` now declares the choice.
+    *Open:* `~/.config/qt6ct/qt6ct.conf`, `qt5ct.conf`,
+    `niri/dms/cursor.kdl`, `DankMaterialShell/settings.json` and
+    `cosmic/.../icon_theme` still name Bibata. Those files are mutable user
+    state, not nix-managed. Clear them or set Breeze in System Settings.
+
+  **Part 2 — heavy tooling moved to `flakes/tools`. 3.58 GiB.**
+  The user chose what to keep on 2026-09-15. See `flakes/tools/flake.nix`.
+  - *[DONE]* `qmk`, `qmk_hid`, `via`, `nrfutil` → `#qmk`. A keyboard gets
+    reflashed a few times a year; the toolchain was resident always.
+  - *[DONE]* `arduino-ide` → `#arduino`.
+  - *[DONE]* `quickemu` (with its own 963 MiB qemu) and the standalone
+    virtualization tools → `#vm`.
+  - *Two constraints decided the split, and both are real:*
+    1. **A devShell cannot install udev rules.** So
+       `hardware.keyboard.qmk.enable`, the udev rule block, and
+       `services.udev.packages` stay in the qmk module. Verified: the built
+       system keeps `50-qmk.rules` and `92-viia.rules`, and the `via` package
+       itself left the closure. `services.udev.packages` copies the rules
+       files without keeping the package.
+    2. **A devShell cannot run a daemon.** `virtualisation.libvirtd` stays a
+       system service, and `unit-libvirtd.service` references the 963 MiB qemu
+       store path directly. **That closure does NOT leave while libvirtd stays
+       enabled.** Disabling libvirtd would reclaim it and would end
+       virt-manager VMs. That decision is open.
+
+  **Kept by user decision (2026-09-15):** freecad, lmstudio, qmk, libreoffice,
+  nixvim, quickemu, lutris, arduino-ide, firefox, bitwarden-cli, ripgrep-all,
+  via, plasma-workspace-wallpapers, claude-code. The move to `flakes/tools`
+  keeps every one of them available on demand. Nothing was lost.
+
+  - *Open:* `virtualisation.libvirtd.enable`. Keep it and qemu stays resident
+    at 963 MiB, or disable it and lose virt-manager VMs in favour of quickemu.
 
 ### Plan
 
@@ -358,7 +432,7 @@ group keeps a regression traceable.
 | C | `nix-ld` libraries → `flakes/compat` | 1 | **−5.8 GiB** | **done 2026-09-14** |
 | D | Duplicate definitions | 5, 9 | none (36.501 GiB both) | **done 2026-09-14** (on `config_maintenance`) |
 | E | Dead code | 6 | 534 lines, 4 lock nodes | **done 2026-09-15** (on `config_maintenance`) |
-| F | Opt-in heavy packages | 7 | large | open |
+| F | Heavy packages → `flakes/tools` | 7 | **−9.05 GiB** (36.50 → 27.45) | **done 2026-09-15** (on `config_maintenance`) |
 
 Measure each step with `nvd diff /run/current-system result`.
 
