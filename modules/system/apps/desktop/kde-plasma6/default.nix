@@ -1,5 +1,16 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  lib,
+  ...
+}: {
   services.desktopManager.plasma6.enable = true;
+
+  # Plasma 6 enables the Orca screen reader by default. Orca then enables
+  # speech-dispatcher, which pulls mbrola-voices at 644 MiB. Nobody on this
+  # host uses a screen reader. The user confirmed the removal on 2026-09-15.
+  # Re-enable both if anybody needs text to speech.
+  services.orca.enable = lib.mkForce false;
+  services.speechd.enable = lib.mkForce false;
 
   # SDDM configuration
   services.displayManager.sddm = {

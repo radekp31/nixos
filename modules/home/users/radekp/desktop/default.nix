@@ -37,6 +37,17 @@
   home.sessionPath = [
     "/home/radekp/.nix-profile/bin/" # Required by Neovim and plugins (?)
   ];
+
+  # Cursor theme. Replaces bibata-cursors, which cost 322 MiB on its own.
+  # kdePackages.breeze already sits in the closure through Plasma 6, so this
+  # theme is free. Declaring it here makes the choice survive a reinstall.
+  home.pointerCursor = {
+    package = pkgs.kdePackages.breeze;
+    name = "breeze_cursors";
+    size = 24;
+    gtk.enable = true;
+    x11.enable = true;
+  };
   home.sessionVariables = {
     SDL_VIDEODRIVER = "wayland";
   };
@@ -262,7 +273,9 @@
 
     # Theming & Icons
     adwaita-icon-theme
-    bibata-cursors
+    # bibata-cursors cost 322 MiB. Replaced by breeze_cursors from
+    # kdePackages.breeze, which Plasma 6 already installs. See
+    # home.pointerCursor below.
     qadwaitadecorations-qt6
     font-awesome_6
 

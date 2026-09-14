@@ -63,8 +63,6 @@
     Defaults    insults
     Defaults:radekp timestamp_timeout=30
 
-
-    user ALL=(ALL) NOPASSWD: ${pkgs.linuxPackages.nvidia_x11.settings}
     radekp ALL=(ALL) NOPASSWD: ${pkgs.rsync}/bin/rsync
   '';
 
