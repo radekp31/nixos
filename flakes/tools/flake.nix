@@ -86,23 +86,21 @@
         };
 
         # Virtual machines. quickemu carries its own qemu.
+        # virt-manager is deliberately absent. The user disabled libvirtd on
+        # 2026-09-15, so a virt-manager here would find no daemon to reach.
         devShells.vm = pkgs.mkShell {
           packages = with pkgs; [
             quickemu
             quickgui
             qemu_kvm
             virt-viewer
-            virt-manager
             spice-gtk
             spice-protocol
-            spice-autorandr
-            spice-vdagent
             swtpm
             OVMF
             virtio-win
-            bridge-utils
           ];
-          shellHook = banner "vm" "virt-manager needs the libvirtd system service.";
+          shellHook = banner "vm" "Run 'quickget' to fetch an image, then 'quickemu'.";
         };
 
         devShells.default = pkgs.mkShell {

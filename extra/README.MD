@@ -28,7 +28,7 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
 | Item | Size in the system closure |
 |---|---|
 | Total `/run/current-system` (at review start) | 36.5 GiB |
-| Total after groups A–F (2026-09-15) | **27.45 GiB** (−9.05) |
+| Total after groups A–F (2026-09-15) | **26.25 GiB** (−10.25, or 28%) |
 | `ld-library-path` (from `nix-ld`) | **6.0 GiB** → 200.9 MiB (fixed 2026-09-14) |
 | ├ `cuda-merged-12.9` | 3.9 GiB (removed) |
 | └ `nvidia-x11-595.71.05` (wrong version) | 782 MiB (removed) |
@@ -342,7 +342,7 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
     changes touch the qemu module.
 
 - **[x] 7. [DONE 2026-09-15] Heavy packages sat in the always-on closure.**
-  **The closure fell from 36.50 GiB to 27.45 GiB. That is 9.05 GiB, or 25%.**
+  **The closure fell from 36.50 GiB to 26.25 GiB. That is 10.25 GiB, or 28%.**
 
   *Method:* measure EXCLUSIVE closure size per package — bytes reachable
   through that package alone. A plain closure size double-counts shared
@@ -417,8 +417,29 @@ Disk size is a symptom. Interference is the disease. Fix the interference first.
   via, plasma-workspace-wallpapers, claude-code. The move to `flakes/tools`
   keeps every one of them available on demand. Nothing was lost.
 
-  - *Open:* `virtualisation.libvirtd.enable`. Keep it and qemu stays resident
-    at 963 MiB, or disable it and lose virt-manager VMs in favour of quickemu.
+  - *[DONE 2026-09-15]* **libvirtd is disabled.** The user chose quickemu.
+    `qemu`, `libvirt` and `virt-manager` now have ZERO paths in the closure,
+    and the 11 libvirtd systemd units are gone. That is a further 1.20 GiB.
+    virt-manager, the dconf connection profile, and the `libvirtd` and
+    `qemu-libvirtd` group memberships went with the daemon, because each one
+    existed only to serve it. **Restore all five together if you want
+    virt-manager back. A partial restore gives a GUI that cannot connect.**
+    `virt-manager` also left `flakes/tools#vm`, for the same reason.
+  - *Kept, and it cannot move to a devShell:* `boot.kernelModules = ["kvm-amd"]`
+    and `virtualisation.spiceUSBRedirection.enable`. quickemu needs KVM from
+    the kernel and needs the setuid `spice-client-glib-usb-acl-helper` for USB
+    passthrough. `/dev/kvm` is mode 0666 on this host, so no group membership
+    is required to reach it.
+  - *[DONE 2026-09-15]* **The cursor theme moved to the plasma6 module.**
+    `environment.sessionVariables` now sets `XCURSOR_THEME = "breeze_cursors"`
+    and `XCURSOR_SIZE = "24"`. Verified in `etc/set-environment`, and
+    `XCURSOR_PATH` already covers `/run/current-system/sw/share/icons`, where
+    Plasma installs the theme. `home.pointerCursor` is removed.
+    *Still open:* Plasma keeps its own copy in `~/.config/kcminputrc`, which
+    nix does not manage. Change the theme once in System Settings, or delete
+    the `[Mouse] cursorTheme` line, if a KDE application shows the old cursor.
+    The same applies to `qt5ct.conf`, `qt6ct.conf`, `niri/dms/cursor.kdl`,
+    `DankMaterialShell/settings.json` and `cosmic/.../icon_theme`.
 
 ### Plan
 
@@ -432,7 +453,7 @@ group keeps a regression traceable.
 | C | `nix-ld` libraries → `flakes/compat` | 1 | **−5.8 GiB** | **done 2026-09-14** |
 | D | Duplicate definitions | 5, 9 | none (36.501 GiB both) | **done 2026-09-14** (on `config_maintenance`) |
 | E | Dead code | 6 | 534 lines, 4 lock nodes | **done 2026-09-15** (on `config_maintenance`) |
-| F | Heavy packages → `flakes/tools` | 7 | **−9.05 GiB** (36.50 → 27.45) | **done 2026-09-15** (on `config_maintenance`) |
+| F | Heavy packages → `flakes/tools` | 7 | **−10.25 GiB** (36.50 → 26.25) | **done 2026-09-15** (on `config_maintenance`) |
 
 Measure each step with `nvd diff /run/current-system result`.
 

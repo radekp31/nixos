@@ -38,16 +38,7 @@
     "/home/radekp/.nix-profile/bin/" # Required by Neovim and plugins (?)
   ];
 
-  # Cursor theme. Replaces bibata-cursors, which cost 322 MiB on its own.
-  # kdePackages.breeze already sits in the closure through Plasma 6, so this
-  # theme is free. Declaring it here makes the choice survive a reinstall.
-  home.pointerCursor = {
-    package = pkgs.kdePackages.breeze;
-    name = "breeze_cursors";
-    size = 24;
-    gtk.enable = true;
-    x11.enable = true;
-  };
+  # The cursor theme lives in modules/system/apps/desktop/kde-plasma6.
   home.sessionVariables = {
     SDL_VIDEODRIVER = "wayland";
   };
