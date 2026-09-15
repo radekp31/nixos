@@ -1,9 +1,5 @@
-{lib, ...}: {
-  options.catppuccinTheme = lib.mkOption {
-    type = lib.types.enum ["latte" "frappe" "macchiato" "mocha"];
-    default = "macchiato";
-    description = "The Catppuccin flavor for this specific host.";
-  };
-
-  config.catppuccinTheme = "macchiato";
+# Host values only. hosts/common/options.nix declares every option and its
+# default. Set an option here only when this host must differ from the default.
+# This host overrides nothing today.
+{...}: {
 }
