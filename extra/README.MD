@@ -641,12 +641,32 @@ The completed items from this review sit in the archive. The open items follow.
     GitHub. A local hook catches it before. A local hook is untracked,
     bypassable, and needs a manual install per clone, so it buys less than it
     appears to. Add one only if a real leak happens.
-  - *Open, and it needs your word:* `.secrets.baseline` and
-    `.pre-commit-config.yaml` are both dead. The baseline serves a tool that is
-    not installed, and it is the sole source of the false positives above.
-    `.pre-commit-config.yaml` now carries an `INERT` header. Say the word and
-    both go. The allowlist must stay either way, because git history keeps the
-    file after a delete.
+  - *[DONE 2026-09-15] Both dead files are deleted.* The user approved.
+    `.secrets.baseline` and `.pre-commit-config.yaml` are gone. The
+    `.gitleaks.toml` allowlist stays, because git history keeps the baseline
+    after the delete. The scan still reports `no leaks found`.
+  - **Correction to the note above.** "pre-commit is not installed" was true of
+    `PATH` and of `.git/hooks`, but it was not the whole mechanism.
+    `modules/devShells/default.nix` put `pkgs.pre-commit` in both shells, and
+    the `devops` shellHook ran `pre-commit install --install-hooks` whenever
+    `.pre-commit-config.yaml` existed. The hooks were devShell-gated. This
+    clone never entered that shell, so `.git/hooks` stayed empty.
+  - **[FIXED 2026-09-15] `nixpush` pushed unformatted code.** This is the real
+    damage the dead hooks caused. `modules/home/shells/zsh/default.nix` held a
+    "simplified nixpush(), because of pre-commit" whose comment said
+    "pre-commit will run treefmt automatically". No hook existed, so nothing
+    formatted anything. An older version of the same function, still commented
+    out in the generated `.zshrc`, ran `nix fmt` itself.
+    - *Done:* `nixpush` runs `nix fmt` again, guarded by `[ -f flake.nix ]` so
+      it stays usable in a repository with no flake. The format runs BEFORE
+      `git add -A`, which the old commented version got wrong.
+    - *Verified:* the new function is in the built
+      `home-manager-files/.zshrc`.
+  - *[DONE 2026-09-15] Removed `pkgs.pre-commit` from both devShells and the
+    install shellHook.* Nothing calls them now.
+  - *[DONE 2026-09-15] Fixed a copy-paste defect found on the way.* The
+    `default` devShell exported `DEVSHELL_NAME="devops"`, so its zsh prompt
+    claimed to be the devops shell. It now exports `default`.
 
 ---
 
@@ -810,9 +830,13 @@ The completed items from this review sit in the archive. The open items follow.
     2026-09-15.* The treefmt gate inside `nix flake check` already covers
     formatting, and a local hook is untracked and bypassable. A push-triggered
     workflow is the reliable place. See the Secret scanning entry above.
-  - *Open:* run `nix flake check` on `push` and `pull_request` too. Today only
-    the nightly job runs it, so a broken commit of yours reaches `main`
-    unchecked. `.github/workflows/secret-scan.yaml` is the pattern to copy.
+  - *[DONE 2026-09-15]* `nix flake check` now runs on `push` and
+    `pull_request`. Both jobs live in one file, `.github/workflows/ci.yaml`,
+    as `gitleaks` and `flake-check`. The separate `secret-scan.yaml` is folded
+    into it, so the repository keeps one CI file.
+  - *Scope of the check:* it evaluates both hosts and runs the treefmt gate. It
+    does NOT build a host closure. The nightly workflow owns that build,
+    because a full desktop closure can exhaust a free runner.
 
 ## ⏳ Pending Discussion
 

@@ -14,12 +14,10 @@
   nixTools = import ./tools/nix.nix {inherit pkgs;};
 in {
   default = pkgs.mkShell {
-    buildInputs =
-      nixTools.packages
-      ++ [pkgs.pre-commit];
+    buildInputs = nixTools.packages;
 
     shellHook = ''
-      export DEVSHELL_NAME="devops"
+      export DEVSHELL_NAME="default"
       export NIXPKGS_ALLOW_UNFREE=1
       export SHELL=${pkgs.zsh}/bin/zsh
     '';
@@ -29,19 +27,12 @@ in {
     buildInputs =
       pythonTools.packages
       ++ devopsTools.packages
-      ++ azureTools.packages
-      ++ [pkgs.pre-commit];
+      ++ azureTools.packages;
 
     shellHook = ''
       export DEVSHELL_NAME="devops"
       export NIXPKGS_ALLOW_UNFREE=1
       export SHELL=${pkgs.zsh}/bin/zsh
-
-      # Install pre-commit hooks from .pre-commit-config.yaml
-      if [ -f .pre-commit-config.yaml ]; then
-        pre-commit install --install-hooks
-      fi
-
     '';
   };
 }

@@ -149,9 +149,17 @@
       Current subscription: Dynatrace-Runecast-Contentcreation
       }
 
-      #simplified nixpush(), because of pre-commit
+      # Format, then commit, then push.
+      # This used to rely on a pre-commit hook to run treefmt. That hook was
+      # never installed, so nixpush pushed unformatted code. It formats itself
+      # now. The guard keeps the function usable in a repository with no flake.
       nixpush() {
         local message="$1"
+
+        if [ -f flake.nix ]; then
+          nix fmt || return 1
+        fi
+
         git add -A
 
         if git diff --cached --quiet; then
@@ -159,7 +167,6 @@
           return 0
         fi
 
-        # pre-commit will run treefmt automatically
         git commit -m "$message" && git push
       }
 
