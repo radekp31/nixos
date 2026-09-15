@@ -854,6 +854,65 @@ The completed items from this review sit in the archive. The open items follow.
   *Design it together with `mkHost`.* `mkHost` reads the same option set to
   build a host, so the two items share one data model. Do `my.*` first,
   because `mkHost` depends on it and not the reverse.
+
+  ### Scope, decided by the user 2026-09-15: VALUES ONLY
+
+  Convert the username where it is a **value**. Leave it where it is an
+  **attribute name** or a **path**.
+
+  | Out of scope | Why |
+  |---|---|
+  | `users.users.radekp`, `home-manager.users.radekp` | attribute names. A `config` read inside an attribute name risks evaluation recursion. |
+  | `modules/home/users/radekp/` | a directory name. Renaming buys nothing while there is one user. |
+  | `…AAAAIIzoVRV… radekp@nixos-desktop` in 2 host files | ssh public key material, not a name. Never edit. |
+  | `radekp31-nixos` in the 2 workflows | YAML cannot read a Nix option. |
+
+  ### The option module
+
+  Add `hosts/common/options.nix`. Import it from `hosts/common/default.nix`.
+  *Verified 2026-09-15:* both live hosts import `../common/default.nix`
+  (`hosts/nixos-desktop/configuration.nix:14`,
+  `hosts/nixos-wsl/configuration.nix:10`), so one import reaches both.
+
+  Declare `my.user.{name,fullName,email,home}`, `my.work.{fullName,email}`,
+  `my.repo.{owner,name,url}` and `my.theme.catppuccin`. Derive `home` from
+  `name` in the option default. Derive `url` from `owner` and `name`.
+
+  A home-manager module reads these through `osConfig.my.*`, exactly as
+  `modules/home/colorschemes/catppuccin/default.nix:7` reads `osConfig` today.
+
+  ### The steps. Commit each one alone.
+
+  **Every step below must produce an IDENTICAL system store path.** The values
+  do not change, only where they are written. A changed path means the step
+  changed behaviour, so stop and find out why. This is the same proof that
+  Group E used.
+
+  | Step | Scope | Files | Check |
+  |---|---|---|---|
+  | 1 | Add the option module. Change nothing else. | `hosts/common/options.nix` (new), `hosts/common/default.nix` | Identical path on both hosts. An option with no consumer produces no output. |
+  | 2 | Migrate `catppuccinTheme` to `my.theme.catppuccin`. Delete the 3 guards. | both `variables.nix`, `modules/home/colorschemes/catppuccin/default.nix:7-9`, `modules/system/apps/nixvim/default.nix:82-84`, `modules/system/apps/wsl-nixvim/default.nix:190-192` | Identical path. This step proves the mechanism on a value that already flows. |
+  | 3 | User identity values. | `hosts/nixos-desktop/configuration.nix:68,70`, `hosts/nixos-desktop/users.nix:8`, `hosts/nixos-wsl/configuration.nix:25`, `hosts/nixos-wsl/users.nix:12`, `modules/home/users/radekp/desktop/default.nix:34,35,38,73,74`, `modules/home/users/radekp/wsl/default.nix:8,9,25,26`, `modules/system/secrets/sops/default.nix:13` | Identical path. |
+  | 4 | Repository URL. | `hosts/common/default.nix:53` | Identical path. |
+  | 5 | Work identity. **Blocked, see below.** | `modules/home/users/radekp/desktop/default.nix:91-92`, `modules/home/users/radekp/wsl/default.nix:36-37,42-43` | NOT identical. It fixes a typo, so the path must change. |
+
+  ### Two findings that came out of the planning
+
+  - **[BLOCKER for step 5] The work email differs between the two hosts.**
+    `modules/home/users/radekp/desktop/default.nix:92` says
+    `radekp.polasek@dynatrace.com`. `modules/home/users/radekp/wsl/default.nix:37`
+    and `:43` say `radek.polasek@dynatrace.com`. One has an extra `p`. One of
+    them is a typo and signs commits with a wrong address.
+    **Ask the user which address is correct before step 5.** This is exactly
+    the defect that centralization prevents.
+  - **Dead `includeIf` on the desktop host.**
+    `modules/home/users/radekp/desktop/default.nix:83` sets
+    `includeIf."gitdir:/mnt/c/workspaces/dt_workspaces"`. That is a WSL path
+    under `/mnt/c`, and it cannot exist on `nixos-desktop`, so the work
+    identity never applies there. Line 86 also carries a comment that says
+    `~/personal/` while the path is `/etc/nixos`. Both comments on lines 82
+    and 85 describe paths that the code does not use. Separate item, not part
+    of this work.
 - [ ] **Host-Wide Version Selector**
   - Add one option to set the major nixpkgs release per host.
   - Keep an escape hatch to override specific packages from another release.
