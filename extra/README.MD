@@ -587,15 +587,9 @@ The completed items from this review sit in the archive. The open items follow.
 
 - **[ ] Host wiring repeats.** `parts/hosts.nix` copies the full home-manager
   block for each host. Add a `mkHost` helper to remove the boilerplate.
-- **[ ] Hardcoded values repeat across the repository.** The string `radekp`
-  appears in 17 `.nix` files. The git email `polasek.31@seznam.cz` repeats in
-  3 files. The GitHub repo string `radekp31` repeats in
-  `hosts/common/default.nix` and the daily-update workflow. Treat identity as
-  one instance of a general pattern, not the only one.
-  - *Action:* Add a `my.user` option set (name, email) and a small set of global
-    constants (repo owner and URL). Reference them everywhere.
-    Leave `time.timeZone` and `system.stateVersion` as per-host values. They are
-    correct to differ. State the rule once, centrally.
+- **[ ] Hardcoded values repeat across the repository.** *Superseded
+  2026-09-15.* The Architecture section now holds the full item. See
+  "Centralize every hardcoded value".
 - **[ ] Commented blocks remain.** Large commented blocks sit in
   `parts/hosts.nix`, `modules/system/secrets/sops`, and
   `hosts/common/profiles/desktop.nix`. Remove them or restore them.
@@ -796,9 +790,70 @@ The completed items from this review sit in the archive. The open items follow.
 - [ ] **Transition to "Smart" Modules**
   - Convert static imports (such as KDE and Plasma) to use `options` and
     `mkEnableOption`. Review 2026-09-14, finding 7 depends on this work.
-- [ ] **Centralize Global Constants**
-  - Define `my.user.name`, `my.user.email`, and similar in a global module.
-  - Do not centralize `time.timeZone` or `system.stateVersion`.
+- [ ] **Centralize every hardcoded value** (user request, extended 2026-09-15)
+  - *The user asked for this on 2026-09-15:* extend the old `my.user` item to
+    ANY hardcoded value, and give each system a variable file that propagates
+    properly into the configuration.
+
+  **The mechanism already exists. Do not invent a new one.**
+  `hosts/nixos-desktop/variables.nix` and `hosts/nixos-wsl/variables.nix`
+  already declare an option and set it per host. The host imports the file.
+  Three modules already read the value. The pattern works today.
+
+  **It has one defect, and it is the whole problem.** Each `variables.nix`
+  declares the option AND sets the value. So the option EXISTS only on a host
+  that imports such a file. Every consumer must therefore guard the read:
+
+  ```nix
+  flavor =
+    if (osConfig ? catppuccinTheme)
+    then osConfig.catppuccinTheme
+    else "macchiato";
+  ```
+
+  *Measured:* that guard repeats in
+  `modules/home/colorschemes/catppuccin/default.nix:7-9`,
+  `modules/system/apps/nixvim/default.nix:82-84` and
+  `modules/system/apps/wsl-nixvim/default.nix:190-192`. The default
+  `"macchiato"` is written **five** times: twice in the two `variables.nix`
+  files and three times in the guards. A changed default needs five edits.
+
+  **The fix splits declaration from value.**
+  1. One shared module declares every option under a `my.*` namespace, with
+     the default. `hosts/common/default.nix` imports it, so EVERY host has
+     every option.
+  2. Each `hosts/<host>/variables.nix` keeps only the values it overrides.
+  3. Every consumer reads `config.my.<x>` with no guard, because the option
+     always exists. The five copies of the default collapse to one.
+
+  *A `my.*` namespace also protects you.* `options.catppuccinTheme` sits at the
+  root of the NixOS option tree today, where an upstream option of the same
+  name would clash.
+
+  **What goes in, measured 2026-09-15:**
+
+  | Constant | Value today | Occurrences |
+  |---|---|---|
+  | `my.user.name` | `radekp` | 26 lines in 14 `.nix` files |
+  | `my.user.email` | `polasek.31@seznam.cz` | 3 lines in 2 files |
+  | `my.user.home` | `/home/radekp` | 4 lines. **Derive it**, never store it. |
+  | `my.repo.owner` | `radekp31` | `hosts/common/default.nix:53` and 2 workflows |
+  | `my.theme.catppuccin` | `macchiato` | 5 copies, see above |
+
+  *Correction to the old entry:* it claimed `radekp` appears in 17 `.nix`
+  files. The measured count on 2026-09-15 is **14 files and 26 lines**. Group E
+  deleted some of them.
+
+  **Stays per host. Do not centralize.**
+  `system.stateVersion` and `time.timeZone` are correct to differ.
+  `networking.hostName` is the host identity itself.
+
+  *Trade-off (complex):* the two GitHub workflows cannot read a Nix option.
+  `radekp31-nixos` stays written out in YAML. Only the Nix side centralizes.
+
+  *Design it together with `mkHost`.* `mkHost` reads the same option set to
+  build a host, so the two items share one data model. Do `my.*` first,
+  because `mkHost` depends on it and not the reverse.
 - [ ] **Host-Wide Version Selector**
   - Add one option to set the major nixpkgs release per host.
   - Keep an escape hatch to override specific packages from another release.
