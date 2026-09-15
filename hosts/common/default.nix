@@ -53,7 +53,7 @@ in {
   system.autoUpgrade = {
     enable = false; # A shell staleness check alerts instead; run upgrades manually.
     operation = "boot";
-    flake = "git+https://github.com/radekp31/nixos.git#${config.networking.hostName}";
+    flake = "git+${config.my.repo.url}#${config.networking.hostName}";
     persistent = true;
     allowReboot = false;
   };
