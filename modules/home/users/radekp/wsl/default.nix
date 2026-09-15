@@ -1,12 +1,16 @@
-{config, ...}: {
+{
+  config,
+  osConfig,
+  ...
+}: {
   imports = [
     ./packages.nix
     ../../../shells/zsh
     ../../../colorschemes/catppuccin
     ../../../apps/tmux
   ];
-  home.username = "radekp";
-  home.homeDirectory = "/home/radekp";
+  home.username = osConfig.my.user.name;
+  home.homeDirectory = osConfig.my.user.home;
 
   programs.git = {
     enable = true;

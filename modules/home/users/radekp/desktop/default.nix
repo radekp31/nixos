@@ -1,6 +1,7 @@
 {
   pkgs,
   config,
+  osConfig,
   ...
 }: {
   imports = [
@@ -31,11 +32,11 @@
   programs.home-manager.enable = true;
 
   # Home Manager settings
-  home.username = "radekp";
-  home.homeDirectory = "/home/radekp";
+  home.username = osConfig.my.user.name;
+  home.homeDirectory = osConfig.my.user.home;
   home.stateVersion = "25.05";
   home.sessionPath = [
-    "/home/radekp/.nix-profile/bin/" # Required by Neovim and plugins (?)
+    "${config.home.homeDirectory}/.nix-profile/bin/" # Required by Neovim and plugins (?)
   ];
 
   # The cursor theme lives in modules/system/apps/desktop/kde-plasma6.
@@ -70,8 +71,8 @@
     enable = true;
     settings = {
       user = {
-        email = "polasek.31@seznam.cz";
-        name = "Radek Polasek";
+        email = osConfig.my.user.email;
+        name = osConfig.my.user.fullName;
       };
 
       init.defaultBranch = "main";

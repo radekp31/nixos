@@ -1,11 +1,15 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   programs.zsh.enable = true;
 
   users = {
     users = {
       radekp = {
         isNormalUser = true;
-        description = "Radek Polasek";
+        description = config.my.user.fullName;
         shell = pkgs.zsh;
         extraGroups = [
           "wheel"

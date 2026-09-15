@@ -1,6 +1,7 @@
 {
   lib,
   pkgs,
+  config,
   ...
 }: {
   imports = [
@@ -22,7 +23,7 @@
   wsl.ssh-agent.enable = true;
 
   # WSL user
-  wsl.defaultUser = "radekp";
+  wsl.defaultUser = config.my.user.name;
   wsl.interop.includePath = true;
 
   # Timezone (already UTC in common, but explicit here)

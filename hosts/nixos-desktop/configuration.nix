@@ -65,9 +65,9 @@
   security.sudo.extraConfig = ''
     Defaults    pwfeedback
     Defaults    insults
-    Defaults:radekp timestamp_timeout=30
+    Defaults:${config.my.user.name} timestamp_timeout=30
 
-    radekp ALL=(ALL) NOPASSWD: ${pkgs.rsync}/bin/rsync
+    ${config.my.user.name} ALL=(ALL) NOPASSWD: ${pkgs.rsync}/bin/rsync
   '';
 
   security.sudo.extraRules = [
