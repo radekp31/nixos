@@ -22,6 +22,10 @@
   # Override the default package
   #programs.terraform.package = pkgs.terraform_1;
 
+  # Never format an encrypted file. sops writes its own layout, and a
+  # formatter that rewrites it creates needless diff churn on every commit.
+  settings.global.excludes = ["**/secrets/*.yaml"];
+
   # Excludes files you dont want to format
   #settings.formatter.terraform.excludes = [ "hello.tf" ];
 }

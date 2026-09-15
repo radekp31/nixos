@@ -28,6 +28,9 @@
     ../../modules/system/apps/nix-ld
     ../../modules/system/apps/steam
     ../../modules/system/hardware/bluetooth
+    # Deferred 2026-09-15 by user decision. The module is finished and
+    # verified. Uncomment this line to install the secrets again.
+    #../../modules/system/secrets/sops
   ];
 
   nixpkgs.config.allowUnfree = true;

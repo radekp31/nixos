@@ -365,7 +365,7 @@ exists anywhere.
   | `modules/devShells/devops/default.nix` | 28 | the inline `devops` shell in `modules/devShells/default.nix:28` | No |
   | `modules/devShells/tools/hooks.nix` | 23 | data for the old devops shell above | No |
   | `modules/devShells/tools/shell.nix` | 22 | `flakes/compat` does the same FHS job. This file also reads `<nixpkgs>`, so it bypasses the flake lock. | No |
-  | `modules/system/secrets/sops` | 51 | nothing. It is ALSO broken: line 3 comments out the only `sops-nix` import, so the `sops.*` options never exist. | Yes, I want to fix t his later |
+  | `modules/system/secrets/sops` | 51 | **FIXED 2026-09-15, then deferred.** The `sops-nix` import is live and the file is now 13 lines. The host import is commented out. See the Security & Secrets section. | Yes, I want to fix t his later |
 
   **Group 6d — Orphan hosts. The 2025-11 era (935 lines).**
   `parts/hosts.nix` builds exactly two hosts. None of these appears there. KEEP!
@@ -613,20 +613,71 @@ The completed items from this review sit in the archive. The open items follow.
 
 ## 🔐 Security & Secrets
 
-- [ ] **SOPS-nix Integration** (High Priority)
-  - **>>> NEXT ITEM. The user chose this on 2026-09-15 and asked that no work
-    start yet. Begin here in the next session. <<<**
-  - The user confirmed on 2026-09-15: keep `modules/system/secrets/sops` and fix
-    it later. Review 2026-09-14, finding 6, group 6c holds the diagnosis.
-  - *The blocker:* `modules/system/secrets/sops/default.nix:3` comments out the
-    only `sops-nix` import. The module then sets `sops.defaultSopsFile` and
-    `sops.secrets` at lines 14-49, but no module defines the `sops.*` options.
-    Importing this file fails with "The option `sops' does not exist".
-  - *The first step:* Add `sops-nix` to `flake.nix` inputs with
-    `inputs.nixpkgs.follows = "nixpkgs"`. The flake does NOT declare it today.
-    Then uncomment line 3. Only then does the rest of the file evaluate.
-  - Review the sops-nix configuration. Confirm that secrets decrypt on deploy.
-  - Move sensitive environment variables and udev rules into secrets.
+- [ ] **[DEFERRED 2026-09-15] SOPS-nix Integration.** The module is finished
+  and verified. The host does NOT import it.
+  - **>>> The user deferred this on 2026-09-15. The code is complete and the
+    build is proven. Only the import at
+    `hosts/nixos-desktop/configuration.nix` is commented out. Uncomment that
+    one line to turn secrets on. Do NOT rebuild this work from scratch. <<<**
+  - *Why the `sops-nix` input stays in `flake.nix`:* the module imports it, and
+    the module stays. A later dead-input scan flags it, exactly as it flags
+    `disko`. This entry is the reason to keep it.
+  - *The old blocker, now closed:* `modules/system/secrets/sops/default.nix:3`
+    commented out the only `sops-nix` import, and `flake.nix` never declared the
+    input. Both are fixed. The input follows the main `nixpkgs` and adds one
+    lock node.
+  - *The module shrank from 51 lines to 13.* Every deleted line repeated an
+    upstream default:
+    - `services.openssh.enable` — the host owns the ssh daemon. A secrets
+      module must not enable a network daemon.
+    - `age.sshKeyPaths` — `sops-nix` defaults this to the ed25519 keys in
+      `config.services.openssh.hostKeys`. *Verified* in the built manifest:
+      `ageSshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"]` with no explicit
+      value in this repository.
+    - `age.keyFile` and `generateKey` — a generated key is in no recipient
+      list, so it decrypts nothing. The ssh host key already works.
+    - `sopsFile`, `format`, `mode` per secret — each one repeated the default.
+    - The `owner` conditional on `config.users.users.radekp.enable`. The option
+      is real and defaults to `true`, so the test was always true here.
+    - `SOPS_AGE_KEY_FILE` in `environment.sessionVariables` — it pointed every
+      session at a root-only path that does not exist. Review 2026-09-14,
+      finding 2 removed global variables for the same reason.
+  - **[FACT 2026-09-15] The old admin key was lost, and the secrets died with
+    it.** `.sops.yaml` named one recipient, `age1at2agfd…`. The private half
+    existed in none of four places: `~/.config/sops/age/keys.txt` (absent),
+    `/var/lib/sops-nix/keys.txt` (absent), `~/.ssh/id_ed25519` → `age1zs6a38…`
+    (no match), `/etc/ssh/ssh_host_ed25519_key` → `age1cq7ryk…` (no match).
+    The user confirmed the loss. `secrets.yaml` was recreated from scratch.
+    The lost content was `test_secret` and `IPs/pinas`, one IP address. That IP
+    appears in no `~/.ssh/config` entry, so it is not recoverable here.
+  - **[DECIDED 2026-09-15] The admin recipient is now the user ssh key.**
+    `age1zs6a38rkxkrp3ala2vc7en46xhctn2v58v2zgt3pfyn4t0wnegysqcurer`, derived
+    from `~/.ssh/id_ed25519`. No separate age key file exists to lose. The
+    second recipient is the `nixos-desktop` host key, `age1cq7ryk…`.
+  - *Documentation:* `modules/system/secrets/sops/README.md` explains the key
+    chain, daily use, how to add a host, how to remove a host, and the rules
+    that stop a brick. The user asked for this on 2026-09-15.
+  - *Verified:* `nix flake check` passed both hosts and the treefmt gate.
+    `nixos-rebuild build` succeeded, and the manifest declares
+    `test_secret` at `/run/secrets/test_secret`, owner `radekp`, mode `0400`.
+  - *Measured:* `nvd diff` reports **+48.6 MiB**, 3 added paths:
+    `sops-install-secrets`, `manifest.json`, and `secrets.yaml`. The binary is
+    the whole cost. This is the price of secret management on this host.
+  - *[DONE 2026-09-15] `treefmt` no longer formats an encrypted file.*
+    `prettier` reindented `secrets.yaml` from 4 spaces to 2 on the first run.
+    The change was harmless, because YAML indentation carries no data and the
+    MAC covers the values. It is still churn on every commit.
+    `treefmt.nix` now sets `settings.global.excludes = ["**/secrets/*.yaml"]`.
+  - **[PROVEN 2026-09-15] The decryption works at activation.** The user
+    switched to generation 376 (`5yh30pwy…`, 17:11). The switch completed, and
+    `/run/secrets/test_secret` exists and is readable by `radekp`. A failed
+    decrypt aborts the switch, so a completed switch is the proof. The ed25519
+    host key alone did the work; no age key file exists on this machine.
+  - *Generation 376 still carries sops.* The disconnect needs one more switch.
+    Generation 377 removes `sops-install-secrets` again.
+  - *Open:* Move sensitive environment variables and udev rules into secrets.
+    Nothing on this host reads a secret today.
+  - *Open:* restore `IPs/pinas` when you know the address again.
 - [x] **[AUDITED 2026-09-15] Security settings on `nixos-desktop`.**
   The audit checked the live system, not only the source. `sshd` is active and
   listens on `0.0.0.0:22` and `[::]:22`.

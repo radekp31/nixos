@@ -35,6 +35,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # disko has no user yet. It stays for the planned dynamic disko setup.
     disko.url = "github:nix-community/disko";
     treefmt-nix.url = "github:numtide/treefmt-nix";
