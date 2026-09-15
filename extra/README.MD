@@ -898,13 +898,50 @@ The completed items from this review sit in the archive. The open items follow.
 
   ### Two findings that came out of the planning
 
-  - **[BLOCKER for step 5] The work email differs between the two hosts.**
-    `modules/home/users/radekp/desktop/default.nix:92` says
-    `radekp.polasek@dynatrace.com`. `modules/home/users/radekp/wsl/default.nix:37`
-    and `:43` say `radek.polasek@dynatrace.com`. One has an extra `p`. One of
-    them is a typo and signs commits with a wrong address.
-    **Ask the user which address is correct before step 5.** This is exactly
-    the defect that centralization prevents.
+  - **[RESOLVED 2026-09-15] The work email differed between the two hosts.**
+    `modules/home/users/radekp/desktop/default.nix:92` said
+    `radekp.polasek@dynatrace.com`, with an extra `p`.
+    `modules/home/users/radekp/wsl/default.nix:37` and `:43` say
+    `radek.polasek@dynatrace.com`. This is exactly the defect that
+    centralization prevents.
+    - **The user decided on 2026-09-15.** Each host gets ONE identity, and the
+      host decides which:
+      - **`dt-wsl-nix` forces `radek.polasek@dynatrace.com`.** It is the work
+        machine. The `radekp.` spelling is the typo and it goes.
+      - **`nixos-desktop` sets `polasek.31@seznam.cz`.** It is the personal
+        machine. It already does this at line 73.
+    - *Assumption to confirm at implementation time:* the user named the email
+      only. Step 5 sets the matching name `Radek Polasek (Dynatrace)` on the
+      WSL default, because a work address with a personal name signs commits
+      inconsistently. Say so if you want the personal name kept there.
+
+  ### Step 5, now concrete
+
+  **`modules/home/users/radekp/wsl/default.nix`** — flip the default identity
+  from personal to work.
+
+  | Line | From | To |
+  |---|---|---|
+  | 25 | `name = "Radek Polasek"` | `my.work.fullName` |
+  | 26 | `email = "polasek.31@seznam.cz"` | `my.work.email` |
+
+  *Kept as they are:* both `includes` blocks and both gitconfig files. Their
+  identity now repeats the default, which is harmless, and
+  `user-dynatrace-github.gitconfig` also carries an `insteadOf` URL rewrite
+  that must survive. Collapse the redundancy in a later pass, not here.
+
+  **`modules/home/users/radekp/desktop/default.nix`** — delete the dead work
+  identity. It carries the typo AND it can never apply.
+
+  | Lines | Action |
+  |---|---|
+  | 73-74 | Keep. Already `polasek.31@seznam.cz` / `Radek Polasek`. Convert to `my.user.*`. |
+  | 82-83 | **Delete** the `includeIf` for `gitdir:/mnt/c/workspaces/dt_workspaces`. That path is under `/mnt/c`, so it cannot exist on this host. |
+  | 89-93 | **Delete** `xdg.configFile."git/dynatrace.gitconfig"`. Only the deleted `includeIf` reached it, and it holds the typo. |
+  | 85-86, 95-99 | **Open:** the `includeIf` for `gitdir:/etc/nixos` points at `personal.gitconfig`, which repeats the default identity exactly. It is pure duplication. Propose the delete at implementation time. |
+
+  *This step alone changes behaviour, so its store path MUST change.* Steps 1
+  to 4 must not.
   - **Dead `includeIf` on the desktop host.**
     `modules/home/users/radekp/desktop/default.nix:83` sets
     `includeIf."gitdir:/mnt/c/workspaces/dt_workspaces"`. That is a WSL path
