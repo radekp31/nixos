@@ -6,6 +6,9 @@
 }: let
   hasNvme = lib.elem "nvme" config.boot.initrd.availableKernelModules;
 in {
+  # Every my.* constant is declared here, so every host has every option.
+  imports = [./options.nix];
+
   # Move tmpfs to RAM on nvme drives and compress it, uses dynamic allocation
   boot.tmp = lib.mkIf hasNvme {
     useTmpfs = true;
