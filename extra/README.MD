@@ -616,9 +616,37 @@ The completed items from this review sit in the archive. The open items follow.
 - **[ ] stateVersion varies by host** (`24.05`, `24.11`, `25.05`). This is
   correct. Do not change existing values. Add a short note in each host to state
   the rule for new readers.
-- **[ ] Secret scanning is off.** `.pre-commit-config.yaml` comments out
-  `detect-secrets` and `trufflehog`, though `.secrets.baseline` exists.
-  Re-enable one scanner.
+- **[x] [DONE 2026-09-15] Secret scanning is off.** It now runs in CI.
+  - *The premise of this item was wrong, and that matters.* "Re-enable one
+    scanner" assumes the pre-commit framework works. It does not.
+    `pre-commit` is not on `PATH`, and `.git/hooks` holds **no hook at all**.
+    So the `nix-fmt` hook never ran either. Uncommenting a block would have
+    changed nothing.
+  - *A second gap, found on the way:* `.github/workflows/flake-daily-update.yaml`
+    was the ONLY workflow, and it triggers on `schedule` and
+    `workflow_dispatch`. **No check of any kind ran on your own commits.**
+  - *Done:* `.github/workflows/secret-scan.yaml` runs `gitleaks` on every
+    `push` and every `pull_request`. CI cannot be skipped with `--no-verify`
+    and needs no per-clone install.
+  - *Done:* `.gitleaks.toml` extends the default rule set and allows one path.
+  - **Measured, and it is good news: 621 commits hold no real secret.**
+    The first run reported 11 leaks. All 11 were the `hashed_secret` SHA-1
+    fields inside `.secrets.baseline`, which are hashes, not secrets. The
+    encrypted `secrets.yaml` triggers nothing. With the allowlist the scan
+    reports `no leaks found`.
+  - *Why gitleaks and not detect-secrets:* `detect-secrets` needs a baseline
+    that ages. `.secrets.baseline` dates from 2026-01-22 and is already stale,
+    because `secrets.yaml` was recreated today. gitleaks needs no baseline.
+  - *Trade-off (suboptimal):* CI catches a secret AFTER the push reaches
+    GitHub. A local hook catches it before. A local hook is untracked,
+    bypassable, and needs a manual install per clone, so it buys less than it
+    appears to. Add one only if a real leak happens.
+  - *Open, and it needs your word:* `.secrets.baseline` and
+    `.pre-commit-config.yaml` are both dead. The baseline serves a tool that is
+    not installed, and it is the sole source of the false positives above.
+    `.pre-commit-config.yaml` now carries an `INERT` header. Say the word and
+    both go. The allowlist must stay either way, because git history keeps the
+    file after a delete.
 
 ---
 
@@ -778,7 +806,13 @@ The completed items from this review sit in the archive. The open items follow.
   - Explain the difference between `hosts/` and `deployments/`.
   - Add a README to each major module.
 - [ ] **CI/CD & Automation**
-  - Add pre-commit hooks that apply treefmt automatically.
+  - ~~Add pre-commit hooks that apply treefmt automatically.~~ *Reconsidered
+    2026-09-15.* The treefmt gate inside `nix flake check` already covers
+    formatting, and a local hook is untracked and bypassable. A push-triggered
+    workflow is the reliable place. See the Secret scanning entry above.
+  - *Open:* run `nix flake check` on `push` and `pull_request` too. Today only
+    the nightly job runs it, so a broken commit of yours reaches `main`
+    unchecked. `.github/workflows/secret-scan.yaml` is the pattern to copy.
 
 ## ⏳ Pending Discussion
 
