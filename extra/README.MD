@@ -874,9 +874,14 @@ The completed items from this review sit in the archive. The open items follow.
   (`hosts/nixos-desktop/configuration.nix:14`,
   `hosts/nixos-wsl/configuration.nix:10`), so one import reaches both.
 
-  Declare `my.user.{name,fullName,email,home}`, `my.work.{fullName,email}`,
+  Declare `my.user.{name,fullName,email,workEmail,home}`,
   `my.repo.{owner,name,url}` and `my.theme.catppuccin`. Derive `home` from
   `name` in the option default. Derive `url` from `owner` and `name`.
+
+  *There is no separate work name.* The user decided on 2026-09-15 that the
+  full name is `Radek Polasek` everywhere. Only the email address differs
+  between the personal and the work identity, so only the email needs two
+  options.
 
   A home-manager module reads these through `osConfig.my.*`, exactly as
   `modules/home/colorschemes/catppuccin/default.nix:7` reads `osConfig` today.
@@ -910,10 +915,10 @@ The completed items from this review sit in the archive. The open items follow.
         machine. The `radekp.` spelling is the typo and it goes.
       - **`nixos-desktop` sets `polasek.31@seznam.cz`.** It is the personal
         machine. It already does this at line 73.
-    - *Assumption to confirm at implementation time:* the user named the email
-      only. Step 5 sets the matching name `Radek Polasek (Dynatrace)` on the
-      WSL default, because a work address with a personal name signs commits
-      inconsistently. Say so if you want the personal name kept there.
+    - **[DECIDED 2026-09-15] The full name is `Radek Polasek` everywhere.**
+      The user rejected a separate work name. The three
+      `Radek Polasek (Dynatrace)` strings all become `Radek Polasek`. So the
+      option set needs one name and two email addresses, not two of each.
 
   ### Step 5, now concrete
 
@@ -922,8 +927,11 @@ The completed items from this review sit in the archive. The open items follow.
 
   | Line | From | To |
   |---|---|---|
-  | 25 | `name = "Radek Polasek"` | `my.work.fullName` |
-  | 26 | `email = "polasek.31@seznam.cz"` | `my.work.email` |
+  | 25 | `name = "Radek Polasek"` | `my.user.fullName`. The value does not change. |
+  | 26 | `email = "polasek.31@seznam.cz"` | `my.user.workEmail` → `radek.polasek@dynatrace.com` |
+  | 36 | `name = Radek Polasek (Dynatrace)` | `my.user.fullName` → `Radek Polasek` |
+  | 42 | `name = Radek Polasek (Dynatrace)` | `my.user.fullName` → `Radek Polasek` |
+  | 37, 43 | `email = radek.polasek@dynatrace.com` | `my.user.workEmail`. The value does not change. |
 
   *Kept as they are:* both `includes` blocks and both gitconfig files. Their
   identity now repeats the default, which is harmless, and
@@ -935,7 +943,7 @@ The completed items from this review sit in the archive. The open items follow.
 
   | Lines | Action |
   |---|---|
-  | 73-74 | Keep. Already `polasek.31@seznam.cz` / `Radek Polasek`. Convert to `my.user.*`. |
+  | 73-74 | Keep both values. Already `polasek.31@seznam.cz` / `Radek Polasek`. Convert to `my.user.email` and `my.user.fullName`. |
   | 82-83 | **Delete** the `includeIf` for `gitdir:/mnt/c/workspaces/dt_workspaces`. That path is under `/mnt/c`, so it cannot exist on this host. |
   | 89-93 | **Delete** `xdg.configFile."git/dynatrace.gitconfig"`. Only the deleted `includeIf` reached it, and it holds the typo. |
   | 85-86, 95-99 | **Open:** the `includeIf` for `gitdir:/etc/nixos` points at `personal.gitconfig`, which repeats the default identity exactly. It is pure duplication. Propose the delete at implementation time. |
