@@ -600,8 +600,19 @@ The completed items from this review sit in the archive. The open items follow.
   `parts/hosts.nix`, `modules/system/secrets/sops`, and
   `hosts/common/profiles/desktop.nix`. Remove them or restore them.
   (Review 2026-09-14, finding 6 extends this item.)
-- **[ ] devShell pin name misleads.** `parts/shells.nix:13` binds `pkgs25_11` to
-  an argument named `pkgs25_05`. Rename for one term, one meaning.
+- **[x] [DONE 2026-09-15] devShell pin name misleads.** `parts/shells.nix`
+  bound `pkgs25_11` to an argument named `pkgs25_05`.
+  - *The root cause was the naming scheme, not the number.* A name that holds a
+    release number goes stale the moment the input moves. A rename to
+    `pkgs25_11` repeats the same defect at the next bump.
+  - *Done:* the pin is now `pkgs_deprecated`, after the input
+    `nixpkgs_deprecated` that supplies it. It matches the `pkgs_unstable` name
+    beside it. The alias line is deleted, so the defect has no home left.
+    The rename covers `parts/shells.nix`, `modules/devShells/default.nix` and
+    `modules/devShells/tools/azure.nix`, 15 occurrences.
+  - *Verified:* both devShells evaluate. The `devops` shell derivation is
+    `8g573dr305yl5iyp5ijlfzbm1005cwpf-nix-shell.drv` before AND after the
+    rename. An identical derivation proves the change is cosmetic.
 - **[ ] stateVersion varies by host** (`24.05`, `24.11`, `25.05`). This is
   correct. Do not change existing values. Add a short note in each host to state
   the rule for new readers.
