@@ -587,9 +587,10 @@ The completed items from this review sit in the archive. The open items follow.
 
 - **[ ] Host wiring repeats.** `parts/hosts.nix` copies the full home-manager
   block for each host. Add a `mkHost` helper to remove the boilerplate.
-- **[ ] Hardcoded values repeat across the repository.** *Superseded
-  2026-09-15.* The Architecture section now holds the full item. See
-  "Centralize every hardcoded value".
+- **[x] [DONE 2026-09-15] Hardcoded values repeat across the repository.**
+  `hosts/common/options.nix` declares every constant under `my.*` now. The
+  Architecture section records the five commits and what stays hardcoded.
+  See "Centralize every hardcoded value".
 - **[ ] Commented blocks remain.** Large commented blocks sit in
   `parts/hosts.nix`, `modules/system/secrets/sops`, and
   `hosts/common/profiles/desktop.nix`. Remove them or restore them.
@@ -790,182 +791,85 @@ The completed items from this review sit in the archive. The open items follow.
 - [ ] **Transition to "Smart" Modules**
   - Convert static imports (such as KDE and Plasma) to use `options` and
     `mkEnableOption`. Review 2026-09-14, finding 7 depends on this work.
-- [ ] **Centralize every hardcoded value** (user request, extended 2026-09-15)
-  - *The user asked for this on 2026-09-15:* extend the old `my.user` item to
-    ANY hardcoded value, and give each system a variable file that propagates
-    properly into the configuration.
+- [x] **[DONE 2026-09-15] Centralize every hardcoded value.**
+  Every constant now lives in one shared option module. No consumer guards
+  the read, because every host has every option.
 
-  **The mechanism already exists. Do not invent a new one.**
-  `hosts/nixos-desktop/variables.nix` and `hosts/nixos-wsl/variables.nix`
-  already declare an option and set it per host. The host imports the file.
-  Three modules already read the value. The pattern works today.
+  **The mechanism.** `hosts/common/options.nix` DECLARES `my.user.*`,
+  `my.repo.*` and `my.theme.catppuccin`, each with its default. It sets no
+  host value. `hosts/common/default.nix` imports it, and both live hosts
+  import `hosts/common/default.nix`, so one import reaches both.
+  `hosts/<host>/variables.nix` holds host overrides only. Both files are
+  empty today, because neither host differs from a default.
 
-  **It has one defect, and it is the whole problem.** Each `variables.nix`
-  declares the option AND sets the value. So the option EXISTS only on a host
-  that imports such a file. Every consumer must therefore guard the read:
+  Derive, never store: `my.user.home` comes from `my.user.name`, and
+  `my.repo.url` comes from `my.repo.owner` and `my.repo.name`.
 
-  ```nix
-  flavor =
-    if (osConfig ? catppuccinTheme)
-    then osConfig.catppuccinTheme
-    else "macchiato";
-  ```
+  A system module reads `config.my.*`. A Home Manager module reads
+  `osConfig.my.*`.
 
-  *Measured:* that guard repeats in
-  `modules/home/colorschemes/catppuccin/default.nix:7-9`,
-  `modules/system/apps/nixvim/default.nix:82-84` and
-  `modules/system/apps/wsl-nixvim/default.nix:190-192`. The default
-  `"macchiato"` is written **five** times: twice in the two `variables.nix`
-  files and three times in the guards. A changed default needs five edits.
+  **The five commits.** Each one was proved by evaluating
+  `config.system.build.toplevel.outPath` on both hosts.
 
-  **The fix splits declaration from value.**
-  1. One shared module declares every option under a `my.*` namespace, with
-     the default. `hosts/common/default.nix` imports it, so EVERY host has
-     every option.
-  2. Each `hosts/<host>/variables.nix` keeps only the values it overrides.
-  3. Every consumer reads `config.my.<x>` with no guard, because the option
-     always exists. The five copies of the default collapse to one.
-
-  *A `my.*` namespace also protects you.* `options.catppuccinTheme` sits at the
-  root of the NixOS option tree today, where an upstream option of the same
-  name would clash.
-
-  **What goes in, measured 2026-09-15:**
-
-  | Constant | Value today | Occurrences |
+  | Step | Commit | Store path |
   |---|---|---|
-  | `my.user.name` | `radekp` | 26 lines in 14 `.nix` files |
-  | `my.user.email` | `polasek.31@seznam.cz` | 3 lines in 2 files |
-  | `my.user.home` | `/home/radekp` | 4 lines. **Derive it**, never store it. |
-  | `my.repo.owner` | `radekp31` | `hosts/common/default.nix:53` and 2 workflows |
-  | `my.theme.catppuccin` | `macchiato` | 5 copies, see above |
+  | 1 | Add the option module | identical |
+  | 2 | Migrate `catppuccinTheme` to `my.theme.catppuccin` | identical |
+  | 3 | User identity values | identical |
+  | 4 | Repository URL | identical |
+  | 5 | Work identity | **changed, as intended** |
 
-  *Correction to the old entry:* it claimed `radekp` appears in 17 `.nix`
-  files. The measured count on 2026-09-15 is **14 files and 26 lines**. Group E
-  deleted some of them.
+  Step 5 changed the path on both hosts. That same check stayed identical
+  through steps 1 to 4, which proves the check sees Home Manager edits and
+  that the first four steps moved values without changing them.
 
-  **Stays per host. Do not centralize.**
-  `system.stateVersion` and `time.timeZone` are correct to differ.
-  `networking.hostName` is the host identity itself.
+  **What step 5 fixed.**
+  - `dt-wsl-nix` now defaults to `radek.polasek@dynatrace.com`. It is the
+    work machine and its default identity was the personal address.
+  - The typo `radekp.polasek@dynatrace.com`, with an extra `p`, is gone.
+  - `nixos-desktop` lost the `includeIf` for
+    `gitdir:/mnt/c/workspaces/dt_workspaces` and the `dynatrace.gitconfig`
+    it reached. That path is under `/mnt/c`, so it could never exist there.
+  - `nixos-desktop` lost the `includeIf` for `gitdir:/etc/nixos` and
+    `personal.gitconfig`. Both repeated the default identity exactly.
+    *The user approved this delete on 2026-09-15.*
+  - Every `Radek Polasek (Dynatrace)` string is now `my.user.fullName`.
+  - Both WSL `includes` blocks and both WSL gitconfig files stay. The
+    `insteadOf` URL rewrite in `user-dynatrace-github.gitconfig` survives.
 
-  *Trade-off (complex):* the two GitHub workflows cannot read a Nix option.
-  `radekp31-nixos` stays written out in YAML. Only the Nix side centralizes.
+  **Still hardcoded, on purpose.**
 
-  *Design it together with `mkHost`.* `mkHost` reads the same option set to
-  build a host, so the two items share one data model. Do `my.*` first,
-  because `mkHost` depends on it and not the reverse.
-
-  ### Scope, decided by the user 2026-09-15: VALUES ONLY
-
-  Convert the username where it is a **value**. Leave it where it is an
-  **attribute name** or a **path**.
-
-  | Out of scope | Why |
+  | What | Why |
   |---|---|
   | `users.users.radekp`, `home-manager.users.radekp` | attribute names. A `config` read inside an attribute name risks evaluation recursion. |
   | `modules/home/users/radekp/` | a directory name. Renaming buys nothing while there is one user. |
-  | `…AAAAIIzoVRV… radekp@nixos-desktop` in 2 host files | ssh public key material, not a name. Never edit. |
+  | ssh public key material in 2 host files | key material, not a name. Never edit. |
   | `radekp31-nixos` in the 2 workflows | YAML cannot read a Nix option. |
+  | `system.stateVersion`, `time.timeZone`, `networking.hostName` | correct to differ per host. |
 
-  ### The option module
+  *Correction to the old entry:* it claimed `radekp` appears in 26 lines
+  across 14 `.nix` files. The measured count before this work was **24 lines
+  in 14 files**.
 
-  Add `hosts/common/options.nix`. Import it from `hosts/common/default.nix`.
-  *Verified 2026-09-15:* both live hosts import `../common/default.nix`
-  (`hosts/nixos-desktop/configuration.nix:14`,
-  `hosts/nixos-wsl/configuration.nix:10`), so one import reaches both.
+  *Open, for a later pass:* four inactive hosts still write the user name
+  out in full — `hosts/desktop-minimal/configuration.nix:183,246`,
+  `hosts/hyperv/users.nix`, `hosts/server/generic/users.nix` and
+  `modules/system/hardware/printers/brother/DCPL2622DW/default.nix:210`.
+  `parts/hosts.nix` does not build any of them, and they do not all import
+  `hosts/common/default.nix`, so `config.my.*` does not reach them yet.
+  Convert them when `mkHost` gives every host the common import.
 
-  Declare `my.user.{name,fullName,email,workEmail,home}`,
-  `my.repo.{owner,name,url}` and `my.theme.catppuccin`. Derive `home` from
-  `name` in the option default. Derive `url` from `owner` and `name`.
-
-  *There is no separate work name.* The user decided on 2026-09-15 that the
-  full name is `Radek Polasek` everywhere. Only the email address differs
-  between the personal and the work identity, so only the email needs two
-  options.
-
-  A home-manager module reads these through `osConfig.my.*`, exactly as
-  `modules/home/colorschemes/catppuccin/default.nix:7` reads `osConfig` today.
-
-  ### The steps. Commit each one alone.
-
-  **Every step below must produce an IDENTICAL system store path.** The values
-  do not change, only where they are written. A changed path means the step
-  changed behaviour, so stop and find out why. This is the same proof that
-  Group E used.
-
-  | Step | Scope | Files | Check |
-  |---|---|---|---|
-  | 1 | Add the option module. Change nothing else. | `hosts/common/options.nix` (new), `hosts/common/default.nix` | Identical path on both hosts. An option with no consumer produces no output. |
-  | 2 | Migrate `catppuccinTheme` to `my.theme.catppuccin`. Delete the 3 guards. | both `variables.nix`, `modules/home/colorschemes/catppuccin/default.nix:7-9`, `modules/system/apps/nixvim/default.nix:82-84`, `modules/system/apps/wsl-nixvim/default.nix:190-192` | Identical path. This step proves the mechanism on a value that already flows. |
-  | 3 | User identity values. | `hosts/nixos-desktop/configuration.nix:68,70`, `hosts/nixos-desktop/users.nix:8`, `hosts/nixos-wsl/configuration.nix:25`, `hosts/nixos-wsl/users.nix:12`, `modules/home/users/radekp/desktop/default.nix:34,35,38,73,74`, `modules/home/users/radekp/wsl/default.nix:8,9,25,26`, `modules/system/secrets/sops/default.nix:13` | Identical path. |
-  | 4 | Repository URL. | `hosts/common/default.nix:53` | Identical path. |
-  | 5 | Work identity. **Blocked, see below.** | `modules/home/users/radekp/desktop/default.nix:91-92`, `modules/home/users/radekp/wsl/default.nix:36-37,42-43` | NOT identical. It fixes a typo, so the path must change. |
-
-  ### Two findings that came out of the planning
-
-  - **[RESOLVED 2026-09-15] The work email differed between the two hosts.**
-    `modules/home/users/radekp/desktop/default.nix:92` said
-    `radekp.polasek@dynatrace.com`, with an extra `p`.
-    `modules/home/users/radekp/wsl/default.nix:37` and `:43` say
-    `radek.polasek@dynatrace.com`. This is exactly the defect that
-    centralization prevents.
-    - **The user decided on 2026-09-15.** Each host gets ONE identity, and the
-      host decides which:
-      - **`dt-wsl-nix` forces `radek.polasek@dynatrace.com`.** It is the work
-        machine. The `radekp.` spelling is the typo and it goes.
-      - **`nixos-desktop` sets `polasek.31@seznam.cz`.** It is the personal
-        machine. It already does this at line 73.
-    - **[DECIDED 2026-09-15] The full name is `Radek Polasek` everywhere.**
-      The user rejected a separate work name. The three
-      `Radek Polasek (Dynatrace)` strings all become `Radek Polasek`. So the
-      option set needs one name and two email addresses, not two of each.
-
-  ### Step 5, now concrete
-
-  **`modules/home/users/radekp/wsl/default.nix`** — flip the default identity
-  from personal to work.
-
-  | Line | From | To |
-  |---|---|---|
-  | 25 | `name = "Radek Polasek"` | `my.user.fullName`. The value does not change. |
-  | 26 | `email = "polasek.31@seznam.cz"` | `my.user.workEmail` → `radek.polasek@dynatrace.com` |
-  | 36 | `name = Radek Polasek (Dynatrace)` | `my.user.fullName` → `Radek Polasek` |
-  | 42 | `name = Radek Polasek (Dynatrace)` | `my.user.fullName` → `Radek Polasek` |
-  | 37, 43 | `email = radek.polasek@dynatrace.com` | `my.user.workEmail`. The value does not change. |
-
-  *Kept as they are:* both `includes` blocks and both gitconfig files. Their
-  identity now repeats the default, which is harmless, and
-  `user-dynatrace-github.gitconfig` also carries an `insteadOf` URL rewrite
-  that must survive. Collapse the redundancy in a later pass, not here.
-
-  **`modules/home/users/radekp/desktop/default.nix`** — delete the dead work
-  identity. It carries the typo AND it can never apply.
-
-  | Lines | Action |
-  |---|---|
-  | 73-74 | Keep both values. Already `polasek.31@seznam.cz` / `Radek Polasek`. Convert to `my.user.email` and `my.user.fullName`. |
-  | 82-83 | **Delete** the `includeIf` for `gitdir:/mnt/c/workspaces/dt_workspaces`. That path is under `/mnt/c`, so it cannot exist on this host. |
-  | 89-93 | **Delete** `xdg.configFile."git/dynatrace.gitconfig"`. Only the deleted `includeIf` reached it, and it holds the typo. |
-  | 85-86, 95-99 | **Open:** the `includeIf` for `gitdir:/etc/nixos` points at `personal.gitconfig`, which repeats the default identity exactly. It is pure duplication. Propose the delete at implementation time. |
-
-  *This step alone changes behaviour, so its store path MUST change.* Steps 1
-  to 4 must not.
-  - **Dead `includeIf` on the desktop host.**
-    `modules/home/users/radekp/desktop/default.nix:83` sets
-    `includeIf."gitdir:/mnt/c/workspaces/dt_workspaces"`. That is a WSL path
-    under `/mnt/c`, and it cannot exist on `nixos-desktop`, so the work
-    identity never applies there. Line 86 also carries a comment that says
-    `~/personal/` while the path is `/etc/nixos`. Both comments on lines 82
-    and 85 describe paths that the code does not use. Separate item, not part
-    of this work.
+  *Next:* `mkHost` reads this same option set to build a host. The two items
+  share one data model, and `my.*` came first because `mkHost` depends on it.
 - [ ] **Host-Wide Version Selector**
   - Add one option to set the major nixpkgs release per host.
   - Keep an escape hatch to override specific packages from another release.
   - Design it together with `mkHost` and the `my.*` option set.
 - [ ] **Clean up Path References**
   - Replace deep relative imports (`../../../../`) with `inputs.self`.
-- [ ] **Update Auto-Upgrade Logic**
-  - Remove the hardcoded GitHub URL from `system.autoUpgrade.flake`.
+- [x] **[DONE 2026-09-15] Update Auto-Upgrade Logic**
+  - `system.autoUpgrade.flake` reads `my.repo.url` now. The option module
+    derives that URL from `my.repo.owner` and `my.repo.name`.
 
 ## 💻 Hardware & Desktop Applications
 
