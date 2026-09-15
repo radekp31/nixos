@@ -78,26 +78,8 @@
       init.defaultBranch = "main";
       safe.directory = "/etc/nixos";
       push.autoSetupRemote = "true";
-
-      # Use work identity for repos under ~/work/
-      includeIf."gitdir:/mnt/c/workspaces/dt_workspaces".path = "${config.xdg.configHome}/git/dynatrace.gitconfig";
-
-      # Use personal identity for repos under ~/personal/
-      includeIf."gitdir:/etc/nixos".path = "${config.xdg.configHome}/git/personal.gitconfig";
     };
   };
-
-  xdg.configFile."git/dynatrace.gitconfig".text = ''
-    [user]
-      name = Radek Polasek (Dynatrace)
-      email = radekp.polasek@dynatrace.com
-  '';
-
-  xdg.configFile."git/personal.gitconfig".text = ''
-    [user]
-      name = Radek Polasek
-      email = polasek.31@seznam.cz
-  '';
 
   #Bash is needed for XDG vars - needs testing
   programs.bash = {

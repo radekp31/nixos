@@ -26,8 +26,8 @@
     ];
     settings = {
       user = {
-        name = "Radek Polasek";
-        email = "polasek.31@seznam.cz";
+        name = osConfig.my.user.fullName;
+        email = osConfig.my.user.workEmail;
       };
       init.defaultBranch = "main";
       safe.directory = "/etc/nixos";
@@ -37,14 +37,14 @@
 
   xdg.configFile."git/user-dynatrace-bitbucket.gitconfig".text = ''
     [user]
-      name = Radek Polasek (Dynatrace)
-      email = radek.polasek@dynatrace.com
+      name = ${osConfig.my.user.fullName}
+      email = ${osConfig.my.user.workEmail}
   '';
 
   xdg.configFile."git/user-dynatrace-github.gitconfig".text = ''
     [user]
-      name = Radek Polasek (Dynatrace)
-      email = radek.polasek@dynatrace.com
+      name = ${osConfig.my.user.fullName}
+      email = ${osConfig.my.user.workEmail}
 
     [url "ssh://git@github.com/Dynatrace-Internal/rnd-ai-knowledgebase"]
       insteadOf = https://github.com/Dynatrace-Internal/rnd-ai-knowledgebase
