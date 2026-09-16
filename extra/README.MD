@@ -585,8 +585,9 @@ The completed items from this review sit in the archive. The open items follow.
 
 ### P2 — Maintainability
 
-- **[ ] Host wiring repeats.** `parts/hosts.nix` copies the full home-manager
-  block for each host. Add a `mkHost` helper to remove the boilerplate.
+- **[x] [DONE 2026-09-16] Host wiring repeats.** `parts/hosts.nix` calls one
+  `mkHost` helper now. The Architecture section records the interface and the
+  proof. See "Refactor Host Definitions (mkHost)".
 - **[x] [DONE 2026-09-15] Hardcoded values repeat across the repository.**
   `hosts/common/options.nix` declares every constant under `my.*` now. The
   Architecture section records the five commits and what stays hardcoded.
@@ -786,8 +787,53 @@ The completed items from this review sit in the archive. The open items follow.
     the same place it declares everything else.
   - *Note:* Keep the input in `flake.nix` until this work starts. A later
     dead-input scan will flag `disko` again. This entry is the reason to keep it.
-- [ ] **Refactor Host Definitions (mkHost)**
-  - Implement a helper in `parts/hosts.nix` to reduce boilerplate for new hosts.
+- [x] **[DONE 2026-09-16] Refactor Host Definitions (mkHost).**
+  `parts/hosts.nix` holds one `mkHost` helper. Each host declares only its
+  three differences. The helper owns every setting the hosts share.
+
+  **The interface.**
+
+  | Argument | Required | Purpose |
+  |---|---|---|
+  | `configuration` | yes | the path to the host `configuration.nix` |
+  | `homeProfile` | yes | the path to the Home Manager profile of that host |
+  | `extraModules` | no, defaults to `[]` | modules that load before the host file |
+
+  `mkHost` owns `system`, `specialArgs`, the `home-manager` NixOS module,
+  `useGlobalPkgs`, `useUserPackages`, `backupFileExtension`,
+  `extraSpecialArgs`, and the `opencode-stub` patch. Each one appeared twice
+  before. Each one appears once now.
+
+  **Why `configuration` takes a full file path and not a directory.** A
+  directory argument needs `dir + /configuration.nix` inside the helper. The
+  similar `"${dir}/configuration.nix"` copies the whole host directory into
+  the nix store, because Nix stores a path when it interpolates one. A full
+  path removes that trap and one concept.
+
+  **Why `extraModules` comes first in the module list.** The WSL host loaded
+  `inputs.nixos-wsl.nixosModules.wsl` before its own file. The helper keeps
+  that order.
+
+  *Verified 2026-09-16:* `system.build.toplevel.outPath` is IDENTICAL before
+  and after on both hosts. `nixos-desktop` stays
+  `a79mdz7f1pp3wv12lsh0q7rbdnamby49` and `dt-wsl-nix` stays
+  `c24ngj66yxbavd22n976wivx1wi3s62z`. A refactor that changes a store path is
+  not a refactor. `nix flake check` passed both hosts and the treefmt gate.
+
+  *Note for a later reader:* the attribute name `dt-wsl-nix` and the directory
+  `hosts/nixos-wsl` differ. So `mkHost` never derives a path from the attribute
+  name. Pass every path explicitly.
+
+  **Left hardcoded on purpose.**
+
+  | What | Why |
+  |---|---|
+  | `home-manager.users.radekp` | one user, one value. The name appears once now, not twice. The recursion risk that the `my.*` entry records does not apply here, because a helper argument is not a `config` read. Add the parameter when a second user arrives. |
+  | `system = "x86_64-linux"` | both hosts use it. A parameter with one value is speculation. |
+  | the 3 commented server blocks | the P2 item "Commented blocks remain" owns them. |
+
+  *Next:* the dynamic disko setup and the Host-Wide Version Selector both
+  waited on this helper. Each one adds one argument to `mkHost`.
 - [ ] **Transition to "Smart" Modules**
   - Convert static imports (such as KDE and Plasma) to use `options` and
     `mkEnableOption`. Review 2026-09-14, finding 7 depends on this work.
