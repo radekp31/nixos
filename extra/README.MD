@@ -406,8 +406,8 @@ exists anywhere.
 
   | Path | Lines | Status | |
   |---|---|---|---|
-  | `flakes/compat` | 185 | **Actively used.** Group C moved the `nix-ld` library set here. | Keep |
-  | `flakes/rust` | 55 | Standalone shell. Review 2026-08-03 already tracks its lock drift. | Keep |
+  | `flakes/compat` | 185 | **Actively used.** Group C moved the `nix-ld` library set here. Its lock joined the daily update job on 2026-09-16. | Keep |
+  | `flakes/rust` | 55 | **Moved 2026-09-16.** It is the `rust` devShell in the main flake now, and the directory is deleted. | Gone |
 
   - *[DONE 2026-09-15]* The user marked the column. The deletions above are the
     only ones authorised. Every other row stays.
@@ -576,12 +576,60 @@ The completed items from this review sit in the archive. The open items follow.
 
 ### P1 — Input hygiene and evaluation cost
 
-- **[ ] The nested Rust flake drifts.** `flakes/rust/flake.nix` declares its own
-  `nixos-unstable`, `rust-overlay`, and `flake-utils`. The main flake does not
-  reference it. The daily update workflow does not update its lock. It ages
-  independently.
-  - *Action:* Wire it in as an input with `follows`, or document it as a
-    standalone shell and add it to the update job.
+- **[x] [DONE 2026-09-16] The nested Rust flake drifted.** The shell is a
+  normal devShell in the main flake now. The compat lock joined the daily
+  update job.
+
+  *Measured before the fix:* `flakes/rust/flake.lock` held `nixpkgs` at
+  2026-07-26, `rust-overlay` at 2026-07-28, `flake-utils` at 2024-11-13, and a
+  SECOND `nixpkgs` at **2025-04-13** that `rust-overlay` carried unfollowed.
+  The root `nix flake update` reached none of them.
+
+  *Done:* `flake.nix` declares `rust-overlay` with
+  `inputs.nixpkgs.follows = "nixpkgs_unstable"`. `parts/shells.nix` applies the
+  overlay to the existing `pkgs_unstable` instance, so nothing instantiates a
+  second nixpkgs. `modules/devShells/tools/rust.nix` holds the toolchain and
+  the package list. `modules/devShells/default.nix` exposes the `rust` shell
+  beside `default` and `devops`. `flakes/rust` is deleted.
+
+  **The command changed. Learn the new one.**
+
+  | Before | After |
+  |---|---|
+  | `nix develop /etc/nixos/flakes/rust` | `nix develop /etc/nixos#rust` |
+
+  *Verified 2026-09-16, and the overlay is provably inert:* the `default` and
+  `devops` derivations are IDENTICAL before and after, at
+  `c5lk5b2jbckihjh72a3412xy4qxiz111` and
+  `ipkc896jk77amixwr36qilhi0n12nbv2`. An identical hash proves the overlay only
+  ADDS `rust-bin` and replaces nothing the other two shells read. Both host
+  store paths are unchanged too.
+
+  *Verified by a real build, not only by evaluation:*
+  `nix develop .#rust --command rustc --version` built the shell and printed
+  `rustc 1.98.1 (48a229cea 2026-09-01)`. `nix flake check` passed.
+
+  *Measured:* the root lock gained exactly ONE node, `rust-overlay`, because
+  its nixpkgs follows. The repository lost a 5-node nested lock, including the
+  2025-04-13 nixpkgs.
+
+  **A second instance of the same defect, found on the way.**
+  `flakes/compat` is also standalone, is also absent from the main flake, and
+  was also absent from the update job. It matters MORE than `flakes/rust`,
+  because Group C made it the live `nix-ld` replacement.
+  - *Done:* `.github/workflows/flake-daily-update.yaml` runs
+    `nix flake update --flake ./flakes/compat`.
+  - *Why compat did NOT move into the main flake:* this README documents
+    `nix run /etc/nixos/flakes/compat` in finding 1, in the Plan section, and
+    in the flake header comment. A move makes every one of those lines wrong.
+    The path IS the interface.
+  - **A workflow bug, found and fixed.** The change gate ran
+    `git diff --quiet flake.lock`, which names the root lock ONLY. On a day
+    when only the nested lock moved, the gate reported `changed=false` and the
+    job discarded the update. The gate names both locks now.
+  - *Open, and it costs 2 lines:* no gate validates compat after its lock
+    moves. The build gate builds host closures, and no host imports compat. Add
+    `nix develop ./flakes/compat#light --command true` to close it.
 
 ### P2 — Maintainability
 

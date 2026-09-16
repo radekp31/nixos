@@ -40,6 +40,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Supplies pkgs_unstable.rust-bin for the rust devShell. It follows
+    # nixpkgs_unstable, so it adds one lock node and no second nixpkgs.
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs_unstable";
+    };
+
     # disko has no user yet. It stays for the planned dynamic disko setup.
     disko.url = "github:nix-community/disko";
     treefmt-nix.url = "github:numtide/treefmt-nix";
