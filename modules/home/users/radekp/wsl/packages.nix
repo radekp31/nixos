@@ -1,6 +1,7 @@
 {
   pkgs,
   inputs,
+  lib,
   ...
 }: let
   aztfexport = pkgs.stdenv.mkDerivation {
@@ -168,6 +169,9 @@ in {
     libseccomp
     cmake
 
+    # Juno tools
+    terminator
+
     # Use azure-cli from the pinned commit
     (nixhubio_azcli.azure-cli.withExtensions [
       nixhubio_azcli.azure-cli-extensions.storage-preview
@@ -216,4 +220,22 @@ in {
 
     zstd
   ];
+
+  programs.zsh.envExtra = ''
+    export PATH="$HOME/.local/bin:$PATH"
+  '';
+
+  home.activation.installTerminatorCtl = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    VENV="$HOME/.juno-ape-venv"
+    if ! "$VENV/bin/terminator-ctl" --version >/dev/null 2>&1; then
+      ${pkgs.python3}/bin/python3 -m venv "$VENV"
+      "$VENV/bin/pip" install --quiet terminator-ctl \
+        --extra-index-url "https://artifactory.lab.dynatrace.org/artifactory/api/pypi/ape-pypi-local/simple/"
+    fi
+    mkdir -p "$HOME/.local/bin"
+    install -m755 ${pkgs.writeShellScript "terminator-ctl" ''
+      source "$HOME/.juno-ape-venv/bin/activate"
+      exec terminator-ctl "$@"
+    ''} "$HOME/.local/bin/terminator-ctl"
+  '';
 }
