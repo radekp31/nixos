@@ -2,7 +2,7 @@
   system = "x86_64-linux";
 in {
   flake.nixosConfigurations = {
-    nixos-desktop = inputs.nixpkgs.lib.nixosSystem {
+    "nixos-desktop" = inputs.nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = {inherit inputs;};
       modules = [
@@ -25,7 +25,7 @@ in {
 
     "dt-wsl-nix" = inputs.nixpkgs.lib.nixosSystem {
       inherit system;
-      specialArgs = {inherit inputs;};
+      specialArgs = {inherit inputs; nixpkgs_unstable = import inputs.nixpkgs_unstable {inherit system; config.allowUnfree = true;};};
       modules = [
         inputs.nixos-wsl.nixosModules.wsl
         ../hosts/nixos-wsl/configuration.nix
@@ -40,7 +40,7 @@ in {
             ];
           };
           home-manager.backupFileExtension = "backup";
-          home-manager.extraSpecialArgs = {inherit inputs;};
+          home-manager.extraSpecialArgs = {inherit inputs; nixpkgs_unstable = import inputs.nixpkgs_unstable {inherit system; config.allowUnfree = true;};};
         }
       ];
     };
