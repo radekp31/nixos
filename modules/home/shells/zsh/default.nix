@@ -150,9 +150,7 @@
       }
 
       # Format, then commit, then push.
-      # This used to rely on a pre-commit hook to run treefmt. That hook was
-      # never installed, so nixpush pushed unformatted code. It formats itself
-      # now. The guard keeps the function usable in a repository with no flake.
+      # The guard keeps the function usable in a repository with no flake.
       nixpush() {
         local message="$1"
 

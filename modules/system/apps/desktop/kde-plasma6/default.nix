@@ -6,15 +6,14 @@
   services.desktopManager.plasma6.enable = true;
 
   # Plasma 6 enables the Orca screen reader by default. Orca then enables
-  # speech-dispatcher, which pulls mbrola-voices at 644 MiB. Nobody on this
-  # host uses a screen reader. The user confirmed the removal on 2026-09-15.
-  # Re-enable both if anybody needs text to speech.
+  # speech-dispatcher, which pulls mbrola-voices at 644 MiB. Re-enable both
+  # for text to speech.
   services.orca.enable = lib.mkForce false;
   services.speechd.enable = lib.mkForce false;
 
   # Cursor theme. Plasma 6 already installs kdePackages.breeze, so
   # breeze_cursors sits in /run/current-system/sw/share/icons at no extra
-  # cost. This replaced bibata-cursors on 2026-09-15, which cost 322 MiB.
+  # cost.
   #
   # These two variables set the cursor for GTK, for Qt outside Plasma, and for
   # the Wayland compositor. Plasma keeps its OWN copy in ~/.config/kcminputrc,

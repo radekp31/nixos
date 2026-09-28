@@ -47,8 +47,12 @@
       inputs.nixpkgs.follows = "nixpkgs_unstable";
     };
 
-    # disko has no user yet. It stays for the planned dynamic disko setup.
-    disko.url = "github:nix-community/disko";
+    # Declarative disk partitioning. nixos-desktop imports it for the
+    # format script only; see hosts/nixos-desktop/disk-config.nix.
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     treefmt-nix.url = "github:numtide/treefmt-nix";
     systems.url = "github:nix-systems/default";
   };
@@ -65,6 +69,7 @@
         ./parts/formatting.nix
         ./parts/shells.nix
         ./parts/hosts.nix
+        ./parts/disks.nix
       ];
     };
 }

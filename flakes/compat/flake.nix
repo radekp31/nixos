@@ -33,8 +33,7 @@
   #
   # Both paths take the NVIDIA driver from the host at /run/opengl-driver, so
   # the driver version always matches the running kernel module. Do not add
-  # nvidia_x11 to the list below. That mistake caused a 595-against-610
-  # mismatch before 2026-09-14.
+  # nvidia_x11 to the list below; it causes a driver version mismatch.
 
   inputs = {
     # Track the same branch as the system flake. Keep the two in step.

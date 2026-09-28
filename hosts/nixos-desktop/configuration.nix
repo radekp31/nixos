@@ -1,5 +1,6 @@
 #Settings for nixos-desktop host
 {
+  inputs,
   pkgs,
   lib,
   config,
@@ -10,14 +11,19 @@
     ./users.nix
     ./variables.nix
 
+    # The disk layout of this machine. It is inert at runtime; see the
+    # disko.enableConfig note below.
+    inputs.disko.nixosModules.disko
+    ./disk-config.nix
+
     # Common base
     ../common/default.nix
     ../common/profiles/desktop.nix
 
     # System modules
-    # Disabled 2026-09-15 by user decision. Re-enable with this line uncommented.
-    #../../modules/system/apps/waydroid
     ../../modules/system/apps/btrfs
+    # claude-code comes from nixpkgs_unstable, not from the release input.
+    ../../modules/system/apps/claude-code
     ../../modules/system/hardware/gpu/nvidia
     ../../modules/system/apps/nixvim
     ../../modules/system/apps/qmk
@@ -28,10 +34,27 @@
     ../../modules/system/apps/nix-ld
     ../../modules/system/apps/steam
     ../../modules/system/hardware/bluetooth
-    # Deferred 2026-09-15 by user decision. The module is finished and
-    # verified. Uncomment this line to install the secrets again.
     #../../modules/system/secrets/sops
   ];
+
+  # disko builds the partition script and sets NOTHING else. The flag gates
+  # exactly fileSystems, boot and swapDevices in the upstream module, so
+  # hardware-configuration.nix keeps owning every mount and this machine boots
+  # as it always has.
+  #
+  # Set it to true ONLY when you reinstall from ./disk-config.nix. The layout
+  # mounts by partition label, and the disk in this machine carries no disko
+  # labels today, so flipping the flag on the running system breaks the boot.
+  disko.enableConfig = false;
+
+  # There is no VM install test for THIS layout. Two upstream facts block it:
+  #   1. lib/tests.nix hardcodes 4096 MiB test disks. The ESP below is 5G, so
+  #      sgdisk fails with "Error encountered; not saving changes".
+  #   2. The harness sets boot.loader.grub.efiInstallAsRemovable, which NixOS
+  #      forbids together with the canTouchEfiVariables this host needs.
+  # The 5G ESP is correct: 15 generations plus memtest86 do not fit in 1G.
+  # `nix build '.#disko-test-single-disk-btrfs'` covers the same GPT, btrfs and
+  # subvolume machinery on a 1G ESP.
 
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.nvidia.acceptLicense = true;
@@ -96,7 +119,6 @@
 
   # Hardware-specific boot configuration
   boot.blacklistedKernelModules = ["nouveau" "fjes"];
-  boot.extraModulePackages = [config.boot.kernelPackages.it87]; # CPU fan goes full rpm due to missing driver
   boot.initrd.availableKernelModules = [
     "nvme"
     "vesafb"
@@ -137,7 +159,10 @@
     "video=DP-3:off"
     "nvme_core.io_timeout=30"
     "nvme_core.max_retries=5"
-    "acpi_enforce_resources=lax"
+    # CONFIG_DAMON_STAT_ENABLED_DEFAULT starts kdamond, which costs about 10%
+    # of one core and raises the idle CPU temperature. Nothing reads its
+    # statistics.
+    "damon_stat.enabled=0"
     "pcie_ports=native"
   ];
 
@@ -147,6 +172,10 @@
   boot.kernelModules = [
     # kvm-amd comes from modules/system/apps/qemu.
     "xfs" # /media/A400, see hardware-configuration.nix
+    # nct6775 loads nct6775_core only. The platform driver does not bind,
+    # because this ASUS board hides the Nuvoton chip behind the embedded
+    # controller. No pwm file appears under /sys/class/hwmon. The BIOS
+    # controls the CPU fan and the chassis fans. Tune them in the UEFI.
     "nct6775"
   ];
 
@@ -156,7 +185,10 @@
     HandleHibernateKey = "ignore";
   };
 
-  powerManagement.cpuFreqGovernor = "performance";
+  # Do not set powerManagement.cpuFreqGovernor here. The amd-pstate-epp
+  # driver defaults to the powersave governor, which suits this CPU. A
+  # performance setting raises boost aggression on the Ryzen 5800X. That
+  # increases the Tctl spikes which drive the BIOS fan curve.
 
   # Networking
   networking.hostName = "nixos-desktop";
@@ -166,9 +198,8 @@
     VISUAL = "nvim";
     NIXOS_CONFIG_LOCATION = "/etc/nixos";
 
-    # NVIDIA driver selection. These stay global on purpose: they steer
-    # libglvnd, GBM, and VA-API for every client. Keep them under review.
-    # Remove one at a time and test Firefox, video playback, and Steam.
+    # NVIDIA driver selection. Global, because they steer libglvnd, GBM, and
+    # VA-API for every client.
     LIBVA_DRIVER_NAME = "nvidia";
     GBM_BACKEND = "nvidia-drm";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
@@ -194,14 +225,10 @@
   # Cockpit
   #services.cockpit.enable = true;
 
-  #virtualisation.docker.enable = true;
+  virtualisation.docker.enable = true;
 
   networking.firewall = {
     enable = true;
-    # 2026-09-15: 22 is the only port with a listener. Nothing served 5432
-    # (postgres) or 5050 (pgadmin), and neither is declared anywhere in this
-    # repository. DNS and NTP replies reach a client through conntrack, so
-    # inbound UDP 53 and 123 were never needed either.
     allowedTCPPorts = [22];
   };
 
@@ -215,6 +242,7 @@
     ntfs3g
     libxfs
     docker-compose
+    docker
   ];
 
   #networking.networkManager.enable = true;

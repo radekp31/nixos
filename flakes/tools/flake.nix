@@ -58,13 +58,12 @@
           echo "${name} environment. ${text}"
         '';
       in {
-        # Keyboard firmware. The compiler pair is the weight here:
-        # gcc-arm-embedded is 1.07 GiB and avr-gcc is 0.51 GiB.
+        # Keyboard firmware.
         # via stays on the system too, because services.udev.packages needs it.
         devShells.qmk = pkgs.mkShell {
           packages = with pkgs; [
-            # qmk pulls both cross compilers itself: gcc-arm-embedded at
-            # 1.07 GiB and avr-gcc at 0.51 GiB. Do not list them again.
+            # qmk pulls gcc-arm-embedded and avr-gcc itself. Do not list them
+            # again.
             # avr-gcc is not a top-level attribute in any case.
             qmk
             qmk_hid
@@ -86,8 +85,7 @@
         };
 
         # Virtual machines. quickemu carries its own qemu.
-        # virt-manager is deliberately absent. The user disabled libvirtd on
-        # 2026-09-15, so a virt-manager here would find no daemon to reach.
+        # No virt-manager: libvirtd is off, so it has no daemon to reach.
         devShells.vm = pkgs.mkShell {
           packages = with pkgs; [
             quickemu

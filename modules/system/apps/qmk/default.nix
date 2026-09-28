@@ -4,11 +4,7 @@
 
   hardware.keyboard.qmk.enable = true;
 
-  # The firmware toolchain moved to flakes/tools#qmk on 2026-09-15.
-  # qmk pulled gcc-arm-embedded (1.07 GiB) and avr-gcc (0.51 GiB) into every
-  # generation, and a keyboard gets reflashed a few times a year.
-  #
-  #   nix develop /etc/nixos/flakes/tools#qmk
+  # Firmware toolchain: nix develop /etc/nixos/flakes/tools#qmk
   #
   # Only the udev side stays here. A devShell cannot install udev rules, and a
   # keyboard stays unwritable until udev has tagged the device.

@@ -12,6 +12,8 @@
     ../common/profiles/wsl.nix
     ../../modules/system/apps/wsl-nixvim
     ../../modules/system/apps/nix-ld-wsl
+    # claude-code comes from nixpkgs_unstable, not from the release input.
+    ../../modules/system/apps/claude-code
     ../../modules/system/hardware/gpu/nvidia-wsl/default.nix
   ];
 

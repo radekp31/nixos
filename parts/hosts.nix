@@ -33,7 +33,7 @@
     };
 in {
   flake.nixosConfigurations = {
-    nixos-desktop = mkHost {
+    "nixos-desktop" = mkHost {
       configuration = ../hosts/nixos-desktop/configuration.nix;
       homeProfile = ../modules/home/users/radekp/desktop;
     };

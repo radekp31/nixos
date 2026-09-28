@@ -166,6 +166,10 @@
 
   # Home packages
   home.packages = with pkgs; [
+    nautilus-python
+
+    lynis
+
     claude-code
     claude-monitor
 
@@ -177,8 +181,7 @@
 
     opencode
 
-    # arduino-ide moved to flakes/tools#arduino on 2026-09-15. It cost 527 MiB.
-    #   nix develop /etc/nixos/flakes/tools#arduino -c arduino-ide
+    # arduino-ide: nix develop /etc/nixos/flakes/tools#arduino -c arduino-ide
 
     #browser
     #firefox-esr
@@ -228,9 +231,7 @@
     rclone
     qpdf
 
-    # Virtualization moved to flakes/tools#vm on 2026-09-15.
-    # quickemu carries its own qemu at 963 MiB.
-    #   nix develop /etc/nixos/flakes/tools#vm
+    # Virtualization: nix develop /etc/nixos/flakes/tools#vm
     #OVMF
 
     # GUI Applications
@@ -244,9 +245,6 @@
 
     # Theming & Icons
     adwaita-icon-theme
-    # bibata-cursors cost 322 MiB. Replaced by breeze_cursors from
-    # kdePackages.breeze, which Plasma 6 already installs. See
-    # home.pointerCursor below.
     qadwaitadecorations-qt6
     font-awesome_6
 

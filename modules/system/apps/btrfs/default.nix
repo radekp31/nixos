@@ -1,4 +1,34 @@
-{pkgs, ...}: {
+{pkgs, ...}: let
+  # A scrub needs CAP_SYS_ADMIN and raw access to the block device, so the
+  # capability set and the device nodes stay. Every knob below costs the scrub
+  # nothing. The important one is PrivateNetwork: a scrub reads disks and has
+  # no reason to hold a socket.
+  #
+  # Verify a change WITHOUT applying it:
+  #   nix build .#nixosConfigurations.nixos-desktop.config.system.build.toplevel
+  #   systemd-analyze security --offline=true \
+  #     ./result/etc/systemd/system/btrfs-scrub-nix.service
+  scrubHardening = {
+    LockPersonality = true;
+    MemoryDenyWriteExecute = true;
+    PrivateNetwork = true;
+    PrivateTmp = true;
+    ProtectClock = true;
+    ProtectControlGroups = true;
+    ProtectHome = true;
+    ProtectHostname = true;
+    ProtectKernelLogs = true;
+    ProtectKernelModules = true;
+    ProtectProc = "invisible";
+    ProcSubset = "pid";
+    RestrictAddressFamilies = [""];
+    RestrictNamespaces = true;
+    RestrictRealtime = true;
+    RestrictSUIDSGID = true;
+    SystemCallArchitectures = "native";
+    UMask = "0077";
+  };
+in {
   # See fileSystems in hardware-config.nix
 
   services.btrfs = {
@@ -37,6 +67,12 @@
       };
     };
   };
+
+  # The unit name comes from the escaped mount point, so "/" becomes a single
+  # dash and the unit is btrfs-scrub--, with two dashes. Keep these two names in
+  # step with autoScrub.fileSystems above.
+  systemd.services."btrfs-scrub--".serviceConfig = scrubHardening;
+  systemd.services."btrfs-scrub-nix".serviceConfig = scrubHardening;
 
   systemd.services.btrbk-daily-root = {
     description = "Trigger daily btrbk snapshots for root";
