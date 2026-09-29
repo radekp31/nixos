@@ -118,7 +118,10 @@
   ];
 
   # Hardware-specific boot configuration
-  boot.blacklistedKernelModules = ["nouveau" "fjes"];
+  # asus_wmi_sensors reads the IT8665E through BIOS WMI calls, the same chip
+  # that it87 drives (see below). Remove it to decrease the concurrent access.
+  # asus_ec_sensors reads the embedded controller, so it stays.
+  boot.blacklistedKernelModules = ["nouveau" "fjes" "asus_wmi_sensors"];
   boot.initrd.availableKernelModules = [
     "nvme"
     "vesafb"
@@ -172,12 +175,19 @@
   boot.kernelModules = [
     # kvm-amd comes from modules/system/apps/qemu.
     "xfs" # /media/A400, see hardware-configuration.nix
-    # nct6775 loads nct6775_core only. The platform driver does not bind,
-    # because this ASUS board hides the Nuvoton chip behind the embedded
-    # controller. No pwm file appears under /sys/class/hwmon. The BIOS
-    # controls the CPU fan and the chassis fans. Tune them in the UEFI.
-    "nct6775"
+    # The Super I/O chip is an ITE IT8665E at 0x290. The kernel has no driver
+    # for it. The out-of-tree it87 fork below gives the pwm files that
+    # CoolerControl needs.
+    "it87"
   ];
+
+  boot.extraModulePackages = [config.boot.kernelPackages.it87];
+  # ACPI claims port 0x290, so it87 refuses to bind without this flag. The
+  # flag is risky: BIOS ACPI code and it87 can access the chip at the same
+  # time. The it87 README warns of races and unexpected reboots.
+  boot.extraModprobeConfig = ''
+    options it87 ignore_resource_conflict=1
+  '';
 
   services.logind.settings.Login = {
     HandlePowerKey = "ignore";
@@ -235,8 +245,6 @@
   # Hardware-specific packages
   environment.systemPackages = with pkgs; [
     alejandra
-    #linuxKernel.packages.linux_6_18.asus-ec-sensors
-    linuxKernel.packages.linux_7_2.asus-ec-sensors
     nvfancontrol
     nvme-cli
     ntfs3g
