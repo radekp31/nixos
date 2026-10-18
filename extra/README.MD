@@ -529,8 +529,10 @@ exists anywhere.
   - *Correction 3:* The earlier claim "every filesystem is btrfs" is FALSE.
     `hosts/nixos-desktop/hardware-configuration.nix:56` declares `/media/A400`
     with `fsType = "xfs"`. The user confirmed on 2026-09-14 that the disk is a
-    live scratch disk. **Keep `xfs` in `boot.kernelModules`. Do not remove the
-    `/media/A400` block.**
+    live scratch disk. *[SUPERSEDED 2026-10-19]* The A400 now holds another
+    OS and the xfs UUID is gone. The user mounts it by hand when needed, so
+    the `/media/A400` block and the `xfs` entry in `boot.kernelModules` are
+    removed.
   - *[DONE 2026-09-14]* `modules/system/apps/qemu/default.nix:8` now sets
     `["kvm-amd"]`. Removed `"kvm_intel"` from the blacklist on line 97. Deleted
     `"usbcore.debug=1"` from the kernel parameters. Deleted the duplicate
@@ -540,7 +542,7 @@ exists anywhere.
     no `kvm-intel`. `etc/modprobe.d/nixos.conf` no longer blacklists
     `kvm_intel`. The only kernel-parameter change is the loss of
     `usbcore.debug=1`. The closure moved by 35 KiB, so the size is unchanged.
-  - *Open (needs the disk attached):* `/media/A400` is NOT mounted, and the UUID
+  - *[CLOSED 2026-10-19, see Correction 3]* `/media/A400` is NOT mounted, and the UUID
     `2b232c2c-3198-432d-bcbe-9d6056700d12` does not resolve. `nofail` hides the
     failure. Attach the disk and check the UUID. Also note that
     `boot.supportedFilesystems` on line 106 omits `xfs`, so the xfs user-space

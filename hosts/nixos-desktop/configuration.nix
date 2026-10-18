@@ -137,6 +137,7 @@
     canTouchEfiVariables = true;
     efiSysMountPoint = "/boot";
   };
+  boot.loader.timeout = 2;
 
   boot.loader.grub = {
     enable = true;
@@ -174,7 +175,6 @@
 
   boot.kernelModules = [
     # kvm-amd comes from modules/system/apps/qemu.
-    "xfs" # /media/A400, see hardware-configuration.nix
     # The Super I/O chip is an ITE IT8665E at 0x290. The kernel has no driver
     # for it. The out-of-tree it87 fork below gives the pwm files that
     # CoolerControl needs.

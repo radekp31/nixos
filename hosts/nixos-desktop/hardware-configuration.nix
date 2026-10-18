@@ -51,12 +51,6 @@
     options = ["rw" "nofail"];
   };
 
-  fileSystems."/media/A400" = {
-    device = "/dev/disk/by-uuid/2b232c2c-3198-432d-bcbe-9d6056700d12";
-    fsType = "xfs";
-    options = ["rw" "nofail" "defaults" "noatime"];
-  };
-
   fileSystems."/mnt/btr_pool" = {
     device = "/dev/disk/by-uuid/f0258479-2d9c-4f3e-b20d-a42a2401b828";
     fsType = "btrfs";
