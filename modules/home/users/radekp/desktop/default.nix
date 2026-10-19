@@ -11,6 +11,9 @@
     # Terminal emulator
     ../../../apps/wezterm
 
+    # Launcher (replaces KRunner)
+    ../../../apps/vicinae
+
     # Tmux
     ../../../apps/tmux
 
