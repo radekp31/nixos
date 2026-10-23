@@ -14,6 +14,9 @@
     # Launcher (replaces KRunner)
     ../../../apps/vicinae
 
+    # Google Chrome with WebGPU on Vulkan
+    ../../../apps/chrome-webgpu
+
     # Tmux
     ../../../apps/tmux
 
