@@ -1,6 +1,5 @@
 {
   pkgs,
-  nixpkgs_unstable,
   lib,
   ...
 }: let
@@ -171,15 +170,17 @@ in {
     # Juno tools
     terminator
 
-    nixpkgs_unstable.azure-cli
-    nixpkgs_unstable.azure-cli-extensions.ad
-    nixpkgs_unstable.azure-cli-extensions.fzf
-    nixpkgs_unstable.azure-cli-extensions.ssh
-    nixpkgs_unstable.azure-cli-extensions.nsp
-    nixpkgs_unstable.azure-cli-extensions.kusto
-    nixpkgs_unstable.azure-cli-extensions.zones
-    nixpkgs_unstable.azure-cli-extensions.quota
-    nixpkgs_unstable.azure-cli-extensions.portal
+    # azure-cli comes from stable nixpkgs. On unstable it depends on python
+    # fabric, which is broken with invoke 3.x (fabric issue #2376).
+    azure-cli
+    azure-cli-extensions.ad
+    azure-cli-extensions.fzf
+    azure-cli-extensions.ssh
+    azure-cli-extensions.nsp
+    azure-cli-extensions.kusto
+    azure-cli-extensions.zones
+    azure-cli-extensions.quota
+    azure-cli-extensions.portal
     # Use azure-cli from the pinned commit
     #(nixhubio_azcli.azure-cli.withExtensions [
     #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.storage-preview
