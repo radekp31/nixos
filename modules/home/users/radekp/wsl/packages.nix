@@ -1,6 +1,6 @@
 {
   pkgs,
-  inputs,
+  lib,
   ...
 }: let
   aztfexport = pkgs.stdenv.mkDerivation {
@@ -65,14 +65,13 @@
       requests
     ];
   };
-
   # Look up working commit hashes here: https://www.nixhub.io/packages/azure-cli
   # azcli is for some reason not working from nixpkgs
   # Pin tracked as the nixpkgs_azcli_pin flake input, so `nix flake update`
   # and the flake lock cover it.
-  nixhubio_azcli = import inputs.nixpkgs_azcli_pin {
-    system = pkgs.stdenv.targetPlatform.system;
-  };
+  #nixhubio_azcli = import inputs.nixpkgs_azcli_pin {
+  #  system = pkgs.stdenv.targetPlatform.system;
+  #};
 in {
   xdg.configFile."containers/containers.conf".text = ''
     [engine]
@@ -168,20 +167,34 @@ in {
     libseccomp
     cmake
 
+    # Juno tools
+    terminator
+
+    # azure-cli comes from stable nixpkgs. On unstable it depends on python
+    # fabric, which is broken with invoke 3.x (fabric issue #2376).
+    azure-cli
+    azure-cli-extensions.ad
+    azure-cli-extensions.fzf
+    azure-cli-extensions.ssh
+    azure-cli-extensions.nsp
+    azure-cli-extensions.kusto
+    azure-cli-extensions.zones
+    azure-cli-extensions.quota
+    azure-cli-extensions.portal
     # Use azure-cli from the pinned commit
-    (nixhubio_azcli.azure-cli.withExtensions [
-      nixhubio_azcli.azure-cli-extensions.storage-preview
-      nixhubio_azcli.azure-cli-extensions.azure-devops
-      nixhubio_azcli.azure-cli-extensions.resource-graph
-      nixhubio_azcli.azure-cli-extensions.quota
-      nixhubio_azcli.azure-cli-extensions.nsp
-      nixhubio_azcli.azure-cli-extensions.kusto
-      nixhubio_azcli.azure-cli-extensions.graphservices
-      nixhubio_azcli.azure-cli-extensions.fzf
-      nixhubio_azcli.azure-cli-extensions.dynatrace
-      nixhubio_azcli.azure-cli-extensions.costmanagement
-      nixhubio_azcli.azure-cli-extensions.databricks
-    ])
+    #(nixhubio_azcli.azure-cli.withExtensions [
+    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.storage-preview
+    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.azure-devops
+    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.resource-graph
+    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.quota
+    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.nsp
+    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.kusto
+    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.graphservices
+    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.fzf
+    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.dynatrace
+    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.costmanagement
+    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.databricks
+    #])
 
     kubectl
     awscli2
@@ -216,4 +229,22 @@ in {
 
     zstd
   ];
+
+  programs.zsh.envExtra = ''
+    export PATH="$HOME/.local/bin:$PATH"
+  '';
+
+  home.activation.installTerminatorCtl = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    VENV="$HOME/.juno-ape-venv"
+    if ! "$VENV/bin/terminator-ctl" --version >/dev/null 2>&1; then
+      ${pkgs.python3}/bin/python3 -m venv "$VENV"
+      "$VENV/bin/pip" install --quiet terminator-ctl \
+        --extra-index-url "https://artifactory.lab.dynatrace.org/artifactory/api/pypi/ape-pypi-local/simple/"
+    fi
+    mkdir -p "$HOME/.local/bin"
+    install -m755 ${pkgs.writeShellScript "terminator-ctl" ''
+      source "$HOME/.juno-ape-venv/bin/activate"
+      exec terminator-ctl "$@"
+    ''} "$HOME/.local/bin/terminator-ctl"
+  '';
 }
