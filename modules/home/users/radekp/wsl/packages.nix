@@ -65,13 +65,6 @@
       requests
     ];
   };
-  # Look up working commit hashes here: https://www.nixhub.io/packages/azure-cli
-  # azcli is for some reason not working from nixpkgs
-  # Pin tracked as the nixpkgs_azcli_pin flake input, so `nix flake update`
-  # and the flake lock cover it.
-  #nixhubio_azcli = import inputs.nixpkgs_azcli_pin {
-  #  system = pkgs.stdenv.targetPlatform.system;
-  #};
 in {
   xdg.configFile."containers/containers.conf".text = ''
     [engine]
@@ -181,20 +174,6 @@ in {
     azure-cli-extensions.zones
     azure-cli-extensions.quota
     azure-cli-extensions.portal
-    # Use azure-cli from the pinned commit
-    #(nixhubio_azcli.azure-cli.withExtensions [
-    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.storage-preview
-    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.azure-devops
-    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.resource-graph
-    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.quota
-    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.nsp
-    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.kusto
-    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.graphservices
-    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.fzf
-    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.dynatrace
-    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.costmanagement
-    #  nixhubio_azcli.nixpkgs_unstable.azure-cli-extensions.databricks
-    #])
 
     kubectl
     awscli2
