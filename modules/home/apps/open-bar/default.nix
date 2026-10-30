@@ -43,15 +43,16 @@ in {
       autohg-menu = false;
       accent-override = true;
 
-      # Bar: one floating card, like the vicinae window.
-      bartype = "Floating";
+      # Bar: a plain full-width bar in solid Catppuccin Base. No margin, no
+      # rounded corners, no border.
+      bartype = "Mainland";
       height = 34.0;
-      margin = 6.0;
-      bgalpha = 0.95;
+      margin = 0.0;
+      bgalpha = 1.0;
       fgalpha = 1.0;
       balpha = 1.0;
-      bwidth = 1.0;
-      bradius = 12.0;
+      bwidth = 0.0;
+      bradius = 0.0;
       neon = false;
       gradient = false;
       shadow = false;
@@ -75,4 +76,8 @@ in {
       notif-radius = 10.0;
       qtoggle-radius = 12.0;
     };
+
+  # blur-my-shell blurs the panel by default. It draws a grey, square bar
+  # behind the Open Bar bar. Turn it off for the panel only.
+  dconf.settings."org/gnome/shell/extensions/blur-my-shell/panel".blur = false;
 }
