@@ -54,7 +54,6 @@
     XCURSOR_SIZE = "24";
   };
 
-
   programs.gnome-disks.enable = true;
 
   services.gnome.core-apps.enable = true;
@@ -69,11 +68,11 @@
 
   services.gnome.localsearch.enable = true;
 
-  services.desktopManager.gnome.debug = true ;
+  services.desktopManager.gnome.debug = true;
 
   environment.systemPackages = with pkgs; [
     gdm-settings
-    
+
     gnomeExtensions.blur-my-shell
     gnomeExtensions.just-perfection
     gnomeExtensions.arc-menu
