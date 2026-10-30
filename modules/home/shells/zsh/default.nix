@@ -149,9 +149,15 @@
       Current subscription: Dynatrace-Runecast-Contentcreation
       }
 
-      #simplified nixpush(), because of pre-commit
+      # Format, then commit, then push.
+      # The guard keeps the function usable in a repository with no flake.
       nixpush() {
         local message="$1"
+
+        if [ -f flake.nix ]; then
+          nix fmt || return 1
+        fi
+
         git add -A
 
         if git diff --cached --quiet; then
@@ -159,7 +165,6 @@
           return 0
         fi
 
-        # pre-commit will run treefmt automatically
         git commit -m "$message" && git push
       }
 

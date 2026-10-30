@@ -1,0 +1,11 @@
+# Secret scanning rules. gitleaks reads this file by itself.
+#
+# Run it locally with:
+#   nix run nixpkgs#gitleaks -- detect --source . --redact -v
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "The detect-secrets baseline holds SHA-1 hashes, not secrets. Git history keeps the file even after a delete, so the path stays allowed."
+paths = ['''^\.secrets\.baseline$''']

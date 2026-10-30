@@ -1,6 +1,7 @@
 {
   pkgs,
   config,
+  osConfig,
   ...
 }: {
   imports = [
@@ -9,6 +10,12 @@
 
     # Terminal emulator
     ../../../apps/wezterm
+
+    # Launcher (replaces KRunner)
+    ../../../apps/vicinae
+
+    # Google Chrome with WebGPU on Vulkan
+    ../../../apps/chrome-webgpu
 
     # Tmux
     ../../../apps/tmux
@@ -31,12 +38,14 @@
   programs.home-manager.enable = true;
 
   # Home Manager settings
-  home.username = "radekp";
-  home.homeDirectory = "/home/radekp";
+  home.username = osConfig.my.user.name;
+  home.homeDirectory = osConfig.my.user.home;
   home.stateVersion = "25.05";
   home.sessionPath = [
-    "/home/radekp/.nix-profile/bin/" # Required by Neovim and plugins (?)
+    "${config.home.homeDirectory}/.nix-profile/bin/" # Required by Neovim and plugins (?)
   ];
+
+  # The cursor theme lives in modules/system/apps/desktop/kde-plasma6.
   home.sessionVariables = {
     SDL_VIDEODRIVER = "wayland";
   };
@@ -68,33 +77,15 @@
     enable = true;
     settings = {
       user = {
-        email = "polasek.31@seznam.cz";
-        name = "Radek Polasek";
+        email = osConfig.my.user.email;
+        name = osConfig.my.user.fullName;
       };
 
       init.defaultBranch = "main";
       safe.directory = "/etc/nixos";
       push.autoSetupRemote = "true";
-
-      # Use work identity for repos under ~/work/
-      includeIf."gitdir:/mnt/c/workspaces/dt_workspaces".path = "${config.xdg.configHome}/git/dynatrace.gitconfig";
-
-      # Use personal identity for repos under ~/personal/
-      includeIf."gitdir:/etc/nixos".path = "${config.xdg.configHome}/git/personal.gitconfig";
     };
   };
-
-  xdg.configFile."git/dynatrace.gitconfig".text = ''
-    [user]
-      name = Radek Polasek (Dynatrace)
-      email = radekp.polasek@dynatrace.com
-  '';
-
-  xdg.configFile."git/personal.gitconfig".text = ''
-    [user]
-      name = Radek Polasek
-      email = polasek.31@seznam.cz
-  '';
 
   #Bash is needed for XDG vars - needs testing
   programs.bash = {
@@ -181,6 +172,10 @@
 
   # Home packages
   home.packages = with pkgs; [
+    nautilus-python
+
+    lynis
+
     claude-code
     claude-monitor
 
@@ -192,7 +187,7 @@
 
     opencode
 
-    arduino-ide
+    # arduino-ide: nix develop /etc/nixos/flakes/tools#arduino -c arduino-ide
 
     #browser
     #firefox-esr
@@ -207,7 +202,7 @@
     jq
     nurl
     ripgrep-all
-    git
+    # git comes from programs.git above and from hosts/common.
     nixd # Nix LSP server
     vimPlugins.nvim-lspconfig
     nixos-anywhere
@@ -222,7 +217,7 @@
     btop-cuda
     dig
     usbutils
-    ntfs3g # NTFS filesystem support
+    # ntfs3g comes from hosts/nixos-desktop.
     p7zip
     kdePackages.dolphin
     kdePackages.dolphin-plugins
@@ -242,37 +237,29 @@
     rclone
     qpdf
 
-    # Virtualization
-    #qemu_kvm
-    #spice-vdagent
-    #virt-viewer
-    #virt-manager
-    qemu
-    quickemu
+    # Virtualization: nix develop /etc/nixos/flakes/tools#vm
     #OVMF
 
     # GUI Applications
     freecad-wayland
 
     # Hardware Control
-    mangohud # GPU overlay
+    # mangohud comes from modules/system/apps/steam.
 
     # Clipboard
     wl-clipboard
 
     # Theming & Icons
     adwaita-icon-theme
-    bibata-cursors
     qadwaitadecorations-qt6
     font-awesome_6
 
     # Fonts
+    # fira-code and meslo-lg come from hosts/common/profiles/desktop.nix.
     meslo-lgs-nf
-    nerd-fonts.fira-code
     nerd-fonts.fira-mono
     nerd-fonts.dejavu-sans-mono
     nerd-fonts.inconsolata
-    nerd-fonts.meslo-lg
     nerd-fonts.space-mono
     nerd-fonts.ubuntu
     nerd-fonts.ubuntu-sans

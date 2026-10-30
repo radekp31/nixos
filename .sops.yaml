@@ -1,7 +1,18 @@
+# Every recipient that may decrypt a file under any secrets/ directory.
+#
+# Derive an age key from an ssh ed25519 key:
+#   nix run nixpkgs#ssh-to-age -- -i <key>.pub
+#
+# Add or remove a key here, then run:
+#   sops updatekeys modules/system/secrets/sops/secrets/secrets.yaml
 keys:
-  - &admin age1at2agfd9jnq8sshwgm0htz6yjv5xafej0hcchu9e4dp8rceaaf4q5rhz3u
+  # radekp, from ~/.ssh/id_ed25519
+  - &admin age1zs6a38rkxkrp3ala2vc7en46xhctn2v58v2zgt3pfyn4t0wnegysqcurer
+  # nixos-desktop, from /etc/ssh/ssh_host_ed25519_key
+  - &nixos-desktop age1cq7rykpdk3umlexaanllesl6w85landwj2hrptesam94nyt573gq95ymwv
 creation_rules:
   - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
           - *admin
+          - *nixos-desktop

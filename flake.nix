@@ -28,11 +28,26 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
-    disko.url = "github:nix-community/disko";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Supplies pkgs_unstable.rust-bin for the rust devShell. It follows
+    # nixpkgs_unstable, so it adds one lock node and no second nixpkgs.
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs_unstable";
+    };
+
+    # Declarative disk partitioning. nixos-desktop imports it for the
+    # format script only; see hosts/nixos-desktop/disk-config.nix.
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     treefmt-nix.url = "github:numtide/treefmt-nix";
     systems.url = "github:nix-systems/default";
-    nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
   };
 
   outputs = inputs @ {
@@ -47,6 +62,7 @@
         ./parts/formatting.nix
         ./parts/shells.nix
         ./parts/hosts.nix
+        ./parts/disks.nix
       ];
     };
 }

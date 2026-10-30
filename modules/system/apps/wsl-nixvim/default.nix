@@ -186,10 +186,7 @@
         #  };
         #};
         #disable_underline = true;
-        flavour =
-          if (config ? catppuccinTheme)
-          then config.catppuccinTheme
-          else "macchiato";
+        flavour = config.my.theme.catppuccin;
 
         integrations = {
           cmp = true;

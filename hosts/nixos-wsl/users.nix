@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   programs.zsh.enable = true;
 
   environment.shells = with pkgs; [zsh bash];
@@ -9,7 +13,7 @@
       createHome = true;
       extraGroups = ["wheel" "docker" "kvm"];
       group = "users";
-      home = "/home/radekp";
+      home = config.my.user.home;
       shell = pkgs.zsh;
     };
   };

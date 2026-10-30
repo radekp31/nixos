@@ -1,5 +1,29 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  lib,
+  ...
+}: {
   services.desktopManager.plasma6.enable = true;
+
+  # Plasma 6 enables the Orca screen reader by default. Orca then enables
+  # speech-dispatcher, which pulls mbrola-voices at 644 MiB. Re-enable both
+  # for text to speech.
+  services.orca.enable = lib.mkForce false;
+  services.speechd.enable = lib.mkForce false;
+
+  # Cursor theme. Plasma 6 already installs kdePackages.breeze, so
+  # breeze_cursors sits in /run/current-system/sw/share/icons at no extra
+  # cost.
+  #
+  # These two variables set the cursor for GTK, for Qt outside Plasma, and for
+  # the Wayland compositor. Plasma keeps its OWN copy in ~/.config/kcminputrc,
+  # which is mutable user state that nix does not manage. Change the theme in
+  # System Settings once, or delete the [Mouse] cursorTheme line there, if a
+  # KDE application still shows the old cursor.
+  environment.sessionVariables = {
+    XCURSOR_THEME = "breeze_cursors";
+    XCURSOR_SIZE = "24";
+  };
 
   # SDDM configuration
   services.displayManager.sddm = {

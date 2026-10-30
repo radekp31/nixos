@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   # Steam
   # Dota 2 parameters for Wayland, to force xwayland session to avoid crashes:
   # SDL_VIDEODRIVER=x11 %command% -vulkan
@@ -12,18 +16,25 @@
     enable32Bit = true;
   };
 
-  environment.sessionVariables = {
-    STEAM_EXTRA_COMPAT_TOOLS_PATH = "/home/radekp/.steam/root/compatibilitytools.d";
-  };
-
-  programs.gamemode.enable = true;
+  #programs.gamemode.enable = true;
 
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
     localNetworkGameTransfers.openFirewall = true;
-    gamescopeSession.enable = true;
+
+    gamescopeSession.enable = false;
+
+    # NVIDIA tuning for games only. extraEnv puts it inside the Steam FHS
+    # environment, not in every process.
+    package = pkgs.steam.override {
+      extraEnv = {
+        __GL_GSYNC_ALLOWED = "1";
+        __GL_VRR_ALLOWED = "1";
+        __GL_THREADED_OPTIMIZATIONS = "0";
+      };
+    };
   };
 
   environment.systemPackages = with pkgs; [
@@ -35,7 +46,9 @@
   systemd.user.services.steam = {
     description = "Steam Background";
     serviceConfig = {
-      ExecStart = "${pkgs.steam}/bin/steam -silent";
+      # Use the configured package, not pkgs.steam. The plain package
+      # ignores programs.steam settings, including extraEnv.
+      ExecStart = "${config.programs.steam.package}/bin/steam -silent";
       Restart = "on-failure";
     };
     wantedBy = ["graphical-session.target"];

@@ -13,11 +13,12 @@ in {
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
+    # This list becomes /run/opengl-driver. It takes driver libraries only.
+    # A compiler, a toolchain, or CUDA does no work here, and every FHS
+    # environment (steam, steam-run) mounts this path and carries the weight.
     extraPackages = with pkgs; [
-      intel-media-driver # LIBVA_DRIVER_NAME=iHD
       libvdpau-va-gl
       nvidia-vaapi-driver
-      intel-vaapi-driver # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
       libva-vdpau-driver
       vulkan-validation-layers
       libglvnd
@@ -25,8 +26,7 @@ in {
       dxvk
       mesa
 
-      # CUDA and OpenGL
-      cudatoolkit
+      # OpenGL helper libraries
       libGLU
       libGL
       libXi
@@ -36,10 +36,6 @@ in {
       libX11
       libXv
       libXrandr
-      zlib
-      ncurses5
-      stdenv.cc
-      binutils
     ];
   };
 

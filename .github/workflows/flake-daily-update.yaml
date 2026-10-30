@@ -39,13 +39,21 @@ jobs:
       - name: Update flake.lock
         run: nix flake update
 
+      # flakes/compat carries its own lock, and the step above never reaches
+      # it. Without this step that lock ages forever.
+      - name: Update the nested compat lock
+        run: nix flake update --flake ./flakes/compat
+
       - name: Format repository
         run: nix fmt
 
-      - name: Check if lock file changed
+      # Name every lock. A bare `git diff --quiet flake.lock` reports no change
+      # when only the nested lock moved, and the job then throws that update
+      # away.
+      - name: Check if any lock file changed
         id: check-changes
         run: |
-          if git diff --quiet flake.lock; then
+          if git diff --quiet -- flake.lock flakes/compat/flake.lock; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT

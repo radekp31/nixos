@@ -1,0 +1,51 @@
+# The gate for your own commits.
+#
+# The daily update workflow triggers on a schedule, so it never sees a
+# manual commit. This file does.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  gitleaks:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # gitleaks needs the full history to scan every commit.
+          fetch-depth: 0
+
+      # gitleaks-action is free for a personal repository. An organization
+      # needs a GITLEAKS_LICENSE secret.
+      - name: Scan for secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  flake-check:
+    name: Flake check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v27
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Set up Cachix binary cache
+        uses: cachix/cachix-action@v15
+        with:
+          name: radekp31-nixos
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      # This evaluates both hosts and runs the treefmt gate. It does NOT
+      # build a host closure. The daily workflow owns that build.
+      - name: Evaluate the flake and check formatting
+        run: nix flake check --print-build-logs

@@ -1,5 +1,9 @@
 # General desktop settings
-{pkgs, ...}: {
+{
+  lib,
+  pkgs,
+  ...
+}: {
   # Enable networking (already in common/default.nix, so remove or keep for clarity)
   # networking.networkmanager.enable = true;  # Remove - duplicate from common
 
@@ -24,12 +28,12 @@
   # Printing
   services.printing.enable = true;
 
-  # Bluetooth
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = true;
-  };
-  services.blueman.enable = true;
+  # The upstream NVIDIA module enables acpid. Its event handlers are empty and
+  # nothing uses its socket, so the unit does nothing. logind reads the power
+  # keys directly.
+  services.acpid.enable = lib.mkForce false;
+
+  # Bluetooth lives in modules/system/hardware/bluetooth.
 
   # dconf for GNOME/GTK apps configuration
   programs.dconf.enable = true;
@@ -59,8 +63,6 @@
     noto-fonts
     cantarell-fonts
     liberation_ttf
-    dejavu_fonts
-
     dejavu_fonts
     nerd-fonts.fira-code
     nerd-fonts.jetbrains-mono

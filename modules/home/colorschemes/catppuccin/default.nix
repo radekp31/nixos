@@ -3,10 +3,7 @@
   osConfig,
   ...
 }: let
-  flavor =
-    if (osConfig ? catppuccinTheme)
-    then osConfig.catppuccinTheme
-    else "macchiato";
+  flavor = osConfig.my.theme.catppuccin;
 in {
   imports = [inputs.catppuccin.homeModules.catppuccin];
   catppuccin = {

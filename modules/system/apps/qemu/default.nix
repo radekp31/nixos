@@ -1,45 +1,21 @@
-{pkgs, ...}: {
-  programs.virt-manager.enable = true;
+{...}: {
+  # Virtualization for nixos-desktop: quickemu, no libvirtd. The VM tools
+  # live in a devShell:
+  #
+  #   nix develop /etc/nixos/flakes/tools#vm
+  #
+  # virt-manager needs libvirtd, the dconf connection profile, and the libvirtd
+  # and qemu-libvirtd group memberships. Restore all of them together, or the
+  # GUI cannot connect.
+  #
+  # quickemu needs KVM from the kernel and the setuid USB helper. A devShell
+  # provides neither. /dev/kvm is mode 0666 on this host, so no group
+  # membership is needed to reach it.
 
-  users.groups.libvirtd.members = ["your_username"];
+  # nixos-desktop is the only importer and runs an AMD CPU.
+  boot.kernelModules = ["kvm-amd"];
 
-  virtualisation.libvirtd.enable = true;
-
-  boot.kernelModules = ["kvm-amd" "kvm-intel"];
-
+  # Installs a setuid spice-client-glib-usb-acl-helper. USB passthrough to a
+  # quickemu guest needs it, and a setuid binary cannot come from a devShell.
   virtualisation.spiceUSBRedirection.enable = true;
-
-  users.users.radekp.extraGroups = ["libvirtd" "qemu-libvirtd"];
-
-  programs.dconf = {
-    enable = true;
-    profiles = {
-      radekp.databases = [
-        {
-          settings = {
-            "org/virt-manager/virt-manager/connections" = {
-              autoconnect = ["qemu:///system"];
-              uris = ["qemu:///system"];
-            };
-          };
-        }
-      ];
-    };
-  };
-
-  # Define system packages
-  environment.systemPackages = with pkgs; [
-    qemu_kvm
-    spice-gtk
-    spice-protocol
-    spice-autorandr
-    spice-vdagent
-    spice-vdagent
-    virt-viewer
-    virt-manager
-    swtpm
-    OVMF
-    virtio-win
-    bridge-utils
-  ];
 }

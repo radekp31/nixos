@@ -1,6 +1,7 @@
 {
   lib,
   pkgs,
+  config,
   ...
 }: {
   imports = [
@@ -11,6 +12,8 @@
     ../common/profiles/wsl.nix
     ../../modules/system/apps/wsl-nixvim
     ../../modules/system/apps/nix-ld-wsl
+    # claude-code comes from nixpkgs_unstable, not from the release input.
+    ../../modules/system/apps/claude-code
     ../../modules/system/hardware/gpu/nvidia-wsl/default.nix
   ];
 
@@ -22,7 +25,7 @@
   wsl.ssh-agent.enable = true;
 
   # WSL user
-  wsl.defaultUser = "radekp";
+  wsl.defaultUser = config.my.user.name;
   wsl.interop.includePath = true;
 
   # Timezone (already UTC in common, but explicit here)

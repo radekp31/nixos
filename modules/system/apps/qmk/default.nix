@@ -4,13 +4,11 @@
 
   hardware.keyboard.qmk.enable = true;
 
-  environment.systemPackages = with pkgs; [
-    via
-    nrfutil
-    qmk
-    qmk_hid
-    qmk-udev-rules
-  ];
+  # Firmware toolchain: nix develop /etc/nixos/flakes/tools#qmk
+  #
+  # Only the udev side stays here. A devShell cannot install udev rules, and a
+  # keyboard stays unwritable until udev has tagged the device.
+  environment.systemPackages = [pkgs.qmk-udev-rules];
   services.udev.packages = [pkgs.via];
 
   services.udev.extraRules = ''
