@@ -3,7 +3,9 @@
     enable = true;
     settings = {
       window = {
-        decorations = "Full"; # Explicitly requests native title bar and window controls
+        #decorations = "Full"; # Explicitly requests native title bar and window controls
+        decorations = "none";
+ 	#startup_mode = "Fullscreen";   # or "Maximized"
         dimensions = {
           columns = 130;
           lines = 35;

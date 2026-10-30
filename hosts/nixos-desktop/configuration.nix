@@ -30,7 +30,9 @@
     ../../modules/system/apps/qemu
     #../../modules/system/hardware/printers/brother/DCPL2622DW
     ../../modules/system/hardware/usb
-    ../../modules/system/apps/desktop/kde-plasma6
+    #../../modules/system/apps/desktop/kde-plasma6
+    # gnome test
+    ../../modules/system/apps/desktop/gnome
     ../../modules/system/apps/nix-ld
     ../../modules/system/apps/steam
     ../../modules/system/hardware/bluetooth

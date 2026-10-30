@@ -10,12 +10,13 @@
 
     # Terminal emulator
     ../../../apps/wezterm
+    ../../../apps/alacritty
 
     # Launcher (replaces KRunner)
     ../../../apps/vicinae
 
-    # Google Chrome with WebGPU on Vulkan
-    ../../../apps/chrome-webgpu
+    # Firefox ESR instance with WebGPU on
+    ../../../apps/firefox-webgpu
 
     # Tmux
     ../../../apps/tmux
@@ -45,10 +46,28 @@
     "${config.home.homeDirectory}/.nix-profile/bin/" # Required by Neovim and plugins (?)
   ];
 
-  # The cursor theme lives in modules/system/apps/desktop/kde-plasma6.
+  # The cursor theme lives in the desktop module that the host imports:
+  # modules/system/apps/desktop/gnome or modules/system/apps/desktop/kde-plasma6.
   home.sessionVariables = {
     SDL_VIDEODRIVER = "wayland";
   };
+
+  # Let Home Manager write the GTK settings and the GNOME icon-theme dconf key.
+  # catppuccin then applies its Papirus icon theme (catppuccin.gtk.icon).
+  # Plasma also writes the GTK settings files. Check for a collision before
+  # you enable the Plasma module again.
+  gtk.enable = true;
+  # GTK3 apps (for example Nemo) ignore the GNOME color-scheme key. They read
+  # this setting. libadwaita apps follow color-scheme and need nothing here.
+  gtk.gtk3.extraConfig.gtk-application-prefer-dark-theme = true;
+  # GTK ships Adwaita built in, so no package is needed. This replaces the
+  # stale "Breeze" value from Plasma. Breeze is not installed, and with a
+  # missing theme GTK3 used light Adwaita and ignored prefer-dark.
+  gtk.theme.name = "Adwaita";
+  # libadwaita (GTK4) apps ignore the theme name. Use the new HM default.
+  gtk.gtk4.theme = null;
+  # Blue Papirus folder icons. Other catppuccin apps keep the global accent.
+  catppuccin.gtk.icon.accent = "blue";
 
   programs.ssh = {
     enable = true;
@@ -221,6 +240,8 @@
     p7zip
     kdePackages.dolphin
     kdePackages.dolphin-plugins
+    # Trial: GTK file manager with split view (F3). Compare it with Dolphin.
+    nemo
     kdePackages.kdeconnect-kde
     file
     rkdeveloptool
