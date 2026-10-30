@@ -26,7 +26,7 @@
     ../../modules/system/apps/claude-code
     ../../modules/system/hardware/gpu/nvidia
     ../../modules/system/apps/nixvim
-    ../../modules/system/apps/qmk
+    #../../modules/system/apps/qmk
     ../../modules/system/apps/qemu
     #../../modules/system/hardware/printers/brother/DCPL2622DW
     ../../modules/system/hardware/usb
