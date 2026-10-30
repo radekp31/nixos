@@ -15,6 +15,9 @@
     # Launcher (replaces KRunner)
     ../../../apps/vicinae
 
+    # Open Bar (GNOME top bar) in the vicinae style
+    ../../../apps/open-bar
+
     # Firefox ESR instance with WebGPU on
     ../../../apps/firefox-webgpu
 

@@ -95,5 +95,16 @@
     gnomeExtensions.workspace-indicator
     gnomeExtensions.vicinae
     gnomeExtensions.tweaks-in-system-menu
+
+    # Trial. Open Bar 49 declares GNOME 45-49 only, and GNOME 50 refuses it.
+    # This patch adds "50". Upstream did not test it on GNOME 50. Remove the
+    # patch when a release with GNOME 50 support is in nixpkgs.
+    (gnomeExtensions.open-bar.overrideAttrs (old: {
+      postPatch =
+        (old.postPatch or "")
+        + ''
+          substituteInPlace metadata.json --replace-fail '"49"' '"49", "50"'
+        '';
+    }))
   ];
 }

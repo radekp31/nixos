@@ -18,18 +18,29 @@
     });
   };
 
-  # GNOME: Super+Tab opens vicinae. GNOME binds Super+Tab to the app switcher
-  # by default, so move the app switcher to Super+comma. This replaces the
-  # whole custom-keybindings list. Add other custom shortcuts here too.
-  dconf.settings = {
+  # GNOME: Super+Tab opens vicinae, Alt+Tab opens the vicinae window list.
+  # GNOME binds both keys to its app switcher by default. A shortcut that is in
+  # both lists conflicts, so the GNOME app switcher keeps only Super+comma.
+  # This replaces the whole custom-keybindings list. Add other custom
+  # shortcuts here too.
+  dconf.settings = let
+    vicinae = lib.getExe config.programs.vicinae.package;
+    path = "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings";
+  in {
     "org/gnome/desktop/wm/keybindings".switch-applications = ["<Super>comma"];
     "org/gnome/settings-daemon/plugins/media-keys".custom-keybindings = [
-      "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+      "${path}/custom0/"
+      "${path}/custom1/"
     ];
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+    "${lib.removePrefix "/" path}/custom0" = {
       name = "Vicinae launcher";
       binding = "<Super>Tab";
-      command = "${lib.getExe config.programs.vicinae.package} open";
+      command = "${vicinae} open";
+    };
+    "${lib.removePrefix "/" path}/custom1" = {
+      name = "Vicinae window list";
+      binding = "<Alt>Tab";
+      command = "${vicinae} cmd launch wm:switch-windows";
     };
   };
 
