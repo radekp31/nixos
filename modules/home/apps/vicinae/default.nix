@@ -10,12 +10,22 @@
   programs.vicinae = {
     enable = true;
     systemd.enable = true; # starts with graphical-session.target
-    # catppuccin sets iconTheme to "Catppuccin <Flavor> <Accent>". No package
-    # installs a theme with that name, so vicinae shows no app icons. Use the
-    # GTK icon theme (catppuccin Papirus) instead.
-    settings.theme = lib.genAttrs ["dark" "light"] (_: {
-      iconTheme = lib.mkForce config.gtk.iconTheme.name;
-    });
+    # Set all settings here, not in the vicinae GUI. A GUI change replaces the
+    # Home Manager link with a file, and the next activation then fails.
+    settings = {
+      # catppuccin sets iconTheme to "Catppuccin <Flavor> <Accent>". No package
+      # installs a theme with that name, so vicinae shows no app icons. Use the
+      # GTK icon theme (catppuccin Papirus) instead.
+      theme.light.iconTheme = lib.mkForce config.gtk.iconTheme.name;
+      theme.dark.iconTheme = lib.mkForce config.gtk.iconTheme.name;
+      # The GUI choice. mkForce overrides the catppuccin theme for dark mode only.
+      theme.dark.name = lib.mkForce "vicinae-dark";
+      keybinds = {
+        "navigation.down" = "alt+TAB";
+        "navigation.up" = "alt+shift+?";
+      };
+      providers.shortcuts.enabled = true;
+    };
   };
 
   # GNOME: Super+Tab opens vicinae, Alt+Tab opens the vicinae window list.
@@ -37,11 +47,11 @@
       binding = "<Super>Tab";
       command = "${vicinae} open";
     };
-    "${lib.removePrefix "/" path}/custom1" = {
-      name = "Vicinae window list";
-      binding = "<Alt>Tab";
-      command = "${vicinae} cmd launch wm:switch-windows";
-    };
+    #"${lib.removePrefix "/" path}/custom1" = {
+    #  name = "Vicinae window list";
+    #  binding = "<Alt>Tab";
+    #  command = "${vicinae} cmd launch wm:switch-windows";
+    #};
   };
 
   # Plasma: move Alt+Space and Alt+F2 from KRunner to "vicinae toggle".
