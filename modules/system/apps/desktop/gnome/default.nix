@@ -71,39 +71,39 @@
   services.desktopManager.gnome.debug = true;
 
   environment.systemPackages = with pkgs; [
-    gdm-settings
-
-    gnomeExtensions.blur-my-shell
-    gnomeExtensions.just-perfection
-    gnomeExtensions.arc-menu
-    gnomeExtensions.dash-to-panel
-    #gnome-shell-extensions set
-    gnomeExtensions.applications-menu
-    gnomeExtensions.auto-move-windows
-    #gnomeExtensions.mount-meter
-    gnomeExtensions.launch-new-instance
-    #gnomeExtensions.light-style
-    gnomeExtensions.native-window-placement
-    gnomeExtensions.places-status-indicator
-    gnomeExtensions.screenshot-window-sizer
-    gnomeExtensions.status-icons
-    gnomeExtensions.system-monitor
-    gnomeExtensions.user-themes
+    #gdm-settings
+    #
+    #gnomeExtensions.blur-my-shell
+    #gnomeExtensions.just-perfection
+    #gnomeExtensions.arc-menu
+    #gnomeExtensions.dash-to-panel
+    ##gnome-shell-extensions set
+    #gnomeExtensions.applications-menu
+    #gnomeExtensions.auto-move-windows
+    ##gnomeExtensions.mount-meter
+    #gnomeExtensions.launch-new-instance
+    ##gnomeExtensions.light-style
+    #gnomeExtensions.native-window-placement
+    #gnomeExtensions.places-status-indicator
+    #gnomeExtensions.screenshot-window-sizer
+    #gnomeExtensions.status-icons
+    #gnomeExtensions.system-monitor
+    #gnomeExtensions.user-themes
     gnomeExtensions.window-list
-    #gnomeExtensions.windowsNavigator
-    gnomeExtensions.workspace-indicator
-    gnomeExtensions.vicinae
-    gnomeExtensions.tweaks-in-system-menu
+    ##gnomeExtensions.windowsNavigator
+    #gnomeExtensions.workspace-indicator
+    #gnomeExtensions.vicinae
+    #gnomeExtensions.tweaks-in-system-menu
 
     # Trial. Open Bar 49 declares GNOME 45-49 only, and GNOME 50 refuses it.
     # This patch adds "50". Upstream did not test it on GNOME 50. Remove the
     # patch when a release with GNOME 50 support is in nixpkgs.
-    (gnomeExtensions.open-bar.overrideAttrs (old: {
-      postPatch =
-        (old.postPatch or "")
-        + ''
-          substituteInPlace metadata.json --replace-fail '"49"' '"49", "50"'
-        '';
-    }))
+    #(gnomeExtensions.open-bar.overrideAttrs (old: {
+    #  postPatch =
+    #    (old.postPatch or "")
+    #    + ''
+    #      substituteInPlace metadata.json --replace-fail '"49"' '"49", "50"'
+    #    '';
+    #}))
   ];
 }
