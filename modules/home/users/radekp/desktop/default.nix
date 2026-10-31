@@ -1,6 +1,7 @@
 {
   pkgs,
   config,
+  lib,
   osConfig,
   ...
 }: {
@@ -71,6 +72,23 @@
   gtk.gtk4.theme = null;
   # Blue Papirus folder icons. Other catppuccin apps keep the global accent.
   catppuccin.gtk.icon.accent = "blue";
+
+  # tmux, fzf, and bat use the 16 terminal colors (ANSI names), not catppuccin.
+  # They then follow the alacritty theme (programs.alacritty.theme).
+  catppuccin.tmux.enable = false;
+  catppuccin.fzf.enable = lib.mkForce false; # the catppuccin module sets it to true
+  catppuccin.bat.enable = lib.mkForce false; # the catppuccin module sets it to true
+  programs.fzf.defaultOptions = ["--color=16"];
+  programs.bat.config.theme = "ansi";
+  programs.tmux.extraConfig = ''
+    # Hex, not an ANSI name: a little darker than the taerminal background
+    # (#26282a). Change it if you change the alacritty theme.
+    set -g status-style "bg=#1c1d1f,fg=white"
+    set -g message-style "bg=default,fg=cyan"
+    set -g mode-style "bg=blue,fg=black"
+    set -g window-status-style "fg=brightblack"
+    set -g window-status-current-style "fg=blue,bold"
+  '';
 
   programs.ssh = {
     enable = true;
