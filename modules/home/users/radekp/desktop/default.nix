@@ -80,15 +80,15 @@
   catppuccin.bat.enable = lib.mkForce false; # the catppuccin module sets it to true
   programs.fzf.defaultOptions = ["--color=16"];
   programs.bat.config.theme = "ansi";
-  programs.tmux.extraConfig = ''
-    # Hex, not an ANSI name: a little darker than the taerminal background
-    # (#26282a). Change it if you change the alacritty theme.
-    set -g status-style "bg=#1c1d1f,fg=white"
-    set -g message-style "bg=default,fg=cyan"
-    set -g mode-style "bg=blue,fg=black"
-    set -g window-status-style "fg=brightblack"
-    set -g window-status-current-style "fg=blue,bold"
-  '';
+  #programs.tmux.extraConfig = ''
+  #  # Hex, not an ANSI name: a little darker than the taerminal background
+  #  # (#26282a). Change it if you change the alacritty theme.
+  #  set -g status-style "bg=#1c1d1f,fg=white"
+  #  set -g message-style "bg=default,fg=cyan"
+  #  set -g mode-style "bg=blue,fg=black"
+  #  set -g window-status-style "fg=brightblack"
+  #  set -g window-status-current-style "fg=blue,bold"
+  #'';
 
   programs.ssh = {
     enable = true;
