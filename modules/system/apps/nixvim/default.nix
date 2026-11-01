@@ -72,16 +72,45 @@
     colorschemes.catppuccin = {
       enable = true;
       settings = {
-        #color_overrides = {
-        #  mocha = {
-        #    base = "#1e1e2f";
-        #  };
-        #};
+        # Taerminal colors from alacritty-theme (themes/taerminal.toml).
+        # Taerminal has only 16 terminal colors. Slots marked "invented" have no taerminal value.
+        # `all` applies to each flavour, so my.theme.catppuccin does not change these colors.
+        color_overrides.all = {
+          # Grays, from dark to light
+          crust = "#161718"; # invented
+          mantle = "#1c1d1f"; # invented: the tmux status bar color; floats, status line
+          base = "#26282a"; # background
+          surface0 = "#303234"; # invented: cursor line
+          surface1 = "#3c3e41"; # invented: selection, line numbers
+          surface2 = "#4a4c4f"; # invented
+          overlay0 = "#58595b"; # invented
+          overlay1 = "#646566"; # invented
+          overlay2 = "#6f6f6f"; # bright black: comments, brackets
+          subtext0 = "#a8a8a8"; # invented
+          subtext1 = "#c8c8c8"; # invented
+          text = "#f0f0f0"; # foreground
+          # Accents
+          red = "#ff8878"; # red: builtin variables, errors
+          maroon = "#fe978b"; # bright red: parameters
+          flamingo = "#fe978b"; # bright red
+          peach = "#ffb88a"; # invented orange: numbers, constants, booleans
+          yellow = "#fffcb7"; # yellow: types, modules
+          rosewater = "#fffed5"; # bright yellow
+          green = "#b4fb73"; # green: strings
+          teal = "#d6fcba"; # bright green: characters
+          sky = "#a2e1f8"; # cyan: operators
+          sapphire = "#c0e9f8"; # bright cyan: labels
+          blue = "#8bbce5"; # blue: functions
+          lavender = "#c2e3ff"; # bright blue: properties, attribute names
+          mauve = "#ffb2fe"; # magenta: keywords, conditionals
+          pink = "#ffc6ff"; # bright magenta: escapes, special
+        };
         #disable_underline = true;
         flavour = config.my.theme.catppuccin;
 
         integrations = {
           cmp = true;
+          diffview = true;
           gitsigns = true;
           mini = {
             enabled = true;
@@ -89,6 +118,7 @@
           };
           notify = false;
           nvimtree = true;
+          snacks.enabled = true;
           treesitter = true;
         };
         styles = {
@@ -103,6 +133,29 @@
         term_colors = true;
       };
     };
+    # The same taerminal colors in base16. This variant has no bold, no italics,
+    # and no snacks colors.
+    #colorschemes.base16 = {
+    #  enable = true;
+    #  colorscheme = {
+    #    base00 = "#26282a"; # background
+    #    base01 = "#303234"; # invented: cursor line, status line
+    #    base02 = "#3c3e41"; # invented: selection
+    #    base03 = "#6f6f6f"; # comments (bright black)
+    #    base04 = "#a8a8a8"; # invented: line numbers
+    #    base05 = "#f0f0f0"; # text
+    #    base06 = "#f1f1f1"; # white
+    #    base07 = "#ffffff"; # bright white
+    #    base08 = "#ff8878"; # red
+    #    base09 = "#ffb88a"; # invented: orange
+    #    base0A = "#fffcb7"; # yellow
+    #    base0B = "#b4fb73"; # green
+    #    base0C = "#a2e1f8"; # cyan
+    #    base0D = "#8bbce5"; # blue
+    #    base0E = "#ffb2fe"; # magenta
+    #    base0F = "#d69a8a"; # invented: brown
+    #  };
+    #};
     clipboard = {
       register = "unnamedplus";
       providers.wl-copy.enable = true;
@@ -113,7 +166,6 @@
         settings = {
           options = {
             icons_enabled = true;
-            colorcheme = "catppuccin";
           };
           sections = {
             lualine_c = [
