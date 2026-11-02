@@ -1,0 +1,16 @@
+#!/bin/sh
+# Run the flake formatter (treefmt: deadnix, alejandra, prettier) on the
+# staged files. CI runs the same treefmt config (checks.formatting).
+# If treefmt changes a file, the commit stops. Look at `git diff`,
+# `git add` the file, and commit again.
+#
+# Turn the hook on one time in each clone:
+#   git config core.hooksPath .githooks
+#
+# ponytail: the hook formats the files on disk, not the staged content.
+# After a partial `git add -p`, the commit can still be unformatted.
+# CI catches that case.
+set -eu
+
+git diff --cached --name-only -z --diff-filter=ACMR |
+  xargs -0 -r nix fmt -- --fail-on-change
