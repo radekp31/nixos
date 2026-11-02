@@ -79,7 +79,9 @@
   catppuccin.fzf.enable = lib.mkForce false; # the catppuccin module sets it to true
   catppuccin.bat.enable = lib.mkForce false; # the catppuccin module sets it to true
   programs.fzf.defaultOptions = ["--color=16"];
-  programs.bat.config.theme = "ansi";
+  # The bat theme ("ansi") is in programs.bat.config below. Older Nix (for
+  # example 2.22) rejects a second programs.bat.config definition here.
+
   #programs.tmux.extraConfig = ''
   #  # Hex, not an ANSI name: a little darker than the taerminal background
   #  # (#26282a). Change it if you change the alacritty theme.
@@ -140,6 +142,7 @@
   programs.bat = {
     enable = true;
     config = {
+      theme = "ansi"; # the 16 terminal colors, see the catppuccin note above
       paging = "never";
       decorations = "never";
     };
