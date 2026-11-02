@@ -4,7 +4,7 @@
 
   programs.alacritty = {
     enable = true;
-    theme = "taerminal"; 
+    theme = "taerminal";
     settings = {
       window = {
         #decorations = "Full"; # Explicitly requests native title bar and window controls
