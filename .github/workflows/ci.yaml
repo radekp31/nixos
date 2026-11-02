@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Nix
-        uses: cachix/install-nix-action@v27
+        uses: cachix/install-nix-action@v31
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
@@ -44,6 +44,15 @@ jobs:
         with:
           name: radekp31-nixos
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      # The hosts use the Nix from flake.lock (the default nix.package).
+      # Put that Nix on PATH, so CI evaluates with the same version.
+      # The Nix from install-nix-action only runs this step and the daemon.
+      - name: Use the Nix version from flake.lock
+        run: |
+          nix_out=$(nix build --no-link --print-out-paths --inputs-from . 'nixpkgs#nix^out')
+          "$nix_out/bin/nix" --version
+          echo "$nix_out/bin" >> "$GITHUB_PATH"
 
       # This evaluates both hosts and runs the treefmt gate. It does NOT
       # build a host closure. The daily workflow owns that build.

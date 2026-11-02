@@ -20,7 +20,7 @@ jobs:
           large-packages: false
 
       - name: Install Nix
-        uses: cachix/install-nix-action@v27
+        uses: cachix/install-nix-action@v31
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
@@ -43,6 +43,15 @@ jobs:
       # it. Without this step that lock ages forever.
       - name: Update the nested compat lock
         run: nix flake update --flake ./flakes/compat
+
+      # The hosts use the Nix from flake.lock (the default nix.package).
+      # Put the Nix from the NEW lock on PATH, so the checks and the builds
+      # below use the version that the hosts get after a rebuild.
+      - name: Use the Nix version from flake.lock
+        run: |
+          nix_out=$(nix build --no-link --print-out-paths --inputs-from . 'nixpkgs#nix^out')
+          "$nix_out/bin/nix" --version
+          echo "$nix_out/bin" >> "$GITHUB_PATH"
 
       - name: Format repository
         run: nix fmt
