@@ -3,7 +3,20 @@
   pkgs,
   ...
 }: {
-  services.displayManager.gdm.enable = true;
+  # The tuigreet module needs this font: its patched matrix rain uses
+  # Cyrillic and Greek glyphs that ter-v22b has.
+  console = {
+    earlySetup = true;
+    font = "ter-v22b"; # Terminus bold, 22px; try ter-v24b or ter-v28b on a 4K screen
+    packages = [pkgs.terminus_font];
+    #colors = [
+    #  "1a1b26" "f7768e" "9ece6a" "e0af68"
+    #  "7aa2f7" "bb9af7" "7dcfff" "a9b1d6"
+    #  "414868" "f7768e" "9ece6a" "e0af68"
+    #  "7aa2f7" "bb9af7" "7dcfff" "c0caf5"
+    #];
+  };
+
   services.desktopManager.gnome.enable = true;
 
   # To disable installing GNOME's suite of applications
@@ -11,18 +24,32 @@
   #services.gnome.core-apps.enable = false;
   #services.gnome.core-developer-tools.enable = false;
   #services.gnome.games.enable = false;
-  environment.gnome.excludePackages = with pkgs; [gnome-tour gnome-user-docs];
+  environment.gnome.excludePackages = with pkgs; [gnome-tour gnome-user-docs nautilus];
 
   # Cursor theme: Adwaita, the GNOME default. GNOME already installs it.
   # GNOME reads the cursor from the dconf key below. Plasma writes
   # breeze_cursors into the user dconf database, and that value wins over a
   # system default. The lock makes GNOME ignore the user value.
-  programs.dconf.profiles.user.databases = [
-    {
-      settings."org/gnome/desktop/interface".cursor-theme = "Adwaita";
-      locks = ["/org/gnome/desktop/interface/cursor-theme"];
-    }
-  ];
+  programs.dconf.profiles = {
+    user.databases = [
+      {
+        settings = {
+          "org/gnome/desktop/interface".cursor-theme = "Adwaita";
+          "org/gnome/desktop/background" = {
+            picture-uri = "file://${../../../../../extra/wallpapers/reddit1-nixos-wallpapers.png}";
+            picture-uri-dark = "file://${../../../../../extra/wallpapers/reddit1-nixos-wallpapers.png}";
+            picture-options = "scaled";
+          };
+        };
+        locks = [
+          "/org/gnome/desktop/interface/cursor-theme"
+          "/org/gnome/desktop/background/picture-uri"
+          "/org/gnome/desktop/background/picture-uri-dark"
+          "/org/gnome/desktop/background/picture-options"
+        ];
+      }
+    ];
+  };
 
   # GNOME opens the Activities overview after login. GNOME has no setting for
   # this. The extension options (dash-to-panel hide-overview-on-startup, Just
@@ -70,16 +97,27 @@
 
   services.desktopManager.gnome.debug = true;
 
+  # Set default programs
+  xdg.mime = {
+    enable = true;
+    defaultApplications = {
+      # Set Nemo file explorer as default
+      # See nautilus included in excludePackages
+      "inode/directory" = "nemo.desktop";
+      "application/x-gnome-saved-search" = "nemo.desktop";
+    };
+  };
+
   environment.systemPackages = with pkgs; [
-    #gdm-settings
+    nemo # File explorer
+    gdm-settings
     #
-    #gnomeExtensions.blur-my-shell
-    #gnomeExtensions.just-perfection
+    gnomeExtensions.just-perfection
     #gnomeExtensions.arc-menu
     #gnomeExtensions.dash-to-panel
     ##gnome-shell-extensions set
     #gnomeExtensions.applications-menu
-    #gnomeExtensions.auto-move-windows
+    #gnomeExtensions.auto-move-windws
     ##gnomeExtensions.mount-meter
     #gnomeExtensions.launch-new-instance
     ##gnomeExtensions.light-style
@@ -94,16 +132,5 @@
     #gnomeExtensions.workspace-indicator
     #gnomeExtensions.vicinae
     #gnomeExtensions.tweaks-in-system-menu
-
-    # Trial. Open Bar 49 declares GNOME 45-49 only, and GNOME 50 refuses it.
-    # This patch adds "50". Upstream did not test it on GNOME 50. Remove the
-    # patch when a release with GNOME 50 support is in nixpkgs.
-    #(gnomeExtensions.open-bar.overrideAttrs (old: {
-    #  postPatch =
-    #    (old.postPatch or "")
-    #    + ''
-    #      substituteInPlace metadata.json --replace-fail '"49"' '"49", "50"'
-    #    '';
-    #}))
   ];
 }

@@ -33,6 +33,9 @@
     #../../modules/system/apps/desktop/kde-plasma6
     # gnome test
     ../../modules/system/apps/desktop/gnome
+    # Greeter for greetd. Import one.
+    ../../modules/system/apps/desktop/sysc-greet
+    #../../modules/system/apps/desktop/tuigreet
     ../../modules/system/apps/nix-ld
     ../../modules/system/apps/steam
     ../../modules/system/hardware/bluetooth

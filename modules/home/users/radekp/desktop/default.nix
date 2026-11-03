@@ -75,13 +75,13 @@
 
   # tmux, fzf, and bat use the 16 terminal colors (ANSI names), not catppuccin.
   # They then follow the alacritty theme (programs.alacritty.theme).
-  catppuccin.tmux.enable = false;
   catppuccin.fzf.enable = lib.mkForce false; # the catppuccin module sets it to true
   catppuccin.bat.enable = lib.mkForce false; # the catppuccin module sets it to true
   programs.fzf.defaultOptions = ["--color=16"];
   # The bat theme ("ansi") is in programs.bat.config below. Older Nix (for
   # example 2.22) rejects a second programs.bat.config definition here.
 
+  #catppuccin.tmux.enable = false;
   #programs.tmux.extraConfig = ''
   #  # Hex, not an ANSI name: a little darker than the taerminal background
   #  # (#26282a). Change it if you change the alacritty theme.
@@ -215,6 +215,9 @@
 
   # Home packages
   home.packages = with pkgs; [
+    #test
+    mksh
+
     nautilus-python
 
     lynis

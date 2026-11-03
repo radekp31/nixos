@@ -46,6 +46,14 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # greetd greeter. modules/system/apps/desktop/sysc-greet builds it from
+    # this source and takes gslapper from this input. The upstream NixOS
+    # module is not used. The tag pins a release; flake.lock pins the commit.
+    sysc-greet = {
+      url = "github:Nomadcxx/sysc-greet/v1.3.2";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     treefmt-nix.url = "github:numtide/treefmt-nix";
     systems.url = "github:nix-systems/default";
   };

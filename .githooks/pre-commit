@@ -12,5 +12,7 @@
 # CI catches that case.
 set -eu
 
+# The second `--` ends the treefmt options. A file name such as
+# `--version` then stays a path and does not become an option.
 git diff --cached --name-only -z --diff-filter=ACMR |
-  xargs -0 -r nix fmt -- --fail-on-change
+  xargs -0 -r nix fmt -- --fail-on-change --

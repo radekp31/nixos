@@ -1,0 +1,28 @@
+--- a/crates/tuigreet/src/ui/bg_animation/matrix.rs
++++ b/crates/tuigreet/src/ui/bg_animation/matrix.rs
+@@ -22,16 +22,16 @@
+ 
+ use super::Animation;
+ 
+-/// Default glyph palette: half-width katakana plus ASCII digits and a few
+-/// symbols. Half-width katakana (U+FF65..U+FF9F) are single-cell on
+-/// terminals that respect Unicode East Asian Width.
++/// Default glyph palette: Cyrillic and Greek letters plus ASCII digits and
++/// a few symbols. The Linux console font holds at most 512 glyphs, and no
++/// console font has half-width katakana, so katakana showed as boxes.
+ const DEFAULT_CHARSET: &[char] = &[
+-  'ｦ', 'ｧ', 'ｨ', 'ｩ', 'ｪ', 'ｫ', 'ｬ', 'ｭ', 'ｮ', 'ｯ', 'ｰ', 'ｱ', 'ｲ', 'ｳ', 'ｴ',
+-  'ｵ', 'ｶ', 'ｷ', 'ｸ', 'ｹ', 'ｺ', 'ｻ', 'ｼ', 'ｽ', 'ｾ', 'ｿ', 'ﾀ', 'ﾁ', 'ﾂ', 'ﾃ',
+-  'ﾄ', 'ﾅ', 'ﾆ', 'ﾇ', 'ﾈ', 'ﾉ', 'ﾊ', 'ﾋ', 'ﾌ', 'ﾍ', 'ﾎ', 'ﾏ', 'ﾐ', 'ﾑ', 'ﾒ',
+-  'ﾓ', 'ﾔ', 'ﾕ', 'ﾖ', 'ﾗ', 'ﾘ', 'ﾙ', 'ﾚ', 'ﾛ', 'ﾜ', 'ﾝ', '0', '1', '2', '3',
+-  '4', '5', '6', '7', '8', '9', '*', '+', '=', '%', '#', '$', '&', '@', '/',
+-  '\\', '|', '<', '>', '?',
++  'Б', 'Г', 'Д', 'Ж', 'З', 'И', 'Й', 'Л', 'П', 'Ф', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ',
++  'Ы', 'Ь', 'Э', 'Ю', 'Я', 'Γ', 'Δ', 'Θ', 'Λ', 'Ξ', 'Π', 'Σ', 'Φ', 'Ψ', 'Ω',
++  'α', 'β', 'γ', 'δ', 'ε', 'ζ', 'η', 'θ', 'ι', 'κ', 'λ', 'μ', 'ν', 'ξ', 'π',
++  'ρ', 'σ', 'τ', 'υ', 'φ', 'χ', 'ψ', 'ω', '0', '1', '2', '3', '4', '5', '6',
++  '7', '8', '9', '*', '+', '=', '%', '#', '$', '&', '@', '/', '\\', '|', '<',
++  '>', '?',
+ ];
+ 
+ /// Configurable parameters for the matrix effect.
