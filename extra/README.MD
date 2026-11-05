@@ -1606,3 +1606,85 @@ The completed items from this review sit in the archive. The open items follow.
 - [x] Standardized the module structure and the use of `lib.mkDefault`.
 - [x] Added the `flake.lock` update GitHub Action.
 - [x] Added GitHub Actions that run `nix flake check` and build validations.
+
+
+
+2026-11-05
+### Proposed new structure to increase flake input loading and improve overall structure
+.
+├── README.md
+├── treefmt.nix
+├── extra/
+│   ├── dead-code-scan.py
+│   └── wallpapers/
+│
+├── flakes/
+│   ├── desktop/
+│   │   ├── flake.nix
+│   │   └── flake.lock
+│   │
+│   ├── wsl/
+│   │   ├── flake.nix
+│   │   └── flake.lock
+│   │
+│   ├── server/
+│   │   ├── flake.nix
+│   │   └── flake.lock
+│   │
+│   ├── tools/
+│   │   ├── flake.nix
+│   │   └── flake.lock
+│   │
+│   └── compat/
+│       ├── flake.nix
+│       └── flake.lock
+│
+├── hosts/
+│   ├── common/
+│   │   ├── default.nix
+│   │   ├── options.nix
+│   │   └── profiles/
+│   │       ├── desktop.nix
+│   │       ├── hyperv.nix
+│   │       ├── server.nix
+│   │       └── wsl.nix
+│   │
+│   ├── desktop-minimal/
+│   │   ├── configuration.nix
+│   │   └── ...
+│   │
+│   ├── hyperv/
+│   │   ├── configuration.nix
+│   │   ├── users.nix
+│   │   └── ...
+│   │
+│   ├── nixos-desktop/
+│   │   ├── configuration.nix
+│   │   ├── disk-config.nix
+│   │   ├── hardware-configuration.nix
+│   │   ├── users.nix
+│   │   └── variables.nix
+│   │
+│   ├── nixos-wsl/
+│   │   ├── configuration.nix
+│   │   ├── devbox.nix
+│   │   ├── users.nix
+│   │   └── variables.nix
+│   │
+│   └── server/
+│       └── generic/
+│           ├── configuration.nix
+│           ├── hardware-configuration.nix
+│           └── users.nix
+│
+├── modules/
+│   ├── home/
+│   └── system/
+│
+├── parts/
+│   ├── disks.nix
+│   ├── formatting.nix
+│   ├── hosts.nix
+│   └── shells.nix
+│
+└── patches/
