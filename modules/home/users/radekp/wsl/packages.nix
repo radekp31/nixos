@@ -1,8 +1,10 @@
 {
   pkgs,
   lib,
+  inputs,
   ...
 }: let
+  azcli = inputs.nixpkgs_azcli_pin.legacyPackages.${pkgs.stdenv.hostPlatform.system};
   aztfexport = pkgs.stdenv.mkDerivation {
     pname = "aztfexport";
     version = "0.18.0";
@@ -91,6 +93,8 @@ in {
     wl-clipboard
     shellcheck
 
+    #Python
+    uv # package manager
     (python313.withPackages (ps:
       with ps; [
         openpyxl
@@ -119,6 +123,7 @@ in {
         lxml
         pdfminer-six
         pdfplumber
+	jsonschema
 
         python-tss-sdk
       ]))
@@ -163,17 +168,16 @@ in {
     # Juno tools
     terminator
 
-    # azure-cli comes from stable nixpkgs. On unstable it depends on python
-    # fabric, which is broken with invoke 3.x (fabric issue #2376).
-    azure-cli
-    azure-cli-extensions.ad
-    azure-cli-extensions.fzf
-    azure-cli-extensions.ssh
-    azure-cli-extensions.nsp
-    azure-cli-extensions.kusto
-    azure-cli-extensions.zones
-    azure-cli-extensions.quota
-    azure-cli-extensions.portal
+    # azure-cli comes from the pinned nixpkgs input nixpkgs_azcli_pin.
+    azcli.azure-cli
+    azcli.azure-cli-extensions.ad
+    azcli.azure-cli-extensions.fzf
+    azcli.azure-cli-extensions.ssh
+    azcli.azure-cli-extensions.nsp
+    azcli.azure-cli-extensions.kusto
+    azcli.azure-cli-extensions.zones
+    azcli.azure-cli-extensions.quota
+    azcli.azure-cli-extensions.portal
 
     kubectl
     awscli2
@@ -196,6 +200,7 @@ in {
     opencode
 
     firefox
+    litemdview # lite text preview - for .md
 
     podman
     podman-compose

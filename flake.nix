@@ -6,6 +6,9 @@
     nixpkgs_deprecated.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs_unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    # Revision with azure-cli 2.85.0. Version 2.86.0 fails with delegated_user_tid. Change the rev to move the pin.
+    nixpkgs_azcli_pin.url = "github:NixOS/nixpkgs/546500056776c6cd4ed763252295bf5b71a18e07";
+
     flake-parts.url = "github:hercules-ci/flake-parts";
 
     home-manager = {
