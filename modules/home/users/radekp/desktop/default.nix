@@ -81,16 +81,21 @@
   # The bat theme ("ansi") is in programs.bat.config below. Older Nix (for
   # example 2.22) rejects a second programs.bat.config definition here.
 
+  # tmux colors for this host only. WSL keeps the catppuccin tmux theme.
   catppuccin.tmux.enable = false;
-  #programs.tmux.extraConfig = ''
-  #  # Hex, not an ANSI name: a little darker than the taerminal background
-  #  # (#26282a). Change it if you change the alacritty theme.
-  #  set -g status-style "bg=#1c1d1f,fg=white"
-  #  set -g message-style "bg=default,fg=cyan"
-  #  set -g mode-style "bg=blue,fg=black"
-  #  set -g window-status-style "fg=brightblack"
-  #  set -g window-status-current-style "fg=blue,bold"
-  #'';
+  programs.tmux.extraConfig = ''
+    # Hex, not an ANSI name: a little darker than the taerminal background
+    # (#26282a). Change it if you change the alacritty theme.
+    set -g status-style "bg=#1c1d1f,fg=white"
+    set -g message-style "bg=default,fg=cyan"
+    set -g mode-style "bg=blue,fg=black"
+    # Tabs: a gray a little lighter than the bar, and blue for the current
+    # tab. The spaces in the formats pad each tab.
+    set -g window-status-style "bg=#3a3c3e,fg=white"
+    set -g window-status-current-style "bg=blue,fg=black,bold"
+    set -g window-status-format " #I:#W#F "
+    set -g window-status-current-format " #I:#W#F "
+  '';
 
   programs.ssh = {
     enable = true;
