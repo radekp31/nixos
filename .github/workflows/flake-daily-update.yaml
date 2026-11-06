@@ -39,10 +39,15 @@ jobs:
       - name: Update flake.lock
         run: nix flake update
 
-      # flakes/compat carries its own lock, and the step above never reaches
-      # it. Without this step that lock ages forever.
-      - name: Update the nested compat lock
-        run: nix flake update --flake ./flakes/compat
+      # Each flake under flakes/ carries its own lock, and the step above
+      # never reaches it. The loop finds every nested flake, so a new one is
+      # never left out. flakes/tools was left out until 2026-11-06.
+      - name: Update the nested locks
+        run: |
+          set -euo pipefail
+          for flake in flakes/*/flake.nix; do
+            nix flake update --flake "./$(dirname "$flake")"
+          done
 
       # The hosts use the Nix from flake.lock (the default nix.package).
       # Put the Nix from the NEW lock on PATH, so the checks and the builds
@@ -57,12 +62,12 @@ jobs:
         run: nix fmt
 
       # Name every lock. A bare `git diff --quiet flake.lock` reports no change
-      # when only the nested lock moved, and the job then throws that update
-      # away.
+      # when only a nested lock moved, and the job then throws that update
+      # away. Git expands the quoted pattern, so it matches every nested lock.
       - name: Check if any lock file changed
         id: check-changes
         run: |
-          if git diff --quiet -- flake.lock flakes/compat/flake.lock; then
+          if git diff --quiet -- flake.lock 'flakes/*/flake.lock'; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT

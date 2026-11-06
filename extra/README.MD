@@ -1015,6 +1015,16 @@ The completed items from this review sit in the archive. The open items follow.
     moves. The build gate builds host closures, and no host imports compat. Add
     `nix develop ./flakes/compat#light --command true` to close it.
 
+  **[DONE 2026-11-06] A third instance.** The job named `flakes/compat` only,
+  so `flakes/tools/flake.lock` stayed at the 2026-09-14 nixpkgs.
+  - *Done:* the job loops over every `flakes/*/flake.nix`. The change gate
+    matches `flakes/*/flake.lock`. A new nested flake joins the job with no
+    workflow edit.
+  - *Done:* the tools lock moved to the 2026-11-05 nixpkgs. All four tools
+    shells still evaluate.
+  - *Still open:* no gate validates a nested flake after its lock moves. This
+    now applies to `flakes/tools` too.
+
 ### P2 — Maintainability
 
 - **[x] [DONE 2026-09-16] Host wiring repeats.** `parts/hosts.nix` calls one
