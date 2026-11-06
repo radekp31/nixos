@@ -14,7 +14,7 @@
     (_final: prev: {
       claude-code =
         (import inputs.nixpkgs_unstable {
-          inherit (prev) system;
+          inherit (prev.stdenv.hostPlatform) system;
           config.allowUnfree = true;
         })
         .claude-code;
