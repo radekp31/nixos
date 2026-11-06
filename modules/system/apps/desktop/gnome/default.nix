@@ -130,7 +130,8 @@
     gnomeExtensions.window-list
     ##gnomeExtensions.windowsNavigator
     #gnomeExtensions.workspace-indicator
-    #gnomeExtensions.vicinae
+    # vicinae reads the window list and the clipboard through this extension.
+    gnomeExtensions.vicinae
     #gnomeExtensions.tweaks-in-system-menu
   ];
 }

@@ -47,11 +47,11 @@
       binding = "<Super>Tab";
       command = "${vicinae} open";
     };
-    #"${lib.removePrefix "/" path}/custom1" = {
-    #  name = "Vicinae window list";
-    #  binding = "<Alt>Tab";
-    #  command = "${vicinae} cmd launch wm:switch-windows";
-    #};
+    "${lib.removePrefix "/" path}/custom1" = {
+      name = "Vicinae window list";
+      binding = "<Alt>Tab";
+      command = "${vicinae} cmd launch wm:switch-windows";
+    };
   };
 
   # Plasma: move Alt+Space and Alt+F2 from KRunner to "vicinae toggle".
