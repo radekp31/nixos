@@ -1543,6 +1543,24 @@ The completed items from this review sit in the archive. The open items follow.
       beside the root `a3116115`. The `follows` is set and the duplicate lock
       node is gone. The remaining extra nixpkgs nodes are deliberate pins:
       `nixpkgs_deprecated`, `nixpkgs_unstable` and `nixpkgs_azcli_pin`.
+  - *Measured 2026-11-07: the download of `nix flake update`.* Nix downloads
+    only the inputs whose revision moved. Each moved input costs its full
+    tarball, because GitHub gives no delta.
+
+    | Input              | Download            | Moved in the last 30 lock commits |
+    | ------------------ | ------------------- | --------------------------------- |
+    | `nixpkgs_unstable` | 51.9 MiB            | 19                                |
+    | `nixpkgs`          | about 52 MiB        | 10                                |
+    | `rust-overlay`     | 16.4 MiB            | 11                                |
+    | other inputs       | small, not measured | 0 to 10                           |
+
+    - These cost nothing per update: `nixpkgs_deprecated` (stopped at the
+      25.11 end of life, 2026-06-30), `nixpkgs_azcli_pin` (fixed revision) and
+      `nixpkgs_2`. Nix takes `nixpkgs_2` from the `treefmt-nix` lock and does
+      not download it, so a `follows` on `treefmt-nix` saves nothing.
+    - A rebuild fetches only the inputs of its host. The desktop skips
+      `rust-overlay`, `nixos-wsl`, `sops-nix`, `treefmt-nix` and the two pins.
+    - The desktop takes `nixpkgs_unstable` for `claude-code` only.
 
 ---
 
