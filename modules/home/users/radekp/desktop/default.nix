@@ -16,9 +16,6 @@
     # Launcher (replaces KRunner)
     ../../../apps/vicinae
 
-    # Firefox ESR instance with WebGPU on
-    ../../../apps/firefox-webgpu
-
     # Tmux
     ../../../apps/tmux
 
@@ -210,9 +207,11 @@
   # Write a plain HTML copy of the bookmarks at each clean Firefox shutdown.
   # Keep the export outside the profile, so a profile reset cannot delete it.
   # Keep the user.js path equal to the profile path in profiles.ini.
+  # Also turn on WebGPU in the main profile.
   home.file.".mozilla/firefox/t8zombgp.default/user.js".text = ''
     user_pref("browser.bookmarks.autoExportHTML", true);
     user_pref("browser.bookmarks.file", "${config.xdg.stateHome}/firefox/bookmarks.html");
+    user_pref("dom.webgpu.enabled", true);
   '';
 
   # Home packages
