@@ -81,7 +81,7 @@
   # The bat theme ("ansi") is in programs.bat.config below. Older Nix (for
   # example 2.22) rejects a second programs.bat.config definition here.
 
-  #catppuccin.tmux.enable = false;
+  catppuccin.tmux.enable = false;
   #programs.tmux.extraConfig = ''
   #  # Hex, not an ANSI name: a little darker than the taerminal background
   #  # (#26282a). Change it if you change the alacritty theme.
