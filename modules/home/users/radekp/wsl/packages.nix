@@ -123,7 +123,7 @@ in {
         lxml
         pdfminer-six
         pdfplumber
-	jsonschema
+        jsonschema
 
         python-tss-sdk
       ]))
