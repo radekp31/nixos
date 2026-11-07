@@ -18,6 +18,13 @@
         extraModules
         ++ [
           configuration
+          ({pkgs, ...}: {
+            # Apply the Lix overlay so lixPackageSets becomes available
+            nixpkgs.overlays = [inputs.lix.overlays.default];
+
+            # Set Lix globally across all hosts
+            nix.package = pkgs.lixPackageSets.stable.lix;
+          })
           inputs.home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
