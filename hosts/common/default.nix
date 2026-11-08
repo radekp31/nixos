@@ -133,6 +133,11 @@ in {
   };
 
   nix = {
+    optimise = {
+    automatic = true;
+    dates = [ "00:00" ];
+    persistent = true; # Runs immediately on boot if missed
+      };
     gc = {
       automatic = lib.mkDefault true; # Add mkDefault here too
       dates = lib.mkDefault "weekly";
@@ -140,12 +145,27 @@ in {
     };
     settings = {
       auto-optimise-store = true;
-      experimental-features = ["nix-command" "flakes"];
-      keep-outputs = true;
-      keep-derivations = true;
+      experimental-features = ["nix-command" "flakes" "pipe-operator"];
+      keep-outputs = false;
+      keep-derivations = false;
+      http-connections = 128;
+      max-substitution-jobs = 64;
       min-free = 20 * 1024 * 1024 * 1024; # 20GB
       max-free = 50 * 1024 * 1024 * 1024; # 50GB
-    };
+      substituters = [
+      "https://cache.nixos.org"
+      "https://lix.cachix.org" # Official Lix binary cache
+      # Add your own local Attic or Cachix server here if applicable
+      ];
+
+      trusted-public-keys = [
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        "lix.cachix.org-1:aBnZUtnRJkNRVMRAcSVV6o9P8N+dG5LzZ/yGvjUu2g4="
+      ];
+
+      # Prioritize binary cache hits over local compilation whenever valid
+      fallback = true;
+      };
   };
 
   # Basic packages
