@@ -48,7 +48,7 @@
   fileSystems."/media/WDRED" = {
     device = "/dev/disk/by-uuid/C6541CA0541C9571";
     fsType = "ntfs";
-    options = ["rw" "nofail"];
+    options = ["rw" "noauto" "xsystemd-automount"];
   };
 
   fileSystems."/mnt/btr_pool" = {
