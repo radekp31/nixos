@@ -98,6 +98,10 @@
 
           alias aws-logout='rm -f ~/.aws/credentials'
 
+          # wsl.interop.includePath is off. Call these Windows commands by full path.
+          alias code="'/mnt/c/Program Files/Microsoft VS Code/bin/code'"
+          alias clip.exe='/mnt/c/Windows/system32/clip.exe'
+
           # Override gnzh: drop user@host, keep path + git + time
           setopt PROMPT_SUBST
 

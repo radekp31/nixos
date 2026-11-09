@@ -26,7 +26,9 @@
 
   # WSL user
   wsl.defaultUser = config.my.user.name;
-  wsl.interop.includePath = true;
+  # Windows PATH entries make zsh typing slow (9P lookups per keystroke).
+  # The zsh config aliases the Windows commands in use.
+  wsl.interop.includePath = false;
 
   # Timezone (already UTC in common, but explicit here)
   time.timeZone = "UTC";
