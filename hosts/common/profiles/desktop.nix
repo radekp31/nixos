@@ -4,7 +4,6 @@
   pkgs,
   ...
 }: {
-  
   #systemd optimizations
   systemd.services.NetworkManager-wait-online.enable = false;
   systemd.services.avahi-daemon.wantedBy = lib.mkForce [];
