@@ -15,11 +15,6 @@
     "net.ipv4.conf.default.rp_filter" = 2;
   };
 
-  # Environment variables for WSL
-  environment.variables = {
-    EDITOR = lib.mkDefault "vim";
-  };
-
   virtualisation.podman = {
     enable = true;
     dockerCompat = true;

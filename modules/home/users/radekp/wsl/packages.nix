@@ -5,34 +5,7 @@
   ...
 }: let
   azcli = inputs.nixpkgs_azcli_pin.legacyPackages.${pkgs.stdenv.hostPlatform.system};
-  aztfexport = pkgs.stdenv.mkDerivation {
-    pname = "aztfexport";
-    version = "0.18.0";
-
-    src = pkgs.fetchurl {
-      url = "https://github.com/Azure/aztfexport/releases/download/v0.18.0/aztfexport_v0.18.0_linux_amd64.zip";
-      sha256 = "75fb5b695c1f591671c58a3fa88c0efcdde298542335b8ee629705dab3ffbd55";
-    };
-
-    nativeBuildInputs = [pkgs.unzip pkgs.autoPatchelfHook];
-    buildInputs = [pkgs.stdenv.cc.cc.lib];
-
-    unpackPhase = ''
-      unzip $src
-    '';
-
-    installPhase = ''
-      mkdir -p $out/bin
-      install -m755 aztfexport $out/bin/aztfexport
-    '';
-
-    meta = with pkgs.lib; {
-      description = "A tool to bring existing Azure resources under Terraform's management";
-      homepage = "https://github.com/Azure/aztfexport";
-      license = licenses.mpl20;
-      platforms = ["x86_64-linux"];
-    };
-  };
+  aztfexport = import ../../../../devShells/derivations/aztfexport.nix {inherit pkgs;};
 
   # Define python-tss-sdk from GitHub
   python-tss-sdk = pkgs.python313Packages.buildPythonPackage {
@@ -74,22 +47,16 @@ in {
   '';
 
   home.packages = with pkgs; [
-    # QEMU packages
-    qemu
+    # QEMU packages. devbox.nix supplies qemu, gvproxy and virtiofsd.
     quickemu
-    quickgui
-    gvproxy
-    virtiofsd
 
-    # Podman packages
-    podman
+    # Podman packages. hosts/common/profiles/wsl.nix supplies podman.
     netavark
     aardvark-dns
     passt # provides pasta
 
     nixos-icons
     alejandra
-    nerd-fonts.jetbrains-mono
     wl-clipboard
     shellcheck
 
@@ -104,17 +71,11 @@ in {
         pip
         autopep8
         hy
-        pathlib2
         requests
         pyyaml
         pydantic
-        hy
         sysctl
-        requests
-        argparse
         thefuzz
-        datetime
-        argparse
         websocket-client
         pyperclip
         openssh
@@ -132,21 +93,15 @@ in {
     chromium
 
     gh
-    htop
 
     bruno
     cheat
     nvd
     nvdtools
-    curl
-    wget
     netcat
     ripgrep-all
     fd
-    bat
-    tree
     microfetch
-    xsel
     #docker_29
     #docker-compose
 
@@ -186,14 +141,10 @@ in {
     aztfexport
     dig
 
-    fzf
-    jq
-    git
     openshift
     terraform
     ansible
     powershell
-    github-cli
 
     #Required for Github Copilot
     nodejs_24
@@ -202,11 +153,6 @@ in {
     firefox
     litemdview # lite text preview - for .md
 
-    podman
-    podman-compose
-    cmake
-    gnumake
-    gvproxy
     gvisor
 
     vault

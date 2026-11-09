@@ -22,8 +22,6 @@
     };
     envExtra = ''
       #export NIXPKGS_ALLOW_UNFREE=1
-      export EDITOR='nvim'
-      export VISUAL='nvim'
       export C='/mnt/c'
       #export MANPAGER='nvim +Man!'
 
@@ -180,10 +178,8 @@
       theme = "gnzh"; #Disable for manual prompt overriding
       plugins = [
         "git"
-        "ruby"
         "virtualenv"
         "copyfile"
-        "git"
         "command-not-found"
         "fzf"
         "sudo"
@@ -195,10 +191,7 @@
     };
   };
   home.packages = with pkgs; [
-    oh-my-zsh
     zsh-fzf-tab
     zsh-fzf-history-search
-    zsh-autosuggestions
-    zsh-syntax-highlighting
   ];
 }

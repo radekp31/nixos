@@ -163,13 +163,10 @@ in {
     tmux
 
     #nix tools
-    nh #nix helper
     nix-output-monitor #helper for rebuild debugging
-    nix-prefetch-git
     nix-prefetch
     nix-prefetch-scripts
     nix-prefetch-docker
-    nps # alternative to nix-search-cli
 
     #documentation
     man-pages # POSIX and Linux extra man-pages (sections 2, 3, 4, 5, 7)

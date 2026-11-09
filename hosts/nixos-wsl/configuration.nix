@@ -19,7 +19,6 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  wsl.useWindowsDriver = true;
   wsl.interop.register = true;
 
   wsl.ssh-agent.enable = true;
@@ -35,9 +34,6 @@
 
   # More conservative GC for WSL
   nix.gc.options = lib.mkForce "--delete-older-than 30d";
-
-  # Neovim as editor
-  environment.variables.EDITOR = "nvim";
 
   # Enable SSH
   services.openssh = {

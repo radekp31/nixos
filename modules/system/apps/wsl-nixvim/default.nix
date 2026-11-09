@@ -53,110 +53,6 @@
           desc = "LSP Code Actions (Quick Fix)";
         };
       }
-      # OpenCode: Ask with context
-      {
-        mode = ["n" "x"];
-        key = "<C-a>";
-        action = "<cmd>lua require('opencode').ask('@this: ', { submit = true })<cr>";
-        options = {desc = "Ask opencode…";};
-      }
-      # OpenCode: Execute action
-      {
-        mode = ["n" "x"];
-        key = "<C-x>";
-        action = "<cmd>lua require('opencode').select()<cr>";
-        options = {desc = "Execute opencode action…";};
-      }
-      # OpenCode: Toggle
-      {
-        mode = ["n" "t"];
-        #key = "<C-.>";
-        key = "<leader>.";
-        action = "<cmd>lua require('opencode').toggle()<cr>";
-        options = {desc = "Toggle opencode";};
-      }
-      # OpenCode: Add range
-      {
-        mode = ["n" "x"];
-        key = "go";
-        action = "<cmd>lua require('opencode').operator('@this ')<cr>";
-        options = {
-          desc = "Add range to opencode";
-          expr = false;
-        };
-      }
-      # OpenCode: Add line
-      {
-        mode = "n";
-        key = "goo";
-        action = "<cmd>lua require('opencode').operator('@this ') .. '_'<cr>";
-        options = {
-          desc = "Add line to opencode";
-          expr = false;
-        };
-      }
-      # OpenCode: Scroll up
-      {
-        mode = "n";
-        key = "<S-C-u>";
-        action = "<cmd>lua require('opencode').command('session.half.page.up')<cr>";
-        options = {desc = "Scroll opencode up";};
-      }
-      # OpenCode: Scroll down
-      {
-        mode = "n";
-        key = "<S-C-d>";
-        action = "<cmd>lua require('opencode').command('session.half.page.down')<cr>";
-        options = {desc = "Scroll opencode down";};
-      }
-      # OpenCode: Execute action
-      {
-        mode = ["n" "x"];
-        key = "<C-x>";
-        action = "<cmd>lua require('opencode').select()<cr>";
-        options = {desc = "Execute opencode action…";};
-      }
-      # OpenCode: Toggle
-      {
-        mode = ["n" "t"];
-        key = "<leader>.";
-        action = "<cmd>lua require('opencode').toggle()<cr>";
-        options = {desc = "Toggle opencode";};
-      }
-      # OpenCode: Add range
-      {
-        mode = ["n" "x"];
-        key = "go";
-        action = "<cmd>lua require('opencode').operator('@this ')<cr>";
-        options = {
-          desc = "Add range to opencode";
-          expr = false;
-        };
-      }
-      # OpenCode: Add line
-      {
-        mode = "n";
-        key = "goo";
-        action = "<cmd>lua require('opencode').operator('@this ') .. '_'<cr>";
-        options = {
-          desc = "Add line to opencode";
-          expr = false;
-        };
-      }
-      # OpenCode: Scroll up
-      {
-        mode = "n";
-        key = "<S-C-u>";
-        action = "<cmd>lua require('opencode').command('session.half.page.up')<cr>";
-        options = {desc = "Scroll opencode up";};
-      }
-      # OpenCode: Scroll down
-      {
-        mode = "n";
-        key = "<S-C-d>";
-        action = "<cmd>lua require('opencode').command('session.half.page.down')<cr>";
-        options = {desc = "Scroll opencode down";};
-      }
       # Remap standard Vim increment/decrement (if using opinionated C-a/C-x above)
       {
         mode = "n";
@@ -584,21 +480,14 @@
           #];
         };
       };
-      opencode = {
-        enable = true;
-      };
     };
     extraConfigLua = ''
     '';
     extraPlugins = [
-      pkgs.vimPlugins.nvim-lspconfig
       pkgs.vimPlugins.friendly-snippets
-      pkgs.vimPlugins.copilot-vim
-      pkgs.vimPlugins.opencode-nvim
     ];
     extraPackages = [
       pkgs.wl-clipboard
-      pkgs.xsel
       pkgs.ripgrep
     ];
   };

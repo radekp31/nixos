@@ -50,12 +50,6 @@
       insteadOf = https://github.com/Dynatrace-Internal/rnd-ai-knowledgebase
   '';
 
-  programs.fzf = {
-    enable = true;
-    enableZshIntegration = true;
-    enableBashIntegration = true;
-  };
-
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
@@ -84,10 +78,6 @@
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
-  };
-
-  programs.docker-cli = {
-    enable = false;
   };
 
   xdg.configFile."wezterm/wezterm.lua".source = ../../../apps/wezterm/wezterm.lua;

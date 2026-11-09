@@ -2,8 +2,6 @@
   # ghostcat devbox prerequisites — NATIVE=0 (podman machine / QEMU/KVM path)
   # https://github.com/ghostcat/ghostcat-scripts/ai/docker/ghostcat-claude-devbox
 
-  virtualisation.podman.enable = true;
-
   # Tools checked by scripts/check-prereqs.sh via `command -v`
   environment.systemPackages = with pkgs; [
     podman-compose
