@@ -105,7 +105,7 @@
 
        bind-key s display-popup -E "tmux list-sessions -F '#{session_name}' | fzf | xargs tmux switch-client -t"
        bind-key -n C-l choose-session
-       bind-key r source-file ~/.config/tmux/tmux.conf \\; display "Config reloaded"
+       bind-key r source-file ~/.config/tmux/tmux.conf \; display "Config reloaded"
 
        bind-key v split-window -h -c "#{pane_current_path}"
        bind-key c new-window -c "#{pane_current_path}"

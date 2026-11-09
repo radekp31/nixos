@@ -48,7 +48,9 @@
 
         if [[ $- == *i* ]]; then
           if grep -qi microsoft /proc/version &> /dev/null; then
-            inxi -S
+            # Keep the System, Shell and Storage lines. Remove colors, logo and icons.
+            # Color the labels light blue (ANSI 94).
+            microfetch | LC_ALL=C sed -n -E 's/\x1b\[[0-9;]*m//g; s/\xee\x98\xa1 //; s/^.*  (System|Shell|Storage \(\/\))(.*)/\x1b[94m\1\x1b[0m\2/p'
           fi
         fi
 
