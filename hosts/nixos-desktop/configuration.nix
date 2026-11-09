@@ -240,7 +240,10 @@
   # Cockpit
   #services.cockpit.enable = true;
 
+  #Docker settings
   virtualisation.docker.enable = true;
+  virtualisation.docker.liveRestore = false;
+  systemd.services.docker.wantedBy = lib.mkForce [];
 
   networking.firewall = {
     enable = true;

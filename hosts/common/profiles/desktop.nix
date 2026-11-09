@@ -4,8 +4,11 @@
   pkgs,
   ...
 }: {
-  # Enable networking (already in common/default.nix, so remove or keep for clarity)
-  # networking.networkmanager.enable = true;  # Remove - duplicate from common
+  
+  #systemd optimizations
+  systemd.services.NetworkManager-wait-online.enable = false;
+  systemd.services.avahi-daemon.wantedBy = lib.mkForce [];
+  systemd.services.nscd.wantedBy = lib.mkForce [];
 
   environment.sessionVariables = {
     #ensure any GTK app launched under KDE or Wayland can reliably locate its interface schemas
