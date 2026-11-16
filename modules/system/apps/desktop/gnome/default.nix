@@ -19,6 +19,10 @@
 
   services.desktopManager.gnome.enable = true;
 
+  # GDM, not greetd: GNOME Shell builds its lock screen only when
+  # org.gnome.DisplayManager is on the system bus (LoginManager.canLock()).
+  services.displayManager.gdm.enable = true;
+
   # To disable installing GNOME's suite of applications
   # and only be left with GNOME shell.
   #services.gnome.core-apps.enable = false;
@@ -34,6 +38,11 @@
     user.databases = [
       {
         settings = {
+          # Desktop PC: never suspend on idle. Locking still works.
+          "org/gnome/settings-daemon/plugins/power" = {
+            sleep-inactive-ac-type = "nothing";
+            sleep-inactive-battery-type = "nothing";
+          };
           "org/gnome/desktop/interface".cursor-theme = "Adwaita";
           "org/gnome/desktop/background" = {
             picture-uri = "file://${../../../../../extra/wallpapers/reddit1-nixos-wallpapers.png}";
@@ -113,6 +122,9 @@
     gdm-settings
     #
     gnomeExtensions.just-perfection
+    # Keeps the monitors on while the lock screen shows. Without it gsd-power
+    # blanks them 10 s after a lock. Enable once with gnome-extensions enable.
+    gnomeExtensions.unblank
     #gnomeExtensions.arc-menu
     #gnomeExtensions.dash-to-panel
     ##gnome-shell-extensions set

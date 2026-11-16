@@ -38,6 +38,9 @@
     path = "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings";
   in {
     "org/gnome/desktop/wm/keybindings".switch-applications = ["<Super>comma"];
+    # Lock screen without Super. The user dconf database wins over the system
+    # one, so this lives here and not in the system dconf profile.
+    "org/gnome/settings-daemon/plugins/media-keys".screensaver = ["<Control><Alt>l"];
     "org/gnome/settings-daemon/plugins/media-keys".custom-keybindings = [
       "${path}/custom0/"
       "${path}/custom1/"
