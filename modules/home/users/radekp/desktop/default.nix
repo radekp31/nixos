@@ -21,6 +21,9 @@
 
     # Enable catpuccin
     ../../../colorschemes/catppuccin
+
+    # Taerminal colors for fzf, bat, and tmux
+    ../../../colorschemes/taerminal
   ];
 
   # Export XDG_CONFIG_HOME and the other XDG variables to the shell and to the
@@ -67,29 +70,11 @@
   # Blue Papirus folder icons. Other catppuccin apps keep the global accent.
   catppuccin.gtk.icon.accent = "blue";
 
-  # tmux, fzf, and bat use the 16 terminal colors (ANSI names), not catppuccin.
-  # They then follow the alacritty theme (programs.alacritty.theme).
+  # tmux, fzf, and bat use the taerminal colors (colorschemes/taerminal), not
+  # catppuccin. They then follow the alacritty theme (programs.alacritty.theme).
   catppuccin.fzf.enable = lib.mkForce false; # the catppuccin module sets it to true
   catppuccin.bat.enable = lib.mkForce false; # the catppuccin module sets it to true
-  programs.fzf.defaultOptions = ["--color=16"];
-  # The bat theme ("ansi") is in programs.bat.config below. Older Nix (for
-  # example 2.22) rejects a second programs.bat.config definition here.
-
-  # tmux colors for this host only. WSL keeps the catppuccin tmux theme.
   catppuccin.tmux.enable = false;
-  programs.tmux.extraConfig = ''
-    # Hex, not an ANSI name: a little darker than the taerminal background
-    # (#26282a). Change it if you change the alacritty theme.
-    set -g status-style "bg=#1c1d1f,fg=white"
-    set -g message-style "bg=default,fg=cyan"
-    set -g mode-style "bg=blue,fg=black"
-    # Tabs: a gray a little lighter than the bar, and blue for the current
-    # tab. The spaces in the formats pad each tab.
-    set -g window-status-style "bg=#3a3c3e,fg=white"
-    set -g window-status-current-style "bg=blue,fg=black,bold"
-    set -g window-status-format " #I:#W#F "
-    set -g window-status-current-format " #I:#W#F "
-  '';
 
   programs.ssh = {
     enable = true;
@@ -141,7 +126,6 @@
   programs.bat = {
     enable = true;
     config = {
-      theme = "ansi"; # the 16 terminal colors, see the catppuccin note above
       paging = "never";
       decorations = "never";
     };

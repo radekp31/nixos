@@ -6,7 +6,7 @@
   imports = [
     ./packages.nix
     ../../../shells/zsh
-    ../../../colorschemes/catppuccin
+    ../../../colorschemes/taerminal
     ../../../apps/tmux
   ];
   home.username = osConfig.my.user.name;
@@ -49,6 +49,7 @@
     [url "ssh://git@github.com/Dynatrace-Internal/rnd-ai-knowledgebase"]
       insteadOf = https://github.com/Dynatrace-Internal/rnd-ai-knowledgebase
   '';
+  
 
   programs.ssh = {
     enable = true;
@@ -72,6 +73,13 @@
         user = "git";
         identityFile = "~/.ssh/dt_bitbucket";
       };
+      # DTRND GitHub account
+      "DTRND-github" = {
+        hostname = "github.com";
+        user = "git";
+        identityFile = "~/.ssh/dt_github_key";
+      };
+
     };
   };
 

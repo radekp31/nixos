@@ -58,6 +58,25 @@
           desc = "LSP Code Actions (Quick Fix)";
         };
       }
+      # Remap standard Vim increment/decrement (Windows Terminal uses C-a and C-x)
+      {
+        mode = "n";
+        key = "+";
+        action = "<C-a>";
+        options = {
+          desc = "Increment under cursor";
+          noremap = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "-";
+        action = "<C-x>";
+        options = {
+          desc = "Decrement under cursor";
+          noremap = true;
+        };
+      }
     ];
     #colorschemes.tokyonight = {
     #  enable = true;
@@ -496,6 +515,9 @@
           };
           words = {
             debounce = 100;
+            enabled = true;
+          };
+          terminal = {
             enabled = true;
           };
         };
