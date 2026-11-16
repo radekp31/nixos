@@ -31,11 +31,36 @@
 
     initContent = ''
 
+        # In a new Windows Terminal tab, attach one tmux session.
+        # ponytail: no preview, no kill key, no session-name check.
+        if [[ $- == *i* && -z "$TMUX" && -n "$WT_SESSION" ]] \
+          && command -v tmux &>/dev/null && command -v fzf &>/dev/null; then
+          __tmux_pick() {
+            local detached choice name
+            detached=$(tmux list-sessions -F '#{session_name}' -f '#{==:#{session_attached},0}' 2>/dev/null)
+            if [[ -n $detached ]]; then
+              choice=$(printf '%s\n[new]\n' "$detached" | fzf --prompt='tmux> ') || return 0
+            else
+              choice='[new]'
+            fi
+            if [[ $choice == '[new]' ]]; then
+              read -r "name?Session name: " || return 0
+              [[ -n $name ]] || return 0
+            else
+              name=$choice
+            fi
+            tmux new-session -A -s "$name" -c /home/radekp
+          }
+          __tmux_pick
+          unset -f __tmux_pick
+        fi
+
         if command -v tmux &>/dev/null \
           && [[ -n "$PS1" ]] \
           && [[ "$TERM" != screen* ]] \
           && [[ "$TERM" != tmux* ]] \
-          && [[ -z "$TMUX" ]]; then
+          && [[ -z "$TMUX" ]] \
+          && [[ -z "$WT_SESSION" ]]; then
           exec tmux new-session -A -s mgmt -c /etc/nixos
         fi
 
