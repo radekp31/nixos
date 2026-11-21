@@ -34,7 +34,7 @@
     # gnome test
     ../../modules/system/apps/desktop/gnome
     # Greeter for greetd. Import one.
-    ../../modules/system/apps/desktop/sysc-greet
+    #../../modules/system/apps/desktop/sysc-greet
     #../../modules/system/apps/desktop/tuigreet
     ../../modules/system/apps/nix-ld
     ../../modules/system/apps/steam
@@ -157,7 +157,7 @@
 
   # Kernel
   #boot.kernelPackages = pkgs.linuxPackages_6_18;
-  boot.kernelPackages = pkgs.linuxPackages_7_2;
+  boot.kernelPackages = pkgs.linuxPackages_7_3;
   boot.kernelParams = [
     "boot.shell_on_fail"
     "trace_clock=local"

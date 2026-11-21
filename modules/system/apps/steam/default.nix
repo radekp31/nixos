@@ -43,14 +43,26 @@
     bottles
     protonup-ng
   ];
-  systemd.user.services.steam = {
+  #systemd.user.services.steam = {
+  #  description = "Steam Background";
+  #  serviceConfig = {
+  #    # Use the configured package, not pkgs.steam. The plain package
+  #    # ignores programs.steam settings, including extraEnv.
+  #    ExecStart = "${config.programs.steam.package}/bin/steam -silent";
+  #    Restart = "on-failure";
+  #  };
+  #  wantedBy = ["graphical-session.target"];
+  #};
+systemd.user.services.steam = {
     description = "Steam Background";
+    after = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
     serviceConfig = {
-      # Use the configured package, not pkgs.steam. The plain package
-      # ignores programs.steam settings, including extraEnv.
       ExecStart = "${config.programs.steam.package}/bin/steam -silent";
       Restart = "on-failure";
+      Environment = "DISPLAY=:0";
     };
-    wantedBy = ["graphical-session.target"];
+    wantedBy = [ "graphical-session.target" ];
   };
+
 }
