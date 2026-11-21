@@ -53,16 +53,15 @@
   #  };
   #  wantedBy = ["graphical-session.target"];
   #};
-systemd.user.services.steam = {
+  systemd.user.services.steam = {
     description = "Steam Background";
-    after = [ "graphical-session.target" ];
-    partOf = [ "graphical-session.target" ];
+    after = ["graphical-session.target"];
+    partOf = ["graphical-session.target"];
     serviceConfig = {
       ExecStart = "${config.programs.steam.package}/bin/steam -silent";
       Restart = "on-failure";
       Environment = "DISPLAY=:0";
     };
-    wantedBy = [ "graphical-session.target" ];
+    wantedBy = ["graphical-session.target"];
   };
-
 }
