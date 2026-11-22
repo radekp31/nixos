@@ -206,11 +206,11 @@
         "narHash": "sha256-BLkAMrredPJd8jm2SLVWVoVU7nDtgHRkKRGX7ApElZU=",
         "rev": "feedf4a098afbbc1604434afcc7eada4d558ae39",
         "type": "tarball",
-        "url": "https://git.lix.systems/api/v1/repos/lix-project/lix/archive/feedf4a098afbbc1604434afcc7eada4d558ae39.tar.gz?rev=feedf4a098afbbc1604434afcc7eada4d558ae39"
+        "url": "https://git.lix.systems/api/v1/repos/lix-project/lix/archive/feedf4a098afbbc1604434afcc7eada4d558ae39.tar.gz"
       },
       "original": {
         "type": "tarball",
-        "url": "https://git.lix.systems/lix-project/lix/archive/main.tar.gz"
+        "url": "https://git.lix.systems/lix-project/lix/archive/feedf4a098afbbc1604434afcc7eada4d558ae39.tar.gz"
       }
     },
     "lowdown-src": {
