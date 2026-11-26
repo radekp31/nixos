@@ -11,11 +11,6 @@
 
     flake-parts.url = "github:hercules-ci/flake-parts";
 
-    lix = {
-      url = "https://git.lix.systems/lix-project/lix/archive/feedf4a098afbbc1604434afcc7eada4d558ae39.tar.gz";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";

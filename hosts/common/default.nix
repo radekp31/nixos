@@ -145,7 +145,7 @@ in {
     };
     settings = {
       auto-optimise-store = true;
-      experimental-features = ["nix-command" "flakes" "pipe-operator"];
+      experimental-features = ["nix-command" "flakes"];
       keep-outputs = false;
       keep-derivations = false;
       http-connections = 128;
@@ -154,13 +154,11 @@ in {
       max-free = 50 * 1024 * 1024 * 1024; # 50GB
       substituters = [
         "https://cache.nixos.org"
-        "https://lix.cachix.org" # Official Lix binary cache
         # Add your own local Attic or Cachix server here if applicable
       ];
 
       trusted-public-keys = [
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-        "lix.cachix.org-1:aBnZUtnRJkNRVMRAcSVV6o9P8N+dG5LzZ/yGvjUu2g4="
       ];
 
       # Prioritize binary cache hits over local compilation whenever valid
